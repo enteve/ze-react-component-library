@@ -1,3 +1,3 @@
-import TestComponent from "./TestComponent";
+import ZETable from "./ZETable";
 
-export { TestComponent };
+export { ZETable };

@@ -6,20 +6,31 @@ module.exports = {
   addons: [],
   webpackFinal: async (config) => {
     config.module.rules.push({
-      test: /\.scss$/,
-      use: ["style-loader", "css-loader", "sass-loader"],
-      include: path.resolve(__dirname, "../")
+      test: /\.less$/,
+      use: [
+        "style-loader",
+        "css-loader",
+        {
+          loader: "less-loader",
+          options: {
+            lessOptions: {
+              javascriptEnabled: true,
+            },
+          },
+        },
+      ],
+      include: path.resolve(__dirname, "../"),
     });
 
     config.module.rules.push({
       test: /\.(ts|tsx)$/,
       loader: require.resolve("babel-loader"),
       options: {
-        presets: [["react-app", { flow: false, typescript: true }]]
-      }
+        presets: [["react-app", { flow: false, typescript: true }]],
+      },
     });
     config.resolve.extensions.push(".ts", ".tsx");
 
     return config;
-  }
+  },
 };
