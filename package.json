@@ -1,5 +1,5 @@
 {
-  "name": "react-component-library",
+  "name": "ze-react-component-library",
   "version": "1.0.0",
   "main": "build/index.js",
   "module": "build/index.esm.js",
@@ -7,7 +7,7 @@
     "build"
   ],
   "types": "build/index.d.ts",
-  "description": "A skeleton to create your own React component library using Rollup, TypeScript, Less and Storybook",
+  "description": "ZeroETP React Component Library",
   "scripts": {
     "build": "rollup -c",
     "test": "jest",
@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/HarveyD/react-component-library.git"
+    "url": "git+https://github.com/enteve/ze-react-component-library.git"
   },
   "keywords": [
     "React",
@@ -30,15 +30,19 @@
     "Less",
     "Storybook"
   ],
-  "author": "Harvey Delaney",
+  "author": "XiChi Zhu",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/HarveyD/react-component-library/issues"
+    "url": "https://github.com/enteve/ze-react-component-library/issues"
   },
-  "homepage": "https://github.com/HarveyD/react-component-library#readme",
+  "homepage": "https://github.com/enteve/ze-react-component-library#readme",
   "peerDependencies": {
     "react": ">=16.8.0",
-    "react-dom": ">=16.8.0"
+    "react-dom": ">=16.8.0",
+    "@ant-design/pro-table": ">=2.38.0",
+    "numeral": ">=2.0.0",
+    "zeroetp-api-sdk": ">=1.1.8",
+    "antd": ">=4.15.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
@@ -59,15 +63,15 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "rollup": "^2.36.1",
-    "rollup-plugin-copy": "^3.3.0",
     "rollup-plugin-peer-deps-external": "^2.2.0",
     "rollup-plugin-postcss": "^3.1.2",
     "rollup-plugin-typescript2": "^0.29.0",
     "ts-jest": "^26.4.4",
+    "@ant-design/pro-table": "^2.39.2",
+    "antd": "^4.16.1",
+    "numeral": "^2.0.6",
+    "zeroetp-api-sdk": "1.1.8",
     "typescript": "^4.1.3"
   },
-  "dependencies": {
-    "@ant-design/pro-table": "^2.39.2",
-    "antd": "^4.16.1"
-  }
+  "dependencies": {}
 }
