@@ -24,7 +24,6 @@ const ZETable: React.FC<ZETableProps> = ({
   logicform,
   options,
   preds,
-  additionalColumns = [],
   customRender = {},
   className,
   titleMap = {},
@@ -75,7 +74,8 @@ const ZETable: React.FC<ZETableProps> = ({
       properties = preds.map((predItem) => {
         const property = properties.find((p) => p.name === predItem);
         if (!property) {
-          throw new Error("未找到属性: " + predItem);
+          // return fake property
+          return { name: predItem, type: "string", primal_type: "string" };
         }
 
         return property;
@@ -87,7 +87,7 @@ const ZETable: React.FC<ZETableProps> = ({
     );
   }
 
-  let columns: ProColumnType[] = properties.map(
+  const columns: ProColumnType[] = properties.map(
     (property) =>
       ({
         title: titleMap[property.name] || property.name,
@@ -97,7 +97,6 @@ const ZETable: React.FC<ZETableProps> = ({
         render: customRender[property.name],
       } as ProColumnType)
   );
-  columns = [...columns, ...additionalColumns];
 
   return (
     <div data-testid="ZETable" className={className}>

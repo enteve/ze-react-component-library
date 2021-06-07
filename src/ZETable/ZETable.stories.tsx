@@ -34,23 +34,19 @@ export const AdditionalColumns = () => (
     logicform={{
       schema: "dealer",
     }}
-    preds={["名称", "公司全称"]}
-    additionalColumns={[
-      {
-        dataIndex: "",
-        title: "操作",
-        render: (v: any, record: any) => (
-          <span
-            className="link primary"
-            onClick={() => {
-              console.log(record);
-            }}
-          >
-            查看详情
-          </span>
-        ),
-      },
-    ]}
+    preds={["名称", "公司全称", "操作"]}
+    customRender={{
+      操作: (v: any, record: any) => (
+        <span
+          className="link primary"
+          onClick={() => {
+            console.log(record);
+          }}
+        >
+          查看详情
+        </span>
+      ),
+    }}
   />
 );
 
