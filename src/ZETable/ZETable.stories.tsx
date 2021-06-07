@@ -80,3 +80,12 @@ export const ClassName = () => (
     className="t"
   />
 );
+
+export const TitleMap = () => (
+  <ZETable
+    logicform={{
+      schema: "dealer",
+    }}
+    titleMap={{ 名称: "供应商" }}
+  />
+);
