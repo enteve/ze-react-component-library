@@ -15,6 +15,17 @@ export const valueTypeMapping = (property: PropertyType) => {
   switch (property.primal_type) {
     case "date":
       return "date";
+    case "number":
+      return "digit";
+    case "string":
+      if (property.constraints.enum) {
+        if (property.constraints.enum.length >= 10) {
+          return "select";
+        }
+
+        return "radio";
+      }
+      return undefined;
     default:
       return undefined;
   }
