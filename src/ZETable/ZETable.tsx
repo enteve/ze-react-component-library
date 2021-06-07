@@ -13,7 +13,6 @@ import "./ZETable.less";
 
 // 发布的时候，要用下面的
 import { execLogicform } from "zeroetp-api-sdk";
-import { ColumnsType } from "antd/lib/table";
 
 // Demo Data
 // import demodata from "./demodata";
@@ -27,6 +26,7 @@ const ZETable: React.FC<ZETableProps> = ({
   preds,
   additionalColumns = [],
   customRender = {},
+  className,
 }) => {
   const values = useContext(ProProvider); // 用来自定义ValueType
   const [result, setResult] = useState<LogicformAPIResultType>();
@@ -90,7 +90,7 @@ const ZETable: React.FC<ZETableProps> = ({
   columns = [...columns, ...additionalColumns];
 
   return (
-    <div data-testid="ZETable">
+    <div data-testid="ZETable" className={className}>
       <ProProvider.Provider
         value={{
           ...values,
