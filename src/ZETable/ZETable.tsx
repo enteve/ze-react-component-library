@@ -28,6 +28,7 @@ const ZETable: React.FC<ZETableProps> = ({
   customRender = {},
   className,
   titleMap = {},
+  scroll,
 }) => {
   const values = useContext(ProProvider); // 用来自定义ValueType
   const [result, setResult] = useState<LogicformAPIResultType>();
@@ -104,7 +105,7 @@ const ZETable: React.FC<ZETableProps> = ({
           search={false}
           request={request}
           size="small"
-          scroll={{ x: 200 * columns.length }}
+          scroll={scroll !== undefined ? scroll : { x: 200 * columns.length }}
           options={options || { reload: true, setting: false, density: false }}
         />
       </ProProvider.Provider>
