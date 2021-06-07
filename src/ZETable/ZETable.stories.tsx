@@ -25,7 +25,7 @@ export const PredsSelection = () => (
     logicform={{
       schema: "dealer",
     }}
-    preds={["名称", "公司全称"]}
+    preds={["公司全称", "名称"]}
   />
 );
 

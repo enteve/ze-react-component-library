@@ -70,9 +70,17 @@ const ZETable: React.FC<ZETableProps> = ({
   // 判断要展示的properties
   let properties = result?.columnProperties || [];
   if (preds) {
-    properties = properties.filter(
-      (property) => preds.indexOf(property.name) >= 0
-    );
+    if (properties.length > 0) {
+      // 不是这个的话，说明result还没拿到
+      properties = preds.map((predItem) => {
+        const property = properties.find((p) => p.name === predItem);
+        if (!property) {
+          throw new Error("未找到属性: " + predItem);
+        }
+
+        return property;
+      }); // 用preds的话，顺序是和preds一样的
+    }
   } else {
     properties = properties.filter(
       (property) => !property.ui?.show_in_detail_only
@@ -106,7 +114,11 @@ const ZETable: React.FC<ZETableProps> = ({
           request={request}
           size="small"
           scroll={scroll !== undefined ? scroll : { x: 200 * columns.length }}
-          options={options || { reload: true, setting: false, density: false }}
+          options={
+            options !== undefined
+              ? options
+              : { reload: true, setting: false, density: false }
+          }
         />
       </ProProvider.Provider>
     </div>
