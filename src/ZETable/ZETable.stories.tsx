@@ -94,3 +94,12 @@ export const CloseScroll = () => (
     scroll={null}
   />
 );
+
+export const Pagination = () => (
+  <ZETable
+    logicform={{
+      schema: "order",
+      limit: 1,
+    }}
+  />
+);
