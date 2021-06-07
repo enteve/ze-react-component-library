@@ -17,3 +17,12 @@ export const Normal = () => (
     }}
   />
 );
+
+export const PredsSelection = () => (
+  <ZETable
+    logicform={{
+      schema: "dealer",
+    }}
+    preds={["名称", "公司全称"]}
+  />
+);
