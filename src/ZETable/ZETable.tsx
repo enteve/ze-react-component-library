@@ -26,6 +26,7 @@ const ZETable: React.FC<ZETableProps> = ({
   options,
   preds,
   additionalColumns = [],
+  customRender = {},
 }) => {
   const values = useContext(ProProvider); // 用来自定义ValueType
   const [result, setResult] = useState<LogicformAPIResultType>();
@@ -83,6 +84,7 @@ const ZETable: React.FC<ZETableProps> = ({
         dataIndex: property.name,
         ellipsis: property.primal_type === "string",
         valueType: valueTypeMapping(property),
+        render: customRender[property.name],
       } as ProColumnType)
   );
   columns = [...columns, ...additionalColumns];
