@@ -20,7 +20,7 @@ import { execLogicform } from "zeroetp-api-sdk";
 //   return Promise.resolve(demodata as LogicformAPIResultType);
 // };
 
-const ZETable: React.FC<ZETableProps> = ({ logicform, options }) => {
+const ZETable: React.FC<ZETableProps> = ({ logicform, options, preds }) => {
   const values = useContext(ProProvider); // 用来自定义ValueType
   const [result, setResult] = useState<LogicformAPIResultType>();
 
@@ -58,15 +58,24 @@ const ZETable: React.FC<ZETableProps> = ({ logicform, options }) => {
   };
 
   // Columns
-  const columns =
-    result?.columnProperties
-      .filter((property) => !property.ui?.show_in_detail_only)
-      .map((property) => ({
-        title: property.name,
-        dataIndex: property.name,
-        ellipsis: property.primal_type === "string",
-        valueType: valueTypeMapping(property),
-      })) || [];
+  // 判断要展示的properties
+  let properties = result?.columnProperties || [];
+  if (preds) {
+    properties = properties.filter(
+      (property) => preds.indexOf(property.name) >= 0
+    );
+  } else {
+    properties = properties.filter(
+      (property) => !property.ui?.show_in_detail_only
+    );
+  }
+
+  const columns = properties.map((property) => ({
+    title: property.name,
+    dataIndex: property.name,
+    ellipsis: property.primal_type === "string",
+    valueType: valueTypeMapping(property),
+  }));
 
   return (
     <div data-testid="ZETable">
