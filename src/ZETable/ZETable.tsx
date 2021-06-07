@@ -1,6 +1,6 @@
 // Generated with util/create-component.js
 import React, { useContext, useState } from "react";
-import ProTable from "@ant-design/pro-table";
+import ProTable, { ProColumns, ProColumnType } from "@ant-design/pro-table";
 import ProProvider from "@ant-design/pro-provider";
 
 import { ZETableProps } from "./ZETable.types";
@@ -13,6 +13,7 @@ import "./ZETable.less";
 
 // 发布的时候，要用下面的
 import { execLogicform } from "zeroetp-api-sdk";
+import { ColumnsType } from "antd/lib/table";
 
 // Demo Data
 // import demodata from "./demodata";
@@ -20,7 +21,12 @@ import { execLogicform } from "zeroetp-api-sdk";
 //   return Promise.resolve(demodata as LogicformAPIResultType);
 // };
 
-const ZETable: React.FC<ZETableProps> = ({ logicform, options, preds }) => {
+const ZETable: React.FC<ZETableProps> = ({
+  logicform,
+  options,
+  preds,
+  additionalColumns = [],
+}) => {
   const values = useContext(ProProvider); // 用来自定义ValueType
   const [result, setResult] = useState<LogicformAPIResultType>();
 
@@ -70,12 +76,16 @@ const ZETable: React.FC<ZETableProps> = ({ logicform, options, preds }) => {
     );
   }
 
-  const columns = properties.map((property) => ({
-    title: property.name,
-    dataIndex: property.name,
-    ellipsis: property.primal_type === "string",
-    valueType: valueTypeMapping(property),
-  }));
+  let columns: ProColumnType[] = properties.map(
+    (property) =>
+      ({
+        title: property.name,
+        dataIndex: property.name,
+        ellipsis: property.primal_type === "string",
+        valueType: valueTypeMapping(property),
+      } as ProColumnType)
+  );
+  columns = [...columns, ...additionalColumns];
 
   return (
     <div data-testid="ZETable">
