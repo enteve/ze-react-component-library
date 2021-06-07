@@ -2,6 +2,7 @@
 import React, { useContext, useState } from "react";
 import ProTable, { ProColumns, ProColumnType } from "@ant-design/pro-table";
 import ProProvider from "@ant-design/pro-provider";
+import { TablePaginationConfig } from "antd";
 
 import { ZETableProps } from "./ZETable.types";
 import type { LogicformAPIResultType, LogicformType } from "zeroetp-api-sdk";
@@ -40,14 +41,22 @@ const ZETable: React.FC<ZETableProps> = ({
     sort,
     filter
   ) => {
-    // console.log("FIlters >>>>>");
-    // console.log(params);
-    // console.log(sort);
-    // console.log(filter);
-    // console.log("FIlters <<<<<");
+    const { pageSize, current } = params;
+
+    console.log("FIlters >>>>>");
+    console.log(params);
+    console.log(sort);
+    console.log(filter);
+    console.log("FIlters <<<<<");
+    const newLF = JSON.parse(JSON.stringify(logicform));
+    if (pageSize && current) {
+      // 支持翻页
+      newLF.limit = pageSize;
+      newLF.skip = pageSize * (current - 1);
+    }
 
     try {
-      const ret = await execLogicform(logicform);
+      const ret = await execLogicform(newLF);
       // console.log(ret);
 
       setResult(ret);
@@ -98,6 +107,14 @@ const ZETable: React.FC<ZETableProps> = ({
       } as ProColumnType)
   );
 
+  // Pagination
+  let pagination: false | TablePaginationConfig = false;
+  if ("limit" in logicform) {
+    pagination = {
+      pageSize: logicform.limit,
+    };
+  }
+
   return (
     <div data-testid="ZETable" className={className}>
       <ProProvider.Provider
@@ -118,6 +135,7 @@ const ZETable: React.FC<ZETableProps> = ({
               ? options
               : { reload: true, setting: false, density: false }
           }
+          pagination={pagination}
         />
       </ProProvider.Provider>
     </div>
