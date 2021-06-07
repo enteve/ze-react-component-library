@@ -89,3 +89,12 @@ export const TitleMap = () => (
     titleMap={{ 名称: "供应商" }}
   />
 );
+
+export const CloseScroll = () => (
+  <ZETable
+    logicform={{
+      schema: "dealer",
+    }}
+    scroll={null}
+  />
+);
