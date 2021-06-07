@@ -9,4 +9,5 @@ export interface ZETableProps {
   customRender?: { [key: string]: Function }; // 自定义的render函数
   additionalColumns?: ProColumnType[]; // 在表格的最后添加各种自定义的列
   options?: OptionConfig; // 传给ProTable的
+  className?: string;
 }

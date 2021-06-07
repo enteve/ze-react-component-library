@@ -4,6 +4,7 @@ import ZETable from "./ZETable";
 import { Tag } from "antd";
 import { config } from "zeroetp-api-sdk";
 import "antd/dist/antd.css";
+import "./ZETable.stories.less";
 
 export default {
   title: "ZETable",
@@ -68,5 +69,14 @@ export const CustomRender = () => (
         );
       },
     }}
+  />
+);
+
+export const ClassName = () => (
+  <ZETable
+    logicform={{
+      schema: "dealer",
+    }}
+    className="t"
   />
 );
