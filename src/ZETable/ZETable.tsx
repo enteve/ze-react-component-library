@@ -12,13 +12,13 @@ import { valueTypeMapping } from "./util";
 import "./ZETable.less";
 
 // 发布的时候，要用下面的
-// import { execLogicform } from "zeroetp-api-sdk";
+import { execLogicform } from "zeroetp-api-sdk";
 
 // Demo Data
-import demodata from "./demodata";
-const execLogicform = async (logicform: LogicformType) => {
-  return Promise.resolve(demodata as LogicformAPIResultType);
-};
+// import demodata from "./demodata";
+// const execLogicform = async (logicform: LogicformType) => {
+//   return Promise.resolve(demodata as LogicformAPIResultType);
+// };
 
 const ZETable: React.FC<ZETableProps> = ({ logicform, options }) => {
   const values = useContext(ProProvider); // 用来自定义ValueType
@@ -32,15 +32,15 @@ const ZETable: React.FC<ZETableProps> = ({ logicform, options }) => {
     sort,
     filter
   ) => {
-    console.log("FIlters >>>>>");
-    console.log(params);
-    console.log(sort);
-    console.log(filter);
-    console.log("FIlters <<<<<");
+    // console.log("FIlters >>>>>");
+    // console.log(params);
+    // console.log(sort);
+    // console.log(filter);
+    // console.log("FIlters <<<<<");
 
     try {
       const ret = await execLogicform(logicform);
-      console.log(ret);
+      // console.log(ret);
 
       setResult(ret);
       return {
