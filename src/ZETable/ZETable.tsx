@@ -38,13 +38,12 @@ const ZETable: React.FC<ZETableProps> = ({
       pageSize: number;
       current: number;
     },
-    sort,
-    filter
+    sort = {},
+    filter = {}
   ) => {
     const { pageSize, current } = params;
 
     console.log("FIlters >>>>>");
-    console.log(params);
     console.log(sort);
     console.log(filter);
     console.log("FIlters <<<<<");
@@ -54,6 +53,14 @@ const ZETable: React.FC<ZETableProps> = ({
       newLF.limit = pageSize;
       newLF.skip = pageSize * (current - 1);
     }
+
+    // Filters
+    if (!("query" in newLF)) newLF.query = {};
+    Object.entries(filter).forEach(([k, v]) => {
+      if (v) {
+        newLF.query[k] = { $in: v };
+      }
+    });
 
     try {
       const ret = await execLogicform(newLF);
@@ -96,16 +103,28 @@ const ZETable: React.FC<ZETableProps> = ({
     );
   }
 
-  const columns: ProColumnType[] = properties.map(
-    (property) =>
-      ({
-        title: titleMap[property.name] || property.name,
-        dataIndex: property.name,
-        ellipsis: property.primal_type === "string",
-        valueType: valueTypeMapping(property),
-        render: customRender[property.name],
-      } as ProColumnType)
-  );
+  const columns: ProColumnType[] = properties.map((property) => {
+    // Filters
+    let valueEnum = undefined;
+    if (property.constraints.enum) {
+      valueEnum = {};
+      property.constraints.enum.forEach((enumItem) => {
+        const enumValue = Array.isArray(enumItem) ? enumItem[0] : enumItem;
+        valueEnum[enumValue] = { text: enumValue };
+      });
+    }
+
+    return {
+      title: titleMap[property.name] || property.name,
+      dataIndex: property.name,
+      ellipsis: property.primal_type === "string",
+      valueType: valueTypeMapping(property),
+      render: customRender[property.name],
+      filters: property.constraints.enum ? true : false,
+      onFilter: false,
+      valueEnum,
+    } as ProColumnType;
+  });
 
   // Pagination
   let pagination: false | TablePaginationConfig = false;
