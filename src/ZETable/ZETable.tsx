@@ -290,7 +290,7 @@ const ZETable: React.FC<ZETableProps> = ({
 
   // Pagination
   let pagination: false | TablePaginationConfig = false;
-  if ("limit" in logicform) {
+  if ("limit" in logicform && logicform.limit !== -1) {
     pagination = {
       pageSize: logicform.limit,
     };

@@ -103,3 +103,12 @@ export const Pagination = () => (
     }}
   />
 );
+
+export const Image = () => (
+  <ZETable
+    logicform={{
+      schema: "product",
+      limit: -1,
+    }}
+  />
+);
