@@ -1,6 +1,6 @@
 {
   "name": "ze-react-component-library",
-  "version": "1.0.9",
+  "version": "1.0.11",
   "main": "build/index.js",
   "module": "build/index.esm.js",
   "files": [
@@ -42,7 +42,7 @@
     "@ant-design/pro-provider": ">=1.4.0",
     "@ant-design/pro-table": ">=2.38.0",
     "antd": ">=4.15.0",
-    "moment": "^>=2.28.0",
+    "moment": ">=2.28.0",
     "numeral": ">=2.0.0",
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0",
