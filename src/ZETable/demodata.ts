@@ -32,6 +32,7 @@ export default {
       合作时间: "2020-01-01",
       金额: 29.12213,
       折扣率: 0.12318,
+      是否有折扣: true,
     },
   ],
   schema: {
@@ -649,11 +650,19 @@ export default {
     {
       name: "金额",
       type: "currency",
+      constraints: {},
     },
     {
       name: "折扣率",
       type: "percentage",
       primal_type: "number",
+      constraints: {},
+    },
+    {
+      name: "是否有折扣",
+      type: "boolean",
+      primal_type: "boolean",
+      constraints: {},
     },
   ],
   total: 1,

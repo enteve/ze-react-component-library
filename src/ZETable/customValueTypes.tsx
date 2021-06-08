@@ -17,4 +17,7 @@ export default (schema?: SchemaType) => ({
       return entity[nameProperty.name];
     },
   },
+  boolean: {
+    render: (v: any) => (v ? "✓" : "x"),
+  },
 });
