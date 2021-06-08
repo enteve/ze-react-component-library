@@ -12,6 +12,8 @@ export const valueTypeMapping = (property: PropertyType) => {
       return "boolean";
     case "image":
       return "image";
+    case "text":
+      return "text";
     default:
       break;
   }
