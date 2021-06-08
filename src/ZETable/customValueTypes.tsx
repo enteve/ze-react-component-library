@@ -18,6 +18,6 @@ export default (schema?: SchemaType) => ({
     },
   },
   boolean: {
-    render: (v: any) => (v ? "✓" : "x"),
+    render: (v: any) => <div>{v ? "✓" : "x"}</div>,
   },
 });
