@@ -112,3 +112,13 @@ export const Image = () => (
     }}
   />
 );
+
+export const FiltersWithLFQuery = () => (
+  <ZETable
+    logicform={{
+      schema: "product",
+      query: { 名称: { $regex: "联名礼盒" } },
+      limit: -1,
+    }}
+  />
+);

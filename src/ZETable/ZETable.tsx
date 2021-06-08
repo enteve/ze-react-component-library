@@ -138,7 +138,7 @@ const ZETable: React.FC<ZETableProps> = ({
 
     console.log("FIlters >>>>>");
     console.log(sort);
-    // console.log(filter);
+    console.log(filter);
     console.log("FIlters <<<<<");
     const newLF = JSON.parse(JSON.stringify(logicform));
     if (pageSize && current) {
@@ -153,6 +153,9 @@ const ZETable: React.FC<ZETableProps> = ({
       if (v !== null && result) {
         const property = result.columnProperties.find((p) => p.name === k);
 
+        let targetKey = k;
+        let targetV = v;
+
         if (Array.isArray(v)) {
           // 清洗输入的字符串
           const mappedV = v.map((i) => {
@@ -165,31 +168,37 @@ const ZETable: React.FC<ZETableProps> = ({
           });
 
           if (property.primal_type === "string" && property.constraints.enum) {
-            newLF.query[k] = { $in: mappedV };
+            targetV = { $in: mappedV };
           } else if (property.primal_type === "date") {
-            newLF.query[k] = {
+            targetV = {
               $gte: `${mappedV[0]} 00:00:00`,
               $lte: `${mappedV[1]} 23:59:59`,
             };
           } else if (property.primal_type === "string") {
-            newLF.query[k] = { $regex: mappedV[0], $options: "i" };
+            targetV = { $regex: mappedV[0], $options: "i" };
           } else if (property.primal_type === "object") {
             // TODO: 有多个NameProperty咋办
             // 搜索entity
             const namePropInRef = getNameProperty(property.schema);
-            newLF.query[`${k}_${namePropInRef.name}`] = {
+            targetKey = `${k}_${namePropInRef.name}`;
+            targetV = {
               $regex: mappedV[0],
               $options: "i",
             };
           } else if (property.primal_type === "boolean") {
             if (v.length === 1) {
-              newLF.query[k] = v[0] === "true" ? true : false;
+              targetV = v[0] === "true" ? true : false;
             }
           } else {
             throw new Error("筛选器中有未准备的数据类型：" + property.type);
           }
+        }
+
+        // 如果LF已经有了该字段的筛选，那么用$and来解决
+        if (targetKey in newLF.query) {
+          newLF.query[targetKey] = { $and: [newLF.query[targetKey], targetV] };
         } else {
-          newLF.query[k] = v;
+          newLF.query[targetKey] = targetV;
         }
       }
     });
