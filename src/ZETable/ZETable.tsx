@@ -213,7 +213,6 @@ const ZETable: React.FC<ZETableProps> = ({
     }
   };
 
-  // Columns
   // 判断要展示的properties
   let properties = result?.columnProperties || [];
   if (preds) {
@@ -240,8 +239,9 @@ const ZETable: React.FC<ZETableProps> = ({
     );
   }
 
+  // Columns配置
   const columns: ProColumnType[] = properties.map((property) => {
-    let additionalProps = {};
+    let additionalProps: any = {};
 
     // Filters
     let valueEnum = undefined;
@@ -273,6 +273,14 @@ const ZETable: React.FC<ZETableProps> = ({
           text: "否",
         },
       };
+    }
+
+    // Alignment
+    if (
+      property.primal_type === "number" ||
+      property.primal_type === "boolean"
+    ) {
+      additionalProps.align = "right";
     }
 
     return {
