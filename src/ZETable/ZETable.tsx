@@ -5,7 +5,11 @@ import ProProvider from "@ant-design/pro-provider";
 import { TablePaginationConfig, Input, Button, DatePicker } from "antd";
 
 import { ZETableProps } from "./ZETable.types";
-import { getNameProperty, LogicformAPIResultType } from "zeroetp-api-sdk";
+import {
+  getNameProperty,
+  LogicformAPIResultType,
+  LogicformType,
+} from "zeroetp-api-sdk";
 import { SearchOutlined } from "@ant-design/icons";
 import { FilterDropdownProps } from "antd/lib/table/interface";
 import moment from "moment";
@@ -16,7 +20,7 @@ const { RangePicker } = DatePicker;
 
 import "./ZETable.less";
 
-// 发布的时候，要用下面的
+// 发布的时候，要用下面的，并把DemoData注释掉
 import { execLogicform } from "zeroetp-api-sdk";
 
 // Demo Data
@@ -177,6 +181,10 @@ const ZETable: React.FC<ZETableProps> = ({
               $regex: mappedV[0],
               $options: "i",
             };
+          } else if (property.primal_type === "boolean") {
+            if (v.length === 1) {
+              newLF.query[k] = v[0] === "true" ? true : false;
+            }
           } else {
             throw new Error("筛选器中有未准备的数据类型：" + property.type);
           }
@@ -215,7 +223,12 @@ const ZETable: React.FC<ZETableProps> = ({
         const property = properties.find((p) => p.name === predItem);
         if (!property) {
           // return fake property
-          return { name: predItem, type: "string", primal_type: "string" };
+          return {
+            name: predItem,
+            type: "string",
+            primal_type: "string",
+            constraints: {},
+          };
         }
 
         return property;
@@ -251,6 +264,15 @@ const ZETable: React.FC<ZETableProps> = ({
         ...additionalProps,
         ...getColumnSearchProps(property.name),
       };
+    } else if (property.primal_type === "boolean") {
+      valueEnum = {
+        true: {
+          text: "是",
+        },
+        false: {
+          text: "否",
+        },
+      };
     }
 
     return {
@@ -259,7 +281,7 @@ const ZETable: React.FC<ZETableProps> = ({
       ellipsis: property.primal_type === "string" && !property.constraints.enum,
       valueType: valueTypeMapping(property),
       render: customRender[property.name],
-      filters: property.constraints.enum ? true : false,
+      filters: valueEnum !== undefined,
       onFilter: false,
       valueEnum,
       ...additionalProps,

@@ -8,6 +8,8 @@ export const valueTypeMapping = (property: PropertyType) => {
       return "percentage";
     case "object":
       return "object";
+    case "boolean":
+      return "boolean";
     default:
       break;
   }
