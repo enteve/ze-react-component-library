@@ -137,10 +137,10 @@ const ZETable: React.FC<ZETableProps> = ({
   ) => {
     const { pageSize, current } = params;
 
-    console.log("FIlters >>>>>");
-    console.log(sort);
-    console.log(filter);
-    console.log("FIlters <<<<<");
+    // console.log("FIlters >>>>>");
+    // console.log(sort);
+    // console.log(filter);
+    // console.log("FIlters <<<<<");
     const newLF = JSON.parse(JSON.stringify(logicform));
     if (pageSize && current) {
       // 支持翻页
