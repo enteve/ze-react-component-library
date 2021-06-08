@@ -21,13 +21,7 @@ const { RangePicker } = DatePicker;
 import "./ZETable.less";
 
 // 发布的时候，要用下面的，并把DemoData注释掉
-import { execLogicform } from "zeroetp-api-sdk";
-
-// Demo Data
-// import demodata from "./demodata";
-// const execLogicform = async (logicform: LogicformType) => {
-//   return Promise.resolve(demodata as LogicformAPIResultType);
-// };
+import { requestLogicform } from "../request";
 
 // 下面三个自定义控件，我不知道为什么放到其他文件里面去后，StoryBook编译就会报错。
 // Search控件
@@ -212,7 +206,7 @@ const ZETable: React.FC<ZETableProps> = ({
     });
 
     try {
-      const ret = await execLogicform(newLF);
+      const ret = await requestLogicform(newLF);
       // console.log(ret);
 
       setResult(ret);
