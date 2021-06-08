@@ -136,10 +136,10 @@ const ZETable: React.FC<ZETableProps> = ({
   ) => {
     const { pageSize, current } = params;
 
-    // console.log("FIlters >>>>>");
-    // console.log(sort);
+    console.log("FIlters >>>>>");
+    console.log(sort);
     // console.log(filter);
-    // console.log("FIlters <<<<<");
+    console.log("FIlters <<<<<");
     const newLF = JSON.parse(JSON.stringify(logicform));
     if (pageSize && current) {
       // 支持翻页
@@ -192,6 +192,13 @@ const ZETable: React.FC<ZETableProps> = ({
           newLF.query[k] = v;
         }
       }
+    });
+
+    // Sort
+    Object.entries(sort).forEach(([k, v]) => {
+      if (!("sort" in newLF)) newLF.sort = {};
+
+      newLF.sort[k] = v === "ascend" ? 1 : -1;
     });
 
     try {
@@ -284,6 +291,13 @@ const ZETable: React.FC<ZETableProps> = ({
       property.primal_type === "boolean"
     ) {
       additionalProps.align = "right";
+    }
+
+    // Sorter
+    if (result.schema.type === "entity") {
+      if (property.primal_type === "number") {
+        additionalProps.sorter = true;
+      }
     }
 
     return {
