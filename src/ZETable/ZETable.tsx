@@ -29,6 +29,7 @@ import { execLogicform } from "zeroetp-api-sdk";
 //   return Promise.resolve(demodata as LogicformAPIResultType);
 // };
 
+// 下面三个自定义控件，我不知道为什么放到其他文件里面去后，StoryBook编译就会报错。
 // Search控件
 const getColumnSearchProps = (propertyName: string) => ({
   filterDropdown: ({
