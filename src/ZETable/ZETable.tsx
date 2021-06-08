@@ -1,14 +1,18 @@
 // Generated with util/create-component.js
 import React, { useContext, useState } from "react";
-import ProTable, { ProColumns, ProColumnType } from "@ant-design/pro-table";
+import ProTable, { ProColumnType } from "@ant-design/pro-table";
 import ProProvider from "@ant-design/pro-provider";
-import { TablePaginationConfig } from "antd";
+import { TablePaginationConfig, Input, Button, DatePicker } from "antd";
 
 import { ZETableProps } from "./ZETable.types";
-import type { LogicformAPIResultType, LogicformType } from "zeroetp-api-sdk";
-
+import { getNameProperty, LogicformAPIResultType } from "zeroetp-api-sdk";
+import { SearchOutlined } from "@ant-design/icons";
+import { FilterDropdownProps } from "antd/lib/table/interface";
+import moment from "moment";
 import customValueTypes from "./customValueTypes";
 import { valueTypeMapping } from "./util";
+
+const { RangePicker } = DatePicker;
 
 import "./ZETable.less";
 
@@ -20,6 +24,91 @@ import { execLogicform } from "zeroetp-api-sdk";
 // const execLogicform = async (logicform: LogicformType) => {
 //   return Promise.resolve(demodata as LogicformAPIResultType);
 // };
+
+// Search控件
+const getColumnSearchProps = (propertyName: string) => ({
+  filterDropdown: ({
+    setSelectedKeys,
+    selectedKeys,
+    confirm,
+    clearFilters,
+  }: FilterDropdownProps) => (
+    <div style={{ padding: 8 }}>
+      <Input
+        placeholder={`搜索 ${propertyName}`}
+        value={selectedKeys[0]}
+        onChange={(e) =>
+          setSelectedKeys(e.target.value ? [e.target.value] : [])
+        }
+        onPressEnter={() => confirm()}
+        style={{ width: 188, marginBottom: 8, display: "block" }}
+      />
+      <Button
+        type="primary"
+        onClick={() => confirm()}
+        icon={<SearchOutlined />}
+        size="small"
+        style={{ width: 90, marginRight: 8 }}
+      >
+        搜索
+      </Button>
+      <Button
+        size="small"
+        style={{ width: 90 }}
+        onClick={() => clearFilters && clearFilters()}
+      >
+        重置
+      </Button>
+    </div>
+  ),
+  filterIcon: (filtered: boolean) => (
+    <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
+  ),
+});
+
+// 日期筛选控件
+const getColumnDateProps = (propertyName: string) => ({
+  filterDropdown: ({
+    setSelectedKeys,
+    selectedKeys,
+    confirm,
+    clearFilters,
+  }: FilterDropdownProps) => (
+    <div style={{ padding: 8 }}>
+      <RangePicker
+        style={{ marginBottom: 8, width: 248 }}
+        value={
+          selectedKeys.length === 2
+            ? [moment(selectedKeys[0]), moment(selectedKeys[1])]
+            : undefined
+        }
+        onChange={(v) =>
+          setSelectedKeys(v ? v.map((i) => i!.format("YYYY-MM-DD")) : [])
+        }
+      />
+      <div style={{ display: "block" }}>
+        <Button
+          type="primary"
+          size="small"
+          style={{ width: 120, marginRight: 8 }}
+          onClick={() => confirm()}
+        >
+          选择
+        </Button>
+        <Button
+          size="small"
+          style={{ width: 120 }}
+          onClick={() => clearFilters && clearFilters()}
+        >
+          重置
+        </Button>
+      </div>
+    </div>
+  ),
+  filterIcon: (filtered: boolean) => (
+    <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
+  ),
+});
 
 const ZETable: React.FC<ZETableProps> = ({
   logicform,
@@ -43,10 +132,10 @@ const ZETable: React.FC<ZETableProps> = ({
   ) => {
     const { pageSize, current } = params;
 
-    console.log("FIlters >>>>>");
-    console.log(sort);
-    console.log(filter);
-    console.log("FIlters <<<<<");
+    // console.log("FIlters >>>>>");
+    // console.log(sort);
+    // console.log(filter);
+    // console.log("FIlters <<<<<");
     const newLF = JSON.parse(JSON.stringify(logicform));
     if (pageSize && current) {
       // 支持翻页
@@ -57,8 +146,43 @@ const ZETable: React.FC<ZETableProps> = ({
     // Filters
     if (!("query" in newLF)) newLF.query = {};
     Object.entries(filter).forEach(([k, v]) => {
-      if (v) {
-        newLF.query[k] = { $in: v };
+      if (v !== null && result) {
+        const property = result.columnProperties.find((p) => p.name === k);
+
+        if (Array.isArray(v)) {
+          // 清洗输入的字符串
+          const mappedV = v.map((i) => {
+            if (i === "true") return true;
+            if (i === "false") return false;
+
+            if (typeof i === "string") return i.trim(); // 删除多余空格
+
+            return i;
+          });
+
+          if (property.primal_type === "string" && property.constraints.enum) {
+            newLF.query[k] = { $in: mappedV };
+          } else if (property.primal_type === "date") {
+            newLF.query[k] = {
+              $gte: `${mappedV[0]} 00:00:00`,
+              $lte: `${mappedV[1]} 23:59:59`,
+            };
+          } else if (property.primal_type === "string") {
+            newLF.query[k] = { $regex: mappedV[0], $options: "i" };
+          } else if (property.primal_type === "object") {
+            // TODO: 有多个NameProperty咋办
+            // 搜索entity
+            const namePropInRef = getNameProperty(property.schema);
+            newLF.query[`${k}_${namePropInRef.name}`] = {
+              $regex: mappedV[0],
+              $options: "i",
+            };
+          } else {
+            throw new Error("筛选器中有未准备的数据类型：" + property.type);
+          }
+        } else {
+          newLF.query[k] = v;
+        }
       }
     });
 
@@ -104,6 +228,8 @@ const ZETable: React.FC<ZETableProps> = ({
   }
 
   const columns: ProColumnType[] = properties.map((property) => {
+    let additionalProps = {};
+
     // Filters
     let valueEnum = undefined;
     if (property.constraints.enum) {
@@ -112,17 +238,31 @@ const ZETable: React.FC<ZETableProps> = ({
         const enumValue = Array.isArray(enumItem) ? enumItem[0] : enumItem;
         valueEnum[enumValue] = { text: enumValue };
       });
+    } else if (property.primal_type === "date") {
+      additionalProps = {
+        ...additionalProps,
+        ...getColumnDateProps(property.name),
+      };
+    } else if (
+      property.primal_type === "string" ||
+      property.primal_type === "object"
+    ) {
+      additionalProps = {
+        ...additionalProps,
+        ...getColumnSearchProps(property.name),
+      };
     }
 
     return {
       title: titleMap[property.name] || property.name,
       dataIndex: property.name,
-      ellipsis: property.primal_type === "string",
+      ellipsis: property.primal_type === "string" && !property.constraints.enum,
       valueType: valueTypeMapping(property),
       render: customRender[property.name],
       filters: property.constraints.enum ? true : false,
       onFilter: false,
       valueEnum,
+      ...additionalProps,
     } as ProColumnType;
   });
 

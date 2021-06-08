@@ -12,9 +12,11 @@ yarn add ze-react-component-library
 
 ```json
 {
+  "@ant-design/icons": ">=4.3.0",
   "@ant-design/pro-table": ">=2.38.0",
   "@ant-design/pro-provider": ">=1.4.0",
   "antd": ">=4.15.0",
+  "moment": "^>=2.28.0",
   "numeral": ">=2.0.0",
   "react": ">=16.8.0",
   "react-dom": ">=16.8.0",
