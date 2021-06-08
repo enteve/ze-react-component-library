@@ -10,6 +10,8 @@ export const valueTypeMapping = (property: PropertyType) => {
       return "object";
     case "boolean":
       return "boolean";
+    case "image":
+      return "image";
     default:
       break;
   }
