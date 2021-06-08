@@ -227,6 +227,7 @@ const ZETable: React.FC<ZETableProps> = ({
             type: "string",
             primal_type: "string",
             constraints: {},
+            is_fake: true,
           };
         }
 
@@ -245,34 +246,36 @@ const ZETable: React.FC<ZETableProps> = ({
 
     // Filters
     let valueEnum = undefined;
-    if (property.constraints.enum) {
-      valueEnum = {};
-      property.constraints.enum.forEach((enumItem) => {
-        const enumValue = Array.isArray(enumItem) ? enumItem[0] : enumItem;
-        valueEnum[enumValue] = { text: enumValue };
-      });
-    } else if (property.primal_type === "date") {
-      additionalProps = {
-        ...additionalProps,
-        ...getColumnDateProps(property.name),
-      };
-    } else if (
-      property.primal_type === "string" ||
-      property.primal_type === "object"
-    ) {
-      additionalProps = {
-        ...additionalProps,
-        ...getColumnSearchProps(property.name),
-      };
-    } else if (property.primal_type === "boolean") {
-      valueEnum = {
-        true: {
-          text: "是",
-        },
-        false: {
-          text: "否",
-        },
-      };
+    if (!property.is_fake) {
+      if (property.constraints.enum) {
+        valueEnum = {};
+        property.constraints.enum.forEach((enumItem) => {
+          const enumValue = Array.isArray(enumItem) ? enumItem[0] : enumItem;
+          valueEnum[enumValue] = { text: enumValue };
+        });
+      } else if (property.primal_type === "date") {
+        additionalProps = {
+          ...additionalProps,
+          ...getColumnDateProps(property.name),
+        };
+      } else if (
+        property.primal_type === "string" ||
+        property.primal_type === "object"
+      ) {
+        additionalProps = {
+          ...additionalProps,
+          ...getColumnSearchProps(property.name),
+        };
+      } else if (property.primal_type === "boolean") {
+        valueEnum = {
+          true: {
+            text: "是",
+          },
+          false: {
+            text: "否",
+          },
+        };
+      }
     }
 
     // Alignment
