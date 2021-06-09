@@ -1,3 +1,4 @@
 import ZETable from "./ZETable";
+import ask from "./ask";
 
-export { ZETable };
+export { ZETable, ask };

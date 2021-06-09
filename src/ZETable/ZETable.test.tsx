@@ -1,27 +1,27 @@
 // Generated with util/create-component.js
-import React from "react";
-import { render } from "@testing-library/react";
+// import React from "react";
+// import { render } from "@testing-library/react";
 
-import ZETable from "./ZETable";
-import { ZETableProps } from "./ZETable.types";
+// import ZETable from "./ZETable";
+// import { ZETableProps } from "./ZETable.types";
 
-describe("Test Component", () => {
-  let props: ZETableProps;
+// describe("Test Component", () => {
+//   let props: ZETableProps;
 
-  beforeEach(() => {
-    props = {
-      foo: "bar"
-    };
-  });
+//   beforeEach(() => {
+//     props = {
+//       foo: "bar"
+//     };
+//   });
 
-  const renderComponent = () => render(<ZETable {...props} />);
+//   const renderComponent = () => render(<ZETable {...props} />);
 
-  it("should render foo text correctly", () => {
-    props.foo = "harvey was here";
-    const { getByTestId } = renderComponent();
+//   it("should render foo text correctly", () => {
+//     props.foo = "harvey was here";
+//     const { getByTestId } = renderComponent();
 
-    const component = getByTestId("ZETable");
+//     const component = getByTestId("ZETable");
 
-    expect(component).toHaveTextContent("harvey was here");
-  });
-});
+//     expect(component).toHaveTextContent("harvey was here");
+//   });
+// });
