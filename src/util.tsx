@@ -6,7 +6,7 @@ import type {
 } from "zeroetp-api-sdk";
 import numeral from "numeral";
 import { findPropByName, getNameProperty } from "zeroetp-api-sdk";
-import { Select } from "antd";
+import { Select, InputNumber } from "antd";
 import { useRequest } from "@umijs/hooks";
 import { requestLogicform } from "./request";
 
@@ -78,6 +78,16 @@ export const customValueTypes = (schema: SchemaType) => ({
     render: (number: number) => {
       return numeral(number).format("0.0%");
     },
+    renderFormItem: (text, props) => (
+      <InputNumber
+        min={0}
+        max={1}
+        step={0.01}
+        formatter={(value) => `${(value as number) * 100}%`}
+        parser={(value) => parseFloat(value.replace("%", "")) / 100}
+        {...props?.fieldProps}
+      />
+    ),
   },
   object: {
     render: (entity: any, props) => {
