@@ -1,7 +1,16 @@
-import React from "react";
-import type { PropertyType, SchemaType } from "zeroetp-api-sdk";
+import React, { useState } from "react";
+import type {
+  PropertyType,
+  SchemaType,
+  LogicformAPIResultType,
+} from "zeroetp-api-sdk";
 import numeral from "numeral";
 import { findPropByName, getNameProperty } from "zeroetp-api-sdk";
+import { Select } from "antd";
+import { useRequest } from "@umijs/hooks";
+import { requestLogicform } from "./request";
+
+const { Option } = Select;
 
 export const valueTypeMapping = (property: PropertyType) => {
   switch (property.type) {
@@ -16,7 +25,7 @@ export const valueTypeMapping = (property: PropertyType) => {
     case "image":
       return "image";
     case "text":
-      return "text";
+      return "textarea";
     case "file":
       return "file";
     default:
@@ -36,9 +45,9 @@ export const valueTypeMapping = (property: PropertyType) => {
 
         return "radio";
       }
-      return undefined;
+      return "text";
     default:
-      return undefined;
+      return "text";
   }
 };
 
@@ -64,7 +73,7 @@ export const valueEnumMapping = (property: PropertyType) => {
   return valueEnum;
 };
 
-export const customValueTypes = (schema?: SchemaType) => ({
+export const customValueTypes = (schema: SchemaType) => ({
   percentage: {
     render: (number: number) => {
       return numeral(number).format("0.0%");
@@ -79,11 +88,52 @@ export const customValueTypes = (schema?: SchemaType) => ({
       return entity[nameProperty.name];
     },
     renderFormItem: (text, props) => {
-      console.log("renderFormItem>>>");
-      console.log(text);
-      console.log(props);
-      console.log("<<<<<renderFormItem");
-      return <div>under construction</div>;
+      const propName = props.proFieldKey.split("-").pop();
+      const property = findPropByName(schema, propName);
+      const nameProperty = getNameProperty(property.schema);
+
+      const [search, setSearch] = useState<string>();
+      const { data } = useRequest<LogicformAPIResultType>(
+        () => {
+          let limit = 20;
+          const query = {};
+          if (search) {
+            query[nameProperty.name] = { $regex: search, $options: "i" };
+            limit = 100;
+          }
+
+          return requestLogicform({
+            schema: property.schema._id,
+            query,
+            limit,
+          });
+        },
+        {
+          formatResult: (res) => res.result,
+          initialData: [],
+          refreshDeps: [search],
+        }
+      );
+
+      const options = (data as any[]).map((i) => (
+        <Option key={i._id} value={i._id}>
+          {i[nameProperty.name]}（{i._id}）
+        </Option>
+      ));
+
+      return (
+        <Select
+          showSearch
+          defaultActiveFirstOption={false}
+          showArrow={false}
+          filterOption={false}
+          onSearch={setSearch}
+          allowClear
+          {...props?.fieldProps}
+        >
+          {options}
+        </Select>
+      );
     },
   },
   boolean: {
