@@ -220,7 +220,7 @@ const ZETable: React.FC<ZETableProps> = ({
       <ProProvider.Provider
         value={{
           ...values,
-          valueTypeMap: customValueTypes(result?.schema),
+          valueTypeMap: result ? customValueTypes(result.schema) : {},
         }}
       >
         <ProTable
