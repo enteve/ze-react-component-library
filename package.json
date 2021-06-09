@@ -1,6 +1,6 @@
 {
   "name": "ze-react-component-library",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "main": "build/index.js",
   "module": "build/index.esm.js",
   "files": [
@@ -39,20 +39,22 @@
   "homepage": "https://github.com/enteve/ze-react-component-library#readme",
   "peerDependencies": {
     "@ant-design/icons": ">=4.3.0",
-    "@ant-design/pro-provider": ">=1.4.0",
-    "@ant-design/pro-table": ">=2.38.0",
+    "@ant-design/pro-form": ">=1.28.0",
+    "@ant-design/pro-provider": ">=1.4.13",
+    "@ant-design/pro-table": ">=2.40.0",
+    "@umijs/hooks": ">1.9.0",
     "antd": ">=4.15.0",
     "moment": ">=2.28.0",
     "numeral": ">=2.0.0",
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0",
-    "@umijs/hooks": ">1.9.0",
-    "zeroetp-api-sdk": ">=1.1.8"
+    "zeroetp-api-sdk": ">=1.1.11"
   },
   "devDependencies": {
     "@ant-design/icons": "^4.6.2",
-    "@ant-design/pro-provider": "^1.4.12",
-    "@ant-design/pro-table": "^2.39.2",
+    "@ant-design/pro-form": "^1.28.0",
+    "@ant-design/pro-provider": "^1.4.13",
+    "@ant-design/pro-table": "^2.40.0",
     "@babel/core": "^7.12.10",
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-node-resolve": "^11.0.1",
@@ -83,7 +85,7 @@
     "rollup-plugin-typescript2": "^0.29.0",
     "ts-jest": "^26.4.4",
     "typescript": "^4.3.2",
-    "zeroetp-api-sdk": "1.1.8"
+    "zeroetp-api-sdk": "1.1.11"
   },
   "dependencies": {},
   "lint-staged": {

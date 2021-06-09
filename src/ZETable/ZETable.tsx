@@ -8,8 +8,7 @@ import { ZETableProps } from "./ZETable.types";
 import { getNameProperty, LogicformAPIResultType } from "zeroetp-api-sdk";
 import { getColumnDateProps, getColumnSearchProps } from "./FilterComponents";
 
-import customValueTypes from "./customValueTypes";
-import { valueTypeMapping } from "./util";
+import { valueTypeMapping, valueEnumMapping, customValueTypes } from "../util";
 
 import "./ZETable.less";
 
@@ -162,15 +161,8 @@ const ZETable: React.FC<ZETableProps> = ({
     let additionalProps: any = {};
 
     // Filters
-    let valueEnum = undefined;
     if (!property.is_fake) {
-      if (property.constraints.enum) {
-        valueEnum = {};
-        property.constraints.enum.forEach((enumItem) => {
-          const enumValue = Array.isArray(enumItem) ? enumItem[0] : enumItem;
-          valueEnum[enumValue] = { text: enumValue };
-        });
-      } else if (property.primal_type === "date") {
+      if (property.primal_type === "date") {
         additionalProps = {
           ...additionalProps,
           ...getColumnDateProps(property.name),
@@ -182,15 +174,6 @@ const ZETable: React.FC<ZETableProps> = ({
         additionalProps = {
           ...additionalProps,
           ...getColumnSearchProps(property.name),
-        };
-      } else if (property.primal_type === "boolean") {
-        valueEnum = {
-          true: {
-            text: "是",
-          },
-          false: {
-            text: "否",
-          },
         };
       }
     }
@@ -210,6 +193,7 @@ const ZETable: React.FC<ZETableProps> = ({
       }
     }
 
+    const valueEnum = valueEnumMapping(property);
     return {
       title: titleMap[property.name] || property.name,
       dataIndex: property.name,
