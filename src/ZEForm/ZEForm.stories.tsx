@@ -11,6 +11,10 @@ export default {
 
 config.API_URL = "http://localhost:3052";
 
-export const Product = () => <ZEForm schemaID="product" />;
-export const Dealer = () => <ZEForm schemaID="dealer" />;
-export const Order = () => <ZEForm schemaID="order" />;
+const onFinish = async (formData: any) => {
+  console.log(formData);
+};
+
+export const Product = () => <ZEForm schemaID="product" onFinish={onFinish} />;
+export const Dealer = () => <ZEForm schemaID="dealer" onFinish={onFinish} />;
+export const Order = () => <ZEForm schemaID="order" onFinish={onFinish} />;

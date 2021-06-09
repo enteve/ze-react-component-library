@@ -140,7 +140,7 @@ import { valueTypeMapping, valueEnumMapping, customValueTypes } from "../util";
 //   },
 // ];
 
-const ZEForm: React.FC<ZEFromProps> = ({ schemaID }) => {
+const ZEForm: React.FC<ZEFromProps> = ({ schemaID, onFinish }) => {
   const values = useContext(ProProvider); // 用来自定义ValueType
   const { data } = useRequest<SchemaAPIResultType>(() =>
     request(getSchemaByID(schemaID))
@@ -183,9 +183,7 @@ const ZEForm: React.FC<ZEFromProps> = ({ schemaID }) => {
       }}
     >
       <BetaSchemaForm<any, "percentage" | "object" | "boolean" | "file">
-        onFinish={async (item) => {
-          console.log(item);
-        }}
+        onFinish={onFinish}
         columns={columns}
       />
     </ProProvider.Provider>
