@@ -140,7 +140,11 @@ import { valueTypeMapping, valueEnumMapping, customValueTypes } from "../util";
 //   },
 // ];
 
-const ZEForm: React.FC<ZEFromProps> = ({ schemaID, onFinish }) => {
+const ZEForm: React.FC<ZEFromProps> = ({
+  schemaID,
+  onFinish,
+  columns: _columns,
+}) => {
   const values = useContext(ProProvider); // 用来自定义ValueType
   const { data } = useRequest<SchemaAPIResultType>(() =>
     request(getSchemaByID(schemaID))
@@ -150,10 +154,16 @@ const ZEForm: React.FC<ZEFromProps> = ({ schemaID, onFinish }) => {
 
   const { schema } = data;
   // 通过properties来生成columns
-  const columns: ProFormColumnsType<
+  let columns: ProFormColumnsType<
     any,
     "percentage" | "object" | "boolean" | "file"
-  >[] = schema.properties.map((p) => {
+  >[];
+
+  // 给下面生成columns用的
+  const propsForProperty = (
+    p,
+    config: { readOnly?: boolean } = {}
+  ): ProFormColumnsType<any, "percentage" | "object" | "boolean" | "file"> => {
     const formItemProps = {
       rules: [],
     };
@@ -170,10 +180,37 @@ const ZEForm: React.FC<ZEFromProps> = ({ schemaID, onFinish }) => {
       valueType: valueTypeMapping(p),
       valueEnum: valueEnumMapping(p),
       formItemProps,
-      readonly: p.udf,
+      readonly: p.udf || config.readOnly,
       render: () => <div>自动计算</div>,
     };
-  });
+  };
+
+  if (_columns) {
+    const mapCustomColumn = (col: any) => {
+      // children
+      if (col.columns) {
+        return {
+          ...col,
+          columns: col.columns.map((c) => mapCustomColumn(c)),
+        };
+      }
+
+      if (!col.dataIndex) throw new Error("columns参数的item必须有dataIndex");
+
+      const property = schema.properties.find((p) => p.name === col.dataIndex);
+
+      return {
+        ...propsForProperty(property),
+        ...col,
+      };
+    };
+
+    columns = _columns.map((c) => mapCustomColumn(c));
+
+    console.log(columns);
+  } else {
+    columns = schema.properties.map((p) => propsForProperty(p));
+  }
 
   return (
     <ProProvider.Provider
