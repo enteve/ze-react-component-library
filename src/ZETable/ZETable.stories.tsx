@@ -10,7 +10,10 @@ export default {
   title: "ZETable",
 };
 
-config.API_URL = "http://localhost:3052";
+config.API_URL = "https://admin.xuetaifeng.com";
+localStorage.token =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MGJmMmFlOTNmNWUzZDdmM2FjM2MzYzAiLCJpYXQiOjE2MjMxNDExMzMsImV4cCI6MTYyMzc0NTkzM30.9js_H8jJPVfxWDI5JhoGeIspKxZQtSY8K81l6sRn7Gs";
+// config.API_URL = "http://localhost:3052";
 
 export const Normal = () => (
   <ZETable

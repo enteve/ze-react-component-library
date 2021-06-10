@@ -31,9 +31,14 @@ yarn install
 yarn run storybook
 ```
 
+### Token 过期的问题解决方案
+
+在各\*.storeis.tsx 文件里面，有一个写着`localStorage.token`的地方，改为最新的 token
+
 ### 组件
 
 - ZETable: 一个表格形式的展现
+- ZEForm: 一个上传形式的展现
 
 ## ZETable
 
@@ -51,3 +56,7 @@ import { ZETable } from "ze-react-component-library";
   className="xx" /* Style */
 />;
 ```
+
+## ZEForm
+
+见 ZEForm.stories.tsx 吧。懒。
