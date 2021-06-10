@@ -7,6 +7,7 @@ import { useRequest } from "@umijs/hooks";
 import { request } from "../request";
 import { getSchemaByID, SchemaAPIResultType } from "zeroetp-api-sdk";
 import { valueTypeMapping, valueEnumMapping, customValueTypes } from "../util";
+import { Divider } from "antd";
 
 // const columns: ProFormColumnsType<DataItem>[] = [
 //   {
@@ -166,6 +167,8 @@ const ZEForm: React.FC<ZEFromProps> = ({
   ): ProFormColumnsType<any, "percentage" | "object" | "boolean" | "file"> => {
     const formItemProps = {
       rules: [],
+      // 是否后面加个分割线
+      extra: p.with_divider ? <Divider dashed /> : undefined,
     };
     if (p.constraints.required) {
       formItemProps.rules.push({
