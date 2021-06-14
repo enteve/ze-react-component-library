@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import type { ProFormColumnsType } from "@ant-design/pro-form";
 import ProProvider from "@ant-design/pro-provider";
 import { BetaSchemaForm } from "@ant-design/pro-form";
-import type { ZEFromProps } from "./ZEForm.types";
+import type { ZEFromProps } from "./ZESchemaForm.types";
 import { useRequest } from "@umijs/hooks";
 import { request } from "../request";
 import { getSchemaByID, SchemaAPIResultType } from "zeroetp-api-sdk";
@@ -141,10 +141,10 @@ import { Divider } from "antd";
 //   },
 // ];
 
-const ZEForm: React.FC<ZEFromProps> = ({
+const ZESchemaForm: React.FC<ZEFromProps> = ({
   schemaID,
-  onFinish,
   columns: _columns,
+  ...props
 }) => {
   const values = useContext(ProProvider); // 用来自定义ValueType
   const { data } = useRequest<SchemaAPIResultType>(() =>
@@ -223,11 +223,11 @@ const ZEForm: React.FC<ZEFromProps> = ({
       }}
     >
       <BetaSchemaForm<any, "percentage" | "object" | "boolean" | "file">
-        onFinish={onFinish}
+        {...props}
         columns={columns}
       />
     </ProProvider.Provider>
   );
 };
 
-export default ZEForm;
+export default ZESchemaForm;

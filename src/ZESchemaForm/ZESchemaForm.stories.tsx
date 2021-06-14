@@ -1,13 +1,14 @@
 // Generated with util/create-component.js
 import React from "react";
-import ZEForm from "./ZEForm";
+import ZESchemaForm from "./ZESchemaForm";
 import { Tag } from "antd";
 import { config } from "zeroetp-api-sdk";
 import "antd/dist/antd.css";
 import { ProFormColumnsType } from "@ant-design/pro-form";
+import { FooterToolbar } from "@ant-design/pro-layout";
 
 export default {
-  title: "ZEForm",
+  title: "ZESchemaForm",
 };
 
 config.API_URL = "https://admin.xuetaifeng.com";
@@ -19,9 +20,15 @@ const onFinish = async (formData: any) => {
   console.log(formData);
 };
 
-export const Product = () => <ZEForm schemaID="product" onFinish={onFinish} />;
-export const Dealer = () => <ZEForm schemaID="dealer" onFinish={onFinish} />;
-export const Order = () => <ZEForm schemaID="order" onFinish={onFinish} />;
+export const Product = () => (
+  <ZESchemaForm schemaID="product" onFinish={onFinish} />
+);
+export const Dealer = () => (
+  <ZESchemaForm schemaID="dealer" onFinish={onFinish} />
+);
+export const Order = () => (
+  <ZESchemaForm schemaID="order" onFinish={onFinish} />
+);
 
 export const DealerCompose = () => {
   /**
@@ -63,7 +70,20 @@ export const DealerCompose = () => {
   return (
     <>
       <h3>自定义排版</h3>
-      <ZEForm schemaID="dealer" onFinish={onFinish} columns={columns} />
+      <ZESchemaForm schemaID="dealer" onFinish={onFinish} columns={columns} />
     </>
   );
 };
+
+export const Submitter = () => (
+  <ZESchemaForm
+    schemaID="order"
+    onFinish={onFinish}
+    layout="horizontal"
+    submitter={{
+      render: (_, dom) => {
+        return <FooterToolbar>{dom[1]}</FooterToolbar>;
+      },
+    }}
+  ></ZESchemaForm>
+);

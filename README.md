@@ -38,7 +38,7 @@ yarn run storybook
 ### 组件
 
 - ZETable: 一个表格形式的展现
-- ZEForm: 一个上传形式的展现
+- ZESchemaForm: 一个上传形式的展现
 
 ## ZETable
 
@@ -57,6 +57,6 @@ import { ZETable } from "ze-react-component-library";
 />;
 ```
 
-## ZEForm
+## ZESchemaForm
 
-见 ZEForm.stories.tsx 吧。懒。
+见 ZESchemaForm.stories.tsx 吧。懒。
