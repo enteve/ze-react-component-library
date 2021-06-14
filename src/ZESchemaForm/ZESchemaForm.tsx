@@ -144,6 +144,7 @@ import { Divider } from "antd";
 const ZESchemaForm: React.FC<ZESchemaFromProps> = ({
   schemaID,
   columns: _columns,
+  propertyConfig,
   ...props
 }) => {
   const values = useContext(ProProvider); // 用来自定义ValueType
@@ -162,8 +163,7 @@ const ZESchemaForm: React.FC<ZESchemaFromProps> = ({
 
   // 给下面生成columns用的
   const propsForProperty = (
-    p,
-    config: { readOnly?: boolean } = {}
+    p
   ): ProFormColumnsType<any, "percentage" | "object" | "boolean" | "file"> => {
     const formItemProps = {
       rules: [],
@@ -177,14 +177,42 @@ const ZESchemaForm: React.FC<ZESchemaFromProps> = ({
       });
     }
 
+    // valueType
+    let valueType;
+    if (
+      propertyConfig &&
+      propertyConfig[p.name] &&
+      "valueType" in propertyConfig[p.name]
+    ) {
+      valueType = propertyConfig[p.name].valueType;
+    } else {
+      valueType = valueTypeMapping(p);
+    }
+
+    // readonly
+    let readonly = p.udf;
+    if (
+      propertyConfig &&
+      propertyConfig[p.name] &&
+      "readonly" in propertyConfig[p.name]
+    ) {
+      readonly = propertyConfig[p.name].readonly;
+    }
+
+    // render
+    let render = undefined;
+    if (p.udf) {
+      render = () => <div>自动计算</div>;
+    }
+
     return {
       title: p.name,
       dataIndex: p.name,
-      valueType: valueTypeMapping(p),
+      valueType,
       valueEnum: valueEnumMapping(p),
       formItemProps,
-      readonly: p.udf || config.readOnly,
-      render: () => <div>自动计算</div>,
+      readonly,
+      render,
     };
   };
 
@@ -209,8 +237,6 @@ const ZESchemaForm: React.FC<ZESchemaFromProps> = ({
     };
 
     columns = _columns.map((c) => mapCustomColumn(c));
-
-    console.log(columns);
   } else {
     columns = schema.properties.map((p) => propsForProperty(p));
   }

@@ -5,4 +5,10 @@ import { FormSchema } from "@ant-design/pro-form/lib/components/SchemaForm";
 export type ZESchemaFromProps = Omit<FormSchema<any>, "columns"> & {
   schemaID: string;
   columns?: ProFormColumnsType[];
+  propertyConfig?: {
+    [key: string]: {
+      readonly?: boolean;
+      valueType?: string;
+    };
+  };
 };
