@@ -131,6 +131,12 @@ export const customValueTypes = (schema: SchemaType) => ({
         </Option>
       ));
 
+      // 这里修改下value，原本是一个object，改成_id
+      let value = props?.fieldProps?.value;
+      if (property.type === "object" && value && typeof value === "object") {
+        value = value._id;
+      }
+
       return (
         <Select
           showSearch
@@ -140,6 +146,7 @@ export const customValueTypes = (schema: SchemaType) => ({
           onSearch={setSearch}
           allowClear
           {...props?.fieldProps}
+          value={value}
         >
           {options}
         </Select>
