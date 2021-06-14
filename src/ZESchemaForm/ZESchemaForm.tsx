@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import type { ProFormColumnsType } from "@ant-design/pro-form";
 import ProProvider from "@ant-design/pro-provider";
 import { BetaSchemaForm } from "@ant-design/pro-form";
-import type { ZEFromProps } from "./ZESchemaForm.types";
+import type { ZESchemaFromProps } from "./ZESchemaForm.types";
 import { useRequest } from "@umijs/hooks";
 import { request } from "../request";
 import { getSchemaByID, SchemaAPIResultType } from "zeroetp-api-sdk";
@@ -141,7 +141,7 @@ import { Divider } from "antd";
 //   },
 // ];
 
-const ZESchemaForm: React.FC<ZEFromProps> = ({
+const ZESchemaForm: React.FC<ZESchemaFromProps> = ({
   schemaID,
   columns: _columns,
   ...props
