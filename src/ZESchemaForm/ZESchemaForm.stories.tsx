@@ -99,3 +99,20 @@ export const Update = () => (
     }}
   />
 );
+
+// 可以做readOnly和valueType的自定义
+export const PropertyConfig = () => (
+  <ZESchemaForm
+    schemaID="order"
+    onFinish={onFinish}
+    propertyConfig={{
+      日期: { readonly: true },
+      状态: { valueType: "select" },
+      JD目标仓库: { valueType: "select" },
+    }}
+    initialValues={{
+      日期: "2021-06-11",
+      状态: "欠费",
+    }}
+  />
+);
