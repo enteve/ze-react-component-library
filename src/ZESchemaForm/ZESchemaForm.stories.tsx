@@ -1,7 +1,6 @@
 // Generated with util/create-component.js
 import React from "react";
 import ZESchemaForm from "./ZESchemaForm";
-import { Tag } from "antd";
 import { config } from "zeroetp-api-sdk";
 import "antd/dist/antd.css";
 import { ProFormColumnsType } from "@ant-design/pro-form";
@@ -85,5 +84,18 @@ export const Submitter = () => (
         return <FooterToolbar>{dom[1]}</FooterToolbar>;
       },
     }}
-  ></ZESchemaForm>
+  />
+);
+
+export const Update = () => (
+  <ZESchemaForm
+    schemaID="order"
+    onFinish={onFinish}
+    initialValues={{
+      日期: "2021-06-11",
+      状态: "欠费",
+      商品: "Gift-02", // Object类型的，只有ID号
+      经销商: { _id: "91310115MA1K4P939A", 名称: "易问" }, // Object的，是一个object
+    }}
+  />
 );
