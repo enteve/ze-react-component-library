@@ -1,8 +1,8 @@
 import { ProFormColumnsType } from "@ant-design/pro-form";
+import { FormSchema } from "@ant-design/pro-form/lib/components/SchemaForm";
 
 // Generated with util/create-component.js
-export interface ZEFromProps {
+export type ZEFromProps = Omit<FormSchema<any>, "columns"> & {
   schemaID: string;
-  onFinish?: (formData: any) => Promise<boolean | void>;
   columns?: ProFormColumnsType[];
-}
+};
