@@ -11,6 +11,7 @@ import { findPropByName, getNameProperty } from "zeroetp-api-sdk";
 import { Select, InputNumber, Radio, Cascader, Spin } from "antd";
 import { useRequest } from "@umijs/hooks";
 import { requestLogicform } from "./request";
+import "antd/lib/cascader/style/index";
 
 const { Option } = Select;
 
