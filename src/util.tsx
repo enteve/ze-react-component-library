@@ -1,12 +1,14 @@
 import React, { useState } from "react";
-import type {
+import {
   PropertyType,
   SchemaType,
   LogicformAPIResultType,
+  getHierarchyCodeLength,
+  getIDProperty,
 } from "zeroetp-api-sdk";
 import numeral from "numeral";
 import { findPropByName, getNameProperty } from "zeroetp-api-sdk";
-import { Select, InputNumber, Radio } from "antd";
+import { Select, InputNumber, Radio, Cascader, Spin } from "antd";
 import { useRequest } from "@umijs/hooks";
 import { requestLogicform } from "./request";
 
@@ -137,60 +139,203 @@ export const customValueTypes = (schema: SchemaType) => ({
     renderFormItem: (text, props) => {
       const propName = props.proFieldKey.split("-").pop();
       const property = findPropByName(schema, propName);
-      const nameProperty = getNameProperty(property.schema);
 
-      const [search, setSearch] = useState<string>();
-      const { data } = useRequest<LogicformAPIResultType>(
-        () => {
-          let limit = 20;
-          const query = {};
-          if (search) {
-            query[nameProperty.name] = { $regex: search, $options: "i" };
-            limit = 100;
-          }
-
-          return requestLogicform({
-            schema: property.schema._id,
-            query,
-            limit,
-          });
-        },
-        {
-          formatResult: (res) => res.result,
-          initialData: [],
-          refreshDeps: [search],
-        }
-      );
-
-      const options = (data as any[]).map((i) => (
-        <Option key={i._id} value={i._id}>
-          {i[nameProperty.name]}（{i._id}）
-        </Option>
-      ));
-
-      // 这里修改下value，原本是一个object，改成_id
-      let value = props?.fieldProps?.value;
-      if (property.type === "object" && value && typeof value === "object") {
-        value = value._id;
+      // Object有两种表现模式，带Hierarchy的和不带Hierarchy的
+      if (property.schema.hierarchy) {
+        return renderObjectFormItemHierarchy(property, props);
       }
 
-      return (
-        <Select
-          showSearch
-          defaultActiveFirstOption={false}
-          showArrow={false}
-          filterOption={false}
-          onSearch={setSearch}
-          allowClear
-          {...props?.fieldProps}
-          value={value}
-        >
-          {options}
-        </Select>
-      );
+      return renderObjectFormItem(property.schema, props);
     },
   },
   boolean: {
     render: (v: any) => <div>{v ? "✓" : "x"}</div>,
   },
 });
+
+// 不带Hierarchy的，渲染object类型的
+const renderObjectFormItem = (schema, props: any) => {
+  const nameProperty = getNameProperty(schema);
+
+  const [search, setSearch] = useState<string>();
+  const { data } = useRequest<LogicformAPIResultType>(
+    () => {
+      let limit = 20;
+      const query = {};
+      if (search) {
+        query[nameProperty.name] = { $regex: search, $options: "i" };
+        limit = 100;
+      }
+
+      return requestLogicform({
+        schema: schema._id,
+        query,
+        limit,
+      });
+    },
+    {
+      formatResult: (res) => res.result,
+      initialData: [],
+      refreshDeps: [search],
+    }
+  );
+
+  const options = (data as any[]).map((i) => (
+    <Option key={i._id} value={i._id}>
+      {i[nameProperty.name]}（{i._id}）
+    </Option>
+  ));
+
+  // 这里修改下value，原本是一个object，改成_id
+  let value = props?.fieldProps?.value;
+  if (value && typeof value === "object") {
+    value = value._id;
+  }
+
+  return (
+    <Select
+      showSearch
+      defaultActiveFirstOption={false}
+      showArrow={false}
+      filterOption={false}
+      onSearch={setSearch}
+      allowClear
+      {...props?.fieldProps}
+      value={value}
+    >
+      {options}
+    </Select>
+  );
+};
+
+// 带Hierarchy的，渲染object类型的
+const renderObjectFormItemHierarchy = (property: PropertyType, props: any) => {
+  const { schema } = property;
+  const nameProperty = getNameProperty(schema);
+
+  // 设定其实的cascade的level
+  let startCodeLength = 1;
+  if (property.ui?.startLevel) {
+    startCodeLength = getHierarchyCodeLength(schema, property.ui.startLevel);
+  }
+
+  const { data, loading } = useRequest<LogicformAPIResultType>(
+    () => {
+      const query = {};
+      if (property.level) {
+        const codeLength = getHierarchyCodeLength(schema, property.level);
+        if (codeLength > 0) {
+          const idProperty = getIDProperty(schema);
+
+          query[idProperty.name] = {
+            $regex: `^.{${startCodeLength},${codeLength}}$`,
+          };
+        }
+      }
+
+      return requestLogicform({
+        schema: schema._id,
+        limit: -1,
+        query,
+        sort: { _id: 1 },
+      });
+    },
+    {
+      formatResult: (res) => {
+        // 注意，这套转化算法的前提是，服务器
+        const { result } = res;
+        if (result.length === 0) return [];
+
+        const cascaded = [];
+        const cascadedMap = {};
+        result.forEach((item) => {
+          const option = {
+            value: item._id,
+            label: item[nameProperty.name],
+            children: [],
+          };
+          cascadedMap[option.value] = option;
+
+          // 第一个item
+          if (cascaded.length === 0) {
+            cascaded.push(option);
+            return;
+          }
+
+          // 其他与第一个item平级的
+          if (cascaded[0].value.length === item._id.length) {
+            cascaded.push(option);
+            return;
+          }
+
+          // 计算parentID的length
+          let parentIDLength = schema.hierarchy[0].code_length;
+
+          for (let i = 1; i < schema.hierarchy.length; i++) {
+            const levelLength = schema.hierarchy[i].code_length;
+            if (parentIDLength + levelLength >= item._id.length) {
+              break;
+            }
+            parentIDLength += levelLength;
+          }
+          let parentID;
+          if (parentIDLength < item._id.length) {
+            parentID = item._id.substring(0, parentIDLength);
+          }
+
+          if (!parentID) {
+            cascaded.push(option);
+            return;
+          }
+
+          if (cascadedMap[parentID]) {
+            cascadedMap[parentID].children.push(option);
+          } else {
+            // 跳脱了原来的层次结构。目前出现于香港和澳门
+            // console.log(option);
+            // console.log(parentID);
+            // console.log(cascadedMap);
+          }
+        });
+
+        return cascaded;
+      },
+      initialData: [],
+    }
+  );
+
+  // Cascader组件所维护的值是一个数组，这里要做一些改造
+  // 设定value
+  let value: any = undefined;
+  if (props?.fieldProps?.value) {
+    const newValue = [];
+    let totalCodeLength = 0;
+
+    schema.hierarchy.forEach((h: any) => {
+      totalCodeLength += h.code_length;
+
+      if (startCodeLength <= totalCodeLength) {
+        newValue.push(props.fieldProps.value.slice(0, totalCodeLength));
+      }
+    });
+
+    value = newValue;
+  }
+
+  return (
+    <Spin spinning={loading}>
+      <Cascader
+        {...props?.fieldProps}
+        expandTrigger="hover"
+        options={data}
+        showSearch
+        value={value}
+        onChange={(val: string[]) => {
+          if (props?.fieldProps?.onChange) {
+            props.fieldProps.onChange(val[val.length - 1]);
+          }
+        }}
+      />
+    </Spin>
+  );
+};
