@@ -308,6 +308,11 @@ const renderObjectFormItemHierarchy = (property: PropertyType, props: any) => {
   // 设定value
   let value: any = undefined;
   if (props?.fieldProps?.value) {
+    value = props?.fieldProps?.value;
+    if (!Array.isArray(value) && typeof value === "object") {
+      value = value._id;
+    }
+
     const newValue = [];
     let totalCodeLength = 0;
 
@@ -315,7 +320,7 @@ const renderObjectFormItemHierarchy = (property: PropertyType, props: any) => {
       totalCodeLength += h.code_length;
 
       if (startCodeLength <= totalCodeLength) {
-        newValue.push(props.fieldProps.value.slice(0, totalCodeLength));
+        newValue.push(value.slice(0, totalCodeLength));
       }
     });
 
