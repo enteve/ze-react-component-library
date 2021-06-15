@@ -213,6 +213,7 @@ const ZESchemaForm: React.FC<ZESchemaFromProps> = ({
       formItemProps,
       readonly,
       render,
+      tooltip: p.description,
     };
   };
 
