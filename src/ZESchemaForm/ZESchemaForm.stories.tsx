@@ -12,7 +12,7 @@ export default {
 
 config.API_URL = "https://admin.xuetaifeng.com";
 localStorage.token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MGJmMmFlOTNmNWUzZDdmM2FjM2MzYzAiLCJpYXQiOjE2MjMxNDExMzMsImV4cCI6MTYyMzc0NTkzM30.9js_H8jJPVfxWDI5JhoGeIspKxZQtSY8K81l6sRn7Gs";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MGJmMmFlOTNmNWUzZDdmM2FjM2MzYzAiLCJpYXQiOjE2MjM3NDU5NjQsImV4cCI6MTYyNDM1MDc2NH0.kQXAlvBuXxLl1xN34KF8a-1owwUiF_KSm49olS5-fDE";
 // config.API_URL = "http://localhost:3052";
 
 const onFinish = async (formData: any) => {
