@@ -106,7 +106,9 @@ export const customValueTypes = (schema: SchemaType) => ({
         return (
           <Radio.Group {...props?.fieldProps}>
             {property.constraints.enum.map((item: any) => (
-              <Radio value={item}>{item * 100}%</Radio>
+              <Radio key={`${item}`} value={item}>
+                {item * 100}%
+              </Radio>
             ))}
           </Radio.Group>
         );
