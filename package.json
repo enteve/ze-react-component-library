@@ -1,6 +1,6 @@
 {
   "name": "ze-react-component-library",
-  "version": "1.0.22",
+  "version": "1.0.23",
   "main": "build/index.js",
   "module": "build/index.esm.js",
   "files": [
@@ -49,7 +49,7 @@
     "numeral": ">=2.0.0",
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0",
-    "zeroetp-api-sdk": ">=1.1.11"
+    "zeroetp-api-sdk": ">=1.1.14"
   },
   "devDependencies": {
     "@ant-design/icons": "^4.6.2",
@@ -87,7 +87,7 @@
     "rollup-plugin-typescript2": "^0.29.0",
     "ts-jest": "^26.4.4",
     "typescript": "^4.3.2",
-    "zeroetp-api-sdk": "1.1.11"
+    "zeroetp-api-sdk": "1.1.14"
   },
   "dependencies": {},
   "lint-staged": {

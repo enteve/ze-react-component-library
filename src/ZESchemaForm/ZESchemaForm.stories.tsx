@@ -116,3 +116,19 @@ export const PropertyConfig = () => (
     }}
   />
 );
+
+export const HierarchyPropertyConfig = () => (
+  <ZESchemaForm
+    schemaID="dealer"
+    onFinish={onFinish}
+    columns={[
+      {
+        title: "所在省市",
+        dataIndex: "所在省市",
+      },
+    ]}
+    initialValues={{
+      所在省市: "08614101",
+    }}
+  />
+);
