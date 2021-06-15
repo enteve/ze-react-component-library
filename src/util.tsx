@@ -34,7 +34,25 @@ export const valueTypeMapping = (property: PropertyType) => {
 
   switch (property.primal_type) {
     case "date":
+      if (property.granularity) {
+        switch (property.granularity) {
+          case "second":
+          case "minute":
+          case "hour":
+            return "dateTime";
+          case "day":
+            return "date";
+          case "week":
+          case "month":
+          // case "quarter":
+          case "year":
+            return `date${property.granularity
+              .toUpperCase()
+              .substring(0, 1)}${property.granularity.substring(1)}`;
+        }
+      }
       return "date";
+
     case "number":
       return "digit";
     case "string":
