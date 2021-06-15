@@ -106,7 +106,7 @@ export const PropertyConfig = () => (
     schemaID="order"
     onFinish={onFinish}
     propertyConfig={{
-      日期: { readonly: true },
+      日期: { readonly: true, valueType: "date" },
       状态: { valueType: "select" },
       JD目标仓库: { valueType: "select" },
     }}
