@@ -6,7 +6,7 @@ import type {
 } from "zeroetp-api-sdk";
 import numeral from "numeral";
 import { findPropByName, getNameProperty } from "zeroetp-api-sdk";
-import { Select, InputNumber } from "antd";
+import { Select, InputNumber, Radio } from "antd";
 import { useRequest } from "@umijs/hooks";
 import { requestLogicform } from "./request";
 
@@ -78,16 +78,33 @@ export const customValueTypes = (schema: SchemaType) => ({
     render: (number: number) => {
       return numeral(number).format("0.0%");
     },
-    renderFormItem: (text, props) => (
-      <InputNumber
-        min={0}
-        max={1}
-        step={0.01}
-        formatter={(value) => `${(value as number) * 100}%`}
-        parser={(value) => parseFloat(value.replace("%", "")) / 100}
-        {...props?.fieldProps}
-      />
-    ),
+    renderFormItem: (text, props) => {
+      const propName = props.proFieldKey.split("-").pop();
+      const property = findPropByName(schema, propName);
+
+      // enum
+      // 对于其他number类型的props，也要有enum的支持，这个之后用到了再说
+      if (property.constraints?.enum) {
+        return (
+          <Radio.Group {...props?.fieldProps}>
+            {property.constraints.enum.map((item: any) => (
+              <Radio value={item}>{item * 100}%</Radio>
+            ))}
+          </Radio.Group>
+        );
+      }
+
+      return (
+        <InputNumber
+          min={0}
+          max={1}
+          step={0.01}
+          formatter={(value) => `${(value as number) * 100}%`}
+          parser={(value) => parseFloat(value.replace("%", "")) / 100}
+          {...props?.fieldProps}
+        />
+      );
+    },
   },
   object: {
     render: (entity: any, props) => {
