@@ -2,6 +2,7 @@
 import React from "react";
 import ZESchemaForm from "./ZESchemaForm";
 import { config, createData } from "zeroetp-api-sdk";
+import { Divider } from "antd";
 import "antd/dist/antd.css";
 import { ProFormColumnsType } from "@ant-design/pro-form";
 import { FooterToolbar } from "@ant-design/pro-layout";
@@ -67,6 +68,9 @@ export const DealerCompose = () => {
       title: "公司简称",
       dataIndex: "名称",
       width: "lg",
+    },
+    {
+      renderFormItem: () => <Divider />,
     },
     {
       title: "公司备注",

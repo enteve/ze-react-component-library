@@ -227,7 +227,9 @@ const ZESchemaForm: React.FC<ZESchemaFromProps> = ({
         };
       }
 
-      if (!col.dataIndex) throw new Error("columns参数的item必须有dataIndex");
+      if (!col.dataIndex) {
+        return col;
+      }
 
       const property = schema.properties.find((p) => p.name === col.dataIndex);
 
