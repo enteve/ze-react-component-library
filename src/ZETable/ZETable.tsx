@@ -7,7 +7,7 @@ import ProTable, { ProColumnType } from "@ant-design/pro-table";
 import ProProvider from "@ant-design/pro-provider";
 import { TablePaginationConfig } from "antd";
 
-import { ZETableProps } from "./ZETable.types";
+import { ZETableProps, PredItemType } from "./ZETable.types";
 import { getNameProperty, LogicformAPIResultType } from "zeroetp-api-sdk";
 import { getColumnDateProps, getColumnSearchProps } from "./FilterComponents";
 
@@ -25,6 +25,7 @@ const ZETable: React.FC<ZETableProps> = ({
   className,
   titleMap = {},
   scroll,
+  bordered = false,
 }) => {
   const values = useContext(ProProvider); // 用来自定义ValueType
   const [result, setResult] = useState<LogicformAPIResultType>();
@@ -133,34 +134,29 @@ const ZETable: React.FC<ZETableProps> = ({
   };
 
   // 判断要展示的properties
-  let properties = result?.columnProperties || [];
-  if (preds) {
-    if (properties.length > 0) {
-      // 不是这个的话，说明result还没拿到
-      properties = preds.map((predItem) => {
-        const property = properties.find((p) => p.name === predItem);
-        if (!property) {
-          // return fake property
-          return {
-            name: predItem,
-            type: "string",
-            primal_type: "string",
-            constraints: {},
-            is_fake: true,
-          };
-        }
-
-        return property;
-      }); // 用preds的话，顺序是和preds一样的
-    }
-  } else {
-    properties = properties.filter(
-      (property) => !property.ui?.show_in_detail_only
-    );
+  let predsToShow: PredItemType[] = preds;
+  if (!predsToShow) {
+    predsToShow = (result?.columnProperties || [])
+      .filter((property) => !property.ui?.show_in_detail_only)
+      .map((property) => property.name);
   }
 
+  const properties = result?.columnProperties || [];
+
   // Columns配置
-  const columns: ProColumnType[] = properties.map((property) => {
+  const mapColumnItem = (predItem: string): ProColumnType => {
+    let property = properties.find((p) => p.name === predItem);
+    if (!property) {
+      // fake property
+      property = {
+        name: predItem,
+        type: "string",
+        primal_type: "string",
+        constraints: {},
+        is_fake: true,
+      };
+    }
+
     let additionalProps: any = {};
 
     // Filters
@@ -190,7 +186,7 @@ const ZETable: React.FC<ZETableProps> = ({
     }
 
     // Sorter
-    if (result.schema.type === "entity") {
+    if (result?.schema.type === "entity") {
       if (property.primal_type === "number") {
         additionalProps.sorter = true;
       }
@@ -208,6 +204,17 @@ const ZETable: React.FC<ZETableProps> = ({
       valueEnum,
       ...additionalProps,
     } as ProColumnType;
+  };
+
+  const columns: ProColumnType[] = predsToShow.map((predItem) => {
+    if (typeof predItem === "object" && "title" in predItem) {
+      return {
+        title: predItem.title,
+        children: predItem.children.map((pred) => mapColumnItem(pred)),
+      };
+    }
+
+    return mapColumnItem(predItem);
   });
 
   // Pagination
@@ -227,6 +234,7 @@ const ZETable: React.FC<ZETableProps> = ({
         }}
       >
         <ProTable
+          bordered={bordered}
           columns={columns}
           rowKey="_id"
           search={false}
