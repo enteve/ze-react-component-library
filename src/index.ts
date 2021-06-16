@@ -1,6 +1,5 @@
-import ZETable from './ZETable';
-import ask from './ask';
-import ZESchemaForm from './ZESchemaForm';
-import ZEProForm from './ZEProForm';
+import ZETable from "./ZETable";
+import ask from "./ask";
+import ZESchemaForm from "./ZESchemaForm";
 
-export { ZETable, ZESchemaForm, ZEProForm, ask };
+export { ZETable, ZESchemaForm, ask };
