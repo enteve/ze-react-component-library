@@ -1,4 +1,7 @@
-// Generated with util/create-component.js
+/**
+ * 这个控件是SimpleQuery时候的控件，用来浏览原始数据。
+ * 如果是通过GroupBy生成的答案，那么要用ZEStatsTable。ZEStatsTable具有下钻功能。
+ */
 import React, { useContext, useState } from "react";
 import ProTable, { ProColumnType } from "@ant-design/pro-table";
 import ProProvider from "@ant-design/pro-provider";
