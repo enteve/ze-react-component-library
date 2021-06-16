@@ -126,3 +126,14 @@ export const FiltersWithLFQuery = () => (
     options={false}
   />
 );
+
+export const Stats = () => (
+  <ZETable
+    logicform={{
+      schema: "order",
+      preds: [{ name: "销量", operator: "$sum", pred: "销量" }],
+      groupby: ["商品", "经销商"],
+    }}
+    options={false}
+  />
+);

@@ -1,7 +1,7 @@
 // Generated with util/create-component.js
 import React from "react";
 import ZESchemaForm from "./ZESchemaForm";
-import { config } from "zeroetp-api-sdk";
+import { config, createData } from "zeroetp-api-sdk";
 import "antd/dist/antd.css";
 import { ProFormColumnsType } from "@ant-design/pro-form";
 import { FooterToolbar } from "@ant-design/pro-layout";
@@ -26,7 +26,15 @@ export const Dealer = () => (
   <ZESchemaForm schemaID="dealer" onFinish={onFinish} />
 );
 export const Order = () => (
-  <ZESchemaForm schemaID="order" onFinish={onFinish} />
+  <ZESchemaForm
+    schemaID="order"
+    onFinish={(formData: any) =>
+      createData(
+        { _id: "order", name: "order", type: "event", properties: [] },
+        formData
+      )
+    }
+  />
 );
 
 export const DealerCompose = () => {
