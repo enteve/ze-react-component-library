@@ -155,3 +155,28 @@ export const StatsAndCalcInFront = () => (
     options={false}
   />
 );
+
+export const TwoRowHeader = () => (
+  <ZETable
+    logicform={{
+      schema: "order",
+      preds: [
+        { name: "销量", operator: "$sum", pred: "销量" },
+        { name: "金额", operator: "$sum", pred: "金额" },
+      ],
+      groupby: "商品",
+    }}
+    preds={[
+      "商品",
+      { title: "服务器的统计值", children: ["金额", "销量"] },
+      "件单价（本地统计）",
+    ]}
+    customRender={{
+      "件单价（本地统计）": (v: any, record: any) => (
+        <span>{record.金额 / record.销量}</span>
+      ),
+    }}
+    options={false}
+    bordered
+  />
+);
