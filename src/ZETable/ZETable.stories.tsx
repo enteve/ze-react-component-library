@@ -123,5 +123,6 @@ export const FiltersWithLFQuery = () => (
       query: { 名称: { $regex: "联名礼盒" } },
       limit: -1,
     }}
+    options={false}
   />
 );
