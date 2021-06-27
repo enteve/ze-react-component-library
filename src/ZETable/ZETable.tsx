@@ -5,7 +5,8 @@
 import React, { useContext, useState } from "react";
 import ProTable, { ProColumnType } from "@ant-design/pro-table";
 import ProProvider from "@ant-design/pro-provider";
-import { TablePaginationConfig, Tooltip } from "antd";
+import { Tooltip, Result } from "antd";
+import type { TablePaginationConfig } from "antd";
 import { Button } from "antd";
 import { DownloadOutlined } from "@ant-design/icons";
 import excelExporter from "./excelExporter";
@@ -137,6 +138,15 @@ const ZETable: React.FC<ZETableProps> = ({
       };
     }
   };
+
+  if (result?.error)
+    return (
+      <Result
+        status="error"
+        title={result.error}
+        subTitle="请联系服务提供商获取技术支持"
+      />
+    );
 
   // 判断要展示的properties
   let predsToShow: PredItemType[] = preds;
