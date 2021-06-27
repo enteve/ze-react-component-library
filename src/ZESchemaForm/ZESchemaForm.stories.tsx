@@ -1,20 +1,19 @@
 // Generated with util/create-component.js
 import React from "react";
 import ZESchemaForm from "./ZESchemaForm";
-import { config, createData } from "zeroetp-api-sdk";
+import { createData } from "zeroetp-api-sdk";
 import { Divider } from "antd";
 import "antd/dist/antd.css";
 import { ProFormColumnsType } from "@ant-design/pro-form";
 import { FooterToolbar } from "@ant-design/pro-layout";
 
+// prepare server
+import prepareServerForStories from "../../util/prepareServerForStories";
+prepareServerForStories();
+
 export default {
   title: "ZESchemaForm",
 };
-
-config.API_URL = "https://admin.xuetaifeng.com";
-localStorage.token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MGJmMmFlOTNmNWUzZDdmM2FjM2MzYzAiLCJpYXQiOjE2MjM3NDU5NjQsImV4cCI6MTYyNDM1MDc2NH0.kQXAlvBuXxLl1xN34KF8a-1owwUiF_KSm49olS5-fDE";
-// config.API_URL = "http://localhost:3052";
 
 const onFinish = async (formData: any) => {
   console.log(formData);

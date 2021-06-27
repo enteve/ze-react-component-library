@@ -4,6 +4,10 @@ import { Card, Statistic } from "antd";
 import React from "react";
 import ask from "./index";
 
+// prepare server
+import prepareServerForStories from "../../util/prepareServerForStories";
+prepareServerForStories();
+
 export default {
   title: "ZEAsk",
 };
