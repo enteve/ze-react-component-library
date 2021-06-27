@@ -21,4 +21,5 @@ export interface ZETableProps {
     | null; // 传给ProTable的。ZETable默认会有Scroll的。用null来关闭
   className?: string;
   bordered?: boolean;
+  exportToExcel?: boolean | string; // 如果是string，那么就是文件名（不包含扩展名）
 }

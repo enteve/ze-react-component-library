@@ -5,11 +5,15 @@
 import React, { useContext, useState } from "react";
 import ProTable, { ProColumnType } from "@ant-design/pro-table";
 import ProProvider from "@ant-design/pro-provider";
-import { TablePaginationConfig } from "antd";
+import { TablePaginationConfig, Tooltip } from "antd";
+import { Button } from "antd";
+import { DownloadOutlined } from "@ant-design/icons";
+import excelExporter from "./excelExporter";
 
 import { ZETableProps, PredItemType } from "./ZETable.types";
-import { getNameProperty, LogicformAPIResultType } from "zeroetp-api-sdk";
 import { getColumnDateProps, getColumnSearchProps } from "./FilterComponents";
+import { getNameProperty, isSimpleQuery } from "zeroetp-api-sdk";
+import type { LogicformAPIResultType } from "zeroetp-api-sdk";
 
 import { valueTypeMapping, valueEnumMapping, customValueTypes } from "../util";
 
@@ -26,6 +30,7 @@ const ZETable: React.FC<ZETableProps> = ({
   titleMap = {},
   scroll,
   bordered = false,
+  exportToExcel,
 }) => {
   const values = useContext(ProProvider); // 用来自定义ValueType
   const [result, setResult] = useState<LogicformAPIResultType>();
@@ -225,6 +230,31 @@ const ZETable: React.FC<ZETableProps> = ({
     };
   }
 
+  const toolBarRender: React.ReactNode[] = [];
+  // Export To Excel
+  if (exportToExcel === undefined) {
+    // 有一个默认的逻辑，如果没有设置exportToExcel，那么看下是不是simpleQuery
+    if (!isSimpleQuery(logicform)) {
+      exportToExcel = true;
+    }
+  }
+  if (exportToExcel) {
+    toolBarRender.push(
+      <Tooltip title="导出Excel">
+        <Button
+          type="text"
+          icon={<DownloadOutlined />}
+          onClick={() =>
+            excelExporter(
+              result,
+              typeof exportToExcel === "string" ? exportToExcel : ""
+            )
+          }
+        />
+      </Tooltip>
+    );
+  }
+
   return (
     <div data-testid="ZETable" className={className}>
       <ProProvider.Provider
@@ -247,6 +277,7 @@ const ZETable: React.FC<ZETableProps> = ({
               : { reload: true, setting: false, density: false }
           }
           pagination={pagination}
+          toolBarRender={() => toolBarRender}
         />
       </ProProvider.Provider>
     </div>

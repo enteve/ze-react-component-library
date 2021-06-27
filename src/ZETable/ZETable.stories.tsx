@@ -101,6 +101,7 @@ export const Pagination = () => (
     logicform={{
       schema: "order",
       limit: 1,
+      close_default_query: true,
     }}
   />
 );
@@ -178,3 +179,16 @@ export const TwoRowHeader = () => (
     bordered
   />
 );
+
+export const ExportExcel = () => {
+  return (
+    <ZETable
+      logicform={{
+        schema: "order",
+        close_default_query: true,
+        limit: 20,
+      }}
+      exportToExcel="订单列表"
+    />
+  );
+};
