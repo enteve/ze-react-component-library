@@ -170,7 +170,7 @@ const ZESchemaForm: React.FC<ZESchemaFromProps> = ({
       // 是否后面加个分割线
       extra: p.with_divider ? <Divider dashed /> : undefined,
     };
-    if (p.constraints.required) {
+    if (p.constraints.required && !p.udf) {
       formItemProps.rules.push({
         required: true,
         message: "此项为必填项",

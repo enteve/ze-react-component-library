@@ -23,14 +23,32 @@ export const Product = () => (
   <ZESchemaForm schemaID="product" onFinish={onFinish} />
 );
 export const Dealer = () => (
-  <ZESchemaForm schemaID="dealer" onFinish={onFinish} />
+  <ZESchemaForm
+    schemaID="dealer"
+    onFinish={(formData: any) =>
+      createData(
+        {
+          _id: "dealer",
+          name: "dealer",
+          type: "entity",
+          properties: [],
+        },
+        formData
+      )
+    }
+  />
 );
 export const Order = () => (
   <ZESchemaForm
-    schemaID="order"
+    schemaID="productsale"
     onFinish={(formData: any) =>
       createData(
-        { _id: "order", name: "order", type: "event", properties: [] },
+        {
+          _id: "productsale",
+          name: "productsale",
+          type: "event",
+          properties: [],
+        },
         formData
       )
     }
@@ -87,7 +105,7 @@ export const DealerCompose = () => {
 
 export const Submitter = () => (
   <ZESchemaForm
-    schemaID="order"
+    schemaID="productsale"
     onFinish={onFinish}
     layout="horizontal"
     submitter={{
@@ -100,7 +118,7 @@ export const Submitter = () => (
 
 export const Update = () => (
   <ZESchemaForm
-    schemaID="order"
+    schemaID="productsale"
     onFinish={onFinish}
     initialValues={{
       日期: "2021-06-11",
@@ -114,7 +132,7 @@ export const Update = () => (
 // 可以做readOnly和valueType的自定义
 export const PropertyConfig = () => (
   <ZESchemaForm
-    schemaID="order"
+    schemaID="productsale"
     onFinish={onFinish}
     propertyConfig={{
       日期: { readonly: true, valueType: "date" },
