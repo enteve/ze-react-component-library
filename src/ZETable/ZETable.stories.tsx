@@ -2,18 +2,16 @@
 import React from "react";
 import ZETable from "./ZETable";
 import { Tag } from "antd";
-import { config } from "zeroetp-api-sdk";
 import "antd/dist/antd.css";
 import "./ZETable.stories.less";
+
+// prepare server
+import prepareServerForStories from "../../util/prepareServerForStories";
+prepareServerForStories();
 
 export default {
   title: "ZETable",
 };
-
-config.API_URL = "https://admin.xuetaifeng.com";
-localStorage.token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MGJmMmFlOTNmNWUzZDdmM2FjM2MzYzAiLCJpYXQiOjE2MjM3NDU5NjQsImV4cCI6MTYyNDM1MDc2NH0.kQXAlvBuXxLl1xN34KF8a-1owwUiF_KSm49olS5-fDE";
-// config.API_URL = "http://localhost:3052";
 
 export const Normal = () => (
   <ZETable
