@@ -99,7 +99,7 @@ export const CloseScroll = () => (
 export const Pagination = () => (
   <ZETable
     logicform={{
-      schema: "order",
+      schema: "productsale",
       limit: 1,
       close_default_query: true,
     }}
@@ -129,7 +129,7 @@ export const FiltersWithLFQuery = () => (
 export const Stats = () => (
   <ZETable
     logicform={{
-      schema: "order",
+      schema: "productsale",
       preds: [{ name: "销量", operator: "$sum", pred: "销量" }],
       groupby: ["商品", "经销商"],
     }}
@@ -140,16 +140,18 @@ export const Stats = () => (
 export const StatsAndCalcInFront = () => (
   <ZETable
     logicform={{
-      schema: "order",
+      schema: "productsale",
       preds: [
         { name: "销量", operator: "$sum", pred: "销量" },
-        { name: "金额", operator: "$sum", pred: "金额" },
+        { name: "销售额", operator: "$sum", pred: "销售额" },
       ],
       groupby: "商品",
     }}
-    preds={["商品", "金额", "销量", "件单价"]}
+    preds={["商品", "销售额", "销量", "件单价"]}
     customRender={{
-      件单价: (v: any, record: any) => <span>{record.金额 / record.销量}</span>,
+      件单价: (v: any, record: any) => (
+        <span>{record.销售额 / record.销量}</span>
+      ),
     }}
     options={false}
   />
@@ -158,21 +160,21 @@ export const StatsAndCalcInFront = () => (
 export const TwoRowHeader = () => (
   <ZETable
     logicform={{
-      schema: "order",
+      schema: "productsale",
       preds: [
         { name: "销量", operator: "$sum", pred: "销量" },
-        { name: "金额", operator: "$sum", pred: "金额" },
+        { name: "销售额", operator: "$sum", pred: "销售额" },
       ],
       groupby: "商品",
     }}
     preds={[
       "商品",
-      { title: "服务器的统计值", children: ["金额", "销量"] },
+      { title: "服务器的统计值", children: ["销售额", "销量"] },
       "件单价（本地统计）",
     ]}
     customRender={{
       "件单价（本地统计）": (v: any, record: any) => (
-        <span>{record.金额 / record.销量}</span>
+        <span>{record.销售额 / record.销量}</span>
       ),
     }}
     options={false}
@@ -184,11 +186,41 @@ export const ExportExcel = () => {
   return (
     <ZETable
       logicform={{
-        schema: "order",
+        schema: "productsale",
         close_default_query: true,
         limit: 20,
       }}
-      exportToExcel="订单列表"
+      exportToExcel="商品销售流水列表"
+    />
+  );
+};
+
+/**
+ * 将数据库里面拆单的流水记录转变为Order
+ * @returns {*}
+ */
+export const ProductSaleToOrder = () => {
+  return (
+    <ZETable
+      logicform={{
+        schema: "productsale",
+        limit: 20,
+        sort: { 日期: -1 },
+        groupby: "订单编号",
+        close_default_query: true,
+        preds: ["日期", "经销商", "发货日期", "销量", "销售额", "件数"],
+        expands: ["经销商.所在省市"],
+      }}
+      scroll={null}
+      customRender={{
+        经销商: (v: any, record: any) => {
+          return `${record.经销商?.名称}(${
+            record.经销商?.所在省市?.parents[
+              record.经销商?.所在省市?.parents.length - 1
+            ]
+          }${record.经销商?.所在省市?.name})`;
+        },
+      }}
     />
   );
 };
