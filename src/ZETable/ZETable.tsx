@@ -241,13 +241,6 @@ const ZETable: React.FC<ZETableProps> = ({
   }
 
   const toolBarRender: React.ReactNode[] = [];
-  // Export To Excel
-  if (exportToExcel === undefined) {
-    // 有一个默认的逻辑，如果没有设置exportToExcel，那么看下是不是simpleQuery
-    if (!isSimpleQuery(logicform)) {
-      exportToExcel = true;
-    }
-  }
   if (exportToExcel) {
     toolBarRender.push(
       <Tooltip title="导出Excel">
