@@ -36,17 +36,19 @@ export const AdditionalColumns = () => (
       schema: "dealer",
     }}
     preds={["名称", "公司全称", "操作"]}
-    customRender={{
-      操作: (v: any, record: any) => (
-        <span
-          className="link primary"
-          onClick={() => {
-            console.log(record);
-          }}
-        >
-          查看详情
-        </span>
-      ),
+    customColumn={{
+      操作: {
+        render: (v: any, record: any) => (
+          <span
+            className="link primary"
+            onClick={() => {
+              console.log(record);
+            }}
+          >
+            查看详情
+          </span>
+        ),
+      },
     }}
   />
 );
@@ -57,13 +59,15 @@ export const CustomRender = () => (
       schema: "dealer",
     }}
     preds={["名称", "公司全称", "状态"]}
-    customRender={{
-      状态: (v: any) => {
-        return (
-          <Tag color="green" style={{ width: 52, textAlign: "center" }}>
-            {v}
-          </Tag>
-        );
+    customColumn={{
+      状态: {
+        render: (v: any) => {
+          return (
+            <Tag color="green" style={{ width: 52, textAlign: "center" }}>
+              {v}
+            </Tag>
+          );
+        },
       },
     }}
   />
@@ -220,13 +224,15 @@ export const ProductSaleToOrder = () => {
         expands: ["经销商.所在省市"],
       }}
       scroll={null}
-      customRender={{
-        经销商: (v: any, record: any) => {
-          return `${record.经销商?.名称}(${
-            record.经销商?.所在省市?.parents[
-              record.经销商?.所在省市?.parents.length - 1
-            ]
-          }${record.经销商?.所在省市?.name})`;
+      customColumn={{
+        经销商: {
+          render: (v: any, record: any) => {
+            return `${record.经销商?.名称}(${
+              record.经销商?.所在省市?.parents[
+                record.经销商?.所在省市?.parents.length - 1
+              ]
+            }${record.经销商?.所在省市?.name})`;
+          },
         },
       }}
     />
