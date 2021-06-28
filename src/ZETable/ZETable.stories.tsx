@@ -90,6 +90,7 @@ export const TitleMap = () => (
     customColumn={{
       名称: {
         title: "供应商",
+        width: 100,
       },
     }}
   />
@@ -190,6 +191,9 @@ export const TwoRowHeader = () => (
           <span>{record.销售额 / record.销量}</span>
         ),
         align: "right",
+      },
+      商品: {
+        width: 200,
       },
     }}
     exportToExcel="复杂表格"
