@@ -9,7 +9,6 @@ export declare type PredItemType =
 export interface ZETableProps {
   logicform: LogicformType;
   preds?: PredItemType[]; // 显示哪些字段
-  titleMap?: { [key: string]: string }; // 字段在表格上显示什么样的标题
   customColumn?: { [key: string]: ProColumnType }; // 自定义的column定义参数
   options?: OptionConfig | false; // 传给ProTable的
   scroll?:

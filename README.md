@@ -49,7 +49,6 @@ import { ZETable } from "ze-react-component-library";
 <ZETable
   logicform={logicform}
   preds={[]} /* 显示哪些字段 */
-  titleMap={} /* pred和表格标题之间的映射关系 */
   customColumn={{}} /* 自定义的Column属性的Map。key为字段名称，value为ProColumnType */
   options={options} /* ProTable的options */
   scroll={null} /* 用来关闭默认的Scroll形态，传给ProTable的 */
