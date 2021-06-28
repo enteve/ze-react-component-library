@@ -87,7 +87,11 @@ export const TitleMap = () => (
     logicform={{
       schema: "dealer",
     }}
-    titleMap={{ 名称: "供应商" }}
+    customColumn={{
+      名称: {
+        title: "供应商",
+      },
+    }}
   />
 );
 

@@ -28,7 +28,6 @@ const ZETable: React.FC<ZETableProps> = ({
   preds,
   customColumn = {},
   className,
-  titleMap = {},
   scroll,
   bordered = false,
   exportToExcel,
@@ -209,7 +208,7 @@ const ZETable: React.FC<ZETableProps> = ({
 
     const valueEnum = valueEnumMapping(property);
     const defaultColumnType: ProColumnType = {
-      title: titleMap[property.name] || property.name,
+      title: property.name,
       dataIndex: property.name,
       ellipsis: property.primal_type === "string" && !property.constraints.enum,
       valueType: valueTypeMapping(property),
