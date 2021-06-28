@@ -1,34 +1,23 @@
+import { message } from "antd";
 import XLSX from "xlsx";
 import { LogicformAPIResultType } from "zeroetp-api-sdk";
 import { customValueTypes } from "../util";
 
 export default (result: LogicformAPIResultType, filename: string) => {
-  const customRender = customValueTypes(result.schema);
-  const ws = XLSX.utils.json_to_sheet(
-    result.result.map((i) => {
-      const newI = {};
-      result.columnProperties.forEach((p) => {
-        if (p.name in i) {
-          if (p.type in customRender) {
-            newI[p.name] = customRender[p.type].render(
-              i[p.name],
-              { proFieldKey: `fake-${p.name}` } // 这是一个fake的proFieldKey
-            );
-          } else {
-            newI[p.name] = i[p.name];
-          }
-        }
-      });
+  if (result.total && result.total > result.result.length) {
+    return message.error("这个要用全局导出做，还没做");
+  }
 
-      return newI;
-    }),
-    {
-      header: result.columnProperties.map((p) => p.name),
-    }
+  if (filename.length === 0) {
+    return message.error("导出的文件必须设定文件名");
+  }
+
+  let excelName = `${filename}.xlsx`;
+  const wb = XLSX.utils.table_to_book(
+    document
+      .getElementsByClassName(filename)[0]
+      .getElementsByTagName("table")[0],
+    { display: true }
   );
-
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Sheet01");
-
-  XLSX.writeFile(wb, `${filename.length > 0 ? filename : "数据导出"}.xlsx`);
+  XLSX.writeFile(wb, excelName);
 };

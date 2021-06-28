@@ -240,19 +240,19 @@ const ZETable: React.FC<ZETableProps> = ({
     };
   }
 
+  let exportFileName = "数据导出";
   const toolBarRender: React.ReactNode[] = [];
   if (exportToExcel) {
+    if (typeof exportToExcel === "string") {
+      exportFileName = exportToExcel;
+    }
+
     toolBarRender.push(
       <Tooltip title="导出Excel">
         <Button
           type="text"
           icon={<DownloadOutlined />}
-          onClick={() =>
-            excelExporter(
-              result,
-              typeof exportToExcel === "string" ? exportToExcel : ""
-            )
-          }
+          onClick={() => excelExporter(result, exportFileName)}
         />
       </Tooltip>
     );
@@ -271,6 +271,7 @@ const ZETable: React.FC<ZETableProps> = ({
           columns={columns}
           rowKey="_id"
           search={false}
+          tableClassName={exportFileName}
           request={request}
           size="small"
           scroll={scroll !== undefined ? scroll : { x: 200 * columns.length }}
