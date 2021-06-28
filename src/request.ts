@@ -21,9 +21,8 @@ export async function requestAsk(question: string): Promise<AskAPIResultType> {
   return ret;
 }
 
-export async function requestLogicform(
+export function requestLogicform(
   logicform: LogicformType
 ): Promise<LogicformAPIResultType> {
-  const ret = (await request(execLogicform(logicform))) || { result: [] };
-  return ret;
+  return request(execLogicform(logicform));
 }
