@@ -149,10 +149,13 @@ export const StatsAndCalcInFront = () => (
       groupby: "商品",
     }}
     preds={["商品", "销售额", "销量", "件单价"]}
-    customRender={{
-      件单价: (v: any, record: any) => (
-        <span>{record.销售额 / record.销量}</span>
-      ),
+    customColumn={{
+      件单价: {
+        render: (v: any, record: any) => (
+          <span>{record.销售额 / record.销量}</span>
+        ),
+        align: "right",
+      },
     }}
     options={false}
   />
@@ -173,10 +176,13 @@ export const TwoRowHeader = () => (
       { title: "服务器的统计值", children: ["销售额", "销量"] },
       "件单价（本地统计）",
     ]}
-    customRender={{
-      "件单价（本地统计）": (v: any, record: any) => (
-        <span>{record.销售额 / record.销量}</span>
-      ),
+    customColumn={{
+      "件单价（本地统计）": {
+        render: (v: any, record: any) => (
+          <span>{record.销售额 / record.销量}</span>
+        ),
+        align: "right",
+      },
     }}
     exportToExcel="复杂表格"
     options={false}
