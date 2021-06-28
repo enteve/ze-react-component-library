@@ -162,7 +162,7 @@ export const HierarchyPropertyConfig = () => (
   />
 );
 
-export const HierarchyPropertyConfigV2 = () => (
+export const HierarchyPropertyConfigObjectInitialValues = () => (
   <ZESchemaForm
     schemaID="dealer"
     onFinish={onFinish}
