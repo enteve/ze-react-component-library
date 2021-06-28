@@ -103,6 +103,7 @@ export const Pagination = () => (
       limit: 1,
       close_default_query: true,
     }}
+    exportToExcel
   />
 );
 
@@ -177,6 +178,7 @@ export const TwoRowHeader = () => (
         <span>{record.销售额 / record.销量}</span>
       ),
     }}
+    exportToExcel="复杂表格"
     options={false}
     bordered
   />
