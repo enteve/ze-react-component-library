@@ -191,9 +191,13 @@ export const TwoRowHeader = () => (
           <span>{record.销售额 / record.销量}</span>
         ),
         align: "right",
+        // sorter: true, // TODO：本地排序还没做
       },
       商品: {
         width: 200,
+      },
+      销售额: {
+        sorter: true,
       },
     }}
     exportToExcel="复杂表格"
