@@ -13,7 +13,7 @@ import excelExporter from "./excelExporter";
 
 import { ZETableProps, PredItemType } from "./ZETable.types";
 import { getColumnDateProps, getColumnSearchProps } from "./FilterComponents";
-import { getNameProperty, isSimpleQuery } from "zeroetp-api-sdk";
+import { getNameProperty } from "zeroetp-api-sdk";
 import type { LogicformAPIResultType } from "zeroetp-api-sdk";
 
 import { valueTypeMapping, valueEnumMapping, customValueTypes } from "../util";
@@ -26,7 +26,7 @@ const ZETable: React.FC<ZETableProps> = ({
   logicform,
   options,
   preds,
-  customRender = {},
+  customColumn = {},
   className,
   titleMap = {},
   scroll,
@@ -208,17 +208,25 @@ const ZETable: React.FC<ZETableProps> = ({
     }
 
     const valueEnum = valueEnumMapping(property);
-    return {
+    const defaultColumnType: ProColumnType = {
       title: titleMap[property.name] || property.name,
       dataIndex: property.name,
       ellipsis: property.primal_type === "string" && !property.constraints.enum,
       valueType: valueTypeMapping(property),
-      render: customRender[property.name],
       filters: valueEnum !== undefined,
       onFilter: false,
       valueEnum,
       ...additionalProps,
-    } as ProColumnType;
+    };
+
+    if (customColumn[property.name]) {
+      return {
+        ...defaultColumnType,
+        ...customColumn[property.name],
+      };
+    }
+
+    return defaultColumnType;
   };
 
   const columns: ProColumnType[] = predsToShow.map((predItem) => {
