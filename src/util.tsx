@@ -18,7 +18,7 @@ const { Option } = Select;
 export const valueTypeMapping = (property: PropertyType) => {
   switch (property.type) {
     case "currency":
-      return "money";
+      return "digit"; // 不用money，不然导出Excel之后，这些列无法被操作
     case "percentage":
       return "percentage";
     case "object":
