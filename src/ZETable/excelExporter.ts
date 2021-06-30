@@ -13,10 +13,16 @@ export default (result: LogicformAPIResultType, filename: string) => {
   }
 
   let excelName = `${filename}.xlsx`;
+  const node = document
+    .getElementsByClassName(filename)[0]
+    ?.getElementsByTagName("table")[0];
+  if (!node) {
+    return message.error("表格不存在");
+  }
+  const cloneNode = node.cloneNode(true);
+  cloneNode.lastChild.firstChild.remove();
   const wb = XLSX.utils.table_to_book(
-    document
-      .getElementsByClassName(filename)[0]
-      .getElementsByTagName("table")[0],
+    cloneNode,
     { display: true }
   );
   XLSX.writeFile(wb, excelName);
