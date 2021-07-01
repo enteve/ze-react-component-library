@@ -1,6 +1,6 @@
 {
   "name": "ze-react-component-library",
-  "version": "1.0.28",
+  "version": "1.0.29",
   "main": "build/index.js",
   "module": "build/index.esm.js",
   "files": [
