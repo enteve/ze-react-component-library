@@ -1,7 +1,6 @@
 import { message } from "antd";
 import XLSX from "xlsx";
 import { LogicformAPIResultType } from "zeroetp-api-sdk";
-import { customValueTypes } from "../util";
 
 export default (result: LogicformAPIResultType, filename: string) => {
   if (result.total && result.total > result.result.length) {
@@ -21,9 +20,6 @@ export default (result: LogicformAPIResultType, filename: string) => {
   }
   const cloneNode = node.cloneNode(true);
   cloneNode.lastChild.firstChild.remove();
-  const wb = XLSX.utils.table_to_book(
-    cloneNode,
-    { display: true }
-  );
+  const wb = XLSX.utils.table_to_book(cloneNode, { display: true });
   XLSX.writeFile(wb, excelName);
 };
