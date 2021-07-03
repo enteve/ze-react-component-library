@@ -1,5 +1,6 @@
 // Generated with util/create-component.js
 import React from "react";
+import moment from "moment";
 import ZETable from "./ZETable";
 import { Tag } from "antd";
 import "antd/dist/antd.css";
@@ -247,6 +248,103 @@ export const ProductSaleToOrder = () => {
           },
         },
       }}
+    />
+  );
+};
+
+// 以下代码只有在周黑鸭的数据库里面才能运行
+export const RefLogicforms = () => {
+  return (
+    <ZETable
+      logicform={{
+        schema: "order",
+        query: {
+          门店_美团创建时间: {
+            $gte: "2021-03-01 00:00:00",
+            $lte: "2021-06-30 23:59:59",
+          },
+          日期: {
+            $gte: "2021-06-01 00:00:00",
+            $lte: "2021-06-01 23:59:59",
+          },
+        },
+        preds: [
+          { name: "订单数量", operator: "$count" },
+          { name: "总实销", operator: "$sum", pred: "实销" },
+          { name: "实销环比", operator: "$mom", pred: "实销" },
+          { name: "折扣率", operator: "折扣费用" },
+        ],
+        groupby: "门店",
+      }}
+      preds={[
+        "平台",
+        "区域",
+        "创建时间",
+        "门店",
+        "订单数量",
+        "总实销",
+        "折扣率",
+        { title: "区域统计", children: ["区域订单数量", "区域总实销"] },
+      ]}
+      customColumn={{
+        平台: {
+          render: () => "美团",
+        },
+        区域: {
+          render: (_v: any, record: any) => record.门店_区域,
+        },
+        创建时间: {
+          render: (_v: any, record: any) =>
+            moment(record.门店.美团创建时间).format("YYYY-MM-DD"),
+          valueType: "date",
+        },
+        门店: {
+          title: "门店名称",
+        },
+        总实销: {
+          title: "实销",
+        },
+        区域总实销: {
+          valueType: "digit",
+        },
+      }}
+      scroll={null}
+      exportToExcel={"新店每日业绩表现"}
+      refLFs={[
+        {
+          logicform: {
+            schema: "order",
+            query: {
+              日期: {
+                $gte: "2021-06-01 00:00:00",
+                $lte: "2021-06-01 23:59:59",
+              },
+            },
+            preds: [
+              { name: "区域订单数量", operator: "$count" },
+              { name: "区域总实销", operator: "$sum", pred: "实销" },
+            ],
+            groupby: { _id: "门店_地理位置", level: "区域" },
+          },
+          merge: (mainData: any, refData: any) => {
+            const newMainData = [];
+            mainData.forEach((i: any) => {
+              const ref = refData.find(
+                (r: any) => r["门店_地理位置(区域)"].name === i.门店_区域
+              );
+              if (ref) {
+                newMainData.push({
+                  ...ref,
+                  ...i,
+                });
+              } else {
+                newMainData.push(i);
+              }
+            });
+            return newMainData;
+          },
+        },
+      ]}
     />
   );
 };

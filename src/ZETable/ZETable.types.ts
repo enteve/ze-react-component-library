@@ -22,4 +22,8 @@ export interface ZETableProps {
   className?: string;
   bordered?: boolean;
   exportToExcel?: boolean | string; // 如果是string，那么就是文件名（不包含扩展名）
+  refLFs?: {
+    logicform: LogicformType;
+    merge: (mainData: any, refData: any) => any;
+  }[]; // 补充的LF，用来填写一些其他的数据
 }
