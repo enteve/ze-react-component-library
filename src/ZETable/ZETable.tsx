@@ -31,6 +31,7 @@ const ZETable: React.FC<ZETableProps> = ({
   scroll,
   bordered = false,
   exportToExcel,
+  refLFs = [],
 }) => {
   const values = useContext(ProProvider); // 用来自定义ValueType
   const [result, setResult] = useState<LogicformAPIResultType>();
@@ -121,11 +122,19 @@ const ZETable: React.FC<ZETableProps> = ({
 
     try {
       const ret = await requestLogicform(newLF);
+      const refResults = await Promise.all(
+        refLFs.map((r) => requestLogicform(r.logicform))
+      );
       // console.log(ret);
-
       setResult(ret);
+
+      let result = JSON.parse(JSON.stringify(ret.result));
+      refLFs.forEach(
+        (r, index) => (result = r.merge(result, refResults[index].result))
+      );
+
       return {
-        data: ret.result,
+        data: result,
         success: true,
         total: ret.total,
       };
