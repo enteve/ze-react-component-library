@@ -218,7 +218,7 @@ const ZETable: React.FC<ZETableProps> = ({
     const valueEnum = valueEnumMapping(property);
     const defaultColumnType: ProColumnType = {
       title: property.name,
-      dataIndex: property.name,
+      dataIndex: property.name.split("."),
       ellipsis: property.primal_type === "string" && !property.constraints.enum,
       valueType: valueTypeMapping(property),
       filters: valueEnum !== undefined,
