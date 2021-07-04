@@ -19,7 +19,16 @@ export default (result: LogicformAPIResultType, filename: string) => {
     return message.error("表格不存在");
   }
   const cloneNode = node.cloneNode(true);
-  cloneNode.lastChild.firstChild.remove();
-  const wb = XLSX.utils.table_to_book(cloneNode, { display: true });
-  XLSX.writeFile(wb, excelName);
+
+  // 有时候ProTable会有一个hidden row，给删了。有时候没有
+  if (
+    (cloneNode.lastChild.firstChild as HTMLElement).getAttribute("aria-hidden")
+  ) {
+    cloneNode.lastChild.firstChild.remove();
+  }
+
+  const wb = XLSX.utils.table_to_book(cloneNode, {
+    display: true,
+  });
+  XLSX.writeFile(wb, excelName, { compression: true });
 };
