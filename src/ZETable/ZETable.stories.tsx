@@ -348,3 +348,39 @@ export const RefLogicforms = () => {
     />
   );
 };
+
+// export const TMP = () => {
+//   return (
+//     <ZETable
+//       logicform={{
+//         query: {
+//           菜品: "5fd317a148be98f2c1dc60e5",
+//           订单号: {
+//             schema: "productsale",
+//             preds: ["订单号"],
+//             query: {
+//               日期: {
+//                 $gte: "2021-05-01 00:00:00",
+//                 $lte: "2021-05-31 23:59:59",
+//               },
+//               状态: "完成",
+//               菜品: "5fd317a148be98f2c1dc60e9",
+//             },
+//           },
+//           日期: {
+//             $gte: "2021-05-01 00:00:00",
+//             $lte: "2021-05-31 23:59:59",
+//           },
+//         },
+//         schema: "productsale",
+//         preds: [
+//           { name: "订单量", operator: "$uniq", pred: "订单号" },
+//           { name: "总销量", operator: "$sum", pred: "销量" },
+//         ],
+//         groupby: ["渠道"],
+//       }}
+//       scroll={null}
+//       exportToExcel={"有小锁骨含大锁骨"}
+//     />
+//   );
+// };
