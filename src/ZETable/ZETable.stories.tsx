@@ -117,6 +117,18 @@ export const Pagination = () => (
   />
 );
 
+// TODO: 这个PredChain还没做的很完美。很完美的是property也顺利找到对应的。
+export const PredChain = () => (
+  <ZETable
+    logicform={{
+      schema: "productsale",
+      close_default_query: true,
+    }}
+    preds={["经销商.统一社会信用代码"]}
+    exportToExcel
+  />
+);
+
 export const Image = () => (
   <ZETable
     logicform={{
