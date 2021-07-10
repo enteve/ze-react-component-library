@@ -5,9 +5,8 @@
 import React, { useContext, useState } from "react";
 import ProTable, { ProColumnType } from "@ant-design/pro-table";
 import ProProvider from "@ant-design/pro-provider";
-import { Tooltip, Result } from "antd";
+import { Tooltip, Result, Button } from "antd";
 import type { TablePaginationConfig } from "antd";
-import { Button } from "antd";
 import { DownloadOutlined } from "@ant-design/icons";
 import excelExporter from "./excelExporter";
 
@@ -26,12 +25,15 @@ const ZETable: React.FC<ZETableProps> = ({
   logicform,
   options,
   preds,
+  search = false,
+  size = "small",
+  rowKey = "_id",
   customColumn = {},
   className,
   scroll,
-  bordered = false,
   exportToExcel,
   refLFs = [],
+  ...restProps
 }) => {
   const values = useContext(ProProvider); // 用来自定义ValueType
   const [result, setResult] = useState<LogicformAPIResultType>();
@@ -283,13 +285,13 @@ const ZETable: React.FC<ZETableProps> = ({
         }}
       >
         <ProTable
-          bordered={bordered}
+          {...restProps}
           columns={columns}
-          rowKey="_id"
-          search={false}
+          rowKey={rowKey}
+          search={search}
           tableClassName={exportFileName}
           request={request}
-          size="small"
+          size={size}
           scroll={scroll !== undefined ? scroll : { x: 200 * columns.length }}
           options={
             options !== undefined
