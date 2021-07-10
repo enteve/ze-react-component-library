@@ -1,13 +1,12 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import type { ProFormColumnsType } from "@ant-design/pro-form";
 import ProProvider from "@ant-design/pro-provider";
 import { BetaSchemaForm } from "@ant-design/pro-form";
-import type { ZESchemaFromProps } from "./ZESchemaForm.types";
+import type { ZESchemaFromProps, ExtendValueTypes } from "./ZESchemaForm.types";
 import { useRequest } from "@umijs/hooks";
 import { request } from "../request";
 import { getSchemaByID, SchemaAPIResultType } from "zeroetp-api-sdk";
 import { valueTypeMapping, valueEnumMapping, customValueTypes } from "../util";
-import { Divider } from "antd";
 
 // const columns: ProFormColumnsType<DataItem>[] = [
 //   {
@@ -156,19 +155,12 @@ const ZESchemaForm: React.FC<ZESchemaFromProps> = ({
 
   const { schema } = data;
   // 通过properties来生成columns
-  let columns: ProFormColumnsType<
-    any,
-    "percentage" | "object" | "boolean" | "file"
-  >[];
+  let columns: ProFormColumnsType<any, ExtendValueTypes>[];
 
   // 给下面生成columns用的
-  const propsForProperty = (
-    p
-  ): ProFormColumnsType<any, "percentage" | "object" | "boolean" | "file"> => {
+  const propsForProperty = (p): ProFormColumnsType<any, ExtendValueTypes> => {
     const formItemProps = {
       rules: [],
-      // 是否后面加个分割线
-      extra: p.with_divider ? <Divider dashed /> : undefined,
     };
     if (p.constraints.required && !p.udf) {
       formItemProps.rules.push({
@@ -220,7 +212,7 @@ const ZESchemaForm: React.FC<ZESchemaFromProps> = ({
   if (_columns) {
     const mapCustomColumn = (col: any) => {
       // children
-      if (col.columns) {
+      if (col.columns && col.valueType !== "table") {
         return {
           ...col,
           columns: col.columns.map((c) => mapCustomColumn(c)),
@@ -251,10 +243,7 @@ const ZESchemaForm: React.FC<ZESchemaFromProps> = ({
         valueTypeMap: customValueTypes(schema),
       }}
     >
-      <BetaSchemaForm<any, "percentage" | "object" | "boolean" | "file">
-        {...props}
-        columns={columns}
-      />
+      <BetaSchemaForm<any, ExtendValueTypes> {...props} columns={columns} />
     </ProProvider.Provider>
   );
 };
