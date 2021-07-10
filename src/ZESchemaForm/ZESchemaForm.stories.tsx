@@ -22,6 +22,41 @@ const onFinish = async (formData: any) => {
 export const Product = () => (
   <ZESchemaForm schemaID="product" onFinish={onFinish} />
 );
+
+export const ProductWithEditableTable = () => (
+  <ZESchemaForm
+    schemaID="product"
+    onFinish={onFinish}
+    columns={[
+      {
+        dataIndex: "子商品",
+        valueType: "table",
+        columns: [
+          {
+            title: "商品编码",
+            renderFormItem: (schema: any) => {
+              return schema?.entry?.子商品 || "-";
+            },
+          },
+          {
+            dataIndex: "子商品",
+            title: "商品名称",
+            valueType: "select",
+          },
+          {
+            dataIndex: "数量",
+            title: "数量",
+            valueType: "digit",
+          },
+          {
+            title: "操作",
+            valueType: "option",
+          },
+        ],
+      },
+    ]}
+  />
+);
 export const Dealer = () => (
   <ZESchemaForm
     schemaID="dealer"

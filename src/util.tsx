@@ -5,10 +5,12 @@ import {
   LogicformAPIResultType,
   getHierarchyCodeLength,
   getIDProperty,
+  findPropByName,
+  getNameProperty,
 } from "zeroetp-api-sdk";
 import numeral from "numeral";
-import { findPropByName, getNameProperty } from "zeroetp-api-sdk";
-import { Select, InputNumber, Radio, Cascader, Spin } from "antd";
+import { EditableProTable } from "@ant-design/pro-table";
+import { Select, InputNumber, Radio, Cascader, Spin, Input } from "antd";
 import { useRequest } from "@umijs/hooks";
 import { requestLogicform } from "./request";
 import "antd/lib/cascader/style/index";
@@ -152,7 +154,98 @@ export const customValueTypes = (schema: SchemaType) => ({
   boolean: {
     render: (v: any) => <div>{v ? "✓" : "x"}</div>,
   },
+  table: {
+    renderFormItem: (text, props) => {
+      const propName = props.proFieldKey.split("-").pop();
+      const property = findPropByName(schema, propName);
+      const { value, onChange } = props.fieldProps;
+      const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
+      const columns = props?.columns?.map((d) => {
+        if (!d.dataIndex) {
+          return d;
+        }
+        if (d.valueType === "select") {
+          return {
+            ...d,
+            renderFormItem: (item, itemProps) => (
+              <ObjectColumnSelect
+                schema={property.schema}
+                onChange={(v, option) => {
+                  handleEditChange({
+                    ...itemProps.record,
+                    [d.dataIndex]: v,
+                    "@option": option,
+                  });
+                }}
+              />
+            ),
+          };
+        }
+        return {
+          formItemProps: (form, config) => {
+            return {
+              onChange: (e) =>
+                handleEditChange({
+                  ...config.entry,
+                  [d.dataIndex]: e.target.value,
+                }),
+            };
+          },
+          ...d,
+        };
+      });
+
+      function handleEditChange(newRecord) {
+        if (value instanceof Array) {
+          const index = value.findIndex((d) => d?.id === newRecord?.id);
+          const newArr = [...value];
+          if (index > -1) {
+            newArr[index] = newRecord;
+          } else {
+            newArr.push(newRecord);
+          }
+          onChange(newArr);
+        } else {
+          onChange([newRecord]);
+        }
+      }
+
+      function handleDataSource(v) {
+        onChange(v);
+      }
+
+      return (
+        <EditableProTable
+          value={value}
+          onChange={handleDataSource}
+          controlled
+          rowKey="id"
+          toolBarRender={false}
+          columns={columns}
+          recordCreatorProps={{
+            newRecordType: "dataSource",
+            position: !value || value?.length === 0 ? "top" : "bottom",
+            record: () => ({
+              id: Date.now(),
+            }),
+          }}
+          editable={{
+            type: "multiple",
+            editableKeys,
+            onChange: setEditableRowKeys,
+            actionRender: (row, _, dom) => {
+              return [dom.delete];
+            },
+          }}
+        />
+      );
+    },
+  },
 });
+
+function ObjectColumnSelect({ schema, ...fieldProps }) {
+  return renderObjectFormItem(schema, { fieldProps });
+}
 
 // 不带Hierarchy的，渲染object类型的
 const renderObjectFormItem = (schema, props: any) => {
@@ -182,7 +275,7 @@ const renderObjectFormItem = (schema, props: any) => {
   );
 
   const options = (data as any[]).map((i) => (
-    <Option key={i._id} value={i._id}>
+    <Option {...i} key={i._id} value={i._id}>
       {i[nameProperty.name]}（{i._id}）
     </Option>
   ));
@@ -200,6 +293,7 @@ const renderObjectFormItem = (schema, props: any) => {
       showArrow={false}
       filterOption={false}
       onSearch={setSearch}
+      placeholder="请选择"
       allowClear
       {...props?.fieldProps}
       value={value}
