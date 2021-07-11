@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   PropertyType,
   SchemaType,
@@ -167,18 +167,22 @@ export const customValueTypes = (schema: SchemaType) => ({
         if (d.valueType === "select") {
           return {
             ...d,
-            renderFormItem: (item, itemProps) => (
-              <ObjectColumnSelect
-                schema={property.schema}
-                onChange={(v, option) => {
-                  handleEditChange({
-                    ...itemProps.record,
-                    [d.dataIndex]: v,
-                    "@option": option,
-                  });
-                }}
-              />
-            ),
+            renderFormItem: (item, itemProps) => {
+              // console.log(itemProps, item);
+              return (
+                <ObjectColumnSelect
+                  {...d.fieldProps}
+                  schema={property.schema}
+                  onChange={(v, option) => {
+                    handleEditChange({
+                      ...itemProps.record,
+                      [d.dataIndex]: v,
+                      "@option": option,
+                    });
+                  }}
+                />
+              );
+            },
           };
         }
         return {
@@ -213,6 +217,12 @@ export const customValueTypes = (schema: SchemaType) => ({
       function handleDataSource(v) {
         onChange(v);
       }
+
+      useEffect(() => {
+        if (value instanceof Array) {
+          setEditableRowKeys(value.map((d) => d?.id));
+        }
+      }, [value]);
 
       return (
         <EditableProTable
@@ -254,8 +264,9 @@ const renderObjectFormItem = (schema, props: any) => {
   const [search, setSearch] = useState<string>();
   const { data } = useRequest<LogicformAPIResultType>(
     () => {
+      // console.log(props);
       let limit = 20;
-      const query = {};
+      const query = { ...props?.fieldProps?.query };
       if (search) {
         query[nameProperty.name] = { $regex: search, $options: "i" };
         limit = 100;
