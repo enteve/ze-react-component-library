@@ -42,6 +42,7 @@ export const ProductWithEditableTable = () => (
             dataIndex: "子商品",
             title: "商品名称",
             valueType: "select",
+            fieldProps: { query: { 分类: { $in: ["单品", "耗材"] } } },
           },
           {
             dataIndex: "数量",
