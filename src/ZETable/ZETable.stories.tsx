@@ -14,11 +14,16 @@ export default {
   title: "ZETable",
 };
 
-export const Normal = () => (
+export const NormalWithRowClick = () => (
   <ZETable
     logicform={{
       schema: "dealer",
     }}
+    onRow={(record) => ({
+      onClick: () => {
+        console.log(record);
+      },
+    })}
   />
 );
 
