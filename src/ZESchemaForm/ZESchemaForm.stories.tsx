@@ -58,6 +58,39 @@ export const ProductWithEditableTable = () => (
     ]}
   />
 );
+
+export const ProductWithEditableTableSupportEnums = () => (
+  <ZESchemaForm
+    schemaID="productMatchRule"
+    columns={[
+      { dataIndex: "名称", title: "规则名称" },
+      {
+        dataIndex: "匹配规则",
+        title: "",
+        valueType: "table",
+        columns: [
+          {
+            dataIndex: "匹配规则",
+            title: "匹配规则",
+            valueType: "select",
+          },
+          {
+            dataIndex: "数量",
+            title: "数量",
+            valueType: "digit",
+          },
+          {
+            title: "操作",
+            valueType: "option",
+          },
+        ],
+      },
+    ]}
+    onFinish={async (formData) => {
+      console.log(formData);
+    }}
+  />
+);
 export const Dealer = () => (
   <ZESchemaForm
     schemaID="dealer"
