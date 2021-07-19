@@ -11,11 +11,10 @@ import { DownloadOutlined } from "@ant-design/icons";
 import excelExporter from "./excelExporter";
 
 import { ZETableProps, PredItemType } from "./ZETable.types";
-import { getColumnDateProps, getColumnSearchProps } from "./FilterComponents";
 import { getNameProperty } from "zeroetp-api-sdk";
 import type { LogicformAPIResultType } from "zeroetp-api-sdk";
 
-import { valueTypeMapping, valueEnumMapping, customValueTypes } from "../util";
+import { customValueTypes, mapColumnItem } from "../util";
 
 import "./ZETable.less";
 
@@ -168,86 +167,17 @@ const ZETable: React.FC<ZETableProps> = ({
 
   const properties = result?.columnProperties || [];
 
-  // Columns配置
-  const mapColumnItem = (predItem: string): ProColumnType => {
-    let property = properties.find((p) => p.name === predItem);
-    if (!property) {
-      // fake property
-      property = {
-        name: predItem,
-        type: "string",
-        primal_type: "string",
-        constraints: {},
-        is_fake: true,
-      };
-    }
-
-    let additionalProps: any = {};
-
-    // Filters
-    if (!property.is_fake) {
-      if (property.primal_type === "date") {
-        additionalProps = {
-          ...additionalProps,
-          ...getColumnDateProps(property.name),
-        };
-      } else if (
-        property.primal_type === "string" ||
-        property.primal_type === "object"
-      ) {
-        additionalProps = {
-          ...additionalProps,
-          ...getColumnSearchProps(property.name),
-        };
-      }
-    }
-
-    // Alignment
-    if (
-      property.primal_type === "number" ||
-      property.primal_type === "boolean"
-    ) {
-      additionalProps.align = "right";
-    }
-
-    // Sorter
-    if (result?.schema.type === "entity") {
-      if (property.primal_type === "number") {
-        additionalProps.sorter = true;
-      }
-    }
-
-    const valueEnum = valueEnumMapping(property);
-    const defaultColumnType: ProColumnType = {
-      title: property.name,
-      dataIndex: property.name.split("."),
-      ellipsis: property.primal_type === "string" && !property.constraints.enum,
-      valueType: valueTypeMapping(property),
-      filters: valueEnum !== undefined,
-      onFilter: false,
-      valueEnum,
-      ...additionalProps,
-    };
-
-    if (customColumn[property.name]) {
-      return {
-        ...defaultColumnType,
-        ...customColumn[property.name],
-      };
-    }
-
-    return defaultColumnType;
-  };
-
   const columns: ProColumnType[] = predsToShow.map((predItem) => {
     if (typeof predItem === "object" && "title" in predItem) {
       return {
         title: predItem.title,
-        children: predItem.children.map((pred) => mapColumnItem(pred)),
+        children: predItem.children.map((pred) =>
+          mapColumnItem(pred, customColumn, properties, result)
+        ),
       };
     }
 
-    return mapColumnItem(predItem);
+    return mapColumnItem(predItem, customColumn, properties, result);
   });
 
   // Pagination

@@ -8,6 +8,11 @@ import {
   findPropByName,
   getNameProperty,
 } from "zeroetp-api-sdk";
+import type { ProColumnType } from "@ant-design/pro-table";
+import {
+  getColumnDateProps,
+  getColumnSearchProps,
+} from "./ZETable/FilterComponents";
 import numeral from "numeral";
 import { EditableProTable } from "@ant-design/pro-table";
 import { Select, InputNumber, Radio, Cascader, Spin, Input } from "antd";
@@ -96,6 +101,78 @@ export const valueEnumMapping = (property: PropertyType) => {
   return valueEnum;
 };
 
+export const mapColumnItem = (
+  predItem: string,
+  customColumn: { [key: string]: ProColumnType },
+  properties: any[],
+  result: LogicformAPIResultType
+): ProColumnType => {
+  let property = properties.find((p) => p.name === predItem);
+  if (!property) {
+    // fake property
+    property = {
+      name: predItem,
+      type: "string",
+      primal_type: "string",
+      constraints: {},
+      is_fake: true,
+    };
+  }
+
+  let additionalProps: any = {};
+
+  // Filters
+  if (!property.is_fake) {
+    if (property.primal_type === "date") {
+      additionalProps = {
+        ...additionalProps,
+        ...getColumnDateProps(property.name),
+      };
+    } else if (
+      property.primal_type === "string" ||
+      property.primal_type === "object"
+    ) {
+      additionalProps = {
+        ...additionalProps,
+        ...getColumnSearchProps(property.name),
+      };
+    }
+  }
+
+  // Alignment
+  if (property.primal_type === "number" || property.primal_type === "boolean") {
+    additionalProps.align = "right";
+  }
+
+  // Sorter
+  if (result?.schema.type === "entity") {
+    if (property.primal_type === "number") {
+      additionalProps.sorter = true;
+    }
+  }
+
+  const valueEnum = valueEnumMapping(property);
+  const defaultColumnType: ProColumnType = {
+    title: property.name,
+    dataIndex: property.name.split("."),
+    ellipsis: property.primal_type === "string" && !property.constraints.enum,
+    valueType: valueTypeMapping(property),
+    filters: valueEnum !== undefined,
+    onFilter: false,
+    valueEnum,
+    ...additionalProps,
+  };
+
+  if (customColumn[property.name]) {
+    return {
+      ...defaultColumnType,
+      ...customColumn[property.name],
+    };
+  }
+
+  return defaultColumnType;
+};
+
 export const customValueTypes = (schema: SchemaType) => ({
   percentage: {
     render: (number: number) => {
@@ -156,42 +233,66 @@ export const customValueTypes = (schema: SchemaType) => ({
   },
   table: {
     renderFormItem: (text, props) => {
-      const propName = props.proFieldKey.split("-").pop();
-      const property = findPropByName(schema, propName);
       const { value, onChange } = props.fieldProps;
       const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
       const columns = props?.columns?.map((d) => {
         if (!d.dataIndex) {
           return d;
         }
-        if (d.valueType === "select") {
-          return {
-            ...d,
-            renderFormItem: (item, itemProps) => {
-              // console.log(itemProps, item);
-              return (
-                <ObjectColumnSelect
-                  {...d.fieldProps}
-                  schema={property.schema}
-                  onChange={(v, option) => {
+        let property;
+        try {
+          property = findPropByName(schema, d.dataIndex);
+        } catch (error) {}
+
+        if (property) {
+          const valueEnum = valueEnumMapping(property);
+          const valueType = valueTypeMapping(property);
+          if (valueEnum) {
+            return {
+              valueType,
+              valueEnum,
+              fieldProps: (form, config) => {
+                return {
+                  onChange: (v, option) => {
                     handleEditChange({
-                      ...itemProps.record,
+                      ...config.entry,
                       [d.dataIndex]: v,
-                      "@option": option,
                     });
-                  }}
-                />
-              );
-            },
-          };
+                  },
+                };
+              },
+              ...d,
+            };
+          }
+          if (property.primal_type === "object") {
+            return {
+              valueType,
+              renderFormItem: (item, itemProps) => {
+                return (
+                  <ObjectColumnSelect
+                    {...d.fieldProps}
+                    schema={property.schema}
+                    onChange={(v, option) => {
+                      handleEditChange({
+                        ...itemProps.record,
+                        [d.dataIndex]: v,
+                        "@option": option,
+                      });
+                    }}
+                  />
+                );
+              },
+              ...d,
+            };
+          }
         }
         return {
-          formItemProps: (form, config) => {
+          fieldProps: (form, config) => {
             return {
-              onChange: (e) =>
+              onChange: (v) =>
                 handleEditChange({
                   ...config.entry,
-                  [d.dataIndex]: e.target.value,
+                  [d.dataIndex]: v,
                 }),
             };
           },
