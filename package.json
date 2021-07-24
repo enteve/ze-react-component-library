@@ -38,6 +38,7 @@
   },
   "homepage": "https://github.com/enteve/ze-react-component-library#readme",
   "peerDependencies": {
+    "@ant-design/charts": ">=1.2.3",
     "@ant-design/icons": ">=4.3.0",
     "@ant-design/pro-form": ">=1.28.0",
     "@ant-design/pro-layout": ">=6.19.4",
@@ -52,6 +53,7 @@
     "zeroetp-api-sdk": ">=1.1.15"
   },
   "devDependencies": {
+    "@ant-design/charts": "^1.2.3",
     "@ant-design/icons": "^4.6.2",
     "@ant-design/pro-form": "^1.28.0",
     "@ant-design/pro-layout": "^6.19.4",
