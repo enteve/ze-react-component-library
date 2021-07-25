@@ -31,6 +31,7 @@ export const ProductWithEditableTable = () => (
       {
         dataIndex: "子商品",
         valueType: "table",
+        fieldProps: {placeholder: '新增产品'},
         columns: [
           {
             title: "商品编码",
