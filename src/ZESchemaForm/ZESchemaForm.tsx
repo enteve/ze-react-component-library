@@ -2,7 +2,11 @@ import React, { useContext } from "react";
 import type { ProFormColumnsType } from "@ant-design/pro-form";
 import ProProvider from "@ant-design/pro-provider";
 import { BetaSchemaForm } from "@ant-design/pro-form";
-import type { ZESchemaFromProps, ExtendValueTypes } from "./ZESchemaForm.types";
+import type {
+  ZESchemaFromProps,
+  ExtendValueTypes,
+  ZESchemaFromColumnType,
+} from "./ZESchemaForm.types";
 import { useRequest } from "@umijs/hooks";
 import { request } from "../request";
 import { getSchemaByID, SchemaAPIResultType } from "zeroetp-api-sdk";
@@ -26,14 +30,14 @@ const ZESchemaForm: React.FC<ZESchemaFromProps> = ({
   let columns: ProFormColumnsType<any, ExtendValueTypes>[];
 
   // 给下面生成columns用的
-  const propsForProperty = (p): ProFormColumnsType<any, ExtendValueTypes> => {
+  const propsForProperty = (
+    p,
+    col?: ZESchemaFromColumnType
+  ): ProFormColumnsType<any, ExtendValueTypes> => {
     const formItemProps = {
       rules: [],
-      initialValue: undefined,
+      initialValue: col?.initialValue || p.default,
     };
-    if(p.default){
-      formItemProps.initialValue = p.default;
-    }
     if (p.constraints.required && !p.udf) {
       formItemProps.rules.push({
         required: true,
@@ -74,7 +78,7 @@ const ZESchemaForm: React.FC<ZESchemaFromProps> = ({
       dataIndex: p.name,
       valueType,
       valueEnum: valueEnumMapping(p),
-      formItemProps,
+      formItemProps: { ...formItemProps, ...col?.formItemProps },
       readonly,
       render,
       tooltip: p.description,
@@ -98,7 +102,7 @@ const ZESchemaForm: React.FC<ZESchemaFromProps> = ({
       const property = schema.properties.find((p) => p.name === col.dataIndex);
 
       return {
-        ...propsForProperty(property),
+        ...propsForProperty(property, col),
         ...col,
       };
     };
