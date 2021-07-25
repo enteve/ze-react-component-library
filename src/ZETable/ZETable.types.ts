@@ -1,5 +1,5 @@
 // Generated with util/create-component.js
-import type { ProColumnType, ProTableProps, } from "@ant-design/pro-table"
+import type { ProColumnType, ProTableProps } from "@ant-design/pro-table";
 import type { ParamsType } from "@ant-design/pro-provider";
 import type { LogicformType } from "zeroetp-api-sdk";
 
@@ -16,5 +16,15 @@ export type ZETableProps = {
     logicform: LogicformType;
     merge: (mainData: any, refData: any) => any;
   }[]; // 补充的LF，用来填写一些其他的数据
-  scroll?: Pick<ProTableProps<ProColumnType, ParamsType>, "scroll"> | null;
-} & Omit<ProTableProps<ProColumnType, ParamsType>, "columns" | "request" | "pagination" | "toolBarRender" | "scroll">
+  scroll?:
+    | ({
+        x?: string | number | true;
+        y?: string | number;
+      } & {
+        scrollToFirstRowOnChange?: boolean;
+      })
+    | null; // 传给ProTable的。ZETable默认会有Scroll的。用null来关闭
+} & Omit<
+  ProTableProps<ProColumnType, ParamsType>,
+  "columns" | "request" | "pagination" | "toolBarRender" | "scroll"
+>;
