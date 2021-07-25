@@ -233,7 +233,7 @@ export const customValueTypes = (schema: SchemaType) => ({
   },
   table: {
     renderFormItem: (text, props) => {
-      const { value, onChange } = props.fieldProps;
+      const { value, onChange, placeholder } = props.fieldProps;
       const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
       const columns = props?.columns?.map((d) => {
         if (!d.dataIndex) {
@@ -336,6 +336,7 @@ export const customValueTypes = (schema: SchemaType) => ({
           recordCreatorProps={{
             newRecordType: "dataSource",
             position: !value || value?.length === 0 ? "top" : "bottom",
+            creatorButtonText: placeholder,
             record: () => ({
               id: Date.now(),
             }),
