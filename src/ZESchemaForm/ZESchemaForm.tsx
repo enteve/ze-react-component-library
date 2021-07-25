@@ -29,7 +29,11 @@ const ZESchemaForm: React.FC<ZESchemaFromProps> = ({
   const propsForProperty = (p): ProFormColumnsType<any, ExtendValueTypes> => {
     const formItemProps = {
       rules: [],
+      initialValue: undefined,
     };
+    if(p.default){
+      formItemProps.initialValue = p.default;
+    }
     if (p.constraints.required && !p.udf) {
       formItemProps.rules.push({
         required: true,
