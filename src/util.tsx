@@ -108,6 +108,29 @@ export const mapColumnItem = (
   result: LogicformAPIResultType
 ): ProColumnType => {
   let property = properties.find((p) => p.name === predItem);
+
+  // 前端的predChain，要获取正确的property
+  // 后端不会出现有.的情况。
+  if (predItem.indexOf(".") > 0) {
+    const chain = predItem.split(".");
+    let currentSchema = { properties };
+    for (const chainItem of chain) {
+      property = currentSchema.properties.find((p) => p.name === chainItem);
+      if (property) {
+        currentSchema = property.schema;
+        if (!currentSchema) break;
+      }
+    }
+
+    if (property) {
+      // 记得要改个名字
+      property = {
+        ...property,
+        name: predItem,
+      };
+    }
+  }
+
   if (!property) {
     // fake property
     property = {
