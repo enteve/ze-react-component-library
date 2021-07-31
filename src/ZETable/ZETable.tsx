@@ -206,6 +206,11 @@ const ZETable: React.FC<ZETableProps> = ({
     );
   }
 
+  // result的schema中的properties其实没啥用，应该改为columnProperties的
+  if (result?.columnProperties) {
+    result.schema.properties = result.columnProperties;
+  }
+
   return (
     <div data-testid="ZETable" className={className}>
       <ProProvider.Provider
