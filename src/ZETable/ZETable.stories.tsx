@@ -366,6 +366,47 @@ export const RefLogicforms = () => {
   );
 };
 
+export const MultiSchema = () => {
+  return (
+    <ZETable
+      logicform={{
+        children: [
+          {
+            query: {
+              日期: {
+                $gte: "2021-06-01 00:00:00",
+                $lte: "2021-06-01 23:59:59",
+              },
+            },
+            preds: [{ name: "订单数量", operator: "$count" }],
+            groupby: [
+              { _id: "门店_地理位置", level: "区域" },
+              { _id: "门店_类型" },
+            ],
+            schema: "order",
+          },
+          {
+            query: {
+              日期: {
+                $gte: "2021-06-01 00:00:00",
+                $lte: "2021-06-01 23:59:59",
+              },
+            },
+            preds: [{ name: "流量", operator: "$sum", pred: "曝光人数" }],
+            groupby: [
+              { _id: "门店_地理位置", level: "区域" },
+              { _id: "门店_类型" },
+            ],
+            schema: "visit",
+          },
+        ],
+      }}
+      scroll={null}
+      exportToExcel
+    />
+  );
+};
+
 // export const TMP = () => {
 //   return (
 //     <ZETable
