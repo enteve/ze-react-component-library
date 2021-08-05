@@ -1,12 +1,9 @@
 import React from "react";
-import { useRequest } from "@umijs/hooks";
-import { requestLogicform } from "../request";
-import type { LogicformAPIResultType, LogicformType } from "zeroetp-api-sdk";
 import type { ZEDashboardProps } from "./ZEDashboard.types";
-import { Card, Col, Row } from "antd";
-import ZEValue from "../ZEValue";
+import { Card, Col, List, Row } from "antd";
 import ZEAsk from "../ZEAsk";
 import ZEChart from "../ZEChart";
+import ZELogicform from "../ZELogicform/ZELogicform";
 
 const ZEDashboard: React.FC<ZEDashboardProps> = () => {
   return (
@@ -31,23 +28,46 @@ const ZEDashboard: React.FC<ZEDashboardProps> = () => {
       </Row>
       <Row style={{ marginTop: 20 }}>
         <Card title="图表" style={{ width: "100%" }}>
-          <ZEChart
-            type="column"
-            logicform={{
-              query: {
-                日期: {
-                  $gte: { $offset: { month: -12 } },
-                },
-              },
-              schema: "productsale",
-              groupby: "$month",
-              preds: [{ name: "amount", operator: "$sum", pred: "销售额" }],
-            }}
-            config={{
-              xField: "_id",
-              yField: "amount",
-            }}
-          />
+          <Row>
+            <Col span={16}>
+              <ZEChart
+                type="column"
+                logicform={{
+                  query: {
+                    日期: {
+                      $gte: { $offset: { month: -12 } },
+                    },
+                  },
+                  schema: "productsale",
+                  groupby: "$month",
+                  preds: [{ name: "amount", operator: "$sum", pred: "销售额" }],
+                }}
+                config={{
+                  xField: "_id",
+                  yField: "amount",
+                }}
+              />
+            </Col>
+            <Col span={8}>
+              <ZELogicform
+                logicform={{
+                  schema: "productsale",
+                  groupby: "渠道",
+                  preds: [{ name: "sum", operator: "$sum", pred: "销售额" }],
+                }}
+                dataKey="dataSource"
+                loadingKey="loading"
+              >
+                <List
+                  renderItem={(item: any) => (
+                    <List.Item>
+                      {item.渠道}:{item.sum}
+                    </List.Item>
+                  )}
+                />
+              </ZELogicform>
+            </Col>
+          </Row>
         </Card>
       </Row>
     </>
