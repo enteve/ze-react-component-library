@@ -31,6 +31,7 @@ const ZETable: React.FC<ZETableProps> = ({
   className,
   scroll,
   exportToExcel,
+  xlsx,
   refLFs = [],
   ...restProps
 }) => {
@@ -212,7 +213,7 @@ const ZETable: React.FC<ZETableProps> = ({
         <Button
           type="text"
           icon={<DownloadOutlined />}
-          onClick={() => excelExporter(result, exportFileName)}
+          onClick={() => excelExporter(result, exportFileName, xlsx)}
         />
       </Tooltip>
     );
