@@ -188,6 +188,18 @@ const ZETable: React.FC<ZETableProps> = ({
     };
   }
 
+  // Scroll
+  const defaultColWidth = 200;
+  const calcWidth = (col: any) => {
+    if (col.children) {
+      return col.children.reduce((acc, c) => acc + calcWidth(c), 0);
+    }
+
+    return "width" in col ? col.width : defaultColWidth;
+  };
+  const x = columns.reduce((acc, c) => acc + calcWidth(c), 0);
+
+  // Export
   let exportFileName = "数据导出";
   const toolBarRender: React.ReactNode[] = [];
   if (exportToExcel) {
@@ -227,7 +239,7 @@ const ZETable: React.FC<ZETableProps> = ({
           tableClassName={exportFileName}
           request={request}
           size={size}
-          scroll={scroll !== undefined ? scroll : { x: 200 * columns.length }}
+          scroll={scroll !== undefined ? scroll : { x }}
           options={
             options !== undefined
               ? options
