@@ -128,6 +128,7 @@ export const PredChain = () => (
     logicform={{
       schema: "productsale",
       close_default_query: true,
+      query: { 类型: "线下" },
     }}
     preds={["经销商.统一社会信用代码"]}
     exportToExcel
@@ -212,7 +213,7 @@ export const TwoRowHeader = () => (
         // sorter: true, // TODO：本地排序还没做
       },
       商品: {
-        width: 200,
+        width: 300,
       },
       销售额: {
         sorter: true,
