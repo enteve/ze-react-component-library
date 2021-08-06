@@ -12,6 +12,7 @@ export type ZETableProps = {
   preds?: PredItemType[]; // 显示哪些字段
   customColumn?: { [key: string]: ProColumnType }; // 自定义的column定义参数
   exportToExcel?: boolean | string; // 如果是string，那么就是文件名（不包含扩展名）
+  xlsx?: any; // 外链的xlsx库。因为是可选的库，所以用外链的形式去做
   refLFs?: {
     logicform: LogicformType;
     merge: (mainData: any, refData: any) => any;

@@ -1,8 +1,13 @@
 import { message } from "antd";
-import XLSX from "xlsx";
 import { LogicformAPIResultType } from "zeroetp-api-sdk";
 
-export default (result: LogicformAPIResultType, filename: string) => {
+export default (
+  result: LogicformAPIResultType,
+  filename: string,
+  XLSX?: any // 外部的XLSX库
+) => {
+  if (!XLSX) return message.error("需要传入XLSX库才能使用导出功能");
+
   if (result.total && result.total > result.result.length) {
     return message.error("这个要用全局导出做，还没做");
   }

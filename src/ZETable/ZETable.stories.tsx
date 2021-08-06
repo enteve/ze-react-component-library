@@ -1,6 +1,7 @@
 // Generated with util/create-component.js
 import React from "react";
 import moment from "moment";
+import XLSX from "xlsx";
 import ZETable from "./ZETable";
 import { Tag } from "antd";
 import "antd/dist/antd.css";
@@ -119,6 +120,7 @@ export const Pagination = () => (
       close_default_query: true,
     }}
     exportToExcel
+    xlsx={XLSX}
   />
 );
 
@@ -132,6 +134,7 @@ export const PredChain = () => (
     }}
     preds={["经销商.统一社会信用代码"]}
     exportToExcel
+    xlsx={XLSX}
   />
 );
 
@@ -220,6 +223,7 @@ export const TwoRowHeader = () => (
       },
     }}
     exportToExcel="复杂表格"
+    xlsx={XLSX}
     options={false}
     bordered
   />
@@ -234,6 +238,7 @@ export const ExportExcel = () => {
         limit: 20,
       }}
       exportToExcel="商品销售流水列表"
+      xlsx={XLSX}
     />
   );
 };
@@ -328,6 +333,7 @@ export const RefLogicforms = () => {
       }}
       scroll={null}
       exportToExcel={"新店每日业绩表现"}
+      xlsx={XLSX}
       refLFs={[
         {
           logicform: {
@@ -404,6 +410,7 @@ export const MultiSchema = () => {
       }}
       scroll={null}
       exportToExcel
+      xlsx={XLSX}
     />
   );
 };
@@ -440,6 +447,7 @@ export const MultiSchema = () => {
 //       }}
 //       scroll={null}
 //       exportToExcel={"有小锁骨含大锁骨"}
+//       xlsx={XLSX}
 //     />
 //   );
 // };
