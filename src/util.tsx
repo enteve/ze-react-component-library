@@ -152,8 +152,9 @@ export const mapColumnItem = (
         ...getColumnDateProps(property.name),
       };
     } else if (
-      property.primal_type === "string" ||
-      property.primal_type === "object"
+      (property.primal_type === "string" ||
+        property.primal_type === "object") &&
+      !property.constraints.enum
     ) {
       additionalProps = {
         ...additionalProps,
