@@ -25,6 +25,8 @@ export type ZETableProps = {
         scrollToFirstRowOnChange?: boolean;
       })
     | null; // 传给ProTable的。ZETable默认会有Scroll的。用null来关闭
+
+  allowCreation?: boolean;
 } & Omit<
   ProTableProps<ProColumnType, ParamsType>,
   "columns" | "request" | "pagination" | "toolBarRender" | "scroll"

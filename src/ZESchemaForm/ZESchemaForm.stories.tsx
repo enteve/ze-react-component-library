@@ -31,7 +31,7 @@ export const ProductWithEditableTable = () => (
       {
         dataIndex: "子商品",
         valueType: "table",
-        fieldProps: {placeholder: '新增产品'},
+        fieldProps: { placeholder: "新增产品" },
         columns: [
           {
             title: "商品编码",
@@ -245,5 +245,13 @@ export const HierarchyPropertyConfigObjectInitialValues = () => (
     initialValues={{
       所在省市: { _id: "08614101", name: "郑州市", code: "08614101" },
     }}
+  />
+);
+
+export const LayoutType = () => (
+  <ZESchemaForm
+    schemaID="employee"
+    layoutType="DrawerForm"
+    trigger={<a>点击我</a>}
   />
 );
