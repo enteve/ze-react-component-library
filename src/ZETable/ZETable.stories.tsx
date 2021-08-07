@@ -28,6 +28,20 @@ export const NormalWithRowClick = () => (
   />
 );
 
+export const DataCreation = () => (
+  <ZETable
+    logicform={{
+      schema: "employee",
+    }}
+    allowCreation
+    onRow={(record) => ({
+      onClick: () => {
+        console.log(record);
+      },
+    })}
+  />
+);
+
 export const PredsSelection = () => (
   <ZETable
     logicform={{

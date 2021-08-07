@@ -2,23 +2,25 @@
  * 这个控件是SimpleQuery时候的控件，用来浏览原始数据。
  * 如果是通过GroupBy生成的答案，那么要用ZEStatsTable。ZEStatsTable具有下钻功能。
  */
-import React, { useContext, useState } from "react";
-import ProTable, { ProColumnType } from "@ant-design/pro-table";
+import React, { useContext, useState, useRef } from "react";
+import ProTable, { ActionType, ProColumnType } from "@ant-design/pro-table";
 import ProProvider from "@ant-design/pro-provider";
 import { Tooltip, Result, Button } from "antd";
 import type { TablePaginationConfig } from "antd";
-import { DownloadOutlined } from "@ant-design/icons";
+import { DownloadOutlined, PlusOutlined } from "@ant-design/icons";
 import excelExporter from "./excelExporter";
 
 import { ZETableProps, PredItemType } from "./ZETable.types";
-import { getNameProperty } from "zeroetp-api-sdk";
+import { createData, getNameProperty } from "zeroetp-api-sdk";
 import type { LogicformAPIResultType } from "zeroetp-api-sdk";
 
 import { customValueTypes, mapColumnItem } from "../util";
 
+import ZESchemaForm from "../ZESchemaForm";
+
 import "./ZETable.less";
 
-import { requestLogicform } from "../request";
+import { requestLogicform, request as requestAPI } from "../request";
 
 const ZETable: React.FC<ZETableProps> = ({
   logicform,
@@ -33,10 +35,14 @@ const ZETable: React.FC<ZETableProps> = ({
   exportToExcel,
   xlsx,
   refLFs = [],
+  allowCreation = false,
   ...restProps
 }) => {
   const values = useContext(ProProvider); // 用来自定义ValueType
   const [result, setResult] = useState<LogicformAPIResultType>();
+  const [creationFormVisible, setCreationFormVisible] =
+    useState<boolean>(false);
+  const tableRef = useRef<ActionType>();
 
   const request = async (
     params: {
@@ -200,9 +206,37 @@ const ZETable: React.FC<ZETableProps> = ({
   };
   const x = columns.reduce((acc, c) => acc + calcWidth(c), 0);
 
+  const toolBarRender: React.ReactNode[] = [];
+
+  // Creation
+  if (allowCreation) {
+    toolBarRender.push(
+      <ZESchemaForm
+        schemaID={logicform.schema}
+        layoutType="DrawerForm"
+        trigger={
+          <Tooltip title="添加数据">
+            <Button
+              type="text"
+              icon={<PlusOutlined />}
+              onClick={() => setCreationFormVisible(true)}
+            />
+          </Tooltip>
+        }
+        onFinish={async (values) => {
+          await requestAPI(createData(logicform.schema, values));
+          setCreationFormVisible(false);
+          tableRef.current.reload();
+        }}
+        visible={creationFormVisible}
+        onVisibleChange={setCreationFormVisible}
+      />
+    );
+  }
+
   // Export
   let exportFileName = "数据导出";
-  const toolBarRender: React.ReactNode[] = [];
+
   if (exportToExcel) {
     if (typeof exportToExcel === "string") {
       exportFileName = exportToExcel;
@@ -234,6 +268,7 @@ const ZETable: React.FC<ZETableProps> = ({
       >
         <ProTable
           {...restProps}
+          actionRef={tableRef}
           columns={columns}
           rowKey={rowKey}
           search={search}
