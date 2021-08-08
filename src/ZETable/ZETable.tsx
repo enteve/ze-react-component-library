@@ -5,13 +5,19 @@
 import React, { useContext, useState, useRef } from "react";
 import ProTable, { ActionType, ProColumnType } from "@ant-design/pro-table";
 import ProProvider from "@ant-design/pro-provider";
-import { Tooltip, Result, Button } from "antd";
+import { Tooltip, Result, Button, Popconfirm, Drawer } from "antd";
 import type { TablePaginationConfig } from "antd";
 import { DownloadOutlined, PlusOutlined } from "@ant-design/icons";
 import excelExporter from "./excelExporter";
 
 import { ZETableProps, PredItemType } from "./ZETable.types";
-import { createData, getNameProperty } from "zeroetp-api-sdk";
+import {
+  createData,
+  getNameProperty,
+  removeDataByID,
+  updateData,
+  updateDataByID,
+} from "zeroetp-api-sdk";
 import type { LogicformAPIResultType } from "zeroetp-api-sdk";
 
 import { customValueTypes, mapColumnItem } from "../util";
@@ -36,10 +42,12 @@ const ZETable: React.FC<ZETableProps> = ({
   xlsx,
   refLFs = [],
   allowCreation = false,
+  creationColumns,
   ...restProps
 }) => {
   const values = useContext(ProProvider); // 用来自定义ValueType
   const [result, setResult] = useState<LogicformAPIResultType>();
+  const [selectedRecord, setSelectedRecord] = useState<any>(undefined);
   const [creationFormVisible, setCreationFormVisible] =
     useState<boolean>(false);
   const tableRef = useRef<ActionType>();
@@ -211,28 +219,55 @@ const ZETable: React.FC<ZETableProps> = ({
   // Creation
   if (allowCreation) {
     toolBarRender.push(
-      <ZESchemaForm
-        schemaID={logicform.schema}
-        layoutType="DrawerForm"
-        trigger={
-          <Tooltip title="添加数据">
-            <Button
-              type="text"
-              icon={<PlusOutlined />}
-              onClick={() => setCreationFormVisible(true)}
-            />
-          </Tooltip>
-        }
-        onFinish={async (values) => {
-          await requestAPI(createData(logicform.schema, values));
-          setCreationFormVisible(false);
-          tableRef.current.reload();
-        }}
-        visible={creationFormVisible}
-        onVisibleChange={setCreationFormVisible}
-      />
+      <Tooltip title="添加数据">
+        <Button
+          type="text"
+          icon={<PlusOutlined />}
+          onClick={() => {
+            setSelectedRecord(undefined);
+            setCreationFormVisible(true);
+          }}
+        />
+      </Tooltip>
     );
   }
+  // Create的话，添加【操作】column
+  columns.push({
+    title: "操作",
+    width: 150,
+    key: "_operation",
+    valueType: "option",
+    render: (_dom, record: any) => [
+      // 修改
+      <a
+        key="edit"
+        onClick={() => {
+          setSelectedRecord(record);
+          setCreationFormVisible(true);
+        }}
+      >
+        修改
+      </a>,
+      // 删除
+      <Popconfirm
+        title="确定删除？删除后将不可恢复。"
+        key="delete"
+        onConfirm={() => {
+          if (logicform.schema) {
+            requestAPI(removeDataByID(logicform.schema, record._id)).then(
+              () => {
+                tableRef.current.reload();
+              }
+            );
+          }
+        }}
+        okText="确定"
+        cancelText="取消"
+      >
+        <a>删除</a>
+      </Popconfirm>,
+    ],
+  });
 
   // Export
   let exportFileName = "数据导出";
@@ -284,6 +319,30 @@ const ZETable: React.FC<ZETableProps> = ({
           pagination={pagination}
           toolBarRender={() => toolBarRender}
         />
+        <Drawer
+          destroyOnClose
+          visible={creationFormVisible}
+          maskClosable={false} // 防止误触
+          width={500}
+          onClose={() => setCreationFormVisible(false)}
+        >
+          <ZESchemaForm
+            schemaID={logicform.schema}
+            columns={creationColumns}
+            initialValues={selectedRecord}
+            onFinish={async (values) => {
+              if (!selectedRecord) {
+                await requestAPI(createData(logicform.schema, values));
+              } else {
+                await requestAPI(
+                  updateDataByID(logicform.schema, selectedRecord._id, values)
+                );
+              }
+              setCreationFormVisible(false);
+              tableRef.current.reload();
+            }}
+          />
+        </Drawer>
       </ProProvider.Provider>
     </div>
   );
