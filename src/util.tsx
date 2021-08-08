@@ -105,7 +105,8 @@ export const mapColumnItem = (
   predItem: string,
   customColumn: { [key: string]: ProColumnType },
   properties: any[],
-  result: LogicformAPIResultType
+  result: LogicformAPIResultType,
+  exporting: boolean // 是否需要导出，导出的话，ellipse不要了
 ): ProColumnType => {
   let property = properties.find((p) => p.name === predItem);
 
@@ -179,7 +180,10 @@ export const mapColumnItem = (
   const defaultColumnType: ProColumnType = {
     title: property.name,
     dataIndex: property.name.split("."),
-    ellipsis: property.primal_type === "string" && !property.constraints.enum,
+    ellipsis:
+      property.primal_type === "string" &&
+      !property.constraints.enum &&
+      !exporting,
     valueType: valueTypeMapping(property),
     filters: valueEnum !== undefined,
     onFilter: false,
@@ -253,7 +257,7 @@ export const customValueTypes = (schema: SchemaType) => ({
     },
   },
   boolean: {
-    render: (v: any) => <div>{v ? "✓" : "x"}</div>,
+    render: (v: any) => <div>{v ? "是" : "否"}</div>,
   },
   table: {
     renderFormItem: (text, props) => {

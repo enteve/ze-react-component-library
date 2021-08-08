@@ -15,7 +15,6 @@ import {
   createData,
   getNameProperty,
   removeDataByID,
-  updateData,
   updateDataByID,
 } from "zeroetp-api-sdk";
 import type { LogicformAPIResultType } from "zeroetp-api-sdk";
@@ -187,12 +186,24 @@ const ZETable: React.FC<ZETableProps> = ({
       return {
         title: predItem.title,
         children: predItem.children.map((pred) =>
-          mapColumnItem(pred, customColumn, properties, result)
+          mapColumnItem(
+            pred,
+            customColumn,
+            properties,
+            result,
+            exportToExcel != undefined
+          )
         ),
       };
     }
 
-    return mapColumnItem(predItem, customColumn, properties, result);
+    return mapColumnItem(
+      predItem,
+      customColumn,
+      properties,
+      result,
+      exportToExcel != undefined
+    );
   });
 
   // Pagination
