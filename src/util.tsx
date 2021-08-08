@@ -81,13 +81,7 @@ export const valueTypeMapping = (property: PropertyType) => {
 
 export const valueEnumMapping = (property: PropertyType) => {
   let valueEnum = undefined;
-  if (property.constraints.enum) {
-    valueEnum = {};
-    property.constraints.enum.forEach((enumItem) => {
-      const enumValue = Array.isArray(enumItem) ? enumItem[0] : enumItem;
-      valueEnum[enumValue] = { text: enumValue };
-    });
-  } else if (property.primal_type === "boolean") {
+  if (property.primal_type === "boolean") {
     valueEnum = {
       true: {
         text: "是",
@@ -96,6 +90,12 @@ export const valueEnumMapping = (property: PropertyType) => {
         text: "否",
       },
     };
+  } else if (property.constraints.enum) {
+    valueEnum = {};
+    property.constraints.enum.forEach((enumItem) => {
+      const enumValue = Array.isArray(enumItem) ? enumItem[0] : enumItem;
+      valueEnum[enumValue] = { text: enumValue };
+    });
   }
 
   return valueEnum;
