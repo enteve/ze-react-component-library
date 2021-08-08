@@ -472,3 +472,112 @@ export const MultiSchema = () => {
 //     />
 //   );
 // };
+
+// 下面的只有JAEM才能看到
+export const JAEMSourceData = () => {
+  const subdistrict = "共和新路街道";
+  return (
+    <ZETable
+      preds={[
+        "街道",
+        "居委会",
+        "小区",
+        "地址",
+        "单元门牌号",
+        "户数",
+        "户型",
+        "层数",
+        "建造年份",
+        "房屋性质",
+        "业委会",
+        "物业公司",
+        "评估结果",
+        "评估描述",
+        "征询开始时间",
+        "立项或通过业主意愿征询时间",
+        "规划公示通过时间",
+        "房屋安全论证通过时间",
+        "是否规模化审批",
+        "开工建设时间",
+        "竣工交付时间",
+        "代建单位",
+        "施工单位",
+        "监理单位",
+        "设计单位",
+        "地勘单位",
+        "电梯品牌",
+      ]}
+      customColumn={{
+        地址: { title: "地址（弄）" },
+      }}
+      logicform={{
+        children: [
+          {
+            query: { 街道: subdistrict },
+            sort: { 街道: 1, 地址: 1, 单元门牌号: 1 },
+            limit: -1,
+            schema: "project",
+          },
+          {
+            query: { 项目_街道: subdistrict },
+            schema: "progress",
+            groupby: "项目",
+            preds: [
+              {
+                name: "征询开始时间",
+                operator: "$sql",
+                pred: "anyIfOrNull(`日期`,`节点` = '征询开始')",
+                type: "date",
+              },
+              {
+                name: "立项或通过业主意愿征询时间",
+                operator: "$sql",
+                pred: "anyIfOrNull(`日期`,`节点` = '征询通过')",
+                type: "date",
+              },
+              {
+                name: "规划公示通过时间",
+                operator: "$sql",
+                pred: "anyIfOrNull(`日期`,`节点` = '规划公示通过')",
+                type: "date",
+              },
+              {
+                name: "规划公示通过时间",
+                operator: "$sql",
+                pred: "anyIfOrNull(`日期`,`节点` = '规划公示通过')",
+                type: "date",
+              },
+              {
+                name: "房屋安全论证通过时间",
+                operator: "$sql",
+                pred: "anyIfOrNull(`日期`,`节点` = '房屋安全论证通过')",
+                type: "date",
+              },
+              {
+                name: "是否规模化审批",
+                operator: "$sql",
+                pred: "anyIfOrNull(`规模化审批`,`节点` = '房屋安全论证通过')",
+                type: "boolean",
+              },
+              {
+                name: "开工建设时间",
+                operator: "$sql",
+                pred: "anyIfOrNull(`日期`,`节点` = '开工建设')",
+                type: "date",
+              },
+              {
+                name: "竣工交付时间",
+                operator: "$sql",
+                pred: "anyIfOrNull(`日期`,`节点` = '完工')",
+                type: "date",
+              },
+            ],
+          },
+        ],
+      }}
+      columnEmptyText=""
+      exportToExcel={`【${subdistrict}】-信息系统数据采集-加装电梯情况一览表`}
+      xlsx={XLSX}
+    />
+  );
+};
