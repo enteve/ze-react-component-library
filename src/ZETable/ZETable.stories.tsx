@@ -32,13 +32,20 @@ export const DataCreation = () => (
   <ZETable
     logicform={{
       schema: "employee",
+      sort: { ID: 1 },
     }}
-    allowCreation
     onRow={(record) => ({
       onClick: () => {
         console.log(record);
       },
     })}
+    allowCreation
+    creationColumns={[
+      { dataIndex: "姓名" },
+      { dataIndex: "部门" },
+      { dataIndex: "手机号码" },
+      { dataIndex: "密码" },
+    ]}
   />
 );
 
