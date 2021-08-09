@@ -31,7 +31,7 @@ const ZETable: React.FC<ZETableProps> = ({
   logicform,
   options,
   preds,
-  search = false,
+  search,
   size = "small",
   rowKey = "_id",
   customColumn = {},
@@ -318,7 +318,7 @@ const ZETable: React.FC<ZETableProps> = ({
           actionRef={tableRef}
           columns={columns}
           rowKey={rowKey}
-          search={search}
+          search={search === undefined ? false : search}
           tableClassName={exportFileName}
           request={request}
           size={size}
