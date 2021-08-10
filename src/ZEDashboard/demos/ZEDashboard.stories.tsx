@@ -1,9 +1,9 @@
 // Generated with util/create-component.js
 import React from "react";
-import ZEDashboard from "./ZEDashboard";
+import ZEDashboard from "../ZEDashboard";
 
 // prepare server
-import prepareServerForStories from "../../util/prepareServerForStories";
+import prepareServerForStories from "../../../util/prepareServerForStories";
 prepareServerForStories();
 
 export default {

@@ -2,13 +2,13 @@
 import React from "react";
 import moment from "moment";
 import XLSX from "xlsx";
-import ZETable from "./ZETable";
+import ZETable from "../ZETable";
 import { Tag } from "antd";
 import "antd/dist/antd.css";
 import "./ZETable.stories.less";
 
 // prepare server
-import prepareServerForStories from "../../util/prepareServerForStories";
+import prepareServerForStories from "../../../util/prepareServerForStories";
 prepareServerForStories();
 
 export default {

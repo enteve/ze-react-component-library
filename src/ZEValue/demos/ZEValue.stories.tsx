@@ -2,10 +2,10 @@
 import { ArrowUpOutlined } from "@ant-design/icons";
 import { Card, Statistic } from "antd";
 import React from "react";
-import ZEValue from "./index";
+import ZEValue from "../index";
 
 // prepare server
-import prepareServerForStories from "../../util/prepareServerForStories";
+import prepareServerForStories from "../../../util/prepareServerForStories";
 prepareServerForStories();
 
 export default {
