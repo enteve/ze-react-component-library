@@ -39,7 +39,7 @@ export const DataCreation = () => (
         console.log(record);
       },
     })}
-    allowCreation
+    creationMode="form"
     creationColumns={[
       { dataIndex: "姓名" },
       { dataIndex: "部门" },
@@ -172,7 +172,7 @@ export const FiltersWithLFQuery = () => (
   <ZETable
     logicform={{
       schema: "product",
-      query: { 名称: { $regex: "联名礼盒" } },
+      query: { 名称: { $regex: "500" } },
       limit: -1,
     }}
     options={false}
@@ -276,6 +276,7 @@ export const ProductSaleToOrder = () => {
         limit: 20,
         sort: { 日期: -1 },
         groupby: "订单编号",
+        query: { 经销商: { $exists: true } },
         close_default_query: true,
         preds: ["日期", "经销商", "发货日期", "销量", "销售额", "件数"],
         expands: ["经销商.所在省市"],

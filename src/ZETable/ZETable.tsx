@@ -40,7 +40,7 @@ const ZETable: React.FC<ZETableProps> = ({
   exportToExcel,
   xlsx,
   refLFs = [],
-  allowCreation = false,
+  creationMode,
   creationColumns,
   ...restProps
 }) => {
@@ -228,7 +228,7 @@ const ZETable: React.FC<ZETableProps> = ({
   const toolBarRender: React.ReactNode[] = [];
 
   // Creation
-  if (allowCreation) {
+  if (creationMode === "form") {
     toolBarRender.push(
       <Tooltip title="添加数据">
         <Button
@@ -331,30 +331,32 @@ const ZETable: React.FC<ZETableProps> = ({
           pagination={pagination}
           toolBarRender={() => toolBarRender}
         />
-        <Drawer
-          destroyOnClose
-          visible={creationFormVisible}
-          maskClosable={false} // 防止误触
-          width={500}
-          onClose={() => setCreationFormVisible(false)}
-        >
-          <ZESchemaForm
-            schemaID={logicform.schema}
-            columns={creationColumns}
-            initialValues={selectedRecord}
-            onFinish={async (values) => {
-              if (!selectedRecord) {
-                await requestAPI(createData(logicform.schema, values));
-              } else {
-                await requestAPI(
-                  updateDataByID(logicform.schema, selectedRecord._id, values)
-                );
-              }
-              setCreationFormVisible(false);
-              tableRef.current.reload();
-            }}
-          />
-        </Drawer>
+        {creationMode === "form" && (
+          <Drawer
+            destroyOnClose
+            visible={creationFormVisible}
+            maskClosable={false} // 防止误触
+            width={500}
+            onClose={() => setCreationFormVisible(false)}
+          >
+            <ZESchemaForm
+              schemaID={logicform.schema}
+              columns={creationColumns}
+              initialValues={selectedRecord}
+              onFinish={async (values) => {
+                if (!selectedRecord) {
+                  await requestAPI(createData(logicform.schema, values));
+                } else {
+                  await requestAPI(
+                    updateDataByID(logicform.schema, selectedRecord._id, values)
+                  );
+                }
+                setCreationFormVisible(false);
+                tableRef.current.reload();
+              }}
+            />
+          </Drawer>
+        )}
       </ProProvider.Provider>
     </div>
   );
