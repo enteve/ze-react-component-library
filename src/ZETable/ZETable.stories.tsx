@@ -28,7 +28,7 @@ export const NormalWithRowClick = () => (
   />
 );
 
-export const DataCreation = () => (
+export const DataCreationForm = () => (
   <ZETable
     logicform={{
       schema: "employee",
@@ -40,12 +40,29 @@ export const DataCreation = () => (
       },
     })}
     creationMode="form"
+    // 下面是给form的
     creationColumns={[
       { dataIndex: "姓名" },
       { dataIndex: "部门" },
       { dataIndex: "手机号码" },
       { dataIndex: "密码" },
     ]}
+  />
+);
+
+export const DataCreationList = () => (
+  <ZETable
+    logicform={{
+      schema: "supplierSettlement",
+      query: { 供应商: "GY20210809130994" },
+    }}
+    preds={["商品.编码", "商品", "商品.分类", "商品.单位", "结算价"]}
+    customColumn={{
+      "商品.编码": { title: "商品编码" },
+      "商品.分类": { title: "类型" },
+      "商品.单位": { title: "单位" },
+    }}
+    creationMode="list"
   />
 );
 
