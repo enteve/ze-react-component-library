@@ -329,17 +329,17 @@ const ZETable: React.FC<ZETableProps> = ({
   } else if (creationMode === "list") {
     tableProps.editable = {
       onSave: (id, record: any, _origin, newLine: boolean) => {
-        if (newLine) {
-          // 用logicform.query里面的数据来设置默认的一些属性
-          // TODO: 目前只接受非chain的query
-          requestAPI(
-            createData(logicform.schema, { ...logicform.query, ...record })
-          ).then(() => tableRef.current.reload());
-        } else {
-          requestAPI(updateDataByID(logicform.schema, id, record)).then(() =>
-            tableRef.current.reload()
-          );
-        }
+        // if (newLine) {
+        //   // 用logicform.query里面的数据来设置默认的一些属性
+        //   // TODO: 目前只接受非chain的query
+        //   requestAPI(
+        //     createData(logicform.schema, { ...logicform.query, ...record })
+        //   ).then(() => tableRef.current.reload());
+        // } else {
+        //   requestAPI(updateDataByID(logicform.schema, id, record)).then(() =>
+        //     tableRef.current.reload()
+        //   );
+        // }
       },
       onDelete: (_id, record) => deleteRecord(record),
     };
@@ -381,7 +381,12 @@ const ZETable: React.FC<ZETableProps> = ({
         }}
       >
         {creationMode !== "list" && <ProTable {...tableProps} />}
-        {creationMode === "list" && <EditableProTable {...tableProps} />}
+        {creationMode === "list" && (
+          <EditableProTable
+            {...tableProps}
+            recordCreatorProps={{ record: { _id: new Date() } }}
+          />
+        )}
         {creationMode === "form" && (
           <Drawer
             destroyOnClose
