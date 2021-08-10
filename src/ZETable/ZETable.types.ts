@@ -27,7 +27,7 @@ export type ZETableProps = {
       })
     | null; // 传给ProTable的。ZETable默认会有Scroll的。用null来关闭
 
-  allowCreation?: boolean;
+  creationMode?: "form" | "list"; // form是单个单个新增，产生一个form。而list是直接在列表里面操作
   creationColumns?: ZESchemaFromColumnType[]; // 就是ZESchemaForm里面的columns属性
 } & Omit<
   ProTableProps<ProColumnType, ParamsType>,
