@@ -3,7 +3,11 @@
  * 如果是通过GroupBy生成的答案，那么要用ZEStatsTable。ZEStatsTable具有下钻功能。
  */
 import React, { useContext, useState, useRef } from "react";
-import ProTable, { ActionType, ProColumnType } from "@ant-design/pro-table";
+import ProTable, {
+  ActionType,
+  EditableProTable,
+  ProColumnType,
+} from "@ant-design/pro-table";
 import ProProvider from "@ant-design/pro-provider";
 import { Tooltip, Result, Button, Popconfirm, Drawer } from "antd";
 import type { TablePaginationConfig } from "antd";
@@ -227,7 +231,56 @@ const ZETable: React.FC<ZETableProps> = ({
 
   const toolBarRender: React.ReactNode[] = [];
 
+  // Export
+  let exportFileName = "数据导出";
+
+  if (exportToExcel) {
+    if (typeof exportToExcel === "string") {
+      exportFileName = exportToExcel;
+    }
+
+    toolBarRender.push(
+      <Tooltip title="导出Excel">
+        <Button
+          type="text"
+          icon={<DownloadOutlined />}
+          onClick={() => excelExporter(result, exportFileName, xlsx)}
+        />
+      </Tooltip>
+    );
+  }
+
+  // result的schema中的properties其实没啥用，应该改为columnProperties的
+  if (result?.columnProperties) {
+    result.schema.properties = result.columnProperties;
+  }
+
+  const tableProps: any = {
+    ...restProps,
+    actionRef: tableRef,
+    columns,
+    rowKey,
+    search: search === undefined ? false : search,
+    tableClassName: exportFileName,
+    request,
+    size,
+    scroll: scroll !== undefined ? scroll : { x },
+    options:
+      options !== undefined
+        ? options
+        : { reload: true, setting: false, density: false },
+    pagination,
+    toolBarRender: () => toolBarRender,
+  };
+
   // Creation
+  const deleteRecord = (record: any) => {
+    if (logicform.schema) {
+      requestAPI(removeDataByID(logicform.schema, record._id)).then(() => {
+        tableRef.current.reload();
+      });
+    }
+  };
   if (creationMode === "form") {
     toolBarRender.push(
       <Tooltip title="添加数据">
@@ -264,13 +317,51 @@ const ZETable: React.FC<ZETableProps> = ({
           title="确定删除？删除后将不可恢复。"
           key="delete"
           onConfirm={() => {
-            if (logicform.schema) {
-              requestAPI(removeDataByID(logicform.schema, record._id)).then(
-                () => {
-                  tableRef.current.reload();
-                }
-              );
-            }
+            deleteRecord(record);
+          }}
+          okText="确定"
+          cancelText="取消"
+        >
+          <a>删除</a>
+        </Popconfirm>,
+      ],
+    });
+  } else if (creationMode === "list") {
+    tableProps.editable = {
+      onSave: (id, record: any, _origin, newLine: boolean) => {
+        if (newLine) {
+          // 用logicform.query里面的数据来设置默认的一些属性
+          // TODO: 目前只接受非chain的query
+          requestAPI(
+            createData(logicform.schema, { ...logicform.query, ...record })
+          ).then(() => tableRef.current.reload());
+        } else {
+          requestAPI(updateDataByID(logicform.schema, id, record)).then(() =>
+            tableRef.current.reload()
+          );
+        }
+      },
+      onDelete: (_id, record) => deleteRecord(record),
+    };
+    columns.push({
+      title: "操作",
+      width: 150,
+      key: "_operation",
+      valueType: "option",
+      render: (text, record: any, _, action) => [
+        <a
+          key="editable"
+          onClick={() => {
+            action?.startEditable?.(record._id);
+          }}
+        >
+          编辑
+        </a>,
+        <Popconfirm
+          title="确定删除？删除后将不可恢复。"
+          key="delete"
+          onConfirm={() => {
+            deleteRecord(record);
           }}
           okText="确定"
           cancelText="取消"
@@ -281,30 +372,6 @@ const ZETable: React.FC<ZETableProps> = ({
     });
   }
 
-  // Export
-  let exportFileName = "数据导出";
-
-  if (exportToExcel) {
-    if (typeof exportToExcel === "string") {
-      exportFileName = exportToExcel;
-    }
-
-    toolBarRender.push(
-      <Tooltip title="导出Excel">
-        <Button
-          type="text"
-          icon={<DownloadOutlined />}
-          onClick={() => excelExporter(result, exportFileName, xlsx)}
-        />
-      </Tooltip>
-    );
-  }
-
-  // result的schema中的properties其实没啥用，应该改为columnProperties的
-  if (result?.columnProperties) {
-    result.schema.properties = result.columnProperties;
-  }
-
   return (
     <div data-testid="ZETable" className={className}>
       <ProProvider.Provider
@@ -313,24 +380,8 @@ const ZETable: React.FC<ZETableProps> = ({
           valueTypeMap: result ? customValueTypes(result.schema) : {},
         }}
       >
-        <ProTable
-          {...restProps}
-          actionRef={tableRef}
-          columns={columns}
-          rowKey={rowKey}
-          search={search === undefined ? false : search}
-          tableClassName={exportFileName}
-          request={request}
-          size={size}
-          scroll={scroll !== undefined ? scroll : { x }}
-          options={
-            options !== undefined
-              ? options
-              : { reload: true, setting: false, density: false }
-          }
-          pagination={pagination}
-          toolBarRender={() => toolBarRender}
-        />
+        {creationMode !== "list" && <ProTable {...tableProps} />}
+        {creationMode === "list" && <EditableProTable {...tableProps} />}
         {creationMode === "form" && (
           <Drawer
             destroyOnClose

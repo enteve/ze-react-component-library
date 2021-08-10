@@ -177,7 +177,7 @@ export const mapColumnItem = (
   }
 
   const valueEnum = valueEnumMapping(property);
-  const defaultColumnType: ProColumnType = {
+  const defaultColumnType: any = {
     title: property.name,
     dataIndex: property.name.split("."),
     ellipsis:
@@ -190,6 +190,23 @@ export const mapColumnItem = (
     valueEnum,
     ...additionalProps,
   };
+
+  // 以下是用来给createMode=list用的
+  // formItemProps
+  if (!defaultColumnType.formItemProps) defaultColumnType.formItemProps = {};
+  if (!defaultColumnType.formItemProps.rules)
+    defaultColumnType.formItemProps.rules = [];
+  if (property.constraints.required && !property.udf) {
+    // 这个rules会在EditableProTable里面起作用
+    defaultColumnType.formItemProps.rules.push({
+      required: true,
+      message: "此项为必填项",
+    });
+  }
+  if (property.name.indexOf(".") > 0) {
+    // 在creation模式里面，这样的情况不可能需要edit
+    defaultColumnType.editable = false;
+  }
 
   if (customColumn[property.name]) {
     return {
