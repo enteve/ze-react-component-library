@@ -319,7 +319,7 @@ export const customValueTypes = (schema: SchemaType) => ({
                     schema={property.schema}
                     onChange={(v, option) => {
                       handleEditChange({
-                        ...itemProps.record,
+                        ...item.entry,
                         [d.dataIndex]: v,
                         "@option": option,
                       });
