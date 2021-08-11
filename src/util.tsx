@@ -203,7 +203,7 @@ export const mapColumnItem = (
       message: "此项为必填项",
     });
   }
-  if (property.name.indexOf(".") > 0) {
+  if (property.name.indexOf(".") > 0 || property.udf) {
     // 在creation模式里面，这样的情况不可能需要edit
     defaultColumnType.editable = false;
   }
