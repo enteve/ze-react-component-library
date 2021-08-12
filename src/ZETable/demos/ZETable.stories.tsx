@@ -31,7 +31,7 @@ export const NormalWithRowClick = () => (
 export const DataCreationForm = () => (
   <ZETable
     logicform={{
-      schema: "employee",
+      schema: "supplier",
       sort: { ID: 1 },
     }}
     onRow={(record) => ({
@@ -41,27 +41,31 @@ export const DataCreationForm = () => (
     })}
     creationMode="form"
     // 下面是给form的
-    creationColumns={[
-      { dataIndex: "姓名" },
-      { dataIndex: "部门" },
-      { dataIndex: "手机号码" },
-      { dataIndex: "密码" },
-    ]}
+    // creationColumns={[
+    //   { dataIndex: "姓名" },
+    //   { dataIndex: "部门" },
+    //   { dataIndex: "手机号码" },
+    //   { dataIndex: "密码" },
+    // ]}
   />
 );
 
 export const DataCreationList = () => (
   <ZETable
     logicform={{
-      schema: "supplierSettlement",
-      query: { 供应商: "GY20210809130994" },
+      schema: "stock",
+      query: {},
     }}
-    preds={["商品.编码", "商品", "商品.分类", "商品.单位", "结算价"]}
-    customColumn={{
-      "商品.编码": { title: "商品编码" },
-      "商品.分类": { title: "类型" },
-      "商品.单位": { title: "单位" },
-    }}
+    preds={[
+      "日期",
+      "类型",
+      "供应商",
+      "提货人",
+      "商品",
+      "生产日期",
+      "交付方式",
+      "数量",
+    ]}
     creationMode="list"
   />
 );
@@ -81,7 +85,7 @@ export const AdditionalColumns = () => (
       schema: "dealer",
     }}
     preds={["名称", "公司全称", "操作"]}
-    customColumn={{
+    customColumns={{
       操作: {
         render: (v: any, record: any) => (
           <span
@@ -104,7 +108,7 @@ export const CustomRender = () => (
       schema: "dealer",
     }}
     preds={["名称", "公司全称", "状态"]}
-    customColumn={{
+    customColumns={{
       状态: {
         render: (v: any) => {
           return (
@@ -132,7 +136,7 @@ export const TitleMap = () => (
     logicform={{
       schema: "dealer",
     }}
-    customColumn={{
+    customColumns={{
       名称: {
         title: "供应商",
         width: 100,
@@ -218,7 +222,7 @@ export const StatsAndCalcInFront = () => (
       groupby: "商品",
     }}
     preds={["商品", "销售额", "销量", "件单价"]}
-    customColumn={{
+    customColumns={{
       件单价: {
         render: (v: any, record: any) => (
           <span>{record.销售额 / record.销量}</span>
@@ -245,7 +249,7 @@ export const TwoRowHeader = () => (
       { title: "服务器的统计值", children: ["销售额", "销量"] },
       "件单价（本地统计）",
     ]}
-    customColumn={{
+    customColumns={{
       "件单价（本地统计）": {
         render: (v: any, record: any) => (
           <span>{record.销售额 / record.销量}</span>
@@ -299,7 +303,7 @@ export const ProductSaleToOrder = () => {
         expands: ["经销商.所在省市"],
       }}
       scroll={null}
-      customColumn={{
+      customColumns={{
         经销商: {
           render: (v: any, record: any) => {
             return `${record.经销商?.名称}(${
@@ -348,7 +352,7 @@ export const RefLogicforms = () => {
         "折扣率",
         { title: "区域统计", children: ["区域订单数量", "区域总实销"] },
       ]}
-      customColumn={{
+      customColumns={{
         平台: {
           render: () => "美团",
         },
@@ -493,7 +497,7 @@ export const MultiSchema = () => {
 
 // 下面的只有JAEM才能看到
 export const JAEMSourceData = () => {
-  const subdistrict = "共和新路街道";
+  const subdistrict = "天目西路街道";
   return (
     <ZETable
       preds={[
@@ -525,7 +529,7 @@ export const JAEMSourceData = () => {
         "地勘单位",
         "电梯品牌",
       ]}
-      customColumn={{
+      customColumns={{
         地址: { title: "地址（弄）" },
       }}
       logicform={{

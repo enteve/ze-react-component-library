@@ -88,18 +88,17 @@ const ZESchemaForm: React.FC<ZESchemaFromProps> = ({
   if (_columns) {
     const mapCustomColumn = (col: any) => {
       // children
-      if (col.columns && col.valueType !== "table") {
+      if (col.columns) {
         return {
           ...col,
           columns: col.columns.map((c) => mapCustomColumn(c)),
         };
       }
 
-      if (!col.dataIndex) {
-        return col;
-      }
+      if (!col.dataIndex) return col;
 
       const property = schema.properties.find((p) => p.name === col.dataIndex);
+      if (!property) return col;
 
       return {
         ...propsForProperty(property, col),
