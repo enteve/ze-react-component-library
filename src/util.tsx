@@ -17,6 +17,43 @@ import "antd/lib/cascader/style/index";
 
 const { Option } = Select;
 
+/**
+ * 相比zeroetp-api-sdk里面的findPropByName，多了对.号的predChain的支持
+ * @param schema
+ * @param propName
+ * @returns
+ */
+export const findProperty = (schema: SchemaType, propName: string) => {
+  // 前端的predChain，要获取正确的property
+  let property: PropertyType;
+  if (propName.indexOf(".") > 0) {
+    const chain = propName.split(".");
+    let currentSchema = schema;
+    for (const chainItem of chain) {
+      property = currentSchema.properties.find((p) => p.name === chainItem);
+      if (property) {
+        currentSchema = property.schema;
+        if (!currentSchema) break;
+      }
+    }
+
+    if (property) {
+      // 记得要改个名字
+      property = {
+        ...property,
+        name: propName,
+      };
+    }
+  } else {
+    try {
+      // 可以找不到属性
+      property = findPropByName(schema, propName);
+    } catch (error) {}
+  }
+
+  return property;
+};
+
 export const valueTypeMapping = (property: PropertyType) => {
   switch (property.type) {
     case "currency":

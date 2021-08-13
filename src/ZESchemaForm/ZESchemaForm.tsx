@@ -10,7 +10,12 @@ import type {
 import { useRequest } from "@umijs/hooks";
 import { request } from "../request";
 import { getSchemaByID, SchemaAPIResultType } from "zeroetp-api-sdk";
-import { valueTypeMapping, valueEnumMapping, customValueTypes } from "../util";
+import {
+  valueTypeMapping,
+  valueEnumMapping,
+  customValueTypes,
+  findProperty,
+} from "../util";
 
 const ZESchemaForm: React.FC<ZESchemaFromProps> = ({
   schemaID,
@@ -58,13 +63,15 @@ const ZESchemaForm: React.FC<ZESchemaFromProps> = ({
     }
 
     // readonly
-    let readonly = p.udf;
+    let readonly = p.udf || p.name.indexOf(".") > 0; // 第二个判断条件是前端predChain
     if (
       propertyConfig &&
       propertyConfig[p.name] &&
       "readonly" in propertyConfig[p.name]
     ) {
       readonly = propertyConfig[p.name].readonly;
+    }
+    if (readonly) {
     }
 
     // render
@@ -73,7 +80,7 @@ const ZESchemaForm: React.FC<ZESchemaFromProps> = ({
       render = () => <div>自动计算</div>;
     }
 
-    return {
+    const column: ProFormColumnsType<any, ExtendValueTypes> = {
       title: p.name,
       dataIndex: p.name,
       valueType,
@@ -83,6 +90,12 @@ const ZESchemaForm: React.FC<ZESchemaFromProps> = ({
       render,
       tooltip: p.description,
     };
+    if (readonly) {
+      // 给可编辑表格用的
+      column.editable = false;
+    }
+
+    return column;
   };
 
   if (_columns) {
@@ -97,12 +110,13 @@ const ZESchemaForm: React.FC<ZESchemaFromProps> = ({
 
       if (!col.dataIndex) return col;
 
-      const property = schema.properties.find((p) => p.name === col.dataIndex);
+      const property = findProperty(schema, col.dataIndex);
       if (!property) return col;
 
       return {
         ...propsForProperty(property, col),
         ...col,
+        dataIndex: col.dataIndex.split("."),
       };
     };
 
