@@ -35,8 +35,7 @@ export const ProductWithEditableTable = () => (
         columns: [
           {
             title: "商品编码",
-            dataIndex: "商品编码",
-            renderFormItem: (value: any) => value?.entry?.子商品?.编码 || "-",
+            dataIndex: "子商品.编码",
           },
           {
             title: "商品名称",
@@ -265,8 +264,7 @@ export const XueTaiFengStock = () => (
           },
           {
             title: "分类",
-            dataIndex: "分类",
-            renderFormItem: (value: any) => value?.entry?.商品?.分类 || "-",
+            dataIndex: "商品.分类",
           },
           {
             title: "生产日期",
