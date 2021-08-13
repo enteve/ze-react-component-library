@@ -142,7 +142,6 @@ export const customValueTypes = (schema: SchemaType) => ({
     renderFormItem: (_text, props) => {
       const propName =
         props?.fieldProps?.propName || props.proFieldKey.split("-").pop();
-      console.log(propName);
 
       const property = findPropByName(schema, propName);
 
@@ -233,12 +232,6 @@ const renderObjectFormItem = (schema, props: any) => {
     </Option>
   ));
 
-  // 这里修改下value，原本是一个object，改成_id
-  let value = props?.fieldProps?.value;
-  if (value && typeof value === "object") {
-    value = value._id;
-  }
-
   return (
     <Select
       showSearch
@@ -249,7 +242,18 @@ const renderObjectFormItem = (schema, props: any) => {
       placeholder="请选择"
       allowClear
       {...props?.fieldProps}
-      value={value}
+      value={
+        typeof props?.fieldProps?.value === "object"
+          ? props?.fieldProps?.value._id
+          : props?.fieldProps?.value
+      }
+      onChange={(v) => {
+        // 为了便于前端显示，这里需要返回整个object。
+        const entity = data.find((i) => i._id === v);
+        if (entity) {
+          props?.fieldProps?.onChange?.(entity);
+        }
+      }}
     >
       {options}
     </Select>

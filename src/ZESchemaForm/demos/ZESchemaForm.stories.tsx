@@ -291,6 +291,11 @@ export const XueTaiFengStock = () => (
             dataIndex: "数量",
           },
           {
+            title: "分类",
+            dataIndex: "分类",
+            renderFormItem: (value: any) => value?.entry?.商品?.分类 || "-",
+          },
+          {
             title: "生产日期",
             dataIndex: "生产日期",
           },
