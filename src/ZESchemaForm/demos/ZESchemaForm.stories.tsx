@@ -29,25 +29,22 @@ export const ProductWithEditableTable = () => (
     onFinish={onFinish}
     columns={[
       {
-        dataIndex: "子商品",
+        dataIndex: "子商品列表",
         valueType: "table",
         fieldProps: { placeholder: "新增产品" },
         columns: [
           {
             title: "商品编码",
-            renderFormItem: (schema: any) => {
-              return schema?.entry?.子商品 || "-";
-            },
+            dataIndex: "子商品.编码",
           },
           {
-            dataIndex: "子商品",
             title: "商品名称",
-            valueType: "select",
+            dataIndex: "子商品",
             fieldProps: { query: { 分类: { $in: ["单品", "耗材"] } } },
           },
           {
-            dataIndex: "数量",
             title: "数量",
+            dataIndex: "数量",
             valueType: "digit",
           },
           {
@@ -87,42 +84,14 @@ export const ProductWithEditableTableSupportEnums = () => (
         ],
       },
     ]}
-    onFinish={async (formData) => {
-      console.log(formData);
-    }}
+    onFinish={onFinish}
   />
 );
 export const Dealer = () => (
-  <ZESchemaForm
-    schemaID="dealer"
-    onFinish={(formData: any) =>
-      createData(
-        {
-          _id: "dealer",
-          name: "dealer",
-          type: "entity",
-          properties: [],
-        },
-        formData
-      )
-    }
-  />
+  <ZESchemaForm schemaID="dealer" onFinish={onFinish} />
 );
 export const Order = () => (
-  <ZESchemaForm
-    schemaID="productsale"
-    onFinish={(formData: any) =>
-      createData(
-        {
-          _id: "productsale",
-          name: "productsale",
-          type: "event",
-          properties: [],
-        },
-        formData
-      )
-    }
-  />
+  <ZESchemaForm schemaID="productsale" onFinish={onFinish} />
 );
 
 export const DealerCompose = () => {
@@ -200,6 +169,7 @@ export const Update = () => (
 );
 
 // 可以做readOnly和valueType的自定义
+// columns里面也可以达到同样的效果。此处这功能是为了方便不用columns的时候用的。
 export const PropertyConfig = () => (
   <ZESchemaForm
     schemaID="productsale"
@@ -253,5 +223,95 @@ export const LayoutType = () => (
     schemaID="employee"
     layoutType="DrawerForm"
     trigger={<a>点击我</a>}
+  />
+);
+
+export const XueTaiFengStock = () => (
+  <ZESchemaForm
+    schemaID="stock"
+    onFinish={onFinish}
+    columns={[
+      {
+        valueType: "group",
+        columns: [
+          {
+            title: "供应商",
+            dataIndex: "供应商",
+            width: "lg",
+          },
+          {
+            title: "入库日期",
+            dataIndex: "日期",
+            width: "lg",
+          },
+        ],
+      },
+      {
+        renderFormItem: () => <Divider dashed />,
+      },
+      {
+        valueType: "table",
+        dataIndex: "商品列表",
+        fieldProps: { placeholder: "新增商品" },
+        columns: [
+          {
+            title: "商品",
+            dataIndex: "商品",
+          },
+          {
+            title: "入库数量",
+            dataIndex: "数量",
+          },
+          {
+            title: "分类",
+            dataIndex: "商品.分类",
+          },
+          {
+            title: "生产日期",
+            dataIndex: "生产日期",
+          },
+          {
+            title: "操作",
+            valueType: "option",
+          },
+        ],
+      },
+      {
+        valueType: "table",
+        dataIndex: "商品列表2",
+        columns: [
+          {
+            title: "商品",
+            dataIndex: "商品",
+            fieldProps: { query: { 分类: { $in: ["单品", "耗材"] } } },
+          },
+          {
+            title: "入库数量",
+            dataIndex: "数量",
+          },
+          {
+            title: "生产日期",
+            dataIndex: "生产日期",
+          },
+          {
+            title: "操作",
+            valueType: "option",
+          },
+        ],
+      },
+    ]}
+    initialValues={{
+      商品列表2: [
+        {
+          id: 1628782019762,
+          商品: {
+            _id: "SoySauce-Z02-L",
+            名称: "谁知道呢",
+          },
+          数量: 1,
+          生产日期: "2021-08-24",
+        },
+      ],
+    }}
   />
 );

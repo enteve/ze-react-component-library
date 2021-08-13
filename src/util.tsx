@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   PropertyType,
   SchemaType,
@@ -8,19 +8,51 @@ import {
   findPropByName,
   getNameProperty,
 } from "zeroetp-api-sdk";
-import type { ProColumnType } from "@ant-design/pro-table";
-import {
-  getColumnDateProps,
-  getColumnSearchProps,
-} from "./ZETable/FilterComponents";
 import numeral from "numeral";
 import { EditableProTable } from "@ant-design/pro-table";
-import { Select, InputNumber, Radio, Cascader, Spin, Input } from "antd";
+import { Select, InputNumber, Radio, Cascader, Spin } from "antd";
 import { useRequest } from "@umijs/hooks";
 import { requestLogicform } from "./request";
 import "antd/lib/cascader/style/index";
 
 const { Option } = Select;
+
+/**
+ * 相比zeroetp-api-sdk里面的findPropByName，多了对.号的predChain的支持
+ * @param schema
+ * @param propName
+ * @returns
+ */
+export const findProperty = (schema: SchemaType, propName: string) => {
+  // 前端的predChain，要获取正确的property
+  let property: PropertyType;
+  if (propName.indexOf(".") > 0) {
+    const chain = propName.split(".");
+    let currentSchema = schema;
+    for (const chainItem of chain) {
+      property = currentSchema.properties.find((p) => p.name === chainItem);
+      if (property) {
+        currentSchema = property.schema;
+        if (!currentSchema) break;
+      }
+    }
+
+    if (property) {
+      // 记得要改个名字
+      property = {
+        ...property,
+        name: propName,
+      };
+    }
+  } else {
+    try {
+      // 可以找不到属性
+      property = findPropByName(schema, propName);
+    } catch (error) {}
+  }
+
+  return property;
+};
 
 export const valueTypeMapping = (property: PropertyType) => {
   switch (property.type) {
@@ -101,123 +133,6 @@ export const valueEnumMapping = (property: PropertyType) => {
   return valueEnum;
 };
 
-export const mapColumnItem = (
-  predItem: string,
-  customColumn: { [key: string]: ProColumnType },
-  properties: any[],
-  result: LogicformAPIResultType,
-  exporting: boolean // 是否需要导出，导出的话，ellipse不要了
-): ProColumnType => {
-  let property = properties.find((p) => p.name === predItem);
-
-  // 前端的predChain，要获取正确的property
-  // 后端不会出现有.的情况。
-  if (predItem.indexOf(".") > 0) {
-    const chain = predItem.split(".");
-    let currentSchema = { properties };
-    for (const chainItem of chain) {
-      property = currentSchema.properties.find((p) => p.name === chainItem);
-      if (property) {
-        currentSchema = property.schema;
-        if (!currentSchema) break;
-      }
-    }
-
-    if (property) {
-      // 记得要改个名字
-      property = {
-        ...property,
-        name: predItem,
-      };
-    }
-  }
-
-  if (!property) {
-    // fake property
-    property = {
-      name: predItem,
-      type: "string",
-      primal_type: "string",
-      constraints: {},
-      is_fake: true,
-    };
-  }
-
-  let additionalProps: any = {};
-
-  // Filters
-  if (!property.is_fake) {
-    if (property.primal_type === "date") {
-      additionalProps = {
-        ...additionalProps,
-        ...getColumnDateProps(property.name),
-      };
-    } else if (
-      (property.primal_type === "string" ||
-        property.primal_type === "object") &&
-      !property.constraints.enum
-    ) {
-      additionalProps = {
-        ...additionalProps,
-        ...getColumnSearchProps(property.name),
-      };
-    }
-  }
-
-  // Alignment
-  if (property.primal_type === "number" || property.primal_type === "boolean") {
-    additionalProps.align = "right";
-  }
-
-  // Sorter
-  if (result?.schema.type === "entity") {
-    if (property.primal_type === "number") {
-      additionalProps.sorter = true;
-    }
-  }
-
-  const valueEnum = valueEnumMapping(property);
-  const defaultColumnType: any = {
-    title: property.name,
-    dataIndex: property.name.split("."),
-    ellipsis:
-      property.primal_type === "string" &&
-      !property.constraints.enum &&
-      !exporting,
-    valueType: valueTypeMapping(property),
-    filters: valueEnum !== undefined,
-    onFilter: false,
-    valueEnum,
-    ...additionalProps,
-  };
-
-  // 以下是用来给createMode=list用的
-  // formItemProps
-  if (!defaultColumnType.formItemProps) defaultColumnType.formItemProps = {};
-  if (!defaultColumnType.formItemProps.rules)
-    defaultColumnType.formItemProps.rules = [];
-  if (property.constraints.required && !property.udf) {
-    // 这个rules会在EditableProTable里面起作用
-    defaultColumnType.formItemProps.rules.push({
-      required: true,
-      message: "此项为必填项",
-    });
-  }
-  if (property.name.indexOf(".") > 0 || property.udf) {
-    // 在creation模式里面，这样的情况不可能需要edit
-    defaultColumnType.editable = false;
-  }
-
-  if (customColumn[property.name]) {
-    return {
-      ...defaultColumnType,
-      ...customColumn[property.name],
-    };
-  }
-
-  return defaultColumnType;
-};
-
 export const customValueTypes = (schema: SchemaType) => ({
   percentage: {
     render: (number: number) => {
@@ -261,8 +176,10 @@ export const customValueTypes = (schema: SchemaType) => ({
 
       return entity[nameProperty.name];
     },
-    renderFormItem: (text, props) => {
-      const propName = props.proFieldKey.split("-").pop();
+    renderFormItem: (_text, props) => {
+      const propName =
+        props?.fieldProps?.propName || props.proFieldKey.split("-").pop();
+
       const property = findPropByName(schema, propName);
 
       // Object有两种表现模式，带Hierarchy的和不带Hierarchy的
@@ -277,132 +194,46 @@ export const customValueTypes = (schema: SchemaType) => ({
     render: (v: any) => <div>{v ? "是" : "否"}</div>,
   },
   table: {
-    renderFormItem: (text, props) => {
-      const { value, onChange, placeholder } = props.fieldProps;
-      const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
-      const columns = props?.columns?.map((d) => {
-        if (!d.dataIndex) {
-          return d;
-        }
-        let property;
-        try {
-          property = findPropByName(schema, d.dataIndex);
-        } catch (error) {}
+    renderFormItem: (_text, props) => {
+      const initialValues = props?.fieldProps?.value || [];
+      const [editableKeys, setEditableRowKeys] = useState<React.Key[]>(
+        initialValues.map((i) => i.id)
+      );
+      const [dataSource, setDataSource] = useState<any[]>(initialValues);
 
-        if (property) {
-          const valueEnum = valueEnumMapping(property);
-          const valueType = valueTypeMapping(property);
-          if (valueEnum) {
-            return {
-              valueType,
-              valueEnum,
-              fieldProps: (form, config) => {
-                return {
-                  onChange: (v, option) => {
-                    handleEditChange({
-                      ...config.entry,
-                      [d.dataIndex]: v,
-                    });
-                  },
-                };
-              },
-              ...d,
-            };
-          }
-          if (property.primal_type === "object") {
-            return {
-              valueType,
-              renderFormItem: (item, itemProps) => {
-                return (
-                  <ObjectColumnSelect
-                    {...d.fieldProps}
-                    schema={property.schema}
-                    onChange={(v, option) => {
-                      handleEditChange({
-                        ...item.entry,
-                        [d.dataIndex]: v,
-                        "@option": option,
-                      });
-                    }}
-                  />
-                );
-              },
-              ...d,
-            };
-          }
-        }
-        return {
-          fieldProps: (form, config) => {
-            return {
-              onChange: (v) =>
-                handleEditChange({
-                  ...config.entry,
-                  [d.dataIndex]: v,
-                }),
-            };
-          },
-          ...d,
-        };
-      });
-
-      function handleEditChange(newRecord) {
-        if (value instanceof Array) {
-          const index = value.findIndex((d) => d?.id === newRecord?.id);
-          const newArr = [...value];
-          if (index > -1) {
-            newArr[index] = newRecord;
-          } else {
-            newArr.push(newRecord);
-          }
-          onChange(newArr);
-        } else {
-          onChange([newRecord]);
-        }
-      }
-
-      function handleDataSource(v) {
-        onChange(v);
-      }
-
-      useEffect(() => {
-        if (value instanceof Array) {
-          setEditableRowKeys(value.map((d) => d?.id));
-        }
-      }, [value]);
+      const setValue = (list) => {
+        setDataSource(list);
+        props?.fieldProps?.onChange?.(
+          list.filter((i) => Object.keys(i).length > 1)
+        );
+      };
 
       return (
         <EditableProTable
-          value={value}
-          onChange={handleDataSource}
-          controlled
+          locale={{ emptyText: " " }}
           rowKey="id"
-          toolBarRender={false}
-          columns={columns}
+          columns={props.columns}
           recordCreatorProps={{
             newRecordType: "dataSource",
-            position: !value || value?.length === 0 ? "top" : "bottom",
-            creatorButtonText: placeholder,
             record: () => ({
               id: Date.now(),
             }),
+            creatorButtonText: props?.fieldProps?.placeholder,
           }}
+          value={dataSource}
+          onChange={setValue}
           editable={{
             type: "multiple",
             editableKeys,
             onChange: setEditableRowKeys,
-            actionRender: (row, _, dom) => {
-              return [dom.delete];
-            },
+            actionRender: (_row, _, dom) => [dom.delete],
+            onValuesChange: (_record, recordList) => setValue(recordList),
           }}
         />
       );
     },
   },
 });
-
-function ObjectColumnSelect({ schema, ...fieldProps }) {
-  return renderObjectFormItem(schema, { fieldProps });
-}
 
 // 不带Hierarchy的，渲染object类型的
 const renderObjectFormItem = (schema, props: any) => {
@@ -438,12 +269,6 @@ const renderObjectFormItem = (schema, props: any) => {
     </Option>
   ));
 
-  // 这里修改下value，原本是一个object，改成_id
-  let value = props?.fieldProps?.value;
-  if (value && typeof value === "object") {
-    value = value._id;
-  }
-
   return (
     <Select
       showSearch
@@ -454,7 +279,18 @@ const renderObjectFormItem = (schema, props: any) => {
       placeholder="请选择"
       allowClear
       {...props?.fieldProps}
-      value={value}
+      value={
+        typeof props?.fieldProps?.value === "object"
+          ? props?.fieldProps?.value._id
+          : props?.fieldProps?.value
+      }
+      onChange={(v) => {
+        // 为了便于前端显示，这里需要返回整个object。
+        const entity = data.find((i) => i._id === v);
+        if (entity) {
+          props?.fieldProps?.onChange?.(entity);
+        }
+      }}
     >
       {options}
     </Select>
