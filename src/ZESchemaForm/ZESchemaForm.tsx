@@ -118,7 +118,39 @@ const ZESchemaForm: React.FC<ZESchemaFromProps> = ({
         valueTypeMap: customValueTypes(schema),
       }}
     >
-      <BetaSchemaForm<any, ExtendValueTypes> {...props} columns={columns} />
+      <BetaSchemaForm<any, ExtendValueTypes>
+        {...props}
+        columns={columns}
+        onFinish={async (values) => {
+          // 在这里进行一个转换，object变回为_id的形式
+          const simplifyValue = (item) => {
+            if (Array.isArray(item)) {
+              return item.map((i) => simplifyValue(i));
+            }
+
+            if (typeof item === "object" && "_id" in item) {
+              return item._id;
+            }
+
+            if (typeof item === "object") {
+              const v = {};
+              for (const key of Object.keys(item)) {
+                v[key] = simplifyValue(item[key]);
+              }
+
+              return v;
+            }
+
+            return item;
+          };
+
+          for (const key of Object.keys(values)) {
+            values[key] = simplifyValue(values[key]);
+          }
+
+          return props.onFinish?.(values);
+        }}
+      />
     </ProProvider.Provider>
   );
 };
