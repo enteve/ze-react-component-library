@@ -23,13 +23,128 @@ import {
 } from "zeroetp-api-sdk";
 import type { LogicformAPIResultType } from "zeroetp-api-sdk";
 
-import { customValueTypes, mapColumnItem } from "../util";
+import { customValueTypes, valueEnumMapping, valueTypeMapping } from "../util";
 
 import ZESchemaForm from "../ZESchemaForm";
 
 import "./ZETable.less";
 
 import { requestLogicform, request as requestAPI } from "../request";
+import { getColumnDateProps, getColumnSearchProps } from "./FilterComponents";
+
+const mapColumnItem = (
+  predItem: string,
+  customColumn: ProColumnType,
+  properties: any[],
+  exporting: boolean // 是否需要导出，导出的话，ellipse不要了
+): ProColumnType => {
+  let property = properties.find((p) => p.name === predItem);
+
+  // 前端的predChain，要获取正确的property
+  // 后端不会出现有.的情况。
+  if (predItem.indexOf(".") > 0) {
+    const chain = predItem.split(".");
+    let currentSchema = { properties };
+    for (const chainItem of chain) {
+      property = currentSchema.properties.find((p) => p.name === chainItem);
+      if (property) {
+        currentSchema = property.schema;
+        if (!currentSchema) break;
+      }
+    }
+
+    if (property) {
+      // 记得要改个名字
+      property = {
+        ...property,
+        name: predItem,
+      };
+    }
+  }
+
+  if (!property) {
+    // fake property
+    property = {
+      name: predItem,
+      type: "string",
+      primal_type: "string",
+      constraints: {},
+      is_fake: true,
+    };
+  }
+
+  let additionalProps: any = {};
+
+  // Filters
+  if (!property.is_fake) {
+    if (property.primal_type === "date") {
+      additionalProps = {
+        ...additionalProps,
+        ...getColumnDateProps(property.name),
+      };
+    } else if (
+      (property.primal_type === "string" ||
+        property.primal_type === "object") &&
+      !property.constraints.enum
+    ) {
+      additionalProps = {
+        ...additionalProps,
+        ...getColumnSearchProps(property.name),
+      };
+    }
+  }
+
+  // Alignment
+  if (property.primal_type === "number" || property.primal_type === "boolean") {
+    additionalProps.align = "right";
+  }
+
+  // Sorter
+  if (property.primal_type === "number") {
+    additionalProps.sorter = true;
+  }
+
+  const valueEnum = valueEnumMapping(property);
+  const defaultColumnType: any = {
+    title: property.name,
+    dataIndex: property.name.split("."),
+    ellipsis:
+      property.primal_type === "string" &&
+      !property.constraints.enum &&
+      !exporting,
+    valueType: valueTypeMapping(property),
+    filters: valueEnum !== undefined,
+    onFilter: false,
+    valueEnum,
+    ...additionalProps,
+  };
+
+  // 以下是用来给createMode=list用的
+  // formItemProps
+  if (!defaultColumnType.formItemProps) defaultColumnType.formItemProps = {};
+  if (!defaultColumnType.formItemProps.rules)
+    defaultColumnType.formItemProps.rules = [];
+  if (property.constraints.required && !property.udf) {
+    // 这个rules会在EditableProTable里面起作用
+    defaultColumnType.formItemProps.rules.push({
+      required: true,
+      message: "此项为必填项",
+    });
+  }
+  if (property.name.indexOf(".") > 0 || property.udf) {
+    // 在creation模式里面，这样的情况不可能需要edit
+    defaultColumnType.editable = false;
+  }
+
+  if (customColumn) {
+    return {
+      ...defaultColumnType,
+      ...customColumn,
+    };
+  }
+
+  return defaultColumnType;
+};
 
 const ZETable: React.FC<ZETableProps> = ({
   logicform,
@@ -38,7 +153,7 @@ const ZETable: React.FC<ZETableProps> = ({
   search,
   size = "small",
   rowKey = "_id",
-  customColumn = {},
+  customColumns = {},
   className,
   scroll,
   exportToExcel,
@@ -192,9 +307,8 @@ const ZETable: React.FC<ZETableProps> = ({
         children: predItem.children.map((pred) =>
           mapColumnItem(
             pred,
-            customColumn,
+            customColumns[pred],
             properties,
-            result,
             exportToExcel != undefined
           )
         ),
@@ -203,9 +317,8 @@ const ZETable: React.FC<ZETableProps> = ({
 
     return mapColumnItem(
       predItem,
-      customColumn,
+      customColumns[predItem],
       properties,
-      result,
       exportToExcel != undefined
     );
   });
