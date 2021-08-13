@@ -160,7 +160,7 @@ export const customValueTypes = (schema: SchemaType) => ({
     renderFormItem: (_text, props) => {
       const initialValues = props?.fieldProps?.value || [];
       const [editableKeys, setEditableRowKeys] = useState<React.Key[]>(
-        initialValues.map((i) => i._id)
+        initialValues.map((i) => i.id)
       );
       const [dataSource, setDataSource] = useState<any[]>(initialValues);
 
@@ -174,12 +174,12 @@ export const customValueTypes = (schema: SchemaType) => ({
       return (
         <EditableProTable
           locale={{ emptyText: " " }}
-          rowKey="_id"
+          rowKey="id"
           columns={props.columns}
           recordCreatorProps={{
             newRecordType: "dataSource",
             record: () => ({
-              _id: Date.now(),
+              id: Date.now(),
             }),
             creatorButtonText: props?.fieldProps?.placeholder,
           }}

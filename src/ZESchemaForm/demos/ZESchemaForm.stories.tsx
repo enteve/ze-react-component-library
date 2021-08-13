@@ -36,7 +36,7 @@ export const ProductWithEditableTable = () => (
           {
             title: "商品编码",
             dataIndex: "商品编码",
-            renderFormItem: (value: any) => value?.entry.子商品 || "-",
+            renderFormItem: (value: any) => value?.entry?.子商品?.编码 || "-",
           },
           {
             title: "商品名称",
@@ -85,42 +85,14 @@ export const ProductWithEditableTableSupportEnums = () => (
         ],
       },
     ]}
-    onFinish={async (formData) => {
-      console.log(formData);
-    }}
+    onFinish={onFinish}
   />
 );
 export const Dealer = () => (
-  <ZESchemaForm
-    schemaID="dealer"
-    onFinish={(formData: any) =>
-      createData(
-        {
-          _id: "dealer",
-          name: "dealer",
-          type: "entity",
-          properties: [],
-        },
-        formData
-      )
-    }
-  />
+  <ZESchemaForm schemaID="dealer" onFinish={onFinish} />
 );
 export const Order = () => (
-  <ZESchemaForm
-    schemaID="productsale"
-    onFinish={(formData: any) =>
-      createData(
-        {
-          _id: "productsale",
-          name: "productsale",
-          type: "event",
-          properties: [],
-        },
-        formData
-      )
-    }
-  />
+  <ZESchemaForm schemaID="productsale" onFinish={onFinish} />
 );
 
 export const DealerCompose = () => {
@@ -198,6 +170,7 @@ export const Update = () => (
 );
 
 // 可以做readOnly和valueType的自定义
+// columns里面也可以达到同样的效果。此处这功能是为了方便不用columns的时候用的。
 export const PropertyConfig = () => (
   <ZESchemaForm
     schemaID="productsale"
@@ -332,7 +305,7 @@ export const XueTaiFengStock = () => (
     initialValues={{
       商品列表2: [
         {
-          _id: 1628782019762,
+          id: 1628782019762,
           商品: {
             _id: "SoySauce-Z02-L",
             名称: "谁知道呢",
