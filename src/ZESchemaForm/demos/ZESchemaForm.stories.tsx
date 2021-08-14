@@ -305,6 +305,10 @@ export const XueTaiFengStock = () => {
               dataIndex: "数量",
             },
             {
+              title: "库存数量",
+              dataIndex: "商品.库存",
+            },
+            {
               title: "分类",
               dataIndex: "商品.分类",
             },
