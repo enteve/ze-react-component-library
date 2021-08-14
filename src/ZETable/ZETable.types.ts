@@ -2,7 +2,7 @@
 import type { ProColumnType, ProTableProps } from "@ant-design/pro-table";
 import type { ParamsType } from "@ant-design/pro-provider";
 import type { LogicformType } from "zeroetp-api-sdk";
-import type { ZESchemaFromColumnType } from "../ZESchemaForm/ZESchemaForm.types";
+import type { ZESchemaFormColumnType } from "../ZESchemaForm/ZESchemaForm.types";
 
 export declare type PredItemType =
   | string
@@ -28,7 +28,7 @@ export type ZETableProps = {
     | null; // 传给ProTable的。ZETable默认会有Scroll的。用null来关闭
 
   creationMode?: "form" | "list"; // form是单个单个新增，产生一个form。而list是直接在列表里面操作
-  creationColumns?: ZESchemaFromColumnType[]; // 就是ZESchemaForm里面的columns属性
+  creationColumns?: ZESchemaFormColumnType[]; // 就是ZESchemaForm里面的columns属性
 } & Omit<
   ProTableProps<ProColumnType, ParamsType>,
   "columns" | "request" | "pagination" | "toolBarRender" | "scroll"

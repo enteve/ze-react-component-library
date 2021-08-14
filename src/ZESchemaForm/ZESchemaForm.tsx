@@ -3,9 +3,9 @@ import type { ProFormColumnsType } from "@ant-design/pro-form";
 import ProProvider from "@ant-design/pro-provider";
 import { BetaSchemaForm } from "@ant-design/pro-form";
 import type {
-  ZESchemaFromProps,
+  ZESchemaFormProps,
   ExtendValueTypes,
-  ZESchemaFromColumnType,
+  ZESchemaFormColumnType,
 } from "./ZESchemaForm.types";
 import { useRequest } from "@umijs/hooks";
 import { request } from "../request";
@@ -17,7 +17,7 @@ import {
   findProperty,
 } from "../util";
 
-const ZESchemaForm: React.FC<ZESchemaFromProps> = ({
+const ZESchemaForm: React.FC<ZESchemaFormProps> = ({
   schemaID,
   columns: _columns,
   propertyConfig,
@@ -37,7 +37,7 @@ const ZESchemaForm: React.FC<ZESchemaFromProps> = ({
   // 给下面生成columns用的
   const propsForProperty = (
     p,
-    col?: ZESchemaFromColumnType
+    col?: ZESchemaFormColumnType
   ): ProFormColumnsType<any, ExtendValueTypes> => {
     const formItemProps = {
       rules: [],
