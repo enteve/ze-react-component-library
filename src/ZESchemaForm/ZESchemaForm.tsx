@@ -74,7 +74,8 @@ const ZESchemaForm: React.FC<ZESchemaFormProps> = ({
 
     // render
     let render = undefined;
-    if (p.udf) {
+    if (p.udf && !readonly) {
+      // 这个readonly是给可编辑表格用的
       render = () => <div>自动计算</div>;
     }
 
