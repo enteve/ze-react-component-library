@@ -14,6 +14,7 @@ import { Select, InputNumber, Radio, Cascader, Spin } from "antd";
 import { useRequest } from "@umijs/hooks";
 import { requestLogicform } from "./request";
 import "antd/lib/cascader/style/index";
+import { useEffect } from "react";
 
 const { Option } = Select;
 
@@ -201,15 +202,20 @@ export const customValueTypes = (schema: SchemaType) => ({
       );
       const [dataSource, setDataSource] = useState<any[]>(initialValues);
 
+      useEffect(() => {
+        if (props?.fieldProps?.value) {
+          setDataSource(props?.fieldProps?.value);
+          setEditableRowKeys(props?.fieldProps?.value.map((i) => i.id));
+        }
+      }, [props?.fieldProps?.value]);
+
       const setValue = (list) => {
-        setDataSource(list);
-        props?.fieldProps?.onChange?.(
-          list.filter((i) => Object.keys(i).length > 1)
-        );
+        props?.fieldProps?.onChange?.(list);
       };
 
       return (
         <EditableProTable
+          controlled
           locale={{ emptyText: " " }}
           rowKey="id"
           columns={props.columns}
