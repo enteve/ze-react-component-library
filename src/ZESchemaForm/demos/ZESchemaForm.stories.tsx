@@ -1,8 +1,7 @@
 // Generated with util/create-component.js
-import React from "react";
+import React, { useRef } from "react";
 import ZESchemaForm from "../ZESchemaForm";
-import { createData } from "zeroetp-api-sdk";
-import { Divider } from "antd";
+import { Divider, FormInstance } from "antd";
 import "antd/dist/antd.css";
 import { ProFormColumnsType } from "@ant-design/pro-form";
 import { FooterToolbar } from "@ant-design/pro-layout";
@@ -226,92 +225,116 @@ export const LayoutType = () => (
   />
 );
 
-export const XueTaiFengStock = () => (
-  <ZESchemaForm
-    schemaID="stock"
-    onFinish={onFinish}
-    columns={[
-      {
-        valueType: "group",
-        columns: [
-          {
-            title: "供应商",
-            dataIndex: "供应商",
-            width: "lg",
-          },
-          {
-            title: "入库日期",
-            dataIndex: "日期",
-            width: "lg",
-          },
-        ],
-      },
-      {
-        renderFormItem: () => <Divider dashed />,
-      },
-      {
-        valueType: "table",
-        dataIndex: "商品列表",
-        fieldProps: { placeholder: "新增商品" },
-        columns: [
-          {
-            title: "商品",
-            dataIndex: "商品",
-          },
-          {
-            title: "入库数量",
-            dataIndex: "数量",
-          },
-          {
-            title: "分类",
-            dataIndex: "商品.分类",
-          },
-          {
-            title: "生产日期",
-            dataIndex: "生产日期",
-          },
-          {
-            title: "操作",
-            valueType: "option",
-          },
-        ],
-      },
-      {
-        valueType: "table",
-        dataIndex: "商品列表2",
-        columns: [
-          {
-            title: "商品",
-            dataIndex: "商品",
-            fieldProps: { query: { 分类: { $in: ["单品", "耗材"] } } },
-          },
-          {
-            title: "入库数量",
-            dataIndex: "数量",
-          },
-          {
-            title: "生产日期",
-            dataIndex: "生产日期",
-          },
-          {
-            title: "操作",
-            valueType: "option",
-          },
-        ],
-      },
-    ]}
-    initialValues={{
+export const XueTaiFengStock = () => {
+  const formRef = useRef<FormInstance>();
+
+  setTimeout(() => {
+    // setFieldsValue展示
+    formRef?.current?.setFieldsValue({
+      日期: "2021-09-30",
       商品列表2: [
         {
-          id: 1628782019762,
+          id: 628782019762,
           商品: {
             _id: "SoySauce-Z02-L",
-            名称: "谁知道呢",
+            名称: "啦啦啦",
           },
-          数量: 1,
-          生产日期: "2021-08-24",
+          数量: 10,
+          生产日期: "2021-09-24",
         },
       ],
-    }}
-  />
-);
+    });
+  }, 3000);
+
+  return (
+    <ZESchemaForm
+      schemaID="stock"
+      onFinish={onFinish}
+      formRef={formRef}
+      columns={[
+        {
+          valueType: "group",
+          columns: [
+            {
+              title: "供应商",
+              dataIndex: "供应商",
+              width: "lg",
+            },
+            {
+              title: "入库日期",
+              dataIndex: "日期",
+              width: "lg",
+            },
+          ],
+        },
+        {
+          renderFormItem: () => <Divider dashed />,
+        },
+        {
+          valueType: "table",
+          dataIndex: "商品列表",
+          fieldProps: { placeholder: "新增商品" },
+          columns: [
+            {
+              title: "商品",
+              dataIndex: "商品",
+            },
+            {
+              title: "入库数量",
+              dataIndex: "数量",
+            },
+            {
+              title: "分类",
+              dataIndex: "商品.分类",
+            },
+            {
+              title: "生产日期",
+              dataIndex: "生产日期",
+            },
+            {
+              title: "操作",
+              valueType: "option",
+            },
+          ],
+        },
+        {
+          valueType: "table",
+          dataIndex: "商品列表2",
+          columns: [
+            {
+              title: "商品",
+              dataIndex: "商品",
+              fieldProps: { query: { 分类: { $in: ["单品", "耗材"] } } },
+            },
+            {
+              title: "入库数量",
+              dataIndex: "数量",
+            },
+            {
+              title: "生产日期",
+              dataIndex: "生产日期",
+            },
+            {
+              title: "操作",
+              valueType: "option",
+            },
+          ],
+        },
+      ]}
+      initialValues={{
+        商品列表2: [
+          {
+            id: 1628782019762,
+            商品: {
+              _id: "SoySauce-Z03-L",
+              编码: "SoySauce-Z03-L",
+              名称: "谁知道呢",
+            },
+            数量: 1,
+            生产日期: "2021-08-24",
+          },
+        ],
+      }}
+    />
+  );
+};

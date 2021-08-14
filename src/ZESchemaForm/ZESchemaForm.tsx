@@ -71,8 +71,6 @@ const ZESchemaForm: React.FC<ZESchemaFromProps> = ({
     ) {
       readonly = propertyConfig[p.name].readonly;
     }
-    if (readonly) {
-    }
 
     // render
     let render = undefined;
