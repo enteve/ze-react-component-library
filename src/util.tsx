@@ -285,14 +285,27 @@ const renderObjectFormItem = (schema, props: any) => {
       placeholder="请选择"
       allowClear
       {...props?.fieldProps}
-      value={
-        typeof props?.fieldProps?.value === "object"
-          ? props?.fieldProps?.value._id
-          : props?.fieldProps?.value
-      }
-      onChange={(v) => {
+      labelInValue
+      value={{
+        value:
+          typeof props?.fieldProps?.value === "object"
+            ? props?.fieldProps?.value._id
+            : props?.fieldProps?.value,
+        label:
+          typeof props?.fieldProps?.value === "object"
+            ? `${props?.fieldProps?.value[nameProperty.name]}(${
+                props?.fieldProps?.value._id
+              })`
+            : props?.fieldProps?.value,
+        key:
+          typeof props?.fieldProps?.value === "object"
+            ? props?.fieldProps?.value._id
+            : props?.fieldProps?.value,
+      }}
+      onChange={(v: any) => {
+        const { value } = v;
         // 为了便于前端显示，这里需要返回整个object。
-        const entity = data.find((i) => i._id === v);
+        const entity = data.find((i) => i._id === value);
         if (entity) {
           props?.fieldProps?.onChange?.(entity);
         }

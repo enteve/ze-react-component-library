@@ -225,6 +225,27 @@ export const LayoutType = () => (
   />
 );
 
+export const initialValuesForObjectType = () => (
+  <ZESchemaForm
+    schemaID="stock"
+    onFinish={onFinish}
+    columns={[
+      {
+        title: "供应商",
+        dataIndex: "供应商",
+        width: "lg",
+      },
+    ]}
+    initialValues={{
+      供应商: {
+        _id: "1234",
+        编码: "1234",
+        名称: "谁知道呢",
+      },
+    }}
+  />
+);
+
 export const XueTaiFengStock = () => {
   const formRef = useRef<FormInstance>();
 
