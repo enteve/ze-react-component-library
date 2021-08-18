@@ -13,6 +13,7 @@ import { Tooltip, Result, Button, Popconfirm, Drawer } from "antd";
 import type { TablePaginationConfig } from "antd";
 import { DownloadOutlined, PlusOutlined } from "@ant-design/icons";
 import excelExporter from "./excelExporter";
+import escapeStringRegexp from "escape-string-regexp";
 
 import { ZETableProps, PredItemType } from "./ZETable.types";
 import {
@@ -219,14 +220,14 @@ const ZETable: React.FC<ZETableProps> = ({
               $lte: `${mappedV[1]} 23:59:59`,
             };
           } else if (property.primal_type === "string") {
-            targetV = { $regex: mappedV[0], $options: "i" };
+            targetV = { $regex: escapeStringRegexp(mappedV[0]), $options: "i" };
           } else if (property.primal_type === "object") {
             // TODO: 有多个NameProperty咋办
             // 搜索entity
             const namePropInRef = getNameProperty(property.schema);
             targetKey = `${k}_${namePropInRef.name}`;
             targetV = {
-              $regex: mappedV[0],
+              $regex: escapeStringRegexp(mappedV[0]),
               $options: "i",
             };
           } else if (property.primal_type === "boolean") {

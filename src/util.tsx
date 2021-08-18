@@ -15,6 +15,7 @@ import { useRequest } from "@umijs/hooks";
 import { requestLogicform } from "./request";
 import "antd/lib/cascader/style/index";
 import { useEffect } from "react";
+import escapeStringRegexp from "escape-string-regexp";
 
 const { Option } = Select;
 
@@ -252,7 +253,10 @@ const renderObjectFormItem = (schema, props: any) => {
       let limit = 20;
       const query = { ...props?.fieldProps?.query };
       if (search) {
-        query[nameProperty.name] = { $regex: search, $options: "i" };
+        query[nameProperty.name] = {
+          $regex: escapeStringRegexp(search),
+          $options: "i",
+        };
         limit = 100;
       }
 
