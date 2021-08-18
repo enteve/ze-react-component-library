@@ -96,7 +96,9 @@
     "xlsx": "^0.17.0",
     "zeroetp-api-sdk": "1.1.18"
   },
-  "dependencies": {},
+  "dependencies": {
+    "escape-string-regexp": "^5.0.0"
+  },
   "lint-staged": {
     "*.{js,css,md}": "prettier --write"
   }
