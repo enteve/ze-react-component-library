@@ -86,7 +86,7 @@ const mapColumnItem = (
     } else if (
       (property.primal_type === "string" ||
         property.primal_type === "object") &&
-      !property.is_categorical
+      !(property.is_categorical && property.stats?.distincts?.length < 10)
     ) {
       additionalProps = {
         ...additionalProps,
