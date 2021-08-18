@@ -184,7 +184,6 @@ export const Image = () => (
   <ZETable
     logicform={{
       schema: "product",
-      limit: -1,
     }}
   />
 );
@@ -496,6 +495,121 @@ export const MultiSchema = () => {
 // };
 
 // 下面的只有JAEM才能看到
+export const JAEMLarge = () => (
+  <ZETable logicform={{ schema: "project", limit: -1 }} />
+);
+
+export const JAEMTMP = () => {
+  const subdistrict = "彭浦镇";
+  return (
+    <ZETable
+      preds={[
+        "街道",
+        "小区",
+        "编号",
+        "评估结果",
+        "评估描述",
+        "征询开始时间",
+        "立项或通过业主意愿征询时间",
+        "规划公示通过时间",
+        "房屋安全论证通过时间",
+        "开工建设时间",
+        "竣工交付时间",
+      ]}
+      columnEmptyText=""
+      logicform={{
+        children: [
+          {
+            limit: -1,
+            schema: "project",
+            query: {
+              街道: subdistrict,
+              最新节点: {
+                $in: [
+                  "征询通过",
+                  "规划公示通过",
+                  "房屋安全论证通过",
+                  "开工建设",
+                  "完工",
+                ],
+              },
+            },
+            sort: { 小区: 1, 地址: 1, 单元门牌号: 1 },
+          },
+          {
+            query: {
+              项目_街道: subdistrict,
+              项目_最新节点: {
+                $in: [
+                  "征询通过",
+                  "规划公示通过",
+                  "房屋安全论证通过",
+                  "开工建设",
+                  "完工",
+                ],
+              },
+            },
+            schema: "progress",
+            groupby: "项目",
+            preds: [
+              {
+                name: "征询开始时间",
+                operator: "$sql",
+                pred: "anyIfOrNull(`日期`,`节点` = '征询开始')",
+                type: "date",
+              },
+              {
+                name: "立项或通过业主意愿征询时间",
+                operator: "$sql",
+                pred: "anyIfOrNull(`日期`,`节点` = '征询通过')",
+                type: "date",
+              },
+              {
+                name: "规划公示通过时间",
+                operator: "$sql",
+                pred: "anyIfOrNull(`日期`,`节点` = '规划公示通过')",
+                type: "date",
+              },
+              {
+                name: "规划公示通过时间",
+                operator: "$sql",
+                pred: "anyIfOrNull(`日期`,`节点` = '规划公示通过')",
+                type: "date",
+              },
+              {
+                name: "房屋安全论证通过时间",
+                operator: "$sql",
+                pred: "anyIfOrNull(`日期`,`节点` = '房屋安全论证通过')",
+                type: "date",
+              },
+              {
+                name: "是否规模化审批",
+                operator: "$sql",
+                pred: "anyIfOrNull(`规模化审批`,`节点` = '房屋安全论证通过')",
+                type: "boolean",
+              },
+              {
+                name: "开工建设时间",
+                operator: "$sql",
+                pred: "anyIfOrNull(`日期`,`节点` = '开工建设')",
+                type: "date",
+              },
+              {
+                name: "竣工交付时间",
+                operator: "$sql",
+                pred: "anyIfOrNull(`日期`,`节点` = '完工')",
+                type: "date",
+              },
+            ],
+          },
+        ],
+      }}
+      exportToExcel={`${subdistrict}数据`}
+      xlsx={XLSX}
+    />
+  );
+};
+
 export const JAEMSourceData = () => {
   const subdistrict = "天目西路街道";
   return (
