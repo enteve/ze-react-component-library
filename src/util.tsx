@@ -130,6 +130,13 @@ export const valueEnumMapping = (property: PropertyType) => {
       const enumValue = Array.isArray(enumItem) ? enumItem[0] : enumItem;
       valueEnum[enumValue] = { text: enumValue };
     });
+  } else if (property.stats?.distincts) {
+    valueEnum = {};
+    property.stats.distincts.forEach((enumItem) => {
+      if (enumItem?.length > 0) {
+        valueEnum[enumItem] = { text: enumItem };
+      }
+    });
   }
 
   return valueEnum;

@@ -86,7 +86,7 @@ const mapColumnItem = (
     } else if (
       (property.primal_type === "string" ||
         property.primal_type === "object") &&
-      !property.constraints.enum
+      !property.is_categorical
     ) {
       additionalProps = {
         ...additionalProps,
@@ -212,7 +212,7 @@ const ZETable: React.FC<ZETableProps> = ({
             return i;
           });
 
-          if (property.primal_type === "string" && property.constraints.enum) {
+          if (property.primal_type === "string" && property.is_categorical) {
             targetV = { $in: mappedV };
           } else if (property.primal_type === "date") {
             targetV = {
