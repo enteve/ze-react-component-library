@@ -2,8 +2,9 @@ import { config } from "zeroetp-api-sdk";
 
 export default () => {
   // config.API_URL = "https://zhouheiya.zeroetp.com";
-  config.API_URL = "https://jaem.yiwendata.com";
+  config.API_URL = "https://admin.xuetaifeng.com";
   localStorage.token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MGY5MDAxYzJiMjI2NDE3NTA2MmU0NTIiLCJpYXQiOjE2MjkxODc5MzMsImV4cCI6MTYyOTc5MjczM30.CEYgYaHhOWqsYyRKlXc0BBQ-FO_XLURmkApPIQuEn1M";
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1VVZBR2tvcGZGQks2N1pfTVgtNGIiLCJpYXQiOjE2Mjg4MzkxMzAsImV4cCI6MTYyOTQ0MzkzMH0.bVeUOXLWSBhKZW12JcQJYkoYj4KvvzJdWCcL6OMnjis";
+
   // config.API_URL = "http://localhost:3052";
 };

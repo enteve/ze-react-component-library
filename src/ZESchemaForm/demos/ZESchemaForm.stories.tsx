@@ -325,6 +325,7 @@ export const XueTaiFengStock = () => {
         {
           valueType: "table",
           dataIndex: "商品列表2",
+          fieldProps: { recordCreatorProps: false },
           columns: [
             {
               title: "商品",
