@@ -230,13 +230,17 @@ export const customValueTypes = (schema: SchemaType) => ({
           locale={{ emptyText: " " }}
           rowKey="id"
           columns={props.columns}
-          recordCreatorProps={{
-            newRecordType: "dataSource",
-            record: () => ({
-              id: Date.now(),
-            }),
-            creatorButtonText: props?.fieldProps?.placeholder,
-          }}
+          recordCreatorProps={
+            props?.fieldProps?.recordCreatorProps === undefined
+              ? {
+                  newRecordType: "dataSource",
+                  record: () => ({
+                    id: Date.now(),
+                  }),
+                  creatorButtonText: props?.fieldProps?.placeholder,
+                }
+              : props?.fieldProps?.recordCreatorProps
+          }
           value={dataSource}
           onChange={setValue}
           editable={{
