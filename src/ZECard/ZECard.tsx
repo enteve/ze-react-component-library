@@ -4,27 +4,71 @@
 import { useRequest } from "@umijs/hooks";
 import { Card, Statistic } from "antd";
 import React from "react";
-import { isSimpleQuery, LogicformAPIResultType } from "zeroetp-api-sdk";
+import { useState } from "react";
+import {
+  isSimpleQuery,
+  LogicformAPIResultType,
+  LogicformType,
+} from "zeroetp-api-sdk";
 import { requestLogicform } from "../request";
+import ZEChart from "../ZEChart";
 import { LogicFormVisualizer } from "../ZELogicform";
 import ZETable from "../ZETable";
 import ZEValue from "../ZEValue";
 import { ZECardProps } from "./ZECard.types";
 
-const ZECard: React.FC<ZECardProps> = ({ logicform, title }) => {
-  const tableOperator = ["$distribution", "$distinct"];
-  const isTable = tableOperator.includes(logicform.operator);
+const getDefaultRepresentation = (
+  logicform: LogicformType,
+  result?: LogicformAPIResultType
+) => {
+  if (!result) return null;
 
-  const isSingleValue = logicform.operator && !isTable;
-  const isStats = logicform.groupby;
+  if (result.returnType === "value" || typeof result.result !== "object")
+    return "value";
+
+  if (logicform.groupby) {
+    return "bar";
+  }
+};
+
+const ZECard: React.FC<ZECardProps> = ({ logicform, title }) => {
+  const { data, loading } = useRequest<LogicformAPIResultType>(() => {
+    if (isSimpleQuery(logicform)) {
+      // simplequery让ZETable自己处理，因为要翻页
+      return new Promise((resolve) => resolve(undefined));
+    }
+
+    return requestLogicform(logicform);
+  });
+  const [representation, setRepresentation] = useState<string>(null);
+
+  console.log(data);
+
+  const defaultRepresentation = getDefaultRepresentation(logicform, data);
+  const finalRepresentation = representation || defaultRepresentation;
 
   return (
-    <Card title={title}>
-      <LogicFormVisualizer logicform={logicform} />
-      {(isSimpleQuery(logicform) || isStats || isTable) && (
+    <Card title={title} loading={loading}>
+      <div style={{ marginBottom: 30 }}>
+        <LogicFormVisualizer logicform={logicform} />
+      </div>
+      {isSimpleQuery(logicform) && <ZETable logicform={logicform} />}
+      {finalRepresentation === "value" && <Statistic value={data.result} />}
+      {finalRepresentation === "bar" && (
+        <ZEChart
+          type="column"
+          logicform={logicform}
+          result={data}
+          config={{
+            xField: "_id",
+            yField: logicform.preds[0].name,
+          }}
+        />
+      )}
+      {/* Default */}
+      {finalRepresentation !== "value" && finalRepresentation !== "bar" && (
         <ZETable logicform={logicform} />
       )}
-      {isSingleValue && <Statistic value={ZEValue(logicform)} />}
     </Card>
   );
 };

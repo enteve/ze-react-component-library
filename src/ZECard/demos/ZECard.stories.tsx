@@ -45,3 +45,14 @@ export const Stats = () => (
     }}
   />
 );
+
+export const StatsDefaultBar = () => (
+  <ZECard
+    title="各商品销量"
+    logicform={{
+      schema: "productsale",
+      preds: [{ name: "销量", operator: "$sum", pred: "销量" }],
+      groupby: ["商品"],
+    }}
+  />
+);
