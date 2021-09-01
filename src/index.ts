@@ -1,6 +1,7 @@
 export { default as ZEValue } from "./ZEValue";
 export { default as ZETable } from "./ZETable";
 export type { ZETableProps } from "./ZETable/ZETable.types";
+export { default as ZECard } from "./ZECard";
 export { default as ZEChart } from "./ZEChart";
 export type { ZEChartProps } from "./ZEChart/ZEChart.types";
 export { default as ZEAsk } from "./ZEAsk";
