@@ -1,6 +1,7 @@
 // Generated with util/create-component.js
 import React from "react";
 import ZELogicform from "../ZELogicform";
+import { LogicFormVisualizer } from "../LogicFormVisualizer";
 
 // prepare server
 import prepareServerForStories from "../../../util/prepareServerForStories";
@@ -29,4 +30,15 @@ export const Basic = () => (
       )}
     />
   </ZELogicform>
+);
+
+export const Visualizer = () => (
+  <LogicFormVisualizer
+    logicform={{
+      schema: "productsale",
+      groupby: "渠道",
+      preds: [{ name: "sum", operator: "$sum", pred: "销售额" }],
+      query: { a: "b" },
+    }}
+  />
 );

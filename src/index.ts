@@ -9,5 +9,5 @@ export type {
   ZESchemaFormColumnType,
   ZESchemaFormProps,
 } from "./ZESchemaForm/ZESchemaForm.types";
-export { default as ZELogicform } from "./ZELogicform";
+export { default as ZELogicform, LogicFormVisualizer } from "./ZELogicform";
 export type { ZELogicformProps } from "./ZELogicform/ZELogicform.types";
