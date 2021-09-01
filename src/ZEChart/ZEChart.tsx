@@ -17,10 +17,19 @@ import { useRequest } from "@umijs/hooks";
 import { LogicformAPIResultType } from "zeroetp-api-sdk";
 import { requestLogicform } from "../request";
 
-const ZEChart: React.FC<ZEChartProps> = ({ type, config = {}, logicform }) => {
-  const { data } = useRequest<LogicformAPIResultType>(() =>
-    requestLogicform(logicform)
-  );
+const ZEChart: React.FC<ZEChartProps> = ({
+  type,
+  config = {},
+  logicform,
+  result,
+}) => {
+  const { data } = useRequest<LogicformAPIResultType>(() => {
+    if (result) {
+      return new Promise((resolve) => resolve(result));
+    }
+
+    return requestLogicform(logicform);
+  });
 
   if (data) {
     config.data = data.result;
