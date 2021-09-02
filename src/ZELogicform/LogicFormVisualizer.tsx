@@ -190,27 +190,55 @@ export const LogicFormVisualizer: React.FC<LogicFormVisualizerProps> = ({
   }
 
   if (logicform.operator) {
-    badges.push({
-      color: "orange",
-      text: (
-        <span>
-          公式： <strong>{logicform.operator}</strong>{" "}
-          {logicform.pred && `(${logicform.pred})`}
-        </span>
-      ),
-    });
+    if (logicform.operator === "$ent" && logicform.name) {
+      badges.push({
+        color: "blue",
+        text: (
+          <span>
+            实体： <strong>{logicform.name}</strong>
+          </span>
+        ),
+      });
+    } else {
+      badges.push({
+        color: "orange",
+        text: (
+          <span>
+            公式： <strong>{logicform.operator}</strong>{" "}
+            {logicform.pred && `(${logicform.pred})`}
+          </span>
+        ),
+      });
+    }
   }
   if (logicform.preds) {
     const preds = logicform.preds.map((p, index) => (
       <span key={index}>
-        <strong>{p.operator}</strong> {p.pred && `(${p.pred})`}
+        {p.operator && (
+          <>
+            <strong>{p.operator}</strong> {p.pred && `(${p.pred})`}
+          </>
+        )}
+        {!p.operator && <>{typeof p === "object" ? p.pred : p}</>}
         {index < logicform.preds!.length - 1 && "，"}
       </span>
     ));
-    badges.push({
-      color: "orange",
-      text: <span>公式： {preds}</span>,
-    });
+
+    if (logicform.groupby) {
+      badges.push({
+        color: "orange",
+        text: <span>公式： {preds}</span>,
+      });
+    } else {
+      badges.push({
+        color: "orange",
+        text: (
+          <span>
+            字段： <strong>{preds}</strong>
+          </span>
+        ),
+      });
+    }
   }
 
   if (logicform.sort) {
