@@ -1,6 +1,6 @@
 {
   "name": "ze-react-component-library",
-  "version": "1.0.51",
+  "version": "1.0.54",
   "main": "lib/index.js",
   "module": "es/index.js",
   "files": [
@@ -52,6 +52,7 @@
     "numeral": ">=2.0.0",
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0",
+    "underscore": ">=1.13.1",
     "zeroetp-api-sdk": ">=1.1.20"
   },
   "devDependencies": {
@@ -95,6 +96,7 @@
     "rollup-plugin-typescript2": "^0.29.0",
     "ts-jest": "^26.4.4",
     "typescript": "^4.3.2",
+    "underscore": "^1.13.1",
     "xlsx": "^0.17.0",
     "zeroetp-api-sdk": "1.1.20"
   },
