@@ -37,7 +37,7 @@ const getDefaultRepresentation = (
   }
 };
 
-const ZECard: React.FC<ZECardProps> = ({ logicform, title }) => {
+const ZECard: React.FC<ZECardProps> = ({ logicform, title, extra }) => {
   const { data, loading } = useRequest<LogicformAPIResultType>(() => {
     if (isSimpleQuery(logicform)) {
       // simplequery让ZETable自己处理，因为要翻页
@@ -83,7 +83,7 @@ const ZECard: React.FC<ZECardProps> = ({ logicform, title }) => {
   }
 
   return (
-    <Card title={title} loading={loading}>
+    <Card title={title} loading={loading} extra={extra}>
       <div style={{ marginBottom: 30 }}>
         <LogicFormVisualizer logicform={logicform} />
       </div>
