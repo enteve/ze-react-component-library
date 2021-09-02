@@ -34,6 +34,33 @@ export const Value = () => (
   />
 );
 
+export const Entity = () => (
+  <ZECard
+    title="Dealer销售额"
+    logicform={{
+      schemaName: "经销商",
+      schema: "dealer",
+      operator: "$ent",
+      field: "名称",
+      name: "上海展晓实业有限公司",
+    }}
+  />
+);
+
+export const EntityPreds = () => (
+  <ZECard
+    title="Dealer销售额"
+    logicform={{
+      schemaName: "经销商",
+      schema: "dealer",
+      operator: "$ent",
+      field: "名称",
+      name: "上海展晓实业有限公司",
+      preds: ["联系人电话"],
+    }}
+  />
+);
+
 export const Stats = () => (
   <ZECard
     title="Dealer数量 by 区域"
