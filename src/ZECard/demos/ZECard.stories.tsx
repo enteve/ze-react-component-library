@@ -83,3 +83,28 @@ export const StatsDefaultBar = () => (
     }}
   />
 );
+
+export const StatsDefaultRepresentation = () => (
+  <ZECard
+    title="各商品销量"
+    logicform={{
+      schema: "productsale",
+      preds: [{ name: "销量", operator: "$sum", pred: "销量" }],
+      groupby: ["商品"],
+    }}
+    representation="table"
+  />
+);
+
+export const StatsCrossTable = () => (
+  <ZECard
+    title="各商品销量"
+    logicform={{
+      schema: "productsale",
+      preds: [{ name: "销量", operator: "$sum", pred: "销量" }],
+      query: { 日期: { $offset: { year: 0 } } },
+      groupby: ["$month", "商品"],
+    }}
+    representation="cross-table"
+  />
+);
