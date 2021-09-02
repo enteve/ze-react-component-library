@@ -41,6 +41,7 @@
   "peerDependencies": {
     "@ant-design/charts": ">=1.2.3",
     "@ant-design/icons": ">=4.3.0",
+    "@ant-design/pro-descriptions": ">=1.9.10",
     "@ant-design/pro-form": ">=1.28.0",
     "@ant-design/pro-layout": ">=6.19.4",
     "@ant-design/pro-provider": ">=1.4.13",
@@ -56,6 +57,7 @@
   "devDependencies": {
     "@ant-design/charts": "^1.2.3",
     "@ant-design/icons": "^4.6.2",
+    "@ant-design/pro-descriptions": "^1.9.10",
     "@ant-design/pro-form": "^1.28.0",
     "@ant-design/pro-layout": "^6.19.4",
     "@ant-design/pro-provider": "^1.4.13",

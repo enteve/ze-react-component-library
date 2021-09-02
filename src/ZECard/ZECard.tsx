@@ -12,9 +12,9 @@ import {
 } from "zeroetp-api-sdk";
 import { requestLogicform } from "../request";
 import ZEChart from "../ZEChart";
+import ZEDescription from "../ZEDescription/ZEDescription";
 import { LogicFormVisualizer } from "../ZELogicform";
 import ZETable from "../ZETable";
-import ZEValue from "../ZEValue";
 import { ZECardProps } from "./ZECard.types";
 
 const getDefaultRepresentation = (
@@ -23,11 +23,17 @@ const getDefaultRepresentation = (
 ) => {
   if (!result) return null;
 
+  console.log(result);
+
   if (result.returnType === "value" || typeof result.result !== "object")
     return "value";
 
   if (logicform.groupby) {
     return "bar";
+  }
+
+  if (logicform.operator === "$ent") {
+    return "entity";
   }
 };
 
@@ -47,28 +53,41 @@ const ZECard: React.FC<ZECardProps> = ({ logicform, title }) => {
   const defaultRepresentation = getDefaultRepresentation(logicform, data);
   const finalRepresentation = representation || defaultRepresentation;
 
+  let component: any;
+  if (isSimpleQuery(logicform)) {
+    component = <ZETable logicform={logicform} />;
+  } else if (finalRepresentation === "value") {
+    component = <Statistic value={data.result} />;
+  } else if (finalRepresentation === "bar") {
+    component = (
+      <ZEChart
+        type="column"
+        logicform={logicform}
+        result={data}
+        config={{
+          xField: "_id",
+          yField: logicform.preds[0].name,
+        }}
+      />
+    );
+  } else if (finalRepresentation === "entity" && data.result?.length === 1) {
+    component = (
+      <ZEDescription
+        schema={data.schema}
+        columnProperties={data.columnProperties}
+        item={data.result[0]}
+      />
+    );
+  } else {
+    component = <ZETable logicform={logicform} />;
+  }
+
   return (
     <Card title={title} loading={loading}>
       <div style={{ marginBottom: 30 }}>
         <LogicFormVisualizer logicform={logicform} />
       </div>
-      {isSimpleQuery(logicform) && <ZETable logicform={logicform} />}
-      {finalRepresentation === "value" && <Statistic value={data.result} />}
-      {finalRepresentation === "bar" && (
-        <ZEChart
-          type="column"
-          logicform={logicform}
-          result={data}
-          config={{
-            xField: "_id",
-            yField: logicform.preds[0].name,
-          }}
-        />
-      )}
-      {/* Default */}
-      {finalRepresentation !== "value" && finalRepresentation !== "bar" && (
-        <ZETable logicform={logicform} />
-      )}
+      {component}
     </Card>
   );
 };

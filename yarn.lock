@@ -42,6 +42,18 @@
     classnames "^2.2.6"
     rc-util "^5.9.4"
 
+"@ant-design/pro-descriptions@^1.9.10":
+  version "1.9.10"
+  resolved "https://registry.yarnpkg.com/@ant-design/pro-descriptions/-/pro-descriptions-1.9.10.tgz#0ec1c5a1cdfe878bdeb4c78af6cdd2c42d435c7e"
+  integrity sha512-laxVJ/5Zz1tJuXpCP4nr/W1k4+BlnbJmtuDoPoAO3cd5rTh60SAumFDFk1VS+BfRtwnJQ1OWf7psZkO6ell1iw==
+  dependencies:
+    "@ant-design/pro-field" "1.21.2"
+    "@ant-design/pro-form" "1.38.1"
+    "@ant-design/pro-skeleton" "1.0.1"
+    "@ant-design/pro-utils" "1.24.1"
+    rc-util "^5.0.6"
+    use-json-comparison "^1.0.5"
+
 "@ant-design/pro-field@1.18.3":
   version "1.18.3"
   resolved "https://registry.yarnpkg.com/@ant-design/pro-field/-/pro-field-1.18.3.tgz#dea6461e38975cb53fda35cb73ccf8a50c414212"
@@ -50,6 +62,22 @@
     "@ant-design/icons" "^4.2.1"
     "@ant-design/pro-provider" "1.4.13"
     "@ant-design/pro-utils" "1.19.0"
+    classnames "^2.2.6"
+    lodash.tonumber "^4.0.3"
+    moment "^2.27.0"
+    omit.js "^2.0.2"
+    rc-util "^5.4.0"
+    react-color "2.19.3"
+    swr "^0.5.6"
+
+"@ant-design/pro-field@1.21.2":
+  version "1.21.2"
+  resolved "https://registry.yarnpkg.com/@ant-design/pro-field/-/pro-field-1.21.2.tgz#537b1bbc70ac8f0cb47770da4dc86e6450347183"
+  integrity sha512-jIbm6ZrclthVXyxy9WRINup3fVkr1QtFkFaAZlB6iiYaoAsNgeQyD/E+2zkt+wY7mRYMeLWaDHyCjItIzMACDw==
+  dependencies:
+    "@ant-design/icons" "^4.2.1"
+    "@ant-design/pro-provider" "1.4.17"
+    "@ant-design/pro-utils" "1.24.1"
     classnames "^2.2.6"
     lodash.tonumber "^4.0.3"
     moment "^2.27.0"
@@ -67,6 +95,23 @@
     "@ant-design/pro-field" "1.18.3"
     "@ant-design/pro-provider" "1.4.13"
     "@ant-design/pro-utils" "1.19.0"
+    "@umijs/use-params" "^1.0.2"
+    classnames "^2.2.6"
+    lodash.merge "^4.6.2"
+    omit.js "^2.0.2"
+    rc-resize-observer "^0.2.3"
+    rc-util "^5.0.6"
+    use-media-antd-query "^1.0.6"
+
+"@ant-design/pro-form@1.38.1":
+  version "1.38.1"
+  resolved "https://registry.yarnpkg.com/@ant-design/pro-form/-/pro-form-1.38.1.tgz#9d6c5c7230dad8b7f72537a790367e14b35f7783"
+  integrity sha512-IomkqBoigt5agEnUs1IEOhY/hWP2cmUTNRjsQl5iF6m4bYL953mF3lt+Q4S7xmysfH30ELyVZx9wbtO07S12Fw==
+  dependencies:
+    "@ant-design/icons" "^4.2.1"
+    "@ant-design/pro-field" "1.21.2"
+    "@ant-design/pro-provider" "1.4.17"
+    "@ant-design/pro-utils" "1.24.1"
     "@umijs/use-params" "^1.0.2"
     classnames "^2.2.6"
     lodash.merge "^4.6.2"
@@ -103,6 +148,20 @@
   dependencies:
     rc-util "^5.0.1"
 
+"@ant-design/pro-provider@1.4.17":
+  version "1.4.17"
+  resolved "https://registry.yarnpkg.com/@ant-design/pro-provider/-/pro-provider-1.4.17.tgz#43bbc89ccecffeb6a04118a49dfd2479c43a0b85"
+  integrity sha512-2/iCs5DtWdjnIYtfi9pRLlS2aqy1HBg+JUGCh8ppzByIrqFjhnnLINe0Ysh/rflcf6r3lup+BUlVXVyqyHKLPg==
+  dependencies:
+    rc-util "^5.0.1"
+
+"@ant-design/pro-skeleton@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@ant-design/pro-skeleton/-/pro-skeleton-1.0.1.tgz#419a0f88c5d544043ae0035eb3aa35494813e959"
+  integrity sha512-vzdqJoVq0fqNEqak9uZfkA1idPgxX2h5LY2AvN3rWHYM7qtP3MSYEgJ+gmvwXSFytH32nOHrhHeV+vUN7RlG9g==
+  dependencies:
+    use-media-antd-query "^1.0.6"
+
 "@ant-design/pro-table@^2.40.0":
   version "2.40.0"
   resolved "https://registry.yarnpkg.com/@ant-design/pro-table/-/pro-table-2.40.0.tgz#85bb50c4e23650cbc1ef6aa60809032456162c8f"
@@ -132,6 +191,20 @@
     fast-deep-equal "^3.1.3"
     moment "^2.27.0"
     rc-util "^5.0.6"
+    swr "^0.5.6"
+
+"@ant-design/pro-utils@1.24.1":
+  version "1.24.1"
+  resolved "https://registry.yarnpkg.com/@ant-design/pro-utils/-/pro-utils-1.24.1.tgz#3af944ba58dcb6d2b129dc70f8059d44489c7177"
+  integrity sha512-AkHGPhC3H+X3GcHPt+LFqyRHoVEM5WEMohY2E+lD0U8u0qFbfHTur3OH1fmzy4gwrQVSyvuPXrWMsF/UWGAT5Q==
+  dependencies:
+    "@ant-design/icons" "^4.3.0"
+    "@ant-design/pro-provider" "1.4.17"
+    classnames "^2.2.6"
+    lodash.merge "^4.6.2"
+    moment "^2.27.0"
+    rc-util "^5.0.6"
+    react-sortable-hoc "^2.0.0"
     swr "^0.5.6"
 
 "@ant-design/react-slick@~0.28.1":
@@ -2562,6 +2635,13 @@
   version "7.14.0"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.14.0.tgz#46794bc20b612c5f75e62dd071e24dfd95f1cbe6"
   integrity sha512-JELkvo/DlpNdJ7dlyw/eY7E0suy5i5GQH+Vlxaq1nsNJ+H7f4Vtv3jMeCEgRhZZQFXTjldYfQgv2qmM6M1v5wA==
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
+"@babel/runtime@^7.2.0":
+  version "7.15.3"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.15.3.tgz#2e1c2880ca118e5b2f9988322bd8a7656a32502b"
+  integrity sha512-OvwMLqNXkCXSz1kSm58sEsNuhqOx/fKpnUnKnFB5v8uDda5bLNEHNgKPvhDN6IU0LDcnHQ90LlJ0Q6jnyBSIBA==
   dependencies:
     regenerator-runtime "^0.13.4"
 
@@ -12392,7 +12472,7 @@ prompts@^2.0.1, prompts@^2.4.0:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@^15.5.10, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.7.2:
+prop-types@^15.5.10, prop-types@^15.5.7, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
@@ -13099,6 +13179,15 @@ react-sizeme@^3.0.1:
     invariant "^2.2.4"
     shallowequal "^1.1.0"
     throttle-debounce "^3.0.1"
+
+react-sortable-hoc@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/react-sortable-hoc/-/react-sortable-hoc-2.0.0.tgz#f6780d8aa4b922a21f3e754af542f032677078b7"
+  integrity sha512-JZUw7hBsAHXK7PTyErJyI7SopSBFRcFHDjWW5SWjcugY0i6iH7f+eJkY8cJmGMlZ1C9xz1J3Vjz0plFpavVeRg==
+  dependencies:
+    "@babel/runtime" "^7.2.0"
+    invariant "^2.2.4"
+    prop-types "^15.5.7"
 
 react-syntax-highlighter@^13.5.3:
   version "13.5.3"
