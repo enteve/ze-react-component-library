@@ -2,7 +2,7 @@
  * 这个控件通过接受Logicform，展示复杂结果
  */
 import { useRequest } from "@umijs/hooks";
-import { Card, Statistic, Table } from "antd";
+import { Button, Card, Statistic, Table, Tooltip } from "antd";
 import React from "react";
 import _ from "underscore";
 import { useState } from "react";
@@ -19,6 +19,9 @@ import ZEDescription from "../ZEDescription/ZEDescription";
 import { LogicFormVisualizer } from "../ZELogicform";
 import ZETable from "../ZETable";
 import { ZECardProps } from "./ZECard.types";
+import ProTable from "@ant-design/pro-table";
+import { DownloadOutlined } from "@ant-design/icons";
+import excelExporter from "../ZETable/excelExporter";
 
 const getDefaultRepresentation = (
   logicform: LogicformType,
@@ -30,6 +33,15 @@ const getDefaultRepresentation = (
     return "value";
 
   if (logicform.groupby) {
+    // 如果是多维分组，并且只有一个pred。那么变成交叉表
+    if (
+      Array.isArray(logicform.groupby) &&
+      logicform.groupby.length === 2 &&
+      logicform.preds?.length === 1
+    ) {
+      return "cross-table";
+    }
+
     return "bar";
   }
 
@@ -42,8 +54,11 @@ const ZECard: React.FC<ZECardProps> = ({
   logicform,
   title,
   extra,
+  bodyStyle = {},
   representation: repr,
   getResult,
+  exportToExcel,
+  xlsx,
 }) => {
   const { data, loading } = useRequest<LogicformAPIResultType>(
     () => {
@@ -55,6 +70,7 @@ const ZECard: React.FC<ZECardProps> = ({
       return requestLogicform(logicform);
     },
     {
+      refreshDeps: [logicform],
       onSuccess: (res) => getResult?.(res),
     }
   );
@@ -67,13 +83,19 @@ const ZECard: React.FC<ZECardProps> = ({
 
   let component: any;
   if (isSimpleQuery(logicform)) {
-    component = <ZETable logicform={logicform} />;
+    component = (
+      <ZETable
+        logicform={logicform}
+        xlsx={xlsx}
+        exportToExcel={exportToExcel}
+      />
+    );
   } else if (finalRepresentation === "value") {
     component = <Statistic value={data.result} />;
-  } else if (finalRepresentation === "bar") {
+  } else if (finalRepresentation === "bar" || finalRepresentation === "pie") {
     component = (
       <ZEChart
-        type="column"
+        type={finalRepresentation === "pie" ? "pie" : "column"}
         logicform={logicform}
         result={data}
         config={{
@@ -110,6 +132,7 @@ const ZECard: React.FC<ZECardProps> = ({
         {
           title: idProp0.name,
           dataIndex: idProp0.name,
+          fixed: "left",
         },
       ];
 
@@ -137,18 +160,64 @@ const ZECard: React.FC<ZECardProps> = ({
         }
       });
 
+      // Export
+      const toolBarRender: React.ReactNode[] = [];
+      let exportFileName = "数据导出";
+
+      if (exportToExcel) {
+        if (typeof exportToExcel === "string") {
+          exportFileName = exportToExcel;
+        }
+
+        toolBarRender.push(
+          <Tooltip title="导出Excel">
+            <Button
+              type="text"
+              icon={<DownloadOutlined />}
+              onClick={() =>
+                excelExporter(
+                  {
+                    result: datasource,
+                    schema: data.schema,
+                    columnProperties: data.columnProperties,
+                  },
+                  exportFileName,
+                  xlsx
+                )
+              }
+            />
+          </Tooltip>
+        );
+      }
+
       component = (
-        <Table rowKey="_id" dataSource={datasource} columns={columns} />
+        <ProTable
+          tableClassName={exportFileName}
+          toolBarRender={() => toolBarRender}
+          options={false}
+          rowKey="_id"
+          search={false}
+          pagination={false}
+          dataSource={datasource}
+          columns={columns}
+          scroll={{ x: 150 * columns.length }}
+        />
       );
     } else {
       component = <div />;
     }
   } else {
-    component = <ZETable logicform={logicform} />;
+    component = (
+      <ZETable
+        logicform={logicform}
+        xlsx={xlsx}
+        exportToExcel={exportToExcel}
+      />
+    );
   }
 
   return (
-    <Card title={title} loading={loading} extra={extra}>
+    <Card title={title} loading={loading} extra={extra} bodyStyle={bodyStyle}>
       <div style={{ marginBottom: 30 }}>
         <LogicFormVisualizer logicform={logicform} />
       </div>
