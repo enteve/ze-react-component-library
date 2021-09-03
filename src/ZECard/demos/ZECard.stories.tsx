@@ -1,6 +1,7 @@
 // Generated with util/create-component.js
 import React from "react";
 import moment from "moment";
+import xlsx from "xlsx";
 import ZECard from "../ZECard";
 import "antd/dist/antd.css";
 
@@ -84,6 +85,18 @@ export const StatsDefaultBar = () => (
   />
 );
 
+export const StatsPie = () => (
+  <ZECard
+    title="各商品销量"
+    logicform={{
+      schema: "productsale",
+      preds: [{ name: "销量", operator: "$sum", pred: "销量" }],
+      groupby: ["商品"],
+    }}
+    representation="pie"
+  />
+);
+
 export const StatsDefaultRepresentation = () => (
   <ZECard
     title="各商品销量"
@@ -105,6 +118,8 @@ export const StatsCrossTable = () => (
       query: { 日期: { $offset: { year: 0 } } },
       groupby: ["$month", "商品"],
     }}
-    representation="cross-table"
+    bodyStyle={{ padding: 0 }}
+    xlsx={xlsx}
+    exportToExcel="交叉表"
   />
 );
