@@ -88,9 +88,16 @@ export const LogicFormVisualizer: React.FC<LogicFormVisualizerProps> = ({
           v.$lte instanceof Date ||
           v.$lte instanceof moment)
       ) {
-        return `${moment(v.$gte).format("YYYY-MM-DD HH:mm:ss")} ~ ${moment(
-          v.$lte
-        ).format("YYYY-MM-DD HH:mm:ss")}`;
+        let startDate = moment(v.$gte).format("YYYY-MM-DD HH:mm:ss");
+        let endDate = moment(v.$lte).format("YYYY-MM-DD HH:mm:ss");
+
+        // 优化一下显示方式
+        if (startDate.endsWith(" 00:00:00") && endDate.endsWith(" 23:59:59")) {
+          startDate = startDate.substring(0, 10);
+          endDate = endDate.substring(0, 10);
+        }
+
+        return `${startDate} ~ ${endDate}`;
       }
 
       if (typeof v === "object" && v.operator === "$ent") {
