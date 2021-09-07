@@ -5,6 +5,7 @@ export type ZECardProps = {
   logicform: LogicformType;
   representation?: string;
   extra?: React.ReactNode;
+  footer?: React.ReactNode;
   bodyStyle?: React.CSSProperties;
   getResult?: (result: LogicformAPIResultType) => void;
   exportToExcel?: boolean | string; // 传给ZETable

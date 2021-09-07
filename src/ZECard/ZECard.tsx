@@ -2,7 +2,7 @@
  * 这个控件通过接受Logicform，展示复杂结果
  */
 import { useRequest } from "@umijs/hooks";
-import { Button, Card, Result, Tooltip } from "antd";
+import { Button, Card, Divider, Result, Tooltip } from "antd";
 
 import React from "react";
 import _ from "underscore";
@@ -58,6 +58,7 @@ const ZECard: React.FC<ZECardProps> = ({
   logicform,
   title,
   extra,
+  footer,
   bodyStyle = {},
   representation: repr,
   getResult,
@@ -268,6 +269,12 @@ const ZECard: React.FC<ZECardProps> = ({
         <LogicFormVisualizer logicform={logicform} />
       </div>
       {component}
+      {footer && (
+        <>
+          <Divider />
+          {footer}
+        </>
+      )}
     </Card>
   );
 };
