@@ -26,12 +26,15 @@ export const Table = () => (
 
 export const Value = () => (
   <ZECard
-    title="Dealer销售额"
+    title="销售额"
     logicform={{
-      schemaName: "经销商",
-      schema: "dealer",
-      operator: "$count",
+      schemaName: "销售流水",
+      schema: "productsale",
+      operator: "$sum",
+      pred: "销售额",
+      name: "总销售额",
     }}
+    showRecommender={true}
   />
 );
 
