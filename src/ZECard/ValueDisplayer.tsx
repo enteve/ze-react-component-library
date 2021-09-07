@@ -42,7 +42,7 @@ const ValueDisplayer: React.FC<Props> = ({
     );
   }
 
-  return <StatisticCard style={{ margin: -24 }} statistic={statistic} />;
+  return <StatisticCard statistic={statistic} />;
 };
 
 export default ValueDisplayer;
