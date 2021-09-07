@@ -2,8 +2,7 @@
  * 这个控件通过接受Logicform，展示复杂结果
  */
 import { useRequest } from "@umijs/hooks";
-import { Button, Card, Table, Tooltip } from "antd";
-import { StatisticCard } from "@ant-design/pro-card";
+import { Button, Card, Result, Tooltip } from "antd";
 
 import React from "react";
 import _ from "underscore";
@@ -22,11 +21,10 @@ import { LogicFormVisualizer } from "../ZELogicform";
 import ZETable from "../ZETable";
 import { ZECardProps } from "./ZECard.types";
 import ProTable from "@ant-design/pro-table";
-import { ArrowDownOutlined, DownloadOutlined } from "@ant-design/icons";
+import { DownloadOutlined } from "@ant-design/icons";
 import excelExporter from "../ZETable/excelExporter";
 import ValueDisplayer from "./ValueDisplayer";
-
-const { Statistic } = StatisticCard;
+import RepresentationChanger from "./RepresentationChanger";
 
 const getDefaultRepresentation = (
   logicform: LogicformType,
@@ -104,10 +102,28 @@ const ZECard: React.FC<ZECardProps> = ({
         showRecommender={showRecommender}
       />
     );
-  } else if (finalRepresentation === "bar" || finalRepresentation === "pie") {
+  } else if (
+    finalRepresentation === "bar" ||
+    finalRepresentation === "pie" ||
+    finalRepresentation === "line"
+  ) {
+    let chartType = "column";
+    switch (finalRepresentation) {
+      case "pie":
+        chartType = "pie";
+        break;
+
+      case "line":
+        chartType = "line";
+        break;
+
+      default:
+        break;
+    }
+
     component = (
       <ZEChart
-        type={finalRepresentation === "pie" ? "pie" : "column"}
+        type={chartType}
         logicform={logicform}
         result={data}
         config={{
@@ -116,6 +132,8 @@ const ZECard: React.FC<ZECardProps> = ({
         }}
       />
     );
+  } else if (finalRepresentation === "map") {
+    component = <Result title="开发中" subTitle="under construction" />;
   } else if (finalRepresentation === "entity" && data.result?.length === 1) {
     component = (
       <ZEDescription
@@ -224,6 +242,17 @@ const ZECard: React.FC<ZECardProps> = ({
         logicform={logicform}
         xlsx={xlsx}
         exportToExcel={exportToExcel}
+      />
+    );
+  }
+
+  // extra
+  // 暂时只有带groupby的是支持RepresentationChanger的
+  if (!extra && logicform.groupby) {
+    extra = (
+      <RepresentationChanger
+        representationType={finalRepresentation}
+        onChange={setRepresentation}
       />
     );
   }
