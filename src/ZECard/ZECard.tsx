@@ -2,7 +2,9 @@
  * 这个控件通过接受Logicform，展示复杂结果
  */
 import { useRequest } from "@umijs/hooks";
-import { Button, Card, Statistic, Table, Tooltip } from "antd";
+import { Button, Card, Table, Tooltip } from "antd";
+import { StatisticCard } from "@ant-design/pro-card";
+
 import React from "react";
 import _ from "underscore";
 import { useState } from "react";
@@ -20,8 +22,11 @@ import { LogicFormVisualizer } from "../ZELogicform";
 import ZETable from "../ZETable";
 import { ZECardProps } from "./ZECard.types";
 import ProTable from "@ant-design/pro-table";
-import { DownloadOutlined } from "@ant-design/icons";
+import { ArrowDownOutlined, DownloadOutlined } from "@ant-design/icons";
 import excelExporter from "../ZETable/excelExporter";
+import ValueDisplayer from "./ValueDisplayer";
+
+const { Statistic } = StatisticCard;
 
 const getDefaultRepresentation = (
   logicform: LogicformType,
@@ -59,6 +64,7 @@ const ZECard: React.FC<ZECardProps> = ({
   getResult,
   exportToExcel,
   xlsx,
+  showRecommender = false,
 }) => {
   const { data, loading } = useRequest<LogicformAPIResultType>(
     () => {
@@ -91,7 +97,13 @@ const ZECard: React.FC<ZECardProps> = ({
       />
     );
   } else if (finalRepresentation === "value") {
-    component = <Statistic value={data.result} />;
+    component = (
+      <ValueDisplayer
+        logicform={logicform}
+        data={data}
+        showRecommender={showRecommender}
+      />
+    );
   } else if (finalRepresentation === "bar" || finalRepresentation === "pie") {
     component = (
       <ZEChart
