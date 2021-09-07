@@ -35,6 +35,7 @@ export const Value = () => (
       name: "总销售额",
     }}
     showRecommender={true}
+    footer={<div>footer</div>}
   />
 );
 
