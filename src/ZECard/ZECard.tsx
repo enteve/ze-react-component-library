@@ -25,6 +25,7 @@ import { DownloadOutlined } from "@ant-design/icons";
 import excelExporter from "../ZETable/excelExporter";
 import ValueDisplayer from "./ValueDisplayer";
 import RepresentationChanger from "./RepresentationChanger";
+import "./ZECard.less";
 
 const getDefaultRepresentation = (
   logicform: LogicformType,
@@ -88,19 +89,23 @@ const ZECard: React.FC<ZECardProps> = ({
   let component: any;
   if (isSimpleQuery(logicform)) {
     component = (
-      <ZETable
-        logicform={logicform}
-        xlsx={xlsx}
-        exportToExcel={exportToExcel}
-      />
+      <div className="proCardContainer">
+        <ZETable
+          logicform={logicform}
+          xlsx={xlsx}
+          exportToExcel={exportToExcel}
+        />
+      </div>
     );
   } else if (finalRepresentation === "value") {
     component = (
-      <ValueDisplayer
-        logicform={logicform}
-        data={data}
-        showRecommender={showRecommender}
-      />
+      <div className="proCardContainer">
+        <ValueDisplayer
+          logicform={logicform}
+          data={data}
+          showRecommender={showRecommender}
+        />
+      </div>
     );
   } else if (
     finalRepresentation === "bar" ||
