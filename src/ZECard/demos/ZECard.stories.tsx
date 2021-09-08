@@ -45,6 +45,25 @@ export const Value = () => (
   />
 );
 
+export const PercentageValue = () => (
+  <ZECard
+    title="MTD销售额环比"
+    logicform={{
+      schemaName: "销售流水",
+      schema: "productsale",
+      operator: "$mom",
+      pred: "销售额",
+      name: "总销售额",
+      query: {
+        日期: {
+          $gte: { $offset: { month: 0 }, day: 1 },
+          $lte: { $offset: { day: 0 } },
+        },
+      },
+    }}
+  />
+);
+
 export const Entity = () => (
   <ZECard
     title="Dealer销售额"
