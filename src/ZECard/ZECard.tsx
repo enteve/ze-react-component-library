@@ -127,15 +127,24 @@ const ZECard: React.FC<ZECardProps> = ({
         break;
     }
 
+    const config: any = {
+      xField: "_id",
+      yField: logicform.preds[0].name,
+    };
+    // chartType有两种形式，column和bar。
+    if (finalRepresentation === "bar" && logicform.sort) {
+      chartType = "bar";
+
+      config.xField = logicform.preds[0].name;
+      config.yField = "_id";
+    }
+
     component = (
       <ZEChart
         type={chartType}
         logicform={logicform}
         result={data}
-        config={{
-          xField: "_id",
-          yField: logicform.preds[0].name,
-        }}
+        config={config}
       />
     );
   } else if (finalRepresentation === "map") {

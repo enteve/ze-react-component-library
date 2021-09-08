@@ -6,5 +6,5 @@ export default () => {
   config.API_URL = "https://admin.xuetaifeng.com";
   // config.API_URL = "https://jaem.yiwendata.com";
   localStorage.token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTBiYzgyNjVlZWQ2ZjRmMmNiZDBkMTQiLCJpYXQiOjE2MzA0NzYxODUsImV4cCI6MTYzMTA4MDk4NX0.WVWppeeVpHk8oWCKLWKdB6CYqZl_j0QT-wAPQmuVHcs";
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTBiYzgyNjVlZWQ2ZjRmMmNiZDBkMTQiLCJpYXQiOjE2MzEwODExNjYsImV4cCI6MTYzMTY4NTk2Nn0.4iyLRZl28OQ-uLfIb21gODMVmy8VMgwsKhPDfq0mqpY";
 };

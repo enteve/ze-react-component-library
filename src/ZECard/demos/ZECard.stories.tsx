@@ -84,13 +84,25 @@ export const Stats = () => (
   />
 );
 
-export const StatsDefaultBar = () => (
+export const StatsDefaultColumn = () => (
   <ZECard
     title="各商品销量"
     logicform={{
       schema: "productsale",
       preds: [{ name: "销量", operator: "$sum", pred: "销量" }],
       groupby: ["商品"],
+    }}
+  />
+);
+
+export const StatsDefaultBar = () => (
+  <ZECard
+    title="商品销量从大到小排序"
+    logicform={{
+      schema: "productsale",
+      preds: [{ name: "销量", operator: "$sum", pred: "销量" }],
+      groupby: ["商品"],
+      sort: { 销量: -1 },
     }}
   />
 );
