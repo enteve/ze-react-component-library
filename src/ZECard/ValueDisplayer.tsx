@@ -18,15 +18,21 @@ const ValueDisplayer: React.FC<Props> = ({
   showRecommender = false,
 }) => {
   let unit = "";
+  let value = data?.result || "-";
   if (data?.columnProperties?.length > 0) {
     const [firstColProp] = data.columnProperties;
-    if (firstColProp.unit) {
+
+    if (firstColProp.type === "percentage") {
+      // 如果是百分比类型的呢
+      unit = "%";
+      value = value * 100;
+    } else if (firstColProp.unit) {
       unit = firstColProp.unit;
     }
   }
 
   const statistic: StatisticProps = {
-    value: data.result,
+    value,
     suffix: unit,
     precision: 1,
   };
