@@ -26,13 +26,19 @@ export const Table = () => (
 
 export const Value = () => (
   <ZECard
-    title="销售额"
+    title="MTD销售额"
     logicform={{
       schemaName: "销售流水",
       schema: "productsale",
       operator: "$sum",
       pred: "销售额",
       name: "总销售额",
+      query: {
+        日期: {
+          $gte: { $offset: { month: 0 }, day: 1 },
+          $lte: { $offset: { day: 0 } },
+        },
+      },
     }}
     showRecommender={true}
     footer={<div>footer</div>}

@@ -6,11 +6,17 @@ import { useRequest } from "@umijs/hooks";
 import { requestLogicform } from "../request";
 import type { LogicformAPIResultType, LogicformType } from "zeroetp-api-sdk";
 
-export default (logicform: LogicformType) => {
+export default (logicform: LogicformType, postProcess?: (v: any) => any) => {
   const { data } = useRequest<LogicformAPIResultType>(() =>
     requestLogicform(logicform)
   );
 
-  if (data?.result) return data.result;
+  if (data?.result) {
+    if (postProcess) {
+      return postProcess(data.result);
+    }
+
+    return data.result;
+  }
   return "-";
 };
