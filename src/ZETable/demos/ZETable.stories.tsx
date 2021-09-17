@@ -18,7 +18,8 @@ export default {
 export const NormalWithRowClick = () => (
   <ZETable
     logicform={{
-      schema: "dealer",
+      schema: "order",
+      close_default_query: true,
     }}
     onRow={(record) => ({
       onClick: () => {

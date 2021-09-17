@@ -186,7 +186,11 @@ export const customValueTypes = (schema: SchemaType) => ({
       const property = findPropByName(schema, propName);
       const nameProperty = getNameProperty(property.schema);
 
-      return entity[nameProperty.name];
+      if (!property.isArray) {
+        return entity[nameProperty.name];
+      }
+
+      return <div>{entity.map((i) => i[nameProperty.name]).join(",")}</div>;
     },
     renderFormItem: (_text, props) => {
       const propName =
