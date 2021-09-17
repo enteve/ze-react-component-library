@@ -106,9 +106,10 @@ const mapColumnItem = (
     title: property.name,
     dataIndex: property.name.split("."),
     ellipsis:
-      property.primal_type === "string" &&
-      !property.constraints.enum &&
-      !exporting,
+      property.ui?.ellipsis ||
+      (property.primal_type === "string" &&
+        !property.constraints.enum &&
+        !exporting), // 前端默认的ellipsis逻辑
     valueType: valueTypeMapping(property),
     filters: valueEnum !== undefined,
     onFilter: false,
