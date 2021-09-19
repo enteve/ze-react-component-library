@@ -57,3 +57,14 @@ export const Line = () => (
     }}
   />
 );
+
+export const Map = () => (
+  <ZEChart
+    type="map"
+    logicform={{
+      schema: "productsale",
+      groupby: [{ _id: "地理位置", level: "省市" }],
+      preds: [{ name: "amount", operator: "$sum", pred: "销售额" }],
+    }}
+  />
+);

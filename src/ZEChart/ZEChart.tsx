@@ -11,6 +11,7 @@ import {
   Scatter,
 } from "@ant-design/charts";
 import { ZEChartProps } from "./ZEChart.types";
+import Map from "./map";
 
 import "./ZEChart.less";
 import { useRequest } from "@umijs/hooks";
@@ -79,6 +80,8 @@ const ZEChart: React.FC<ZEChartProps> = ({
     chartDom = <Bullet {...config} />;
   } else if (type === "scatter") {
     chartDom = <Scatter {...config} />;
+  } else if (type === "map") {
+    chartDom = <Map {...config} />;
   } else {
     chartDom = <div>暂未支持</div>;
   }
