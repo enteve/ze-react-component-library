@@ -1,36 +1,37 @@
 /**
  * 单纯的EChart的Wrapper
  */
-import React from "react";
+import React, { useState, useEffect } from "react";
 import ReactECharts from "echarts-for-react";
-import { CSSProperties } from "markdown-to-jsx/node_modules/@types/react";
 
 interface Props {
   option: any;
-  style?: CSSProperties;
+  style?: React.CSSProperties;
   ref?: any;
 }
 
 const CHART_DEFAULT_HEIGHT = 400;
 
 const EChart: React.FC<Props> = ({ option, style = {}, ref }) => {
+  // 之所以要用一个trueOption，然后在useEffect里面用timeout去改option，是因为这样可以显示图表的change动画。不然第一次初始化数据的时候直接显示图表，没有动画
+  const [trueOption, setTrueOption] = useState({});
   const defaultOption = {
     toolbox: {
       feature: {
         saveAsImage: {},
       },
     },
-    legend: {
-      type: "scroll",
-      top: 0,
-      padding: [0, 50],
-    },
   };
+  useEffect(() => {
+    setTimeout(() => {
+      setTrueOption(option);
+    }, 100);
+  }, [option]);
   return (
     <ReactECharts
       ref={ref}
       style={{ height: CHART_DEFAULT_HEIGHT, ...style }}
-      option={{ ...defaultOption, ...option }}
+      option={{ ...defaultOption, ...trueOption }}
       notMerge={true}
       lazyUpdate={true}
       // onChartReady={this.onChartReadyCallback}
