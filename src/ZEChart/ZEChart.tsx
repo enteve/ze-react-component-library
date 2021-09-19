@@ -15,12 +15,7 @@ import getBarOption from "./EChart/options/bar";
 import getColumnOption from "./EChart/options/column";
 import { getNameKeyForChart } from "./util";
 
-const ZEChart: React.FC<ZEChartProps> = ({
-  type,
-  config = {},
-  logicform,
-  result,
-}) => {
+const ZEChart: React.FC<ZEChartProps> = ({ type, logicform, result }) => {
   const { data } = useRequest<LogicformAPIResultType>(() => {
     if (result) {
       return new Promise((resolve) => resolve(result));
@@ -28,13 +23,6 @@ const ZEChart: React.FC<ZEChartProps> = ({
 
     return requestLogicform(logicform);
   });
-
-  if (data) {
-    config.data = data.result;
-  } else {
-    config.data = [];
-  }
-  // console.log(config.data);
 
   // 设定正确的chart
   let chartDom: React.ReactNode;
@@ -49,6 +37,7 @@ const ZEChart: React.FC<ZEChartProps> = ({
         name: predItem.name,
         type: "line",
         data: data.result.map((r) => r[predItem.name]),
+        animationDuration: 500,
       }));
       option.xAxis.data = data.result.map((r) => _.get(r, nameProp));
     }
@@ -80,8 +69,9 @@ const ZEChart: React.FC<ZEChartProps> = ({
         name: predItem.name,
         type: "bar",
         data: data.result.map((r) => r[predItem.name]),
+        animationDuration: 500,
       }));
-      option.yAxis.data = data.result.map((r) => _.get(r, nameProp));
+      option.xAxis.data = data.result.map((r) => _.get(r, nameProp));
     }
 
     chartDom = <EChart option={option} />;
@@ -96,8 +86,11 @@ const ZEChart: React.FC<ZEChartProps> = ({
         name: predItem.name,
         type: "bar",
         data: data.result.map((r) => r[predItem.name]),
+        animationDuration: 500,
       }));
-      option.xAxis.data = data.result.map((r) => _.get(r, nameProp));
+      option.yAxis.data = data.result.map((r) => _.get(r, nameProp));
+
+      console.log(option);
     }
 
     chartDom = <EChart option={option} />;
