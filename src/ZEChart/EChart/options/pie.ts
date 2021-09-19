@@ -10,6 +10,7 @@ export default () => {
     },
     series: [
       {
+        animationDuration: 500,
         top: 20,
         type: "pie",
         data: [],

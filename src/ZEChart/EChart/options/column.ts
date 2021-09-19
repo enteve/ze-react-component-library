@@ -5,11 +5,11 @@ export default () => {
       top: 0,
       padding: [0, 50],
     },
-    yAxis: {
+    xAxis: {
       type: "category",
       data: [],
     },
-    xAxis: {
+    yAxis: {
       type: "value",
     },
     tooltip: {
