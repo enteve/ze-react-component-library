@@ -39,7 +39,6 @@
   },
   "homepage": "https://github.com/enteve/ze-react-component-library#readme",
   "peerDependencies": {
-    "@ant-design/charts": ">=1.2.3",
     "@ant-design/icons": ">=4.3.0",
     "@ant-design/pro-card": ">=1.14.17",
     "@ant-design/pro-descriptions": ">=1.9.10",
@@ -49,15 +48,16 @@
     "@ant-design/pro-table": ">=2.40.0",
     "@umijs/hooks": ">1.9.0",
     "antd": ">=4.15.0",
+    "echarts": ">=5.2.0",
+    "echarts-for-react": ">=3.0.1",
     "moment": ">=2.28.0",
     "numeral": ">=2.0.0",
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0",
     "underscore": ">=1.13.1",
-    "zeroetp-api-sdk": ">=1.1.21"
+    "zeroetp-api-sdk": ">=1.1.23"
   },
   "devDependencies": {
-    "@ant-design/charts": "^1.2.3",
     "@ant-design/icons": "^4.6.2",
     "@ant-design/pro-card": "^1.14.17",
     "@ant-design/pro-descriptions": "^1.9.10",
@@ -65,9 +65,6 @@
     "@ant-design/pro-layout": "^6.19.4",
     "@ant-design/pro-provider": "^1.4.13",
     "@ant-design/pro-table": "^2.40.0",
-    "@antv/l7": "^2.5.23",
-    "@antv/l7-district": "^2.3.11",
-    "@antv/l7-react": "^2.3.3",
     "@babel/core": "^7.12.10",
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-node-resolve": "^11.0.1",
@@ -83,6 +80,8 @@
     "babel-plugin-import": "^1.13.3",
     "babel-preset-react-app": "^10.0.0",
     "cross-env": "^7.0.3",
+    "echarts": "^5.2.0",
+    "echarts-for-react": "^3.0.1",
     "father-build": "^1.19.8",
     "husky": ">=6",
     "identity-obj-proxy": "^3.0.0",
@@ -103,7 +102,7 @@
     "typescript": "^4.3.2",
     "underscore": "^1.13.1",
     "xlsx": "^0.17.0",
-    "zeroetp-api-sdk": "1.1.21"
+    "zeroetp-api-sdk": "1.1.23"
   },
   "dependencies": {
     "escape-string-regexp": "^5.0.0"

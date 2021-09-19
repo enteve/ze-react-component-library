@@ -1,15 +1,6 @@
 // Generated with util/create-component.js
 import React from "react";
-import {
-  Line,
-  Pie,
-  Area,
-  Column,
-  Bar,
-  DualAxes,
-  Bullet,
-  Scatter,
-} from "@ant-design/charts";
+import _ from "underscore";
 import { ZEChartProps } from "./ZEChart.types";
 import Map from "./map";
 
@@ -17,6 +8,12 @@ import "./ZEChart.less";
 import { useRequest } from "@umijs/hooks";
 import { LogicformAPIResultType } from "zeroetp-api-sdk";
 import { requestLogicform } from "../request";
+import EChart from "./EChart";
+import getPieOption from "./EChart/options/pie";
+import getLineOption from "./EChart/options/line";
+import getBarOption from "./EChart/options/bar";
+import getColumnOption from "./EChart/options/column";
+import { getNameKeyForChart } from "./util";
 
 const ZEChart: React.FC<ZEChartProps> = ({
   type,
@@ -42,46 +39,70 @@ const ZEChart: React.FC<ZEChartProps> = ({
   // 设定正确的chart
   let chartDom: React.ReactNode;
   if (type === "line") {
-    const lineDefaultConfig: any = {
-      padding: "auto",
-      xField: "_id",
-      yField: logicform.preds[0].name,
-    };
+    const option: any = getLineOption();
 
-    chartDom = <Line {...{ ...lineDefaultConfig, ...config }} />;
+    // 灌入Data
+    if (data) {
+      const nameProp = getNameKeyForChart(logicform, data);
+
+      option.series = logicform.preds.map((predItem) => ({
+        name: predItem.name,
+        type: "line",
+        data: data.result.map((r) => r[predItem.name]),
+      }));
+      option.xAxis.data = data.result.map((r) => _.get(r, nameProp));
+    }
+
+    chartDom = <EChart option={option} />;
   } else if (type === "pie") {
-    // 设定默认config
-    const pieDefaultConfig: any = {
-      appendPadding: 10,
-      data,
-      angleField: logicform.preds[0].name,
-      colorField: "_id",
-      radius: 1,
-      innerRadius: 0.64,
-      interactions: [
-        { type: "element-selected" },
-        { type: "element-active" },
-        { type: "pie-statistic-active" },
-      ],
-    };
+    const option: any = getPieOption();
 
-    chartDom = <Pie {...{ ...pieDefaultConfig, ...config }} />;
-  } else if (type === "area") {
-    chartDom = <Area {...config} />;
+    // 灌入Data
+    if (data) {
+      const nameProp = getNameKeyForChart(logicform, data);
+
+      option.series[0].data = data.result.map((r) => ({
+        _id: r._id,
+        value: r[logicform.preds[0].name],
+        name: _.get(r, nameProp),
+      }));
+    }
+
+    chartDom = <EChart option={option} />;
   } else if (type === "column") {
-    chartDom = <Column {...config} />;
+    const option: any = getColumnOption();
+
+    // 灌入Data
+    if (data) {
+      const nameProp = getNameKeyForChart(logicform, data);
+
+      option.series = logicform.preds.map((predItem) => ({
+        name: predItem.name,
+        type: "bar",
+        data: data.result.map((r) => r[predItem.name]),
+      }));
+      option.yAxis.data = data.result.map((r) => _.get(r, nameProp));
+    }
+
+    chartDom = <EChart option={option} />;
   } else if (type === "bar") {
-    chartDom = <Bar {...config} />;
-  } else if (type === "area") {
-    chartDom = <Area {...config} />;
-  } else if (type === "dualAxes") {
-    chartDom = <DualAxes {...config} />;
-  } else if (type === "bullet") {
-    chartDom = <Bullet {...config} />;
-  } else if (type === "scatter") {
-    chartDom = <Scatter {...config} />;
+    const option: any = getBarOption();
+
+    // 灌入Data
+    if (data) {
+      const nameProp = getNameKeyForChart(logicform, data);
+
+      option.series = logicform.preds.map((predItem) => ({
+        name: predItem.name,
+        type: "bar",
+        data: data.result.map((r) => r[predItem.name]),
+      }));
+      option.xAxis.data = data.result.map((r) => _.get(r, nameProp));
+    }
+
+    chartDom = <EChart option={option} />;
   } else if (type === "map") {
-    chartDom = <Map {...config} />;
+    chartDom = <Map data={data} logicform={logicform} />;
   } else {
     chartDom = <div>暂未支持</div>;
   }
