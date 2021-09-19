@@ -42,10 +42,6 @@ const ZEDashboard: React.FC<ZEDashboardProps> = () => {
                   groupby: "$month",
                   preds: [{ name: "amount", operator: "$sum", pred: "销售额" }],
                 }}
-                config={{
-                  xField: "_id",
-                  yField: "amount",
-                }}
               />
             </Col>
             <Col span={8}>
