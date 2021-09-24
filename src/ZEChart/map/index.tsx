@@ -1,67 +1,64 @@
 import React from "react";
-import { MapboxScene } from "@antv/l7-react";
-import { DrillDownLayer } from "@antv/l7-district";
+import { useRequest } from "@umijs/hooks";
+import {
+  commonRequest,
+  LogicformAPIResultType,
+  LogicformType,
+} from "zeroetp-api-sdk";
+import * as echarts from "echarts";
+import EChart from "../EChart";
+import _ from "underscore";
+import { getNameKeyForChart } from "../util";
 
 interface Props {
-  data: any[];
+  logicform: LogicformType;
+  data: LogicformAPIResultType;
 }
 
-const Map: React.FC<Props> = ({ data }) => {
-  console.log(data);
-  return (
-    <MapboxScene
-      map={{
-        center: [116.2825, 39.9],
-        pitch: 0,
-        style: "blank",
-        zoom: 3,
-        minZoom: 3,
-        maxZoom: 10,
-      }}
-      option={{ logoVisible: false }}
-      onSceneLoaded={(scene) => {
-        new DrillDownLayer(scene, {
-          viewStart: "Country",
-          viewEnd: "City",
-          joinBy: ["NAME_CHN", "name"],
-          provinceData: [
-            {
-              name: "青海省",
-              value: 1223,
-            },
-            {
-              name: "上海市",
-              value: 23,
-            },
-          ],
-          cityData: [
-            {
-              name: "海东市",
-              value: 1223,
-            },
-          ],
-          countyData: [
-            {
-              name: "平安区",
-              value: "456",
-            },
-          ],
-          fill: {
-            color: {
-              field: "value",
-              values: ["lightskyblue", "yellow", "orangered"],
-            },
+const Map: React.FC<Props> = ({ logicform, data }) => {
+  const { data: mapData } = useRequest(() => commonRequest("/map/china"), {
+    onSuccess: (geoJSON) => {
+      echarts.registerMap("china", geoJSON);
+    },
+  });
+
+  let option: any = {};
+
+  if (mapData && data) {
+    const values = data.result.map((i) => i[logicform.preds[0].name]);
+    const max = _.max(values);
+    const min = _.min(values);
+    const nameProp = getNameKeyForChart(logicform, data);
+
+    option = {
+      visualMap: {
+        min,
+        max,
+        text: ["最高", "最低"],
+        realtime: false,
+        calculable: true,
+      },
+      tooltip: {
+        trigger: "item",
+      },
+      series: [
+        {
+          name: logicform.preds[0].name,
+          roam: true,
+          type: "map",
+          mapType: "china",
+          label: {
+            show: true,
           },
-          // popup: {
-          //   enable: true,
-          //   Html: (props) => {
-          //     return `<span>${props.NAME_CHN}</span>`;
-          //   },
-          // },
-        });
-      }}
-    />
-  );
+          data: data.result.map((i) => ({
+            name: _.get(i, nameProp),
+            value: i[logicform.preds[0].name],
+          })),
+        },
+      ],
+    };
+  }
+  return <EChart option={option} />;
 };
 
 export default Map;

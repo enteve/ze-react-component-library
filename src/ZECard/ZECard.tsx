@@ -8,6 +8,7 @@ import React from "react";
 import _ from "underscore";
 import { useState } from "react";
 import {
+  findPropByName,
   getNameProperty,
   isSimpleQuery,
   LogicformAPIResultType,
@@ -44,6 +45,31 @@ const getDefaultRepresentation = (
       logicform.preds?.length === 1
     ) {
       return "cross-table";
+    }
+
+    // 如果是一维分组，且这一维是地理位置，那么用地图
+    if (typeof logicform.groupby === "object") {
+      let groupbyItem: any = logicform.groupby;
+      if (Array.isArray(logicform.groupby)) {
+        if (logicform.groupby.length === 1) {
+          groupbyItem = logicform.groupby[0];
+        } else {
+          groupbyItem = null;
+        }
+      }
+
+      if (groupbyItem) {
+        let groupbyProp: PropertyType;
+        if (typeof groupbyItem === "object" && "_id" in groupbyItem) {
+          groupbyProp = findPropByName(result.schema, groupbyItem._id);
+        } else if (typeof groupbyItem === "string") {
+          groupbyProp = findPropByName(result.schema, groupbyItem);
+        }
+
+        if (groupbyProp?.ref === "geo") {
+          return "map";
+        }
+      }
     }
 
     return "bar";
@@ -111,7 +137,8 @@ const ZECard: React.FC<ZECardProps> = ({
   } else if (
     finalRepresentation === "bar" ||
     finalRepresentation === "pie" ||
-    finalRepresentation === "line"
+    finalRepresentation === "line" ||
+    finalRepresentation === "map"
   ) {
     let chartType = "column";
     switch (finalRepresentation) {
@@ -122,33 +149,22 @@ const ZECard: React.FC<ZECardProps> = ({
       case "line":
         chartType = "line";
         break;
+      case "map":
+        chartType = "map";
+        break;
 
       default:
         break;
     }
 
-    const config: any = {
-      xField: "_id",
-      yField: logicform.preds[0].name,
-    };
     // chartType有两种形式，column和bar。
     if (finalRepresentation === "bar" && logicform.sort) {
       chartType = "bar";
-
-      config.xField = logicform.preds[0].name;
-      config.yField = "_id";
     }
 
     component = (
-      <ZEChart
-        type={chartType}
-        logicform={logicform}
-        result={data}
-        config={config}
-      />
+      <ZEChart type={chartType} logicform={logicform} result={data} />
     );
-  } else if (finalRepresentation === "map") {
-    component = <Result title="开发中" subTitle="under construction" />;
   } else if (finalRepresentation === "entity" && data.result?.length === 1) {
     component = (
       <ZEDescription
