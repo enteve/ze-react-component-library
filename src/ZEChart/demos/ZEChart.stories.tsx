@@ -10,9 +10,34 @@ export default {
   title: "ZEChart",
 };
 
-export const BasicUsage = () => (
+export const Pie = () => (
   <ZEChart
     type="pie"
+    logicform={{
+      schema: "productsale",
+      groupby: "经销商",
+      preds: [{ name: "amount", operator: "$sum", pred: "销售额" }],
+    }}
+  />
+);
+
+export const Bar = () => (
+  <ZEChart
+    type="bar"
+    logicform={{
+      schema: "productsale",
+      groupby: "经销商",
+      preds: [
+        { name: "流水数量", operator: "$count" },
+        { name: "订单数量", operator: "$uniq", pred: "订单编号" },
+      ],
+    }}
+  />
+);
+
+export const Column = () => (
+  <ZEChart
+    type="column"
     logicform={{
       schema: "productsale",
       groupby: "经销商",

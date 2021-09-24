@@ -126,6 +126,18 @@ export const StatsDefaultBar = () => (
   />
 );
 
+export const StatsDefaultMap = () => (
+  <ZECard
+    title="地图"
+    logicform={{
+      schema: "productsale",
+      preds: [{ name: "销量", operator: "$sum", pred: "销量" }],
+      groupby: [{ _id: "地理位置", level: "省市" }],
+      sort: { 销量: -1 },
+    }}
+  />
+);
+
 export const StatsPie = () => (
   <ZECard
     title="各商品销量"
