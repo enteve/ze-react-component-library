@@ -13,9 +13,10 @@ import { getNameKeyForChart } from "../util";
 interface Props {
   logicform: LogicformType;
   data: LogicformAPIResultType;
+  eventsDict?: Record<string, Function>;
 }
 
-const Map: React.FC<Props> = ({ logicform, data }) => {
+const Map: React.FC<Props> = ({ logicform, data, eventsDict = {} }) => {
   const { data: mapData } = useRequest(() => commonRequest("/map/china"), {
     onSuccess: (geoJSON) => {
       echarts.registerMap("china", geoJSON);
@@ -58,7 +59,7 @@ const Map: React.FC<Props> = ({ logicform, data }) => {
       ],
     };
   }
-  return <EChart option={option} />;
+  return <EChart option={option} eventsDict={eventsDict} />;
 };
 
 export default Map;

@@ -1,9 +1,11 @@
 // Generated with util/create-component.js
-import React from "react";
+import React, { useState } from "react";
 import ZEChart from "../ZEChart";
 
 // prepare server
 import prepareServerForStories from "../../../util/prepareServerForStories";
+import { LogicformType } from "zeroetp-api-sdk";
+
 prepareServerForStories();
 
 export default {
@@ -21,30 +23,42 @@ export const Pie = () => (
   />
 );
 
-export const Bar = () => (
-  <ZEChart
-    type="bar"
-    logicform={{
-      schema: "productsale",
-      groupby: "经销商",
-      preds: [
-        { name: "流水数量", operator: "$count" },
-        { name: "订单数量", operator: "$uniq", pred: "订单编号" },
-      ],
-    }}
-  />
-);
+export const Bar = () => {
+  const [logicform, setLogicform] = useState<LogicformType>({
+    schema: "productsale",
+    groupby: "经销商",
+    preds: [
+      { name: "流水数量", operator: "$count" },
+      { name: "订单数量", operator: "$uniq", pred: "订单编号" },
+    ],
+  });
 
-export const Column = () => (
-  <ZEChart
-    type="column"
-    logicform={{
-      schema: "productsale",
-      groupby: "经销商",
-      preds: [{ name: "amount", operator: "$sum", pred: "销售额" }],
-    }}
-  />
-);
+  return (
+    <ZEChart
+      type="bar"
+      logicform={logicform}
+      onChangeLogicform={setLogicform}
+    />
+  );
+};
+
+export const Column = () => {
+  const [logicform, setLogicform] = useState<LogicformType>({
+    schema: "productsale",
+    groupby: "商品_分类",
+    preds: [{ name: "amount", operator: "$sum", pred: "销售额" }],
+  });
+
+  console.log(logicform);
+
+  return (
+    <ZEChart
+      type="column"
+      logicform={logicform}
+      onChangeLogicform={setLogicform}
+    />
+  );
+};
 
 export const Line = () => (
   <ZEChart

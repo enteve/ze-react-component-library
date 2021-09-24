@@ -7,6 +7,7 @@ import {
   getIDProperty,
   findPropByName,
   getNameProperty,
+  LogicformType,
 } from "zeroetp-api-sdk";
 import numeral from "numeral";
 import { EditableProTable } from "@ant-design/pro-table";
@@ -473,4 +474,66 @@ const renderObjectFormItemHierarchy = (property: PropertyType, props: any) => {
       />
     </Spin>
   );
+};
+
+const normaliseGroupby = (logicform: LogicformType) => {
+  if (!logicform.groupby) return;
+
+  if (typeof logicform.groupby === "string") {
+    logicform.groupby = [{ _id: logicform.groupby }];
+  }
+
+  if (!Array.isArray(logicform.groupby)) {
+    logicform.groupby = [logicform.groupby];
+  }
+
+  for (let i = 0; i < logicform.groupby.length; i++) {
+    const element = logicform.groupby[i];
+
+    if (typeof element === "string") {
+      logicform.groupby[i] = [{ _id: element }];
+    }
+  }
+
+  return logicform.groupby;
+};
+
+/**
+ * 逻辑是这样的。
+ * TODO：写testcase
+ * groupby: "商品_分类"，从’单品‘开始下钻   ->  query:{商品_分类:'单品'}, groupby: "商品",
+ * @param logicform
+ * @param schema
+ * @param groupbyItem
+ * @returns new logicform
+ */
+export const drilldownLogicform = (
+  logicform: LogicformType,
+  schema: SchemaType,
+  groupbyItem: string
+) => {
+  if (!logicform.groupby) return null; //必须有groupby才能下钻
+  const newLF: LogicformType = JSON.parse(JSON.stringify(logicform));
+  normaliseGroupby(newLF);
+  if (newLF.groupby.length > 1) return null; // 暂时不支持多维数组下钻
+
+  if (!newLF.query) newLF.query = {};
+  newLF.query[newLF.groupby[0]._id] = groupbyItem;
+
+  // 获取下一层
+  const groupbyProp = findPropByName(schema, newLF.groupby[0]._id);
+  // console.log(groupbyProp);
+
+  if (newLF.groupby[0].level) {
+  } else {
+    if (groupbyProp.hierarchy?.down) {
+      const groupbyChain = newLF.groupby[0]._id.split("_");
+      groupbyChain.pop();
+      newLF.groupby = [...groupbyChain, groupbyProp.hierarchy?.down].join("_");
+
+      return newLF;
+    }
+  }
+
+  return null;
 };
