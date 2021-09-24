@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { useRequest } from "@umijs/hooks";
 import {
   LogicformAPIResultType,
   LogicformType,
   config,
   normaliseGroupby,
+  getHierarchyCodeLength,
 } from "zeroetp-api-sdk";
 import * as echarts from "echarts";
 import EChart from "../EChart";
@@ -18,25 +19,52 @@ interface Props {
 }
 
 const Map: React.FC<Props> = ({ logicform, data, eventsDict = {} }) => {
+  const [map, setMap] = useState<string>("100000");
   const { data: mapData } = useRequest(
     () => {
-      const mapUrl = "100000.json";
+      if (!data?.schema)
+        return new Promise<Response>((resolve) => resolve(null));
 
-      // 决定地图
+      let mapID = map;
+      const startLevel = "省市";
+
+      // 决定地图选哪张
       if (logicform?.groupby && data && data.schema) {
         normaliseGroupby(logicform);
-        if (logicform.groupby.length === 1 && logicform.groupby[0].level) {
-          console.log("nb！");
-          // 看data所有的start code。拿到统一的startcode。
+        if (
+          logicform.groupby.length === 1 &&
+          logicform.groupby[0].level &&
+          logicform.groupby[0].level !== startLevel
+        ) {
+          if (data.columnProperties[0].schema?._id === "geo") {
+            if (logicform.groupby[0].level === "城市") {
+              const startCodeLength = getHierarchyCodeLength(
+                data.columnProperties[0].schema,
+                startLevel
+              );
+              const codes = new Set<string>();
+              data.result.forEach((i) =>
+                codes.add(i._id.substring(0, startCodeLength))
+              );
+              const codeArray = Array.from(codes);
+              if (codeArray.length === 1) {
+                mapID = `${codeArray[0].substring(4)}0000`;
+              }
+            }
+          }
         }
       }
 
-      return fetch(`${config.API_URL}/map/china/${mapUrl}`);
+      return fetch(`${config.API_URL}/map/china/${mapID}.json`);
     },
     {
       onSuccess: async (response) => {
-        const json = await response.json();
-        echarts.registerMap("china", json);
+        if (response) {
+          const json = await response.json();
+          const mapID = response.url.split("/").pop().split(".")[0];
+          echarts.registerMap(mapID, json);
+          setMap(mapID);
+        }
       },
       refreshDeps: [data],
     }
@@ -66,7 +94,7 @@ const Map: React.FC<Props> = ({ logicform, data, eventsDict = {} }) => {
           name: logicform.preds[0].name,
           roam: true,
           type: "map",
-          map: "china",
+          map,
           label: {
             show: true,
           },

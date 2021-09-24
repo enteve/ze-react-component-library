@@ -71,9 +71,9 @@ export const Line = () => (
 
 export const Map = () => {
   const [logicform, setLogicform] = useState<LogicformType>({
-    schema: "productsale",
-    groupby: [{ _id: "地理位置", level: "省市" }],
-    preds: [{ name: "amount", operator: "$sum", pred: "销售额" }],
+    schema: "interview",
+    groupby: [{ _id: "所在城市", level: "省市" }],
+    preds: [{ name: "count", operator: "$count" }],
   });
 
   return (
