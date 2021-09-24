@@ -40,10 +40,16 @@ const ZEChart: React.FC<ZEChartProps> = ({
       if (!data?.schema) return;
       if (!onChangeLogicform) return;
 
-      // 下钻
-      const drilledLF = drilldownLogicform(logicform, data.schema, params.name);
-      if (drilledLF) {
-        onChangeLogicform(drilledLF);
+      const { dataIndex } = params;
+      const item = data.result[dataIndex];
+      if (item) {
+        // 下钻
+        const drilledLF = drilldownLogicform(logicform, data.schema, item._id);
+        if (drilledLF) {
+          onChangeLogicform(drilledLF);
+        }
+      } else {
+        console.error("不应该找不到item的, dataIndex: " + dataIndex);
       }
     },
   };
