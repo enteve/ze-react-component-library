@@ -1,9 +1,10 @@
 import React from "react";
 import { useRequest } from "@umijs/hooks";
 import {
-  commonRequest,
   LogicformAPIResultType,
   LogicformType,
+  config,
+  normaliseGroupby,
 } from "zeroetp-api-sdk";
 import * as echarts from "echarts";
 import EChart from "../EChart";
@@ -17,15 +18,33 @@ interface Props {
 }
 
 const Map: React.FC<Props> = ({ logicform, data, eventsDict = {} }) => {
-  const { data: mapData } = useRequest(() => commonRequest("/map/china"), {
-    onSuccess: (geoJSON) => {
-      echarts.registerMap("china", geoJSON);
+  const { data: mapData } = useRequest(
+    () => {
+      const mapUrl = "100000.json";
+
+      // 决定地图
+      if (logicform?.groupby && data && data.schema) {
+        normaliseGroupby(logicform);
+        if (logicform.groupby.length === 1 && logicform.groupby[0].level) {
+          console.log("nb！");
+          // 看data所有的start code。拿到统一的startcode。
+        }
+      }
+
+      return fetch(`${config.API_URL}/map/china/${mapUrl}`);
     },
-  });
+    {
+      onSuccess: async (response) => {
+        const json = await response.json();
+        echarts.registerMap("china", json);
+      },
+      refreshDeps: [data],
+    }
+  );
 
   let option: any = {};
 
-  if (mapData && data) {
+  if (mapData && data && data.result) {
     const values = data.result.map((i) => i[logicform.preds[0].name]);
     const max = _.max(values);
     const min = _.min(values);
@@ -47,7 +66,7 @@ const Map: React.FC<Props> = ({ logicform, data, eventsDict = {} }) => {
           name: logicform.preds[0].name,
           roam: true,
           type: "map",
-          mapType: "china",
+          map: "china",
           label: {
             show: true,
           },
@@ -59,6 +78,7 @@ const Map: React.FC<Props> = ({ logicform, data, eventsDict = {} }) => {
       ],
     };
   }
+
   return <EChart option={option} eventsDict={eventsDict} />;
 };
 

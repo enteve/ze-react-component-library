@@ -8,6 +8,7 @@ import {
   findPropByName,
   getNameProperty,
   LogicformType,
+  normaliseGroupby,
 } from "zeroetp-api-sdk";
 import numeral from "numeral";
 import { EditableProTable } from "@ant-design/pro-table";
@@ -476,28 +477,6 @@ const renderObjectFormItemHierarchy = (property: PropertyType, props: any) => {
   );
 };
 
-const normaliseGroupby = (logicform: LogicformType) => {
-  if (!logicform.groupby) return;
-
-  if (typeof logicform.groupby === "string") {
-    logicform.groupby = [{ _id: logicform.groupby }];
-  }
-
-  if (!Array.isArray(logicform.groupby)) {
-    logicform.groupby = [logicform.groupby];
-  }
-
-  for (let i = 0; i < logicform.groupby.length; i++) {
-    const element = logicform.groupby[i];
-
-    if (typeof element === "string") {
-      logicform.groupby[i] = [{ _id: element }];
-    }
-  }
-
-  return logicform.groupby;
-};
-
 /**
  * 逻辑是这样的。
  * TODO：写testcase
@@ -518,14 +497,25 @@ export const drilldownLogicform = (
   if (newLF.groupby.length > 1) return null; // 暂时不支持多维数组下钻
 
   if (!newLF.query) newLF.query = {};
-  newLF.query[newLF.groupby[0]._id] = groupbyItem;
 
   // 获取下一层
   const groupbyProp = findPropByName(schema, newLF.groupby[0]._id);
   // console.log(groupbyProp);
 
   if (newLF.groupby[0].level) {
+    const hierarchy: any[] = groupbyProp.schema.hierarchy;
+
+    const thisLevelIndex = hierarchy.findIndex(
+      (h) => h.name === newLF.groupby[0].level
+    );
+    if (thisLevelIndex < hierarchy.length - 1) {
+      newLF.query[newLF.groupby[0]._id] = { $regex: `^${groupbyItem}` };
+      newLF.groupby[0].level = hierarchy[thisLevelIndex + 1].name;
+      return newLF;
+    }
   } else {
+    newLF.query[newLF.groupby[0]._id] = groupbyItem;
+
     if (groupbyProp.hierarchy?.down) {
       const groupbyChain = newLF.groupby[0]._id.split("_");
       groupbyChain.pop();

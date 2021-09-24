@@ -49,8 +49,6 @@ export const Column = () => {
     preds: [{ name: "amount", operator: "$sum", pred: "销售额" }],
   });
 
-  console.log(logicform);
-
   return (
     <ZEChart
       type="column"
@@ -68,42 +66,21 @@ export const Line = () => (
       groupby: "$day",
       preds: [{ name: "amount", operator: "$sum", pred: "销售额" }],
     }}
-    config={{
-      annotations: [
-        {
-          type: "regionFilter",
-          start: ["min", "median"],
-          end: ["max", "0"],
-          color: "#F4664A",
-        },
-        {
-          type: "text",
-          position: ["min", "median"],
-          content: "中位数",
-          offsetY: -4,
-          style: { textBaseline: "bottom" },
-        },
-        {
-          type: "line",
-          start: ["min", "median"],
-          end: ["max", "median"],
-          style: {
-            stroke: "#F4664A",
-            lineDash: [2, 2],
-          },
-        },
-      ],
-    }}
   />
 );
 
-export const Map = () => (
-  <ZEChart
-    type="map"
-    logicform={{
-      schema: "productsale",
-      groupby: [{ _id: "地理位置", level: "省市" }],
-      preds: [{ name: "amount", operator: "$sum", pred: "销售额" }],
-    }}
-  />
-);
+export const Map = () => {
+  const [logicform, setLogicform] = useState<LogicformType>({
+    schema: "productsale",
+    groupby: [{ _id: "地理位置", level: "省市" }],
+    preds: [{ name: "amount", operator: "$sum", pred: "销售额" }],
+  });
+
+  return (
+    <ZEChart
+      type="map"
+      logicform={logicform}
+      onChangeLogicform={setLogicform}
+    />
+  );
+};
