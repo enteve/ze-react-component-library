@@ -5,4 +5,5 @@ export interface ZEChartProps {
   type: string;
   logicform: LogicformType;
   result?: LogicformAPIResultType;
+  onChangeLogicform?: (logicform: LogicformType) => void;
 }

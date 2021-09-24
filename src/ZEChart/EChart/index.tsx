@@ -8,11 +8,17 @@ interface Props {
   option: any;
   style?: React.CSSProperties;
   ref?: any;
+  eventsDict?: Record<string, Function>;
 }
 
 const CHART_DEFAULT_HEIGHT = 400;
 
-const EChart: React.FC<Props> = ({ option, style = {}, ref }) => {
+const EChart: React.FC<Props> = ({
+  option,
+  style = {},
+  ref,
+  eventsDict = {},
+}) => {
   // 之所以要用一个trueOption，然后在useEffect里面用timeout去改option，是因为这样可以显示图表的change动画。不然第一次初始化数据的时候直接显示图表，没有动画
   const [trueOption, setTrueOption] = useState({});
   const defaultOption = {
@@ -34,8 +40,8 @@ const EChart: React.FC<Props> = ({ option, style = {}, ref }) => {
       option={{ ...defaultOption, ...trueOption }}
       notMerge={true}
       lazyUpdate={true}
+      onEvents={eventsDict}
       // onChartReady={this.onChartReadyCallback}
-      // onEvents={EventsDict}
       // opts={}
     />
   );

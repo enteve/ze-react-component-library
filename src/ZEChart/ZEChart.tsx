@@ -14,15 +14,39 @@ import getLineOption from "./EChart/options/line";
 import getBarOption from "./EChart/options/bar";
 import getColumnOption from "./EChart/options/column";
 import { getNameKeyForChart } from "./util";
+import { drilldownLogicform } from "../util";
 
-const ZEChart: React.FC<ZEChartProps> = ({ type, logicform, result }) => {
-  const { data } = useRequest<LogicformAPIResultType>(() => {
-    if (result) {
-      return new Promise((resolve) => resolve(result));
+const ZEChart: React.FC<ZEChartProps> = ({
+  type,
+  logicform,
+  result,
+  onChangeLogicform,
+}) => {
+  const { data } = useRequest<LogicformAPIResultType>(
+    () => {
+      if (result) {
+        return new Promise((resolve) => resolve(result));
+      }
+
+      return requestLogicform(logicform);
+    },
+    {
+      refreshDeps: [logicform, result],
     }
+  );
 
-    return requestLogicform(logicform);
-  });
+  const chartEventDict: Record<string, Function> = {
+    dblclick: (params: any) => {
+      if (!data?.schema) return;
+      if (!onChangeLogicform) return;
+
+      // 下钻
+      const drilledLF = drilldownLogicform(logicform, data.schema, params.name);
+      if (drilledLF) {
+        onChangeLogicform(drilledLF);
+      }
+    },
+  };
 
   // 设定正确的chart
   let chartDom: React.ReactNode;
@@ -42,7 +66,7 @@ const ZEChart: React.FC<ZEChartProps> = ({ type, logicform, result }) => {
       option.xAxis.data = data.result.map((r) => _.get(r, nameProp));
     }
 
-    chartDom = <EChart option={option} />;
+    chartDom = <EChart option={option} eventsDict={chartEventDict} />;
   } else if (type === "pie") {
     const option: any = getPieOption();
 
@@ -57,7 +81,7 @@ const ZEChart: React.FC<ZEChartProps> = ({ type, logicform, result }) => {
       }));
     }
 
-    chartDom = <EChart option={option} />;
+    chartDom = <EChart option={option} eventsDict={chartEventDict} />;
   } else if (type === "column") {
     const option: any = getColumnOption();
 
@@ -74,7 +98,7 @@ const ZEChart: React.FC<ZEChartProps> = ({ type, logicform, result }) => {
       option.xAxis.data = data.result.map((r) => _.get(r, nameProp));
     }
 
-    chartDom = <EChart option={option} />;
+    chartDom = <EChart option={option} eventsDict={chartEventDict} />;
   } else if (type === "bar") {
     const option: any = getBarOption();
 
@@ -93,9 +117,11 @@ const ZEChart: React.FC<ZEChartProps> = ({ type, logicform, result }) => {
       console.log(option);
     }
 
-    chartDom = <EChart option={option} />;
+    chartDom = <EChart option={option} eventsDict={chartEventDict} />;
   } else if (type === "map") {
-    chartDom = <Map data={data} logicform={logicform} />;
+    chartDom = (
+      <Map data={data} logicform={logicform} eventsDict={chartEventDict} />
+    );
   } else {
     chartDom = <div>暂未支持</div>;
   }
