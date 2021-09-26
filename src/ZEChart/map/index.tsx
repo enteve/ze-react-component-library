@@ -11,6 +11,7 @@ import * as echarts from "echarts";
 import EChart from "../EChart";
 import _ from "underscore";
 import { getNameKeyForChart } from "../util";
+import { Result } from "antd";
 
 interface Props {
   logicform: LogicformType;
@@ -20,42 +21,57 @@ interface Props {
 
 const Map: React.FC<Props> = ({ logicform, data, eventsDict = {} }) => {
   const [map, setMap] = useState<string>("100000");
+
   const { data: mapData } = useRequest(
     () => {
-      if (!data?.schema)
-        return new Promise<Response>((resolve) => resolve(null));
-
-      let mapID = map;
-      const startLevel = "省市";
-
-      // 决定地图选哪张
       if (logicform?.groupby && data && data.schema) {
+        // 朱曦炽：这里就直接假定了地图有以下level：区域、省市、城市、区县
+        // 决定地图选哪张
         normaliseGroupby(logicform);
         if (
           logicform.groupby.length === 1 &&
           logicform.groupby[0].level &&
-          logicform.groupby[0].level !== startLevel
+          data.columnProperties?.[0].schema?._id === "geo"
         ) {
-          if (data.columnProperties[0].schema?._id === "geo") {
-            if (logicform.groupby[0].level === "城市") {
-              const startCodeLength = getHierarchyCodeLength(
-                data.columnProperties[0].schema,
-                startLevel
-              );
-              const codes = new Set<string>();
-              data.result.forEach((i) =>
-                codes.add(i._id.substring(0, startCodeLength))
-              );
-              const codeArray = Array.from(codes);
-              if (codeArray.length === 1) {
-                mapID = `${codeArray[0].substring(4)}0000`;
-              }
+          const level = logicform.groupby[0].level;
+          let mapID;
+          if (level === "省市") {
+            mapID = "100000";
+          } else if (level === "城市") {
+            const startCodeLength = getHierarchyCodeLength(
+              data.columnProperties[0].schema,
+              "省市"
+            );
+            const codes = new Set<string>();
+            data.result.forEach((i) =>
+              codes.add(i._id.substring(0, startCodeLength))
+            );
+            const codeArray = Array.from(codes);
+            if (codeArray.length === 1) {
+              mapID = `${codeArray[0].substring(4)}0000`;
             }
+          } else if (level === "区县") {
+            const startCodeLength = getHierarchyCodeLength(
+              data.columnProperties[0].schema,
+              "城市"
+            );
+            const codes = new Set<string>();
+            data.result.forEach((i) =>
+              codes.add(i._id.substring(0, startCodeLength))
+            );
+            const codeArray = Array.from(codes);
+            if (codeArray.length === 1) {
+              mapID = `${codeArray[0].substring(4)}00`;
+            }
+          }
+
+          if (mapID) {
+            return fetch(`${config.API_URL}/map/china/${mapID}.json`);
           }
         }
       }
 
-      return fetch(`${config.API_URL}/map/china/${mapID}.json`);
+      return new Promise<Response>((resolve) => resolve(null));
     },
     {
       onSuccess: async (response) => {
@@ -73,9 +89,28 @@ const Map: React.FC<Props> = ({ logicform, data, eventsDict = {} }) => {
   let option: any = {};
 
   if (mapData && data && data.result) {
+    if (!logicform.groupby)
+      return <Result status="error" title="地图不支持非分组数据" />;
+    normaliseGroupby(logicform);
+    if (logicform.groupby.length !== 1)
+      return <Result status="error" title="地图组件不支持多维分组" />;
+    if (data.columnProperties?.[0].schema?._id !== "geo") {
+      return <Result status="error" title="必须以地理位置分组" />;
+    }
+    if (!logicform.groupby[0].level) {
+      return <Result status="error" title="分组必须要有level信息" />;
+    }
+    const level = logicform.groupby[0].level;
+    if (["省市", "城市", "区县"].indexOf(level) < 0) {
+      return <Result status="error" title="暂不支持的地图类型" />;
+    }
+
     const values = data.result.map((i) => i[logicform.preds[0].name]);
     const max = _.max(values);
-    const min = _.min(values);
+    let min = _.min(values);
+    if (min === max) {
+      if (min > 0) min = 0; // feat: 如果上下限一样，那么下限变为0
+    }
     const nameProp = getNameKeyForChart(logicform, data);
 
     option = {

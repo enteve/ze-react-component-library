@@ -55,7 +55,7 @@ const ZEChart: React.FC<ZEChartProps> = ({
   };
 
   // 设定正确的chart
-  let chartDom: React.ReactNode;
+  let chartDom: React.ReactNode = <div />;
   if (type === "line") {
     const option: any = getLineOption();
 
