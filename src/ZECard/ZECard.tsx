@@ -1,8 +1,8 @@
 /**
  * 这个控件通过接受Logicform，展示复杂结果
  */
-import { useRequest } from "@umijs/hooks";
-import { Button, Card, Divider, Result, Tooltip } from "antd";
+import { useRequest, useHistoryTravel } from "@umijs/hooks";
+import { Button, Empty, Card, Divider, Tooltip } from "antd";
 
 import React from "react";
 import _ from "underscore";
@@ -27,6 +27,7 @@ import excelExporter from "../ZETable/excelExporter";
 import ValueDisplayer from "./ValueDisplayer";
 import RepresentationChanger from "./RepresentationChanger";
 import "./ZECard.less";
+import LogicFormTraveler from "./LogicFormTraveler";
 
 const getDefaultRepresentation = (
   logicform: LogicformType,
@@ -81,7 +82,7 @@ const getDefaultRepresentation = (
 };
 
 const ZECard: React.FC<ZECardProps> = ({
-  logicform,
+  logicform: initialLogicform,
   title,
   extra,
   footer,
@@ -92,6 +93,15 @@ const ZECard: React.FC<ZECardProps> = ({
   xlsx,
   showRecommender = false,
 }) => {
+  const {
+    value: logicform,
+    setValue: setLogicform,
+    backLength,
+    forwardLength,
+    go,
+    back,
+    forward,
+  } = useHistoryTravel<LogicformType>(initialLogicform);
   const { data, loading } = useRequest<LogicformAPIResultType>(
     () => {
       if (isSimpleQuery(logicform)) {
@@ -134,157 +144,188 @@ const ZECard: React.FC<ZECardProps> = ({
         />
       </div>
     );
-  } else if (
-    finalRepresentation === "bar" ||
-    finalRepresentation === "pie" ||
-    finalRepresentation === "line" ||
-    finalRepresentation === "map"
-  ) {
-    let chartType = "column";
-    switch (finalRepresentation) {
-      case "pie":
-        chartType = "pie";
-        break;
+  } else {
+    if (data?.result?.length === 0) {
+      component = <Empty description="没有数据" />;
+    } else if (
+      finalRepresentation === "bar" ||
+      finalRepresentation === "pie" ||
+      finalRepresentation === "line" ||
+      finalRepresentation === "map"
+    ) {
+      let chartType = "column";
+      switch (finalRepresentation) {
+        case "pie":
+          chartType = "pie";
+          break;
 
-      case "line":
-        chartType = "line";
-        break;
-      case "map":
-        chartType = "map";
-        break;
+        case "line":
+          chartType = "line";
+          break;
+        case "map":
+          chartType = "map";
+          break;
 
-      default:
-        break;
-    }
+        default:
+          break;
+      }
 
-    // chartType有两种形式，column和bar。
-    if (finalRepresentation === "bar" && logicform.sort) {
-      chartType = "bar";
-    }
-
-    component = (
-      <ZEChart type={chartType} logicform={logicform} result={data} />
-    );
-  } else if (finalRepresentation === "entity" && data.result?.length === 1) {
-    component = (
-      <ZEDescription
-        schema={data.schema}
-        columnProperties={data.columnProperties}
-        item={data.result[0]}
-      />
-    );
-  } else if (finalRepresentation === "cross-table") {
-    if (data?.result) {
-      const idProp0 = data.columnProperties[0];
-      const idProp1 = data.columnProperties[1];
-      const measurementName = data.columnProperties[2].name;
-
-      const getIDKey = (prop: PropertyType, item: any) => {
-        if (!prop.schema) {
-          return item[prop.name];
-        }
-
-        const nameProp = getNameProperty(prop.schema);
-        return item[prop.name][nameProp.name];
-      };
-
-      const datasource: any[] = [];
-      const columns: any[] = [
-        {
-          title: idProp0.name,
-          dataIndex: idProp0.name,
-          fixed: "left",
-        },
-      ];
-
-      data.result.forEach((item) => {
-        if (
-          datasource.length === 0 ||
-          datasource[datasource.length - 1]._id !== item[idProp0.name]
-        ) {
-          datasource.push({
-            _id: item[idProp0.name],
-            [idProp0.name]: item[idProp0.name],
-          });
-        }
-
-        const idKey = getIDKey(idProp1, item);
-
-        datasource[datasource.length - 1][idKey] = item[measurementName];
-
-        if (!columns.find((c) => c.title === idKey)) {
-          columns.push({
-            title: idKey,
-            dataIndex: idKey,
-            valueType: "digit",
-          });
-        }
-      });
-
-      // Export
-      const toolBarRender: React.ReactNode[] = [];
-      let exportFileName = "数据导出";
-
-      if (exportToExcel) {
-        if (typeof exportToExcel === "string") {
-          exportFileName = exportToExcel;
-        }
-
-        toolBarRender.push(
-          <Tooltip title="导出Excel">
-            <Button
-              type="text"
-              icon={<DownloadOutlined />}
-              onClick={() =>
-                excelExporter(
-                  {
-                    result: datasource,
-                    schema: data.schema,
-                    columnProperties: data.columnProperties,
-                  },
-                  exportFileName,
-                  xlsx
-                )
-              }
-            />
-          </Tooltip>
-        );
+      // chartType有两种形式，column和bar。
+      if (finalRepresentation === "bar" && logicform.sort) {
+        chartType = "bar";
       }
 
       component = (
-        <ProTable
-          tableClassName={exportFileName}
-          toolBarRender={() => toolBarRender}
-          options={false}
-          rowKey="_id"
-          search={false}
-          pagination={false}
-          dataSource={datasource}
-          columns={columns}
-          scroll={{ x: 150 * columns.length }}
+        <ZEChart
+          type={chartType}
+          logicform={logicform}
+          result={data}
+          onChangeLogicform={setLogicform}
         />
       );
+    } else if (finalRepresentation === "entity" && data.result?.length === 1) {
+      component = (
+        <ZEDescription
+          schema={data.schema}
+          columnProperties={data.columnProperties}
+          item={data.result[0]}
+        />
+      );
+    } else if (finalRepresentation === "cross-table") {
+      if (data?.result) {
+        const idProp0 = data.columnProperties[0];
+        const idProp1 = data.columnProperties[1];
+        const measurementName = data.columnProperties[2].name;
+
+        const getIDKey = (prop: PropertyType, item: any) => {
+          if (!prop.schema) {
+            return item[prop.name];
+          }
+
+          const nameProp = getNameProperty(prop.schema);
+          return item[prop.name][nameProp.name];
+        };
+
+        const datasource: any[] = [];
+        const columns: any[] = [
+          {
+            title: idProp0.name,
+            dataIndex: idProp0.name,
+            fixed: "left",
+          },
+        ];
+
+        data.result.forEach((item) => {
+          if (
+            datasource.length === 0 ||
+            datasource[datasource.length - 1]._id !== item[idProp0.name]
+          ) {
+            datasource.push({
+              _id: item[idProp0.name],
+              [idProp0.name]: item[idProp0.name],
+            });
+          }
+
+          const idKey = getIDKey(idProp1, item);
+
+          datasource[datasource.length - 1][idKey] = item[measurementName];
+
+          if (!columns.find((c) => c.title === idKey)) {
+            columns.push({
+              title: idKey,
+              dataIndex: idKey,
+              valueType: "digit",
+            });
+          }
+        });
+
+        // Export
+        const toolBarRender: React.ReactNode[] = [];
+        let exportFileName = "数据导出";
+
+        if (exportToExcel) {
+          if (typeof exportToExcel === "string") {
+            exportFileName = exportToExcel;
+          }
+
+          toolBarRender.push(
+            <Tooltip title="导出Excel">
+              <Button
+                type="text"
+                icon={<DownloadOutlined />}
+                onClick={() =>
+                  excelExporter(
+                    {
+                      result: datasource,
+                      schema: data.schema,
+                      columnProperties: data.columnProperties,
+                    },
+                    exportFileName,
+                    xlsx
+                  )
+                }
+              />
+            </Tooltip>
+          );
+        }
+
+        component = (
+          <ProTable
+            tableClassName={exportFileName}
+            toolBarRender={() => toolBarRender}
+            options={false}
+            rowKey="_id"
+            search={false}
+            pagination={false}
+            dataSource={datasource}
+            columns={columns}
+            scroll={{ x: 150 * columns.length }}
+          />
+        );
+      } else {
+        component = <div />;
+      }
     } else {
-      component = <div />;
+      component = (
+        <ZETable
+          logicform={logicform}
+          xlsx={xlsx}
+          exportToExcel={exportToExcel}
+        />
+      );
     }
-  } else {
-    component = (
-      <ZETable
-        logicform={logicform}
-        xlsx={xlsx}
-        exportToExcel={exportToExcel}
-      />
-    );
   }
 
   // extra
   // 暂时只有带groupby的是支持RepresentationChanger的
   if (!extra && logicform.groupby) {
     extra = (
-      <RepresentationChanger
-        representationType={finalRepresentation}
-        onChange={setRepresentation}
-      />
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+        }}
+      >
+        {backLength > 0 && (
+          <div
+            style={{
+              marginRight: 10,
+            }}
+          >
+            <LogicFormTraveler
+              go={go}
+              back={back}
+              forward={forward}
+              backLength={backLength}
+              forwardLength={forwardLength}
+            />
+          </div>
+        )}
+        <RepresentationChanger
+          representationType={finalRepresentation}
+          onChange={setRepresentation}
+        />
+      </div>
     );
   }
 
