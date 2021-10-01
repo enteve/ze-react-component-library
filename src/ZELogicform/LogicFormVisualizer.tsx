@@ -8,6 +8,14 @@ import { isRelativeDateForm, normaliseRelativeDateForm } from "zeroetp-api-sdk";
 
 export interface LogicFormVisualizerProps {
   logicform: LogicformType;
+
+  // 表达要不要显示某一些的部门。默认都是true。可以把schema和preds关掉
+  display?: {
+    schema?: boolean;
+    preds?: boolean;
+    query?: boolean;
+    groupby?: boolean;
+  };
 }
 
 /**
@@ -17,20 +25,23 @@ export interface LogicFormVisualizerProps {
  */
 export const LogicFormVisualizer: React.FC<LogicFormVisualizerProps> = ({
   logicform,
+  display = {},
 }) => {
   const badges: { color: string; text: React.ReactNode }[] = [];
   const filterColor = "green";
 
-  badges.push({
-    color: "red",
-    text: (
-      <span>
-        数据源：<strong>{logicform.schemaName || logicform.schema}</strong>
-      </span>
-    ),
-  });
+  if (!(display.schema === false)) {
+    badges.push({
+      color: "red",
+      text: (
+        <span>
+          数据源：<strong>{logicform.schemaName || logicform.schema}</strong>
+        </span>
+      ),
+    });
+  }
 
-  if (logicform.groupby) {
+  if (!(display.groupby === false) && logicform.groupby) {
     const doWithGroupbyItem = (groupbyItem: any) => {
       if (typeof groupbyItem === "object") {
         return `${groupbyItem._id}(${groupbyItem.level})`;
@@ -56,7 +67,7 @@ export const LogicFormVisualizer: React.FC<LogicFormVisualizerProps> = ({
       ),
     });
   }
-  if (logicform.query) {
+  if (!(display.query === false) && logicform.query) {
     const dateReg = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
     const basicValueDisplay = (oldV: any) => {
       let v = oldV;
@@ -196,7 +207,7 @@ export const LogicFormVisualizer: React.FC<LogicFormVisualizerProps> = ({
     });
   }
 
-  if (logicform.operator) {
+  if (!(display.preds === false) && logicform.operator) {
     if (logicform.operator === "$ent" && logicform.name) {
       badges.push({
         color: "blue",
@@ -218,7 +229,7 @@ export const LogicFormVisualizer: React.FC<LogicFormVisualizerProps> = ({
       });
     }
   }
-  if (logicform.preds) {
+  if (!(display.preds === false) && logicform.preds) {
     const preds = logicform.preds.map((p, index) => (
       <span key={index}>
         {p.operator && (

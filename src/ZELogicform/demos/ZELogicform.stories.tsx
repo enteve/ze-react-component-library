@@ -42,3 +42,17 @@ export const Visualizer = () => (
     }}
   />
 );
+
+export const VisualizerDisplay = () => (
+  <LogicFormVisualizer
+    logicform={{
+      schema: "productsale",
+      groupby: "渠道",
+      preds: [{ name: "sum", operator: "$sum", pred: "销售额" }],
+      query: { a: "b" },
+    }}
+    display={{
+      schema: false,
+    }}
+  />
+);
