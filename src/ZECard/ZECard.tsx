@@ -22,12 +22,13 @@ import { LogicFormVisualizer } from "../ZELogicform";
 import ZETable from "../ZETable";
 import { ZECardProps } from "./ZECard.types";
 import ProTable from "@ant-design/pro-table";
-import { DownloadOutlined } from "@ant-design/icons";
+import { DownloadOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import excelExporter from "../ZETable/excelExporter";
 import ValueDisplayer from "./ValueDisplayer";
 import RepresentationChanger from "./RepresentationChanger";
 import "./ZECard.less";
 import LogicFormTraveler from "./LogicFormTraveler";
+import { color } from "echarts";
 
 const getDefaultRepresentation = (
   logicform: LogicformType,
@@ -84,6 +85,8 @@ const getDefaultRepresentation = (
 const ZECard: React.FC<ZECardProps> = ({
   logicform: initialLogicform,
   title,
+  warning,
+  mainContent,
   extra,
   footer,
   bodyStyle = {},
@@ -92,6 +95,8 @@ const ZECard: React.FC<ZECardProps> = ({
   exportToExcel,
   xlsx,
   showRecommender = false,
+  visualizerDisplayProp,
+  showMainContentOnly,
 }) => {
   const {
     value: logicform,
@@ -124,7 +129,9 @@ const ZECard: React.FC<ZECardProps> = ({
   const finalRepresentation = representation || defaultRepresentation;
 
   let component: any;
-  if (isSimpleQuery(logicform)) {
+  if (mainContent) {
+    component = mainContent;
+  } else if (isSimpleQuery(logicform)) {
     component = (
       <div className="proCardContainer">
         <ZETable
@@ -329,12 +336,23 @@ const ZECard: React.FC<ZECardProps> = ({
     );
   }
 
+  if (showMainContentOnly) return component;
+
   return (
     <Card title={title} loading={loading} extra={extra} bodyStyle={bodyStyle}>
-      <div style={{ marginBottom: 30 }}>
-        <LogicFormVisualizer logicform={logicform} />
+      <div>
+        <LogicFormVisualizer
+          logicform={logicform}
+          display={visualizerDisplayProp}
+        />
       </div>
-      {component}
+      {warning?.length > 0 && (
+        <div style={{ marginTop: 10 }}>
+          <ExclamationCircleOutlined className="warningIcon" />
+          <span style={{ marginLeft: 5, color: "#525252" }}>{warning}</span>
+        </div>
+      )}
+      <div style={{ marginTop: 20 }}>{component}</div>
       {footer && (
         <>
           <Divider />
