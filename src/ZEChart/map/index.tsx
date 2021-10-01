@@ -47,8 +47,11 @@ const Map: React.FC<Props> = ({ logicform, data, eventsDict = {} }) => {
               codes.add(i._id.substring(0, startCodeLength))
             );
             const codeArray = Array.from(codes);
+
             if (codeArray.length === 1) {
-              mapID = `${codeArray[0].substring(4)}0000`;
+              mapID = `${codeArray[0].substring(
+                startCodeLength - codeArray[0].length
+              )}0000`;
             }
           } else if (level === "区县") {
             const startCodeLength = getHierarchyCodeLength(
@@ -61,7 +64,9 @@ const Map: React.FC<Props> = ({ logicform, data, eventsDict = {} }) => {
             );
             const codeArray = Array.from(codes);
             if (codeArray.length === 1) {
-              mapID = `${codeArray[0].substring(4)}00`;
+              mapID = `${codeArray[0].substring(
+                startCodeLength - codeArray[0].length
+              )}00`;
             }
           }
 

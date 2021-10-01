@@ -6,16 +6,18 @@ import type { LogicformType } from "zeroetp-api-sdk";
 
 import { isRelativeDateForm, normaliseRelativeDateForm } from "zeroetp-api-sdk";
 
+export type LogicFormVisualizerDisplayProp = {
+  schema?: boolean;
+  preds?: boolean;
+  query?: boolean;
+  groupby?: boolean;
+};
+
 export interface LogicFormVisualizerProps {
   logicform: LogicformType;
 
   // 表达要不要显示某一些的部门。默认都是true。可以把schema和preds关掉
-  display?: {
-    schema?: boolean;
-    preds?: boolean;
-    query?: boolean;
-    groupby?: boolean;
-  };
+  display?: LogicFormVisualizerDisplayProp;
 }
 
 /**
