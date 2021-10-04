@@ -18,7 +18,8 @@ const ValueDisplayer: React.FC<Props> = ({
   showRecommender = false,
 }) => {
   let unit = "";
-  let value = data?.result || "-";
+  let precision = 1;
+  let value = data && "result" in data ? data.result : "-";
   if (data?.columnProperties?.length > 0) {
     const [firstColProp] = data.columnProperties;
 
@@ -29,12 +30,17 @@ const ValueDisplayer: React.FC<Props> = ({
     } else if (firstColProp.unit) {
       unit = firstColProp.unit;
     }
+
+    // precision
+    if (firstColProp.type === "int") {
+      precision = 0;
+    }
   }
 
   const statistic: StatisticProps = {
     value,
     suffix: unit,
-    precision: 1,
+    precision,
   };
 
   // Recommender
