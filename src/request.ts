@@ -4,7 +4,7 @@ import type {
   LogicformAPIResultType,
   AskAPIResultType,
 } from "zeroetp-api-sdk";
-import { execLogicform, ask } from "zeroetp-api-sdk";
+import { execLogicform, ask, commonRequest } from "zeroetp-api-sdk";
 
 export async function request(func: Promise<any>) {
   try {
@@ -30,5 +30,17 @@ export async function requestLogicform(
     message.error(ret.error);
     return null;
   }
+  return ret;
+}
+
+export async function requestRecommend(logicform: LogicformType): Promise<any> {
+  const ret = await request(
+    commonRequest("/logicform/recommend", {
+      method: "POST",
+      data: {
+        logicform,
+      },
+    })
+  );
   return ret;
 }
