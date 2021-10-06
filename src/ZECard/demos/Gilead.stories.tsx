@@ -20,6 +20,7 @@ import { requestRecommend, requestAsk } from "../../request";
 import ZEValue from "../../ZEValue";
 import ValueDisplayer from "../ValueDisplayer";
 import { Button, message, Progress, Skeleton, Space } from "antd";
+import ZELogicform from "../../ZELogicform";
 prepareServerForStories();
 
 export default {
@@ -74,32 +75,37 @@ const GLDCard = (question: string) => {
                 }}
               />
               <Space>
-                {/* <Statistic
-                  title="上月同期"
-                  value={ZEValue({
+                <ZELogicform
+                  logicform={{
                     schema: "ddi_sales",
                     operator: "$sum",
                     pred: "销售额",
                     query: {
                       日期: { $offset: { month: -2 } },
                     },
-                  })}
-                  suffix="万元"
-                /> */}
-
-                {/* <Statistic
-                  title="环比"
-                  value={ZEValue({
+                  }}
+                  dataKey="value"
+                >
+                  <Statistic title="上月同期" value="-" suffix="万元" />
+                </ZELogicform>
+                <ZELogicform
+                  logicform={{
                     schema: "ddi_sales",
                     operator: "$mom",
                     pred: "销售额",
                     query: {
                       日期: { $offset: { month: -2 } },
                     },
-                  })}
-                  formatter={(value: any) => numeral(value).format("0.0%")}
-                  trend="up"
-                /> */}
+                  }}
+                  dataKey="value"
+                >
+                  <Statistic
+                    title="环比"
+                    value="-"
+                    formatter={(value: any) => numeral(value).format("0.0%")}
+                    trend="up"
+                  />
+                </ZELogicform>
               </Space>
             </div>
 
@@ -112,35 +118,6 @@ const GLDCard = (question: string) => {
                   pred: "销量",
                 }}
               />
-
-              <Space>
-                {/* <Statistic
-                  title="上月同期"
-                  value={ZEValue({
-                    schema: "ddi_sales",
-                    operator: "$sum",
-                    pred: "销量",
-                    query: {
-                      日期: { $offset: { month: -2 } },
-                    },
-                  })}
-                  suffix="瓶"
-                /> */}
-
-                {/* <Statistic
-                  title="环比"
-                  value={ZEValue({
-                    schema: "ddi_sales",
-                    operator: "$mom",
-                    pred: "销量",
-                    query: {
-                      日期: { $offset: { month: -2 } },
-                    },
-                  })}
-                  formatter={(value: any) => numeral(value).format("0.0%")}
-                  trend="up"
-                /> */}
-              </Space>
             </div>
 
             <div>
