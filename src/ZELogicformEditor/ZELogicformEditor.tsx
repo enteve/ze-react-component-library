@@ -1,16 +1,15 @@
 import React, { useState } from "react";
 import { LogicformType } from "zeroetp-api-sdk";
 import Editor from "react-simple-code-editor";
-import XLSX from "xlsx";
 import { highlight, languages } from "prismjs/components/prism-core";
 import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism-coy.css";
 import { Button, Col, message, Row } from "antd";
-import { ZECard } from "..";
+import ZECard from "../ZECard/ZECard";
 import { ZELogicformEditorProps } from "./ZELogicformEditor.types";
 
-const ZELogicformEditor: React.FC<ZELogicformEditorProps> = ({}) => {
+const ZELogicformEditor: React.FC<ZELogicformEditorProps> = ({ xlsx }) => {
   const [logicformString, setLogicformString] = useState<string>("");
   const [logicform, setLogicform] = useState<LogicformType>();
 
@@ -49,7 +48,7 @@ const ZELogicformEditor: React.FC<ZELogicformEditorProps> = ({}) => {
           <ZECard
             logicform={logicform}
             title="结果"
-            xlsx={XLSX}
+            xlsx={xlsx}
             exportToExcel
           />
         )}
