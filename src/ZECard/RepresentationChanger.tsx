@@ -1,5 +1,5 @@
 import React from "react";
-import { Radio, RadioChangeEvent } from "antd";
+import { Button, Dropdown, Radio, RadioChangeEvent } from "antd";
 import {
   BarChartOutlined,
   GlobalOutlined,
@@ -9,6 +9,7 @@ import {
 } from "@ant-design/icons";
 import { useState } from "react";
 import { useEffect } from "react";
+import Menu from "rc-menu/lib/Menu";
 
 type Props = {
   representationType: string;
@@ -24,7 +25,7 @@ const RepresentationChanger: React.FC<Props> = ({
     setValue(representationType);
   }, [representationType]);
 
-  return (
+  const menu = (
     <Radio.Group
       value={value}
       buttonStyle="solid"
@@ -49,6 +50,31 @@ const RepresentationChanger: React.FC<Props> = ({
         <GlobalOutlined />
       </Radio.Button>
     </Radio.Group>
+  );
+
+  let mainButton: React.ReactNode;
+  switch (representationType) {
+    case "table":
+      mainButton = <TableOutlined />;
+      break;
+    case "bar":
+      mainButton = <BarChartOutlined />;
+      break;
+    case "line":
+      mainButton = <LineChartOutlined />;
+      break;
+    case "pie":
+      mainButton = <PieChartOutlined />;
+      break;
+    case "map":
+      mainButton = <GlobalOutlined />;
+      break;
+  }
+
+  return (
+    <Dropdown overlay={menu} trigger={["click"]}>
+      <Button icon={mainButton} />
+    </Dropdown>
   );
 };
 

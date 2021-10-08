@@ -2,7 +2,7 @@
  * 这个控件通过接受Logicform，展示复杂结果
  */
 import { useRequest, useHistoryTravel } from "@umijs/hooks";
-import { Button, Empty, Card, Divider, Tooltip } from "antd";
+import { Button, Empty, Card, Divider, Tooltip, Result } from "antd";
 
 import React from "react";
 import _ from "underscore";
@@ -28,7 +28,6 @@ import ValueDisplayer from "./ValueDisplayer";
 import RepresentationChanger from "./RepresentationChanger";
 import "./ZECard.less";
 import LogicFormTraveler from "./LogicFormTraveler";
-import { color } from "echarts";
 
 const getDefaultRepresentation = (
   logicform: LogicformType,
@@ -109,6 +108,10 @@ const ZECard: React.FC<ZECardProps> = ({
   } = useHistoryTravel<LogicformType>(initialLogicform);
   const { data, loading } = useRequest<LogicformAPIResultType>(
     () => {
+      if (!logicform) {
+        throw new Error("no logicform");
+      }
+
       if (isSimpleQuery(logicform)) {
         // simplequery让ZETable自己处理，因为要翻页
         return new Promise((resolve) => resolve(undefined));
@@ -123,7 +126,8 @@ const ZECard: React.FC<ZECardProps> = ({
   );
   const [representation, setRepresentation] = useState<string>(repr);
 
-  console.log(data);
+  if (!logicform) return <Result status="error" title="出现错误" />;
+  // console.log(data);
 
   const defaultRepresentation = getDefaultRepresentation(logicform, data);
   const finalRepresentation = representation || defaultRepresentation;
