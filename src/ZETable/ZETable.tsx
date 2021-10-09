@@ -367,6 +367,9 @@ const ZETable: React.FC<ZETableProps> = ({
   }
 
   const tableProps: any = {
+    cardProps: {
+      bodyStyle: { padding: 0 },
+    },
     ...restProps,
     actionRef: tableRef,
     columns,
