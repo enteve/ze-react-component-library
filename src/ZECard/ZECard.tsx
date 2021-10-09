@@ -137,23 +137,19 @@ const ZECard: React.FC<ZECardProps> = ({
     component = mainContent;
   } else if (isSimpleQuery(logicform)) {
     component = (
-      <div className="proCardContainer">
-        <ZETable
-          logicform={logicform}
-          xlsx={xlsx}
-          exportToExcel={exportToExcel}
-        />
-      </div>
+      <ZETable
+        logicform={logicform}
+        xlsx={xlsx}
+        exportToExcel={exportToExcel}
+      />
     );
   } else if (finalRepresentation === "value") {
     component = (
-      <div className="proCardContainer">
-        <ValueDisplayer
-          logicform={logicform}
-          data={data}
-          showRecommender={showRecommender}
-        />
-      </div>
+      <ValueDisplayer
+        logicform={logicform}
+        data={data}
+        showRecommender={showRecommender}
+      />
     );
   } else {
     if (data?.result?.length === 0) {
@@ -291,6 +287,9 @@ const ZECard: React.FC<ZECardProps> = ({
             dataSource={datasource}
             columns={columns}
             scroll={{ x: 150 * columns.length }}
+            cardProps={{
+              bodyStyle: { padding: 0 },
+            }}
           />
         );
       } else {
