@@ -1,4 +1,5 @@
 import { LogicformAPIResultType, LogicformType } from "zeroetp-api-sdk";
+import { ZETableProps } from "../ZETable/ZETable.types";
 import { LogicFormVisualizerDisplayProp } from "../ZELogicform/LogicFormVisualizer";
 
 export type ZECardProps = {
@@ -17,4 +18,6 @@ export type ZECardProps = {
   showRecommender?: boolean; // 是不是要显示更多推荐的相关数值
 
   visualizerDisplayProp?: LogicFormVisualizerDisplayProp;
+
+  tableProps?: Omit<ZETableProps, "logicform">;
 };

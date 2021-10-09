@@ -21,6 +21,9 @@ export const Table = () => (
       schema: "dealer",
       limit: 10,
     }}
+    tableProps={{
+      defaultColWidth: 100,
+    }}
   />
 );
 

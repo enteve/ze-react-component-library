@@ -159,6 +159,7 @@ const ZETable: React.FC<ZETableProps> = ({
   refLFs = [],
   creationMode,
   creationColumns,
+  defaultColWidth = 200,
   ...restProps
 }) => {
   const values = useContext(ProProvider); // 用来自定义ValueType
@@ -330,7 +331,6 @@ const ZETable: React.FC<ZETableProps> = ({
   }
 
   // Scroll
-  const defaultColWidth = 200;
   const calcWidth = (col: any) => {
     if (col.children) {
       return col.children.reduce((acc, c) => acc + calcWidth(c), 0);

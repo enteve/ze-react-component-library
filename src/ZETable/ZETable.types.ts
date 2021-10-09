@@ -29,6 +29,7 @@ export type ZETableProps = {
 
   creationMode?: "form" | "list"; // form是单个单个新增，产生一个form。而list是直接在列表里面操作
   creationColumns?: ZESchemaFormColumnType[]; // 就是ZESchemaForm里面的columns属性
+  defaultColWidth?: number;
 } & Omit<
   ProTableProps<ProColumnType, ParamsType>,
   "columns" | "request" | "pagination" | "toolBarRender" | "scroll"
