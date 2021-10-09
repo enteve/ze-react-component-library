@@ -96,6 +96,7 @@ const ZECard: React.FC<ZECardProps> = ({
   showRecommender = false,
   visualizerDisplayProp,
   showMainContentOnly,
+  tableProps = {},
 }) => {
   const {
     value: logicform,
@@ -141,6 +142,7 @@ const ZECard: React.FC<ZECardProps> = ({
         logicform={logicform}
         xlsx={xlsx}
         exportToExcel={exportToExcel}
+        {...tableProps}
       />
     );
   } else if (finalRepresentation === "value") {
@@ -301,6 +303,7 @@ const ZECard: React.FC<ZECardProps> = ({
           logicform={logicform}
           xlsx={xlsx}
           exportToExcel={exportToExcel}
+          {...tableProps}
         />
       );
     }
