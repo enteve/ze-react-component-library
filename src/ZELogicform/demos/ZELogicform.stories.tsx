@@ -5,7 +5,7 @@ import { LogicFormVisualizer } from "../LogicFormVisualizer";
 
 // prepare server
 import prepareServerForStories from "../../../util/prepareServerForStories";
-import { List } from "antd";
+import { List, message } from "antd";
 prepareServerForStories();
 
 export default {
@@ -53,6 +53,34 @@ export const VisualizerDisplay = () => (
     }}
     display={{
       schema: false,
+    }}
+  />
+);
+
+export const VisualizerWithFilter = () => (
+  <LogicFormVisualizer
+    logicform={{
+      schemaName: "销售流水",
+      schema: "productsale",
+      operator: "$sum",
+      pred: "销售额",
+      name: "总销售额",
+      query: {
+        日期: {
+          $gte: { $offset: { month: 0 }, day: 1 },
+          $lte: { $offset: { day: 0 } },
+        },
+        商品_分类: "单品",
+      },
+    }}
+    display={{
+      schema: false,
+    }}
+    filters={{
+      商品_分类: ["全部", "单品", "组合", "耗材"],
+    }}
+    onQueryChange={(query) => {
+      message.info(JSON.stringify(query));
     }}
   />
 );
