@@ -1,27 +1,22 @@
 // Generated with util/create-component.js
-import React, { useState } from "react";
-import moment from "moment";
+import React from "react";
 import numeral from "numeral";
 import ZECard from "../ZECard";
-import ProCard, { StatisticCard } from "@ant-design/pro-card";
+import { StatisticCard } from "@ant-design/pro-card";
 import "antd/dist/antd.css";
 
 const { Statistic } = StatisticCard;
 
 // prepare server
-import prepareServerForStories from "../../../util/prepareServerForStories";
-import {
-  AskAPIResultType,
-  LogicformAPIResultType,
-  LogicformType,
-} from "zeroetp-api-sdk";
+import { AskAPIResultType, config } from "zeroetp-api-sdk";
 import { useRequest } from "@umijs/hooks";
 import { requestRecommend, requestAsk } from "../../request";
-import ZEValue from "../../ZEValue";
-import ValueDisplayer from "../ValueDisplayer";
 import { Button, message, Progress, Skeleton, Space } from "antd";
 import ZELogicform from "../../ZELogicform";
-prepareServerForStories();
+
+config.API_URL = "http://localhost:3052";
+localStorage.token =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTVmZmUwMTE4OTQ4YjY2OWQ5YTBhZmMiLCJpYXQiOjE2MzM3MDY0OTcsImV4cCI6MTYzNDMxMTI5N30.7JfN-YoQZxkgo6-v5Y_PV5Mke7zik8QbwDjg7mqIFx4";
 
 export default {
   title: "Gilead",
@@ -64,6 +59,7 @@ const GLDCard = (question: string) => {
       // 分析Logicform，如果是一个value类型的，那么三个都要算
       mainContent = (
         <>
+          <div>这里显示切换产品</div>
           <Space direction="vertical" size="large">
             <div>
               <h3>销售额</h3>
@@ -182,9 +178,11 @@ const GLDCard = (question: string) => {
         title={question}
         warning={warning}
         logicform={logicform}
-        visualizerDisplayProp={{
-          preds: false,
-          schema: false,
+        visualizerProps={{
+          display: {
+            preds: false,
+            schema: false,
+          },
         }}
         mainContent={mainContent}
         footer={recommender}

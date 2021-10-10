@@ -1,10 +1,11 @@
 import React from "react";
 import moment from "moment";
-import { Badge } from "antd";
+import { Badge, Dropdown, Menu } from "antd";
 
 import type { LogicformType } from "zeroetp-api-sdk";
 
 import { isRelativeDateForm, normaliseRelativeDateForm } from "zeroetp-api-sdk";
+import { DownOutlined } from "@ant-design/icons";
 
 export type LogicFormVisualizerDisplayProp = {
   schema?: boolean;
@@ -16,8 +17,12 @@ export type LogicFormVisualizerDisplayProp = {
 export interface LogicFormVisualizerProps {
   logicform: LogicformType;
 
-  // 表达要不要显示某一些的部门。默认都是true。可以把schema和preds关掉
+  // 表达要不要显示某一些的部分。默认都是true。可以把schema和preds关掉
   display?: LogicFormVisualizerDisplayProp;
+
+  // feat: 支持筛选控件
+  filters?: { [key: string]: string[] };
+  onQueryChange?: (query: any) => void;
 }
 
 /**
@@ -28,6 +33,8 @@ export interface LogicFormVisualizerProps {
 export const LogicFormVisualizer: React.FC<LogicFormVisualizerProps> = ({
   logicform,
   display = {},
+  filters = [],
+  onQueryChange,
 }) => {
   const badges: { color: string; text: React.ReactNode }[] = [];
   const filterColor = "green";
@@ -73,6 +80,10 @@ export const LogicFormVisualizer: React.FC<LogicFormVisualizerProps> = ({
     const dateReg = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
     const basicValueDisplay = (oldV: any) => {
       let v = oldV;
+      if (v === undefined) {
+        return "全部";
+      }
+
       if (typeof v === "boolean") {
         return v ? "是" : "否";
       }
@@ -132,15 +143,49 @@ export const LogicFormVisualizer: React.FC<LogicFormVisualizerProps> = ({
         (v.$lte && v.$gte) ||
         isRelativeDateForm(v)
       ) {
-        // 时间格式
-        badges.push({
-          color: filterColor,
-          text: (
-            <span>
-              {k}：<strong>{basicValueDisplay(v)}</strong>
-            </span>
-          ),
-        });
+        if (filters[k]) {
+          badges.push({
+            color: filterColor,
+            text: (
+              <span>
+                {k}：
+                <Dropdown
+                  overlay={
+                    <Menu>
+                      {filters[k].map((f) => (
+                        <Menu.Item
+                          key={f === undefined ? "全部" : f}
+                          onClick={() => {
+                            onQueryChange?.({
+                              ...logicform.query,
+                              [k]: f,
+                            });
+                          }}
+                        >
+                          {f === undefined ? "全部" : f}
+                        </Menu.Item>
+                      ))}
+                    </Menu>
+                  }
+                >
+                  <strong>
+                    {basicValueDisplay(v)} <DownOutlined />
+                  </strong>
+                </Dropdown>
+              </span>
+            ),
+          });
+        } else {
+          // 基本属性
+          badges.push({
+            color: filterColor,
+            text: (
+              <span>
+                {k}：<strong>{basicValueDisplay(v)}</strong>
+              </span>
+            ),
+          });
+        }
       } else if ("$ne" in v) {
         badges.push({
           color: filterColor,

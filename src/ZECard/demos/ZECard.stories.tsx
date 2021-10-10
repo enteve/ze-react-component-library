@@ -179,3 +179,28 @@ export const StatsCrossTable = () => (
     exportToExcel="交叉表"
   />
 );
+
+export const LFVisualizerAsFilter = () => (
+  <ZECard
+    title="LFVisualizerAsFilter"
+    logicform={{
+      schemaName: "销售流水",
+      schema: "productsale",
+      operator: "$sum",
+      pred: "销售额",
+      name: "总销售额",
+      query: {
+        日期: {
+          $gte: { $offset: { month: 0 }, day: 1 },
+          $lte: { $offset: { day: 0 } },
+        },
+        商品_分类: undefined,
+      },
+    }}
+    visualizerProps={{
+      filters: {
+        商品_分类: [undefined, "单品", "组合", "耗材"],
+      },
+    }}
+  />
+);

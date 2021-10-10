@@ -94,9 +94,9 @@ const ZECard: React.FC<ZECardProps> = ({
   exportToExcel,
   xlsx,
   showRecommender = false,
-  visualizerDisplayProp,
   showMainContentOnly,
   tableProps = {},
+  visualizerProps = {},
 }) => {
   const {
     value: logicform,
@@ -348,8 +348,14 @@ const ZECard: React.FC<ZECardProps> = ({
     <Card title={title} loading={loading} extra={extra} bodyStyle={bodyStyle}>
       <div>
         <LogicFormVisualizer
+          {...visualizerProps}
           logicform={logicform}
-          display={visualizerDisplayProp}
+          onQueryChange={(query) => {
+            setLogicform({
+              ...logicform,
+              query,
+            });
+          }}
         />
       </div>
       {warning?.length > 0 && (
