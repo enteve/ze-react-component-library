@@ -8,7 +8,7 @@ export type ZECardProps = {
   representation?: string;
   warning?: string; // 显示在visualizer下方，一个warning
   extra?: React.ReactNode;
-  mainContent?: React.ReactNode; // 可以用来替换主要的返回的显示内容，做到高度自定义化
+  mainContent?: (logicform: LogicformType) => React.ReactNode; // 可以用来替换主要的返回的显示内容，做到高度自定义化
   footer?: React.ReactNode;
   bodyStyle?: React.CSSProperties;
   getResult?: (result: LogicformAPIResultType) => void;
