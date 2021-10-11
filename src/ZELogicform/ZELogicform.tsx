@@ -8,14 +8,20 @@ const ZELogicform: React.FC<ZELogicformProps> = ({
   logicform,
   dataKey,
   loadingKey,
+  content,
   children,
 }) => {
   const { data, loading } = useRequest<LogicformAPIResultType>(
     () => requestLogicform(logicform),
     {
       formatResult: (res) => res.result,
+      refreshDeps: [logicform],
     }
   );
+
+  if (content) {
+    return <>{content(data)}</>;
+  }
 
   const prop: any = {
     [dataKey]: data,
