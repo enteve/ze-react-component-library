@@ -135,7 +135,7 @@ const ZECard: React.FC<ZECardProps> = ({
 
   let component: any;
   if (mainContent) {
-    component = mainContent;
+    component = mainContent(logicform);
   } else if (isSimpleQuery(logicform)) {
     component = (
       <ZETable
