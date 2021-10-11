@@ -25,7 +25,7 @@ export default {
 // 本质上是去分析Logicform，然后根据logicform决定ZECard的UI
 const GLDCard = (question: string) => {
   let warning: string;
-  let mainContent: React.ReactNode;
+  let mainContent: any;
   let recommender: React.ReactNode;
 
   const { data: logicform, loading } = useRequest<AskAPIResultType>(
@@ -57,7 +57,7 @@ const GLDCard = (question: string) => {
       warning = "跨产品的销量不具备参考价值，优先显示销售额";
 
       // 分析Logicform，如果是一个value类型的，那么三个都要算
-      mainContent = (
+      mainContent = (logicform) => (
         <>
           <div>这里显示切换产品</div>
           <Space direction="vertical" size="large">
@@ -150,7 +150,7 @@ const GLDCard = (question: string) => {
     }
   }
 
-  if (recommends.length > 0) {
+  if (recommends?.length > 0) {
     recommender = (
       <>
         <h3>您还可以这样问：</h3>
