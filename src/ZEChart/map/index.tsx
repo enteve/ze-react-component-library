@@ -71,6 +71,11 @@ const Map: React.FC<Props> = ({ logicform, data, eventsDict = {} }) => {
           }
 
           if (mapID) {
+            // mapID的长度为6位
+            if (mapID.length > 6) {
+              mapID = mapID.substring(mapID.length - 6);
+            }
+
             return fetch(`${config.API_URL}/map/china/${mapID}.json`);
           }
         }

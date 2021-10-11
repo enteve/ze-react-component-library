@@ -13,11 +13,9 @@ import { useRequest } from "@umijs/hooks";
 import { requestRecommend, requestAsk } from "../../request";
 import { Button, message, Progress, Skeleton, Space } from "antd";
 import ZELogicform from "../../ZELogicform";
+import prepareServerForStories from "../../../util/prepareServerForStories";
 
-config.API_URL = "http://localhost:3052";
-localStorage.token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTVmZmUwMTE4OTQ4YjY2OWQ5YTBhZmMiLCJpYXQiOjE2MzM3MDY0OTcsImV4cCI6MTYzNDMxMTI5N30.7JfN-YoQZxkgo6-v5Y_PV5Mke7zik8QbwDjg7mqIFx4";
-
+prepareServerForStories();
 export default {
   title: "Gilead",
 };
