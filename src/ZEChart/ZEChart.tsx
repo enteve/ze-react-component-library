@@ -1,5 +1,6 @@
 // Generated with util/create-component.js
-import React from "react";
+import React, { useRef } from "react";
+import moment, {Moment} from "moment";
 import _ from "underscore";
 import { ZEChartProps } from "./ZEChart.types";
 import Map from "./map";
@@ -22,6 +23,7 @@ const ZEChart: React.FC<ZEChartProps> = ({
   result,
   onChangeLogicform,
 }) => {
+  const clickRef = useRef<Moment>();
   const { data } = useRequest<LogicformAPIResultType>(
     () => {
       if (result) {
@@ -36,10 +38,12 @@ const ZEChart: React.FC<ZEChartProps> = ({
   );
 
   const chartEventDict: Record<string, Function> = {
-    dblclick: (params: any) => {
-      if (!data?.schema) return;
-      if (!onChangeLogicform) return;
-
+    click: (params: any) => {
+      const current = moment();
+      if(!clickRef.current || current.diff(clickRef.current, "millisecond") > 200 || !data?.schema || !onChangeLogicform){
+        clickRef.current = current;
+        return;
+      }
       const { dataIndex } = params;
       const item = data.result[dataIndex];
       if (item) {
@@ -51,6 +55,7 @@ const ZEChart: React.FC<ZEChartProps> = ({
       } else {
         console.error("不应该找不到item的, dataIndex: " + dataIndex);
       }
+      clickRef.current = current;
     },
   };
 
