@@ -509,8 +509,28 @@ export const drilldownLogicform = (
       (h) => h.name === newLF.groupby[0].level
     );
     if (thisLevelIndex < hierarchy.length - 1) {
-      newLF.query[newLF.groupby[0]._id] = { $regex: `^${groupbyItem}` };
-      newLF.groupby[0].level = hierarchy[thisLevelIndex + 1].name;
+      let drilldownLevel = 1;
+      let groupbyItemID = groupbyItem;
+
+      // 特殊逻辑，对于geo来说，4个直辖市直接下钻2级
+      if (groupbyProp.schema._id === "geo") {
+        if (newLF.groupby[0].level === "省市") {
+          if (
+            groupbyItem.endsWith("31") ||
+            groupbyItem.endsWith("11") ||
+            groupbyItem.endsWith("12") ||
+            groupbyItem.endsWith("50")
+          ) {
+            // 4个直辖市判断
+            drilldownLevel = 2;
+            groupbyItemID += "01";
+          }
+        }
+      }
+
+      newLF.groupby[0].level = hierarchy[thisLevelIndex + drilldownLevel].name;
+      newLF.query[newLF.groupby[0]._id] = { $regex: `^${groupbyItemID}` };
+
       return newLF;
     }
   } else {
