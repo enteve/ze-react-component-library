@@ -35,7 +35,7 @@ export const MapCard = () => {
 export const BarCard = () => {
   return (
     <ZECard
-      title="今年各产品销量"
+      title="今年各品类销量"
       logicform={{
         schema: "sales",
         preds: [
@@ -48,7 +48,7 @@ export const BarCard = () => {
         query: {
           日期: { $offset: { year: 0 } },
         },
-        groupby: { _id: "产品" },
+        groupby: { _id: "产品_品类" },
         sort: { 总销量: -1 },
       }}
     />
