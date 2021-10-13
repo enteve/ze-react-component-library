@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Button, Dropdown, Radio, RadioChangeEvent } from "antd";
 import {
   BarChartOutlined,
@@ -7,23 +7,34 @@ import {
   PieChartOutlined,
   TableOutlined,
 } from "@ant-design/icons";
-import { useState } from "react";
-import { useEffect } from "react";
-import Menu from "rc-menu/lib/Menu";
 
 type Props = {
   representationType: string;
   onChange: (representation: string) => void;
+  scrollElement?: Element;
 };
 
 const RepresentationChanger: React.FC<Props> = ({
   representationType,
   onChange,
+  scrollElement = window,
 }) => {
+  const [visible, setVisible] = useState<boolean>(false);
   const [value, setValue] = useState<string>(representationType);
   useEffect(() => {
     setValue(representationType);
   }, [representationType]);
+
+  const onScroll = useCallback(() => {
+    setVisible(false);
+  }, []);
+
+  useEffect(() => {
+    scrollElement.addEventListener("scroll", onScroll);
+    return () => {
+      scrollElement.removeEventListener("scroll", onScroll);
+    };
+  }, []);
 
   const menu = (
     <Radio.Group
@@ -72,7 +83,12 @@ const RepresentationChanger: React.FC<Props> = ({
   }
 
   return (
-    <Dropdown overlay={menu} trigger={["click"]}>
+    <Dropdown
+      overlay={menu}
+      trigger={["click"]}
+      visible={visible}
+      onVisibleChange={setVisible}
+    >
       <Button icon={mainButton} />
     </Dropdown>
   );
