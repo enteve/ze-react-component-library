@@ -1,6 +1,5 @@
 // Generated with util/create-component.js
-import React, { useRef } from "react";
-import moment, { Moment } from "moment";
+import React from "react";
 import _ from "underscore";
 import { ZEChartProps } from "./ZEChart.types";
 import Map from "./map";
@@ -16,16 +15,14 @@ import getLineOption from "./EChart/options/line";
 import getBarOption from "./EChart/options/bar";
 import getColumnOption from "./EChart/options/column";
 import { getNameKeyForChart, formatBarData } from "./util";
-import { drilldownLogicform } from "../util";
 
 const ZEChart: React.FC<ZEChartProps> = ({
   type,
   logicform,
   result,
-  onChangeLogicform,
   width,
+  onDbClick,
 }) => {
-  const clickRef = useRef<Moment>();
   const { data } = useRequest<LogicformAPIResultType>(
     () => {
       if (result) {
@@ -38,31 +35,11 @@ const ZEChart: React.FC<ZEChartProps> = ({
       refreshDeps: [logicform, result],
     }
   );
-
   const chartEventDict: Record<string, Function> = {
     click: (params: any) => {
-      const current = moment();
-      if (
-        !clickRef.current ||
-        current.diff(clickRef.current, "millisecond") > 200 ||
-        !data?.schema ||
-        !onChangeLogicform
-      ) {
-        clickRef.current = current;
-        return;
-      }
       const { dataIndex } = params;
       const item = data.result[dataIndex];
-      if (item) {
-        // 下钻
-        const drilledLF = drilldownLogicform(logicform, data.schema, item._id);
-        if (drilledLF) {
-          onChangeLogicform(drilledLF);
-        }
-      } else {
-        console.error("不应该找不到item的, dataIndex: " + dataIndex);
-      }
-      clickRef.current = current;
+      onDbClick?.(item);
     },
   };
 
@@ -128,7 +105,10 @@ const ZEChart: React.FC<ZEChartProps> = ({
       option.series = logicform.preds.map((predItem) => ({
         name: predItem.name,
         type: "bar",
-        data: formatBarData(data.result.map((r) => r[predItem.name]), width && width < 900),
+        data: formatBarData(
+          data.result.map((r) => r[predItem.name]),
+          width && width < 900
+        ),
         animationDuration: 500,
         barMaxWidth: 48,
       }));
