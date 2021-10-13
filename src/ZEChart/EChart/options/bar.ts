@@ -1,4 +1,4 @@
-export default () => {
+export default (labelInside?: boolean) => {
   return {
     legend: {
       type: "scroll",
@@ -9,6 +9,18 @@ export default () => {
       type: "category",
       inverse: true,
       data: [],
+      ...(labelInside ? {
+        axisTick: {
+          show: false
+        },
+        axisLine: {
+          show: false
+        },
+        axisLabel: {
+          show: false
+        },
+        z: 10
+      } : {})
     },
     xAxis: {
       type: "value",

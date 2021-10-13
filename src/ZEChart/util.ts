@@ -18,3 +18,19 @@ export const getNameKeyForChart = (logicform, data: LogicformAPIResultType) => {
 
   return ret;
 };
+
+export const formatBarData = (data: number[], showLabel?:boolean) => {
+  return data.map(d => {
+    const weight = d / Math.max(...data);
+    return {
+      value: d,
+      label: {
+        show: showLabel,
+        position: weight > 0.5 ? 'inside' : 'right',
+        formatter: p => `${p.name}`,
+        color: weight > 0.5 ? '#fff' : '#000',
+        fontWeight: 'bolder',
+      }
+    }
+  })
+}
