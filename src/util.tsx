@@ -489,18 +489,15 @@ const renderObjectFormItemHierarchy = (property: PropertyType, props: any) => {
 export const drilldownLogicform = (
   logicform: LogicformType,
   schema: SchemaType,
-  groupbyItem: string
+  groupbyItem: any
 ) => {
   if (!logicform.groupby) return null; //必须有groupby才能下钻
   const newLF: LogicformType = JSON.parse(JSON.stringify(logicform));
   normaliseGroupby(newLF);
   if (newLF.groupby.length > 1) return null; // 暂时不支持多维数组下钻
 
-  if (!newLF.query) newLF.query = {};
-
   // 获取下一层
   const groupbyProp = findPropByName(schema, newLF.groupby[0]._id);
-  // console.log(groupbyProp);
 
   if (newLF.groupby[0].level) {
     const hierarchy: any[] = groupbyProp.schema.hierarchy;
@@ -510,16 +507,16 @@ export const drilldownLogicform = (
     );
     if (thisLevelIndex < hierarchy.length - 1) {
       let drilldownLevel = 1;
-      let groupbyItemID = groupbyItem;
+      let groupbyItemID = groupbyItem._id;
 
       // 特殊逻辑，对于geo来说，4个直辖市直接下钻2级
       if (groupbyProp.schema._id === "geo") {
         if (newLF.groupby[0].level === "省市") {
           if (
-            groupbyItem.endsWith("31") ||
-            groupbyItem.endsWith("11") ||
-            groupbyItem.endsWith("12") ||
-            groupbyItem.endsWith("50")
+            groupbyItemID.endsWith("31") ||
+            groupbyItemID.endsWith("11") ||
+            groupbyItemID.endsWith("12") ||
+            groupbyItemID.endsWith("50")
           ) {
             // 4个直辖市判断
             drilldownLevel = 2;
@@ -528,13 +525,20 @@ export const drilldownLogicform = (
         }
       }
 
+      const nameProp = getNameProperty(groupbyProp.schema);
+      newLF.query[newLF.groupby[0]._id] = {
+        schema: groupbyProp.schema._id,
+        operator: "$ent",
+        field: nameProp.name,
+        name: groupbyItem[`${newLF.groupby[0]._id}(${newLF.groupby[0].level})`][
+          nameProp.name
+        ],
+      };
       newLF.groupby[0].level = hierarchy[thisLevelIndex + drilldownLevel].name;
-      newLF.query[newLF.groupby[0]._id] = { $regex: `^${groupbyItemID}` };
-
       return newLF;
     }
   } else {
-    newLF.query[newLF.groupby[0]._id] = groupbyItem;
+    newLF.query[newLF.groupby[0]._id] = groupbyItem._id;
 
     if (groupbyProp.hierarchy?.down) {
       const groupbyChain = newLF.groupby[0]._id.split("_");
