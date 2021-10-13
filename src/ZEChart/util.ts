@@ -1,5 +1,5 @@
 import { getNameProperty, LogicformAPIResultType } from "zeroetp-api-sdk";
-import type { ZEChartProps } from './ZEChart.types';
+import type { ZEChartProps } from "./ZEChart.types";
 import { useRef } from "react";
 import moment, { Moment } from "moment";
 import { drilldownLogicform } from "../util";
@@ -24,20 +24,20 @@ export const getNameKeyForChart = (logicform, data: LogicformAPIResultType) => {
 };
 
 export const formatBarData = (data: number[], showLabel?: boolean) => {
-  return data.map(d => {
+  return data.map((d) => {
     const weight = d / Math.max(...data);
     return {
       value: d,
       label: {
         show: showLabel,
-        position: weight > 0.5 ? 'inside' : 'right',
-        formatter: p => `${p.name}`,
-        color: weight > 0.5 ? '#fff' : '#000',
-        fontWeight: 'bolder',
-      }
-    }
-  })
-}
+        position: weight > 0.5 ? "inside" : "right",
+        formatter: (p) => `${p.name}`,
+        color: weight > 0.5 ? "#fff" : "#000",
+        fontWeight: "bolder",
+      },
+    };
+  });
+};
 
 export function useDrillDownDbClick(
   props: Pick<ZEChartProps, "logicform" | "onChangeLogicform"> & { data: any }
@@ -58,7 +58,7 @@ export function useDrillDownDbClick(
     }
     if (item) {
       // 下钻
-      const drilledLF = drilldownLogicform(logicform, data.schema, item._id);
+      const drilledLF = drilldownLogicform(logicform, data.schema, item);
       if (drilledLF) {
         onChangeLogicform(drilledLF);
       }
