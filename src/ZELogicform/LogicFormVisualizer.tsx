@@ -53,7 +53,10 @@ export const LogicFormVisualizer: React.FC<LogicFormVisualizerProps> = ({
   if (!(display.groupby === false) && logicform.groupby) {
     const doWithGroupbyItem = (groupbyItem: any) => {
       if (typeof groupbyItem === "object") {
-        return `${groupbyItem._id}(${groupbyItem.level})`;
+        if (groupbyItem.level) {
+          return `${groupbyItem._id}(${groupbyItem.level})`;
+        }
+        return groupbyItem._id;
       }
       return groupbyItem;
     };
