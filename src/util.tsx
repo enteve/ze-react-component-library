@@ -543,7 +543,13 @@ export const drilldownLogicform = (
     if (groupbyProp.hierarchy?.down) {
       const groupbyChain = newLF.groupby[0]._id.split("_");
       groupbyChain.pop();
-      newLF.groupby = [...groupbyChain, groupbyProp.hierarchy?.down].join("_");
+      if (groupbyProp.hierarchy.down === "_id") {
+        newLF.groupby = groupbyChain;
+      } else {
+        newLF.groupby = [...groupbyChain, groupbyProp.hierarchy?.down].join(
+          "_"
+        );
+      }
 
       return newLF;
     }
