@@ -54,3 +54,31 @@ export const BarCard = () => {
     />
   );
 };
+
+export const SingleBar = () => {
+  return (
+    <ZECard
+      title="今年各产品销量"
+      logicform={{
+        schema: "sales",
+        preds: [
+          {
+            operator: "$sum",
+            pred: "销售量",
+            name: "总销量",
+          },
+        ],
+        query: {
+          日期: { $offset: { year: 0 } },
+          产品: {
+            operator: "$ent",
+            schema: "product",
+            field: "名称",
+            name: "美丽无敌女长袖",
+          },
+        },
+        groupby: { _id: "产品" },
+      }}
+    />
+  );
+};
