@@ -36,7 +36,7 @@ const EChart: React.FC<Props> = ({
         setTrueOption(option);
       }
     }, 100);
-  }, [option]);
+  }, [JSON.stringify(option)]);
 
   useEffect(() => {
     mountRef.current = true;

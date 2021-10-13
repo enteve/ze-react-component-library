@@ -1,6 +1,6 @@
 // Generated with util/create-component.js
 import React, { useRef } from "react";
-import moment, {Moment} from "moment";
+import moment, { Moment } from "moment";
 import _ from "underscore";
 import { ZEChartProps } from "./ZEChart.types";
 import Map from "./map";
@@ -8,13 +8,14 @@ import Map from "./map";
 import "./ZEChart.less";
 import { useRequest } from "@umijs/hooks";
 import { LogicformAPIResultType } from "zeroetp-api-sdk";
+import { SizeMe } from "react-sizeme";
 import { requestLogicform } from "../request";
 import EChart from "./EChart";
 import getPieOption from "./EChart/options/pie";
 import getLineOption from "./EChart/options/line";
 import getBarOption from "./EChart/options/bar";
 import getColumnOption from "./EChart/options/column";
-import { getNameKeyForChart } from "./util";
+import { getNameKeyForChart, formatBarData } from "./util";
 import { drilldownLogicform } from "../util";
 
 const ZEChart: React.FC<ZEChartProps> = ({
@@ -22,6 +23,7 @@ const ZEChart: React.FC<ZEChartProps> = ({
   logicform,
   result,
   onChangeLogicform,
+  width,
 }) => {
   const clickRef = useRef<Moment>();
   const { data } = useRequest<LogicformAPIResultType>(
@@ -40,7 +42,12 @@ const ZEChart: React.FC<ZEChartProps> = ({
   const chartEventDict: Record<string, Function> = {
     click: (params: any) => {
       const current = moment();
-      if(!clickRef.current || current.diff(clickRef.current, "millisecond") > 200 || !data?.schema || !onChangeLogicform){
+      if (
+        !clickRef.current ||
+        current.diff(clickRef.current, "millisecond") > 200 ||
+        !data?.schema ||
+        !onChangeLogicform
+      ) {
         clickRef.current = current;
         return;
       }
@@ -105,14 +112,14 @@ const ZEChart: React.FC<ZEChartProps> = ({
         type: "bar",
         data: data.result.map((r) => r[predItem.name]),
         animationDuration: 500,
-        barMaxWidth: 48
+        barMaxWidth: 48,
       }));
       option.xAxis.data = data.result.map((r) => _.get(r, nameProp));
     }
 
     chartDom = <EChart option={option} eventsDict={chartEventDict} />;
   } else if (type === "bar") {
-    const option: any = getBarOption();
+    const option: any = getBarOption(width && width < 900);
 
     // 灌入Data
     if (data) {
@@ -121,9 +128,9 @@ const ZEChart: React.FC<ZEChartProps> = ({
       option.series = logicform.preds.map((predItem) => ({
         name: predItem.name,
         type: "bar",
-        data: data.result.map((r) => r[predItem.name]),
+        data: formatBarData(data.result.map((r) => r[predItem.name]), width && width < 900),
         animationDuration: 500,
-        barMaxWidth: 48
+        barMaxWidth: 48,
       }));
       option.yAxis.data = data.result.map((r) => _.get(r, nameProp));
 
@@ -141,4 +148,10 @@ const ZEChart: React.FC<ZEChartProps> = ({
   return <div data-testid="ZEChart">{chartDom}</div>;
 };
 
-export default ZEChart;
+const ZEChartWrapper: React.FC<Omit<ZEChartProps, "width">> = (props) => {
+  return (
+    <SizeMe>{({ size }) => <ZEChart width={size.width} {...props} />}</SizeMe>
+  );
+};
+
+export default ZEChartWrapper;

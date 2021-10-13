@@ -6,4 +6,5 @@ export interface ZEChartProps {
   logicform: LogicformType;
   result?: LogicformAPIResultType;
   onChangeLogicform?: (logicform: LogicformType) => void;
+  width?: number
 }
