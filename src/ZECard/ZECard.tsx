@@ -231,12 +231,14 @@ const ZECard: React.FC<ZECardProps> = ({
           return item[prop.name][nameProp.name];
         };
 
+        const colWidth = tableProps.defaultColWidth || 150;
         const datasource: any[] = [];
         const columns: any[] = [
           {
             title: idProp0.name,
             dataIndex: idProp0.name,
             fixed: "left",
+            width: colWidth,
           },
         ];
 
@@ -304,7 +306,7 @@ const ZECard: React.FC<ZECardProps> = ({
             pagination={false}
             dataSource={datasource}
             columns={columns}
-            scroll={{ x: 150 * columns.length }}
+            scroll={{ x: colWidth * columns.length }}
             cardProps={{
               bodyStyle: { padding: 0 },
             }}
