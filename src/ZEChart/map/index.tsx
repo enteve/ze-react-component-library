@@ -141,7 +141,7 @@ const Map: React.FC<Props> = ({ logicform, data, eventsDict = {} }) => {
           type: "map",
           map,
           label: {
-            show: true,
+            show: logicform?.groupby[0]?.level !== "省市",
           },
           data: data.result.map((i) => ({
             name: _.get(i, nameProp),
