@@ -16,7 +16,7 @@ import {
   PropertyType,
 } from "zeroetp-api-sdk";
 import { requestLogicform } from "../request";
-import ZEChart from "../ZEChart";
+import ZEChart, { useDrillDownDbClick } from "../ZEChart";
 import ZEDescription from "../ZEDescription/ZEDescription";
 import { LogicFormVisualizer } from "../ZELogicform";
 import ZETable from "../ZETable";
@@ -127,6 +127,20 @@ const ZECard: React.FC<ZECardProps> = ({
   );
   const [representation, setRepresentation] = useState<string>(repr);
 
+  const { onDbClick } = useDrillDownDbClick({
+    logicform,
+    onChangeLogicform: setLogicform,
+    data,
+  });
+
+  const onRow = (record) => {
+    return {
+      onClick: (e) => {
+        onDbClick(record);
+      },
+    };
+  };
+
   if (!logicform) return <Result status="error" title="出现错误" />;
   // console.log(data);
 
@@ -142,6 +156,7 @@ const ZECard: React.FC<ZECardProps> = ({
         logicform={logicform}
         xlsx={xlsx}
         exportToExcel={exportToExcel}
+        onRow={onRow}
         {...tableProps}
       />
     );
@@ -190,6 +205,7 @@ const ZECard: React.FC<ZECardProps> = ({
           logicform={logicform}
           result={data}
           onChangeLogicform={setLogicform}
+          onDbClick={onDbClick}
         />
       );
     } else if (finalRepresentation === "entity" && data.result?.length === 1) {
@@ -303,6 +319,7 @@ const ZECard: React.FC<ZECardProps> = ({
           logicform={logicform}
           xlsx={xlsx}
           exportToExcel={exportToExcel}
+          onRow={onRow}
           {...tableProps}
         />
       );

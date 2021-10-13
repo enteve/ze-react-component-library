@@ -5,6 +5,7 @@ export interface ZEChartProps {
   type: string;
   logicform: LogicformType;
   result?: LogicformAPIResultType;
+  onDbClick?: (item: any) => void;
   onChangeLogicform?: (logicform: LogicformType) => void;
   width?: number
 }
