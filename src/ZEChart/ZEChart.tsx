@@ -105,6 +105,7 @@ const ZEChart: React.FC<ZEChartProps> = ({
         type: "bar",
         data: data.result.map((r) => r[predItem.name]),
         animationDuration: 500,
+        barMaxWidth: 48
       }));
       option.xAxis.data = data.result.map((r) => _.get(r, nameProp));
     }
@@ -122,6 +123,7 @@ const ZEChart: React.FC<ZEChartProps> = ({
         type: "bar",
         data: data.result.map((r) => r[predItem.name]),
         animationDuration: 500,
+        barMaxWidth: 48
       }));
       option.yAxis.data = data.result.map((r) => _.get(r, nameProp));
 
