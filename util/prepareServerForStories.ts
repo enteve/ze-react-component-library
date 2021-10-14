@@ -7,5 +7,5 @@ export default () => {
   config.API_URL = "https://retail.yiwendata.com";
   // config.API_URL = "https://jaem.yiwendata.com";
   localStorage.token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTNiMDRjZjRhNDJjMTliNDIxMGNiMjYiLCJpYXQiOjE2MzM5NTc0OTYsImV4cCI6MTYzNDU2MjI5Nn0.FAPrf28iKVFDn6kQliT7gm73XAqvqD-ZZsZpT4brxmA";
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTY2ZDA1NDJmZmQyNjNmYzE2NTBlYmUiLCJpYXQiOjE2MzQxMjc5OTUsImV4cCI6MTYzNDczMjc5NX0.BnGnOdqWYITNAWrhfasrcqx1bI4Y5An3yFPey9NvDqk";
 };
