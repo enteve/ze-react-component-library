@@ -158,3 +158,48 @@ export const MultiCardWithCustomContent = () => {
     </>
   );
 };
+
+// ZECard因为有内部的lf traverler，所以不支持从外部改变logicform。如需从外部改变，用Key来改。本质上是两个component
+export const CardSwitcher = () => {
+  const lf1 = {
+    schema: "sales",
+    preds: [
+      {
+        operator: "$sum",
+        pred: "销售量",
+        name: "总销量",
+      },
+    ],
+    query: {
+      日期: { $offset: { year: 0 } },
+      产品: {
+        operator: "$ent",
+        schema: "product",
+        field: "名称",
+        name: "美丽无敌女长袖",
+      },
+    },
+    groupby: { _id: "产品" },
+  };
+
+  const lf2 = {
+    schema: "sales",
+    preds: [
+      {
+        operator: "$sum",
+        pred: "销售量",
+        name: "总销量",
+      },
+    ],
+    groupby: { _id: "产品" },
+  };
+
+  const [lf, setLF] = useState<LogicformType>(lf1);
+
+  return (
+    <>
+      <Button onClick={() => setLF(lf2)}>switch!</Button>
+      <ZECard key={JSON.stringify(lf)} title="今年各产品销量" logicform={lf} />
+    </>
+  );
+};
