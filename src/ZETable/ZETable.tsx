@@ -28,6 +28,7 @@ import "./ZETable.less";
 
 import { requestLogicform, request as requestAPI } from "../request";
 import { getColumnDateProps, getColumnSearchProps } from "./FilterComponents";
+import { addSummaryToData } from "./summary";
 
 const mapColumnItem = (
   predItem: string,
@@ -266,8 +267,14 @@ const ZETable: React.FC<ZETableProps> = ({
         (r, index) => (result = r.merge(result, refResults[index].result))
       );
 
+      const resultWithSummary = addSummaryToData(
+        result,
+        logicform,
+        ret.columnProperties
+      );
+
       return {
-        data: result,
+        data: resultWithSummary,
         success: true,
         total: ret.total,
       };

@@ -24,8 +24,6 @@ export async function requestAsk(question: string): Promise<AskAPIResultType> {
 export async function requestLogicform(
   logicform: LogicformType
 ): Promise<LogicformAPIResultType> {
-  console.log(JSON.stringify(logicform));
-
   const ret: LogicformAPIResultType = await request(execLogicform(logicform));
 
   if (ret.error) {
