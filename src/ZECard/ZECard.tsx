@@ -353,10 +353,13 @@ const ZECard: React.FC<ZECardProps> = ({
             />
           </div>
         )}
-        <RepresentationChanger
-          representationType={finalRepresentation}
-          onChange={setRepresentation}
-        />
+        {/* 有mainContent的话，没有RepresentationChanger */}
+        {!mainContent && (
+          <RepresentationChanger
+            representationType={finalRepresentation}
+            onChange={setRepresentation}
+          />
+        )}
       </div>
     );
   }
