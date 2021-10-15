@@ -15,7 +15,7 @@ const ZELogicform: React.FC<ZELogicformProps> = ({
     () => requestLogicform(logicform),
     {
       formatResult: (res) => res.result,
-      refreshDeps: [logicform],
+      refreshDeps: [JSON.stringify(logicform)],
     }
   );
 
