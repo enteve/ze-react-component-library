@@ -184,6 +184,8 @@ export const customValueTypes = (schema: SchemaType) => ({
   },
   object: {
     render: (entity: any, props) => {
+      if (typeof entity !== "object") return <div>{entity}</div>;
+
       const propName = props.proFieldKey.split("-").pop();
       const property = findPropByName(schema, propName);
       const nameProperty = getNameProperty(property.schema);
@@ -494,7 +496,16 @@ export const drilldownLogicform = (
   if (!logicform.groupby) return null; //必须有groupby才能下钻
   const newLF: LogicformType = JSON.parse(JSON.stringify(logicform));
   normaliseGroupby(newLF);
+
   if (newLF.groupby.length > 1) return null; // 暂时不支持多维数组下钻
+
+  //summary行
+  if (
+    groupbyItem === "__total" ||
+    (typeof groupbyItem === "object" && groupbyItem._id === "__total")
+  ) {
+    return null;
+  }
 
   // 获取下一层
   const groupbyProp = findPropByName(schema, newLF.groupby[0]._id);
@@ -538,9 +549,8 @@ export const drilldownLogicform = (
       return newLF;
     }
   } else {
-    newLF.query[newLF.groupby[0]._id] = groupbyItem._id;
-
     if (groupbyProp.hierarchy?.down) {
+      newLF.query[newLF.groupby[0]._id] = groupbyItem._id;
       const groupbyChain = newLF.groupby[0]._id.split("_");
       groupbyChain.pop();
       if (groupbyProp.hierarchy.down === "_id") {
