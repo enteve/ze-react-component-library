@@ -39,7 +39,7 @@ const getDefaultRepresentation = (
     return "value";
 
   if (logicform.groupby) {
-    // 如果是多维分组，并且只有一个pred。那么变成交叉表
+    // 如果是2维分组，并且只有一个pred。那么变成交叉表
     if (
       Array.isArray(logicform.groupby) &&
       logicform.groupby.length === 2 &&
@@ -48,29 +48,33 @@ const getDefaultRepresentation = (
       return "cross-table";
     }
 
-    // 如果是一维分组，且这一维是地理位置，那么用地图
-    if (typeof logicform.groupby === "object") {
-      let groupbyItem: any = logicform.groupby;
-      if (Array.isArray(logicform.groupby)) {
-        if (logicform.groupby.length === 1) {
-          groupbyItem = logicform.groupby[0];
-        } else {
-          groupbyItem = null;
-        }
-      }
+    // 如果是多维分组，直接用table
+    if (Array.isArray(logicform.groupby) && logicform.groupby.length >= 2) {
+      return "table";
+    }
 
-      if (groupbyItem) {
-        let groupbyProp: PropertyType;
-        if (typeof groupbyItem === "object" && "_id" in groupbyItem) {
-          groupbyProp = findPropByName(result.schema, groupbyItem._id);
-        } else if (typeof groupbyItem === "string") {
-          groupbyProp = findPropByName(result.schema, groupbyItem);
-        }
+    // 👇是一维分组的逻辑
+    let groupbyItem: any = logicform.groupby;
 
-        if (groupbyProp?.ref === "geo") {
-          return "map";
-        }
-      }
+    if (Array.isArray(logicform.groupby)) {
+      groupbyItem = logicform.groupby[0];
+    }
+
+    let groupbyProp: PropertyType;
+    if (typeof groupbyItem === "object" && "_id" in groupbyItem) {
+      groupbyProp = findPropByName(result.schema, groupbyItem._id);
+    } else if (typeof groupbyItem === "string") {
+      groupbyProp = findPropByName(result.schema, groupbyItem);
+    }
+
+    // 如果是geo，那么用地图
+    if (groupbyProp?.ref === "geo") {
+      return "map";
+    }
+
+    // 如果是categorical的，用pie
+    if (groupbyProp?.is_categorical) {
+      return "pie";
     }
 
     return "bar";
