@@ -1,6 +1,6 @@
 {
   "name": "ze-react-component-library",
-  "version": "1.0.72",
+  "version": "1.0.73",
   "main": "lib/index.js",
   "module": "es/index.js",
   "files": [
@@ -58,7 +58,7 @@
     "react-simple-code-editor": ">=0.11.0",
     "underscore": ">=1.13.1",
     "xlsx": ">=0.17.0",
-    "zeroetp-api-sdk": ">=1.1.23"
+    "zeroetp-api-sdk": ">=1.1.29"
   },
   "devDependencies": {
     "@ant-design/icons": "^4.6.2",
@@ -107,7 +107,7 @@
     "typescript": "^4.3.2",
     "underscore": "^1.13.1",
     "xlsx": "^0.17.0",
-    "zeroetp-api-sdk": "^1.1.26"
+    "zeroetp-api-sdk": "^1.1.29"
   },
   "dependencies": {
     "escape-string-regexp": "^5.0.0",
