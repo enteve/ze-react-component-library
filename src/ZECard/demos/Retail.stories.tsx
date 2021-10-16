@@ -32,6 +32,7 @@ export const MapCard = () => {
         },
         groupby: { _id: "店铺_地址", level: "省市" },
       }}
+      footer={(logicform) => <div>{JSON.stringify(logicform)})</div>} // footer随着logicform的变化而变化
     />
   );
 };
