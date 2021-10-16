@@ -141,6 +141,17 @@ export const StatsDefaultMap = () => (
   />
 );
 
+export const StatsDefaultPie = () => (
+  <ZECard
+    title="各商品分类销售额"
+    logicform={{
+      schema: "productsale",
+      preds: [{ name: "销售额", operator: "$sum", pred: "销售额" }],
+      groupby: ["商品_分类"],
+    }}
+  />
+);
+
 export const StatsPie = () => (
   <ZECard
     title="各商品销量"
