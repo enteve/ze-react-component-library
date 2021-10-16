@@ -394,7 +394,8 @@ const ZECard: React.FC<ZECardProps> = ({
       {footer && (
         <>
           <Divider />
-          {footer}
+          {typeof footer !== "function" && footer}
+          {typeof footer === "function" && footer(logicform)}
         </>
       )}
     </Card>
