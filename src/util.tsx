@@ -499,10 +499,10 @@ export const drilldownLogicform = (
 
   if (newLF.groupby.length > 1) return null; // 暂时不支持多维数组下钻
 
-  //summary行
+  // 一般来说，__开头的，是前端自己添加的一些辅助行。例如汇总行之类的。
   if (
-    groupbyItem === "__total" ||
-    (typeof groupbyItem === "object" && groupbyItem._id === "__total")
+    (typeof groupbyItem === "string" && groupbyItem.startsWith("__")) ||
+    (typeof groupbyItem === "object" && groupbyItem._id.startsWith("__"))
   ) {
     return null;
   }
