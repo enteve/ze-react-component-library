@@ -318,6 +318,40 @@ export const ProductSaleToOrder = () => {
   );
 };
 
+export const Totals = () => (
+  <ZETable
+    logicform={{
+      schema: "productsale",
+      groupby: "经销商",
+      preds: [
+        { name: "销量", operator: "$sum", pred: "销量" },
+        { name: "销售额", operator: "$sum", pred: "销售额" },
+      ],
+    }}
+    refLFs={[
+      {
+        logicform: {
+          schema: "productsale",
+          preds: [
+            { name: "销量", operator: "$sum", pred: "销量" },
+            { name: "销售额", operator: "$sum", pred: "销售额" },
+          ],
+        },
+        merge: (mainData: any[], refData: any) => {
+          return [
+            {
+              _id: "__total",
+              经销商: "总计",
+              ...refData,
+            },
+            ...mainData,
+          ];
+        },
+      },
+    ]}
+  />
+);
+
 // 以下代码只有在周黑鸭的数据库里面才能运行
 export const RefLogicforms = () => {
   return (

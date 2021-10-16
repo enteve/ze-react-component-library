@@ -28,7 +28,11 @@ import "./ZETable.less";
 
 import { requestLogicform, request as requestAPI } from "../request";
 import { getColumnDateProps, getColumnSearchProps } from "./FilterComponents";
-import { addSummaryToData } from "./summary";
+import {
+  canUseCrossTable,
+  columnToCrossTable,
+  dataToCrossTable,
+} from "./crossTableGen";
 
 const mapColumnItem = (
   predItem: string,
@@ -267,14 +271,12 @@ const ZETable: React.FC<ZETableProps> = ({
         (r, index) => (result = r.merge(result, refResults[index].result))
       );
 
-      const resultWithSummary = addSummaryToData(
-        result,
-        logicform,
-        ret.columnProperties
-      );
+      if (canUseCrossTable(logicform)) {
+        result = dataToCrossTable(ret.columnProperties, result);
+      }
 
       return {
-        data: resultWithSummary,
+        data: result,
         success: true,
         total: ret.total,
       };
@@ -491,6 +493,14 @@ const ZETable: React.FC<ZETableProps> = ({
         </Popconfirm>,
       ],
     });
+  }
+
+  if (result && canUseCrossTable(logicform)) {
+    tableProps.columns = columnToCrossTable(
+      result.columnProperties,
+      result.result,
+      defaultColWidth
+    );
   }
 
   return (

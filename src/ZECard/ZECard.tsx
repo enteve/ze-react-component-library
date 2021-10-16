@@ -39,15 +39,6 @@ const getDefaultRepresentation = (
     return "value";
 
   if (logicform.groupby) {
-    // 如果是2维分组，并且只有一个pred。那么变成交叉表
-    if (
-      Array.isArray(logicform.groupby) &&
-      logicform.groupby.length === 2 &&
-      logicform.preds?.length === 1
-    ) {
-      return "cross-table";
-    }
-
     // 如果是多维分组，直接用table
     if (Array.isArray(logicform.groupby) && logicform.groupby.length >= 2) {
       return "table";
@@ -220,105 +211,6 @@ const ZECard: React.FC<ZECardProps> = ({
           item={data.result[0]}
         />
       );
-    } else if (finalRepresentation === "cross-table") {
-      if (data?.result) {
-        const idProp0 = data.columnProperties[0];
-        const idProp1 = data.columnProperties[1];
-        const measurementName = data.columnProperties[2].name;
-
-        const getIDKey = (prop: PropertyType, item: any) => {
-          if (!prop.schema) {
-            return item[prop.name];
-          }
-
-          const nameProp = getNameProperty(prop.schema);
-          return item[prop.name][nameProp.name];
-        };
-
-        const colWidth = tableProps.defaultColWidth || 150;
-        const datasource: any[] = [];
-        const columns: any[] = [
-          {
-            title: idProp0.name,
-            dataIndex: idProp0.name,
-            fixed: "left",
-            width: colWidth,
-          },
-        ];
-
-        data.result.forEach((item) => {
-          if (
-            datasource.length === 0 ||
-            datasource[datasource.length - 1]._id !== item[idProp0.name]
-          ) {
-            datasource.push({
-              _id: item[idProp0.name],
-              [idProp0.name]: item[idProp0.name],
-            });
-          }
-
-          const idKey = getIDKey(idProp1, item);
-
-          datasource[datasource.length - 1][idKey] = item[measurementName];
-
-          if (!columns.find((c) => c.title === idKey)) {
-            columns.push({
-              title: idKey,
-              dataIndex: idKey,
-              valueType: "digit",
-            });
-          }
-        });
-
-        // Export
-        const toolBarRender: React.ReactNode[] = [];
-        let exportFileName = "数据导出";
-
-        if (exportToExcel) {
-          if (typeof exportToExcel === "string") {
-            exportFileName = exportToExcel;
-          }
-
-          toolBarRender.push(
-            <Tooltip title="导出Excel">
-              <Button
-                type="text"
-                icon={<DownloadOutlined />}
-                onClick={() =>
-                  excelExporter(
-                    {
-                      result: datasource,
-                      schema: data.schema,
-                      columnProperties: data.columnProperties,
-                    },
-                    exportFileName,
-                    xlsx
-                  )
-                }
-              />
-            </Tooltip>
-          );
-        }
-
-        component = (
-          <ProTable
-            tableClassName={exportFileName}
-            toolBarRender={() => toolBarRender}
-            options={false}
-            rowKey="_id"
-            search={false}
-            pagination={false}
-            dataSource={datasource}
-            columns={columns}
-            scroll={{ x: colWidth * columns.length }}
-            cardProps={{
-              bodyStyle: { padding: 0 },
-            }}
-          />
-        );
-      } else {
-        component = <div />;
-      }
     } else {
       component = (
         <ZETable

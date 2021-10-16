@@ -185,9 +185,31 @@ export const StatsCrossTable = () => (
       query: { 日期: { $offset: { year: 0 } } },
       groupby: ["$month", "商品"],
     }}
-    bodyStyle={{ padding: 0 }}
     xlsx={xlsx}
     exportToExcel="交叉表"
+    tableProps={{
+      refLFs: [
+        {
+          // 这里演示一下Summary行的用法。之所以要另外调用logicform，是因为很多东西的【总计】，并不是所有数值加起来，所以还不如再调用一次。
+          logicform: {
+            schema: "productsale",
+            preds: [{ name: "销量", operator: "$sum", pred: "销量" }],
+            query: { 日期: { $offset: { year: 0 } } },
+            groupby: ["商品"],
+          },
+          merge: (mainData: any[], refData: any) => {
+            return [
+              ...mainData,
+              ...refData.map((r) => ({
+                ...r,
+                _id: `__Total_${r._id}`,
+                "日期(month)": "Total",
+              })),
+            ];
+          },
+        },
+      ],
+    }}
   />
 );
 
