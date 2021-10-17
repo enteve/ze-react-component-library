@@ -125,7 +125,7 @@ const ZEChart: React.FC<ZEChartProps> = ({
     chartDom = <EChart option={option} eventsDict={chartEventDict} />;
   } else if (type === "map") {
     chartDom = (
-      <Map data={data} logicform={logicform} eventsDict={chartEventDict} />
+      <Map data={data} logicform={logicform} eventsDict={chartEventDict} coloringMap={coloringMap} />
     );
   } else {
     chartDom = <div>暂未支持</div>;

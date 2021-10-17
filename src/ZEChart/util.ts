@@ -95,7 +95,7 @@ export function chartTooltipFormatter(params: any): string {
   data.forEach(d => {
     let itemTip = '';
     d?.data?.preds?.forEach(f => {
-      itemTip = `${itemTip}${d?.marker}${f.name}: <span style="font-weight: bolder;">${toThousands(d?.data?.[f.name])}</span><br />`
+      itemTip = `${itemTip}${d?.marker}${f.name} <span style="float:right;margin-left:20px;font-size:14px;color:#666;font-weight:900">${toThousands(d?.data?.[f.name])}</span><br />`
     })
     res = `${res}${itemTip}`
   })

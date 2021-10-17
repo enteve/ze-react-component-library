@@ -25,12 +25,24 @@ export const MapCard = () => {
             operator: "$sum",
             pred: "销售量",
             name: "总销量",
+            
+          },
+          {
+            operator: "$avg",
+            pred: "销售量",
+            name: "平均销量",
           },
         ],
         query: {
           日期: { $offset: { year: 0 } },
         },
         groupby: { _id: "店铺_地址", level: "省市" },
+      }}
+      coloringMap={(record) => {
+        if(record.总销量 > 20000){
+          return "pink";
+        }
+        return undefined;
       }}
       footer={(logicform) => <div>{JSON.stringify(logicform)})</div>} // footer随着logicform的变化而变化
     />
