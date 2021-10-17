@@ -14,7 +14,7 @@ import getPieOption from "./EChart/options/pie";
 import getLineOption from "./EChart/options/line";
 import getBarOption from "./EChart/options/bar";
 import getColumnOption from "./EChart/options/column";
-import { getNameKeyForChart, formatBarData } from "./util";
+import { getNameKeyForChart, formatBarData, chartTooltipFormatter } from "./util";
 
 const ZEChart: React.FC<ZEChartProps> = ({
   type,
@@ -22,6 +22,7 @@ const ZEChart: React.FC<ZEChartProps> = ({
   result,
   width,
   onDbClick,
+  coloringMap,
 }) => {
   const { data } = useRequest<LogicformAPIResultType>(
     () => {
@@ -101,18 +102,22 @@ const ZEChart: React.FC<ZEChartProps> = ({
     // 灌入Data
     if (data) {
       const nameProp = getNameKeyForChart(logicform, data);
-
-      option.series = logicform.preds.map((predItem) => ({
+      // 默认取第一个pred为主value
+      option.series = logicform.preds.slice(0, 1).map((predItem) => ({
         name: predItem.name,
         type: "bar",
         data: formatBarData(
-          data.result.map((r) => r[predItem.name]),
-          width && width < 900
+          data.result,
+          predItem.name,
+          logicform.preds,
+          width && width < 900,
+          coloringMap,
         ),
         animationDuration: 500,
         barMaxWidth: 48,
       }));
       option.yAxis.data = data.result.map((r) => _.get(r, nameProp));
+      option.tooltip.formatter = chartTooltipFormatter;
 
       console.log(option);
     }
@@ -120,7 +125,7 @@ const ZEChart: React.FC<ZEChartProps> = ({
     chartDom = <EChart option={option} eventsDict={chartEventDict} />;
   } else if (type === "map") {
     chartDom = (
-      <Map data={data} logicform={logicform} eventsDict={chartEventDict} />
+      <Map data={data} logicform={logicform} eventsDict={chartEventDict} coloringMap={coloringMap} />
     );
   } else {
     chartDom = <div>暂未支持</div>;

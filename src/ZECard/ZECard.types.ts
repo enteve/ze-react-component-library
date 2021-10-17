@@ -16,7 +16,7 @@ export type ZECardProps = {
   xlsx?: any; // 外链的xlsx库。给到ZETable的
   showMainContentOnly?: boolean; // 是不是只显示最主要的content，其他都不显示。主要用在嵌套在其他component里面
   showRecommender?: boolean; // 是不是要显示更多推荐的相关数值
-
+  coloringMap?: (record: any) => string;
   tableProps?: Omit<ZETableProps, "logicform">;
   visualizerProps?: Omit<LogicFormVisualizerProps, "logicform">;
 };

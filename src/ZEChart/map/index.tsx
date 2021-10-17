@@ -10,16 +10,17 @@ import {
 import * as echarts from "echarts";
 import EChart from "../EChart";
 import _ from "underscore";
-import { getNameKeyForChart } from "../util";
+import { getNameKeyForChart, chartTooltipFormatter } from "../util";
 import { Result } from "antd";
 
 interface Props {
   logicform: LogicformType;
   data: LogicformAPIResultType;
   eventsDict?: Record<string, Function>;
+  coloringMap?: (record: any) => string;
 }
 
-const Map: React.FC<Props> = ({ logicform, data, eventsDict = {} }) => {
+const Map: React.FC<Props> = ({ logicform, data, eventsDict = {}, coloringMap }) => {
   const [map, setMap] = useState<string>("100000");
 
   const { data: mapData } = useRequest(
@@ -133,6 +134,7 @@ const Map: React.FC<Props> = ({ logicform, data, eventsDict = {} }) => {
       },
       tooltip: {
         trigger: "item",
+        formatter: chartTooltipFormatter,
       },
       series: [
         {
@@ -146,6 +148,11 @@ const Map: React.FC<Props> = ({ logicform, data, eventsDict = {} }) => {
           data: data.result.map((i) => ({
             name: _.get(i, nameProp),
             value: i[logicform.preds[0].name],
+            itemStyle: {
+              color: coloringMap?.(i),
+            },
+            ...i,
+            preds: logicform?.preds,
           })),
         },
       ],
