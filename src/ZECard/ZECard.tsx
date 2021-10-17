@@ -58,13 +58,21 @@ const getDefaultRepresentation = (
       groupbyProp = findPropByName(result.schema, groupbyItem);
     }
 
+    // Schema指定的presentation
+    if (groupbyProp.ui?.presentation) {
+      return groupbyProp.ui?.presentation;
+    }
+
     // 如果是geo，那么用地图
     if (groupbyProp?.ref === "geo") {
       return "map";
     }
 
-    // 如果是categorical的，用pie
-    if (groupbyProp?.is_categorical) {
+    // 如果是categorical的，并且，用pie
+    if (
+      groupbyProp?.is_categorical &&
+      groupbyProp?.stats?.distincts?.length <= 5
+    ) {
       return "pie";
     }
 
