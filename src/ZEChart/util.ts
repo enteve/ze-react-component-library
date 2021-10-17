@@ -23,11 +23,14 @@ export const getNameKeyForChart = (logicform, data: LogicformAPIResultType) => {
   return ret;
 };
 
-export const formatBarData = (data: number[], showLabel?: boolean) => {
+export const formatBarData = (data: any[], valueKey: string, preds: any, showLabel?: boolean, coloringMap?: (record: any) => string) => {
   return data.map((d) => {
-    const weight = d / Math.max(...data);
+    const weight = d[valueKey] / Math.max(...data.map(m => m[valueKey]));
     return {
-      value: d,
+      value: d[valueKey],
+      itemStyle: {
+        color: coloringMap?.(d),
+      },
       label: {
         show: showLabel,
         position: weight > 0.5 ? "inside" : "right",
@@ -35,6 +38,8 @@ export const formatBarData = (data: number[], showLabel?: boolean) => {
         color: weight > 0.5 ? "#fff" : "#000",
         fontWeight: "bolder",
       },
+      ...d,
+      preds,
     };
   });
 };
@@ -69,4 +74,30 @@ export function useDrillDownDbClick(
   };
 
   return { onDbClick };
+}
+
+// 千分位分割
+export function toThousands(param) {
+  if (!param) return 0;
+  const n = param.toString().split('.');
+  if (n.length > 1) {
+    return `${(n[0] || 0).toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,')}.${n[1]}`;
+  }
+  return (n[0] || 0).toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
+}
+
+export function chartTooltipFormatter(params: any): string {
+  let res: string = '';
+  if (!params) {
+    return res;
+  }
+  const data: any[] = params instanceof Array ? params : [params];
+  data.forEach(d => {
+    let itemTip = '';
+    d?.data?.preds?.forEach(f => {
+      itemTip = `${itemTip}${d?.marker}${f.name}: <span style="font-weight: bolder;">${toThousands(d?.data?.[f.name])}</span><br />`
+    })
+    res = `${res}${itemTip}`
+  })
+  return res;
 }

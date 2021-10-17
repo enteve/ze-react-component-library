@@ -2,14 +2,13 @@
  * 这个控件通过接受Logicform，展示复杂结果
  */
 import { useRequest, useHistoryTravel } from "@umijs/hooks";
-import { Button, Empty, Card, Divider, Tooltip, Result } from "antd";
+import { Empty, Card, Divider, Result } from "antd";
 
 import React from "react";
 import _ from "underscore";
 import { useState } from "react";
 import {
   findPropByName,
-  getNameProperty,
   isSimpleQuery,
   LogicformAPIResultType,
   LogicformType,
@@ -21,9 +20,7 @@ import ZEDescription from "../ZEDescription/ZEDescription";
 import { LogicFormVisualizer } from "../ZELogicform";
 import ZETable from "../ZETable";
 import { ZECardProps } from "./ZECard.types";
-import ProTable from "@ant-design/pro-table";
-import { DownloadOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
-import excelExporter from "../ZETable/excelExporter";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 import ValueDisplayer from "./ValueDisplayer";
 import RepresentationChanger from "./RepresentationChanger";
 import "./ZECard.less";
@@ -92,6 +89,7 @@ const ZECard: React.FC<ZECardProps> = ({
   showMainContentOnly,
   tableProps = {},
   visualizerProps = {},
+  coloringMap,
 }) => {
   const {
     value: logicform,
@@ -201,6 +199,7 @@ const ZECard: React.FC<ZECardProps> = ({
           result={data}
           onChangeLogicform={setLogicform}
           onDbClick={onDbClick}
+          coloringMap={coloringMap}
         />
       );
     } else if (finalRepresentation === "entity" && data.result?.length === 1) {

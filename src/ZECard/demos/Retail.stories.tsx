@@ -41,6 +41,13 @@ export const BarCard = () => {
   return (
     <ZECard
       title="今年各品类销量"
+      coloringMap={(record) => {
+        console.log(record);
+        if(record.总销量 > 140000){
+          return "#722ed1";
+        }
+        return "#eb2f96";
+      }}
       logicform={{
         schema: "sales",
         preds: [
@@ -48,6 +55,11 @@ export const BarCard = () => {
             operator: "$sum",
             pred: "销售量",
             name: "总销量",
+          },
+          {
+            operator: "$avg",
+            pred: "销售量",
+            name: "平均销量",
           },
         ],
         query: {
