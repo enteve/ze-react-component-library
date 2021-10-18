@@ -10,7 +10,11 @@ import {
 import * as echarts from "echarts";
 import EChart from "../EChart";
 import _ from "underscore";
-import { getNameKeyForChart, chartTooltipFormatter } from "../util";
+import {
+  getNameKeyForChart,
+  chartTooltipFormatter,
+  formatChartData,
+} from "../util";
 import { Result } from "antd";
 
 interface Props {
@@ -20,7 +24,12 @@ interface Props {
   coloringMap?: (record: any) => string;
 }
 
-const Map: React.FC<Props> = ({ logicform, data, eventsDict = {}, coloringMap }) => {
+const Map: React.FC<Props> = ({
+  logicform,
+  data,
+  eventsDict = {},
+  coloringMap,
+}) => {
   const [map, setMap] = useState<string>("100000");
 
   const { data: mapData } = useRequest(
@@ -147,15 +156,14 @@ const Map: React.FC<Props> = ({ logicform, data, eventsDict = {}, coloringMap })
           label: {
             show: logicform?.groupby[0]?.level !== "省市",
           },
-          data: data.result.map((i) => ({
-            name: _.get(i, nameProp),
-            value: i[logicform.preds[0].name],
-            itemStyle: {
-              color: coloringMap?.(i),
-            },
-            ...i,
-            preds: logicform?.preds,
-          })),
+          data: formatChartData({
+            data: data.result,
+            valueKey: logicform.preds[0].name,
+            valueName: (i) => _.get(i, nameProp),
+            preds: logicform.preds,
+            coloringMap,
+            properties: data.columnProperties,
+          }),
         },
       ],
     };

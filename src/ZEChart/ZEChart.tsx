@@ -14,7 +14,11 @@ import getPieOption from "./EChart/options/pie";
 import getLineOption from "./EChart/options/line";
 import getBarOption from "./EChart/options/bar";
 import getColumnOption from "./EChart/options/column";
-import { getNameKeyForChart, formatBarData, chartTooltipFormatter } from "./util";
+import {
+  getNameKeyForChart,
+  formatChartData,
+  chartTooltipFormatter,
+} from "./util";
 
 const ZEChart: React.FC<ZEChartProps> = ({
   type,
@@ -56,12 +60,18 @@ const ZEChart: React.FC<ZEChartProps> = ({
       option.series = logicform.preds.map((predItem) => ({
         name: predItem.name,
         type: "line",
-        data: data.result.map((r) => r[predItem.name]),
+        data: formatChartData({
+          data: data.result,
+          valueKey: predItem.name,
+          preds: logicform.preds,
+          properties: data.columnProperties,
+        }),
         animationDuration: 500,
       }));
       option.xAxis.data = data.result.map((r) => _.get(r, nameProp));
     }
 
+    option.tooltip.formatter = chartTooltipFormatter;
     chartDom = <EChart option={option} eventsDict={chartEventDict} />;
   } else if (type === "pie") {
     const option: any = getPieOption();
@@ -69,14 +79,16 @@ const ZEChart: React.FC<ZEChartProps> = ({
     // 灌入Data
     if (data) {
       const nameProp = getNameKeyForChart(logicform, data);
-
-      option.series[0].data = data.result.map((r) => ({
-        _id: r._id,
-        value: r[logicform.preds[0].name],
-        name: _.get(r, nameProp),
-      }));
+      option.series[0].data = formatChartData({
+        data: data.result,
+        valueKey: logicform.preds[0].name,
+        valueName: (i) => _.get(i, nameProp),
+        preds: logicform.preds,
+        properties: data.columnProperties,
+      });
     }
 
+    option.tooltip.formatter = chartTooltipFormatter;
     chartDom = <EChart option={option} eventsDict={chartEventDict} />;
   } else if (type === "column") {
     const option: any = getColumnOption();
@@ -88,13 +100,19 @@ const ZEChart: React.FC<ZEChartProps> = ({
       option.series = logicform.preds.map((predItem) => ({
         name: predItem.name,
         type: "bar",
-        data: data.result.map((r) => r[predItem.name]),
+        data: formatChartData({
+          data: data.result,
+          valueKey: predItem.name,
+          preds: logicform.preds,
+          properties: data.columnProperties,
+        }),
         animationDuration: 500,
         barMaxWidth: 48,
       }));
       option.xAxis.data = data.result.map((r) => _.get(r, nameProp));
     }
 
+    option.tooltip.formatter = chartTooltipFormatter;
     chartDom = <EChart option={option} eventsDict={chartEventDict} />;
   } else if (type === "bar") {
     const option: any = getBarOption(width && width < 900);
@@ -106,26 +124,31 @@ const ZEChart: React.FC<ZEChartProps> = ({
       option.series = logicform.preds.slice(0, 1).map((predItem) => ({
         name: predItem.name,
         type: "bar",
-        data: formatBarData(
-          data.result,
-          predItem.name,
-          logicform.preds,
-          width && width < 900,
+        data: formatChartData({
+          data: data.result,
+          valueKey: predItem.name,
+          preds: logicform.preds,
+          showLabel: width && width < 900,
           coloringMap,
-        ),
+          isBar: true,
+          properties: data.columnProperties,
+        }),
         animationDuration: 500,
         barMaxWidth: 48,
       }));
       option.yAxis.data = data.result.map((r) => _.get(r, nameProp));
       option.tooltip.formatter = chartTooltipFormatter;
-
-      console.log(option);
     }
 
     chartDom = <EChart option={option} eventsDict={chartEventDict} />;
   } else if (type === "map") {
     chartDom = (
-      <Map data={data} logicform={logicform} eventsDict={chartEventDict} coloringMap={coloringMap} />
+      <Map
+        data={data}
+        logicform={logicform}
+        eventsDict={chartEventDict}
+        coloringMap={coloringMap}
+      />
     );
   } else {
     chartDom = <div>暂未支持</div>;
