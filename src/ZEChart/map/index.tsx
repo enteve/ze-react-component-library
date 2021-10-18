@@ -134,6 +134,7 @@ const Map: React.FC<Props> = ({ logicform, data, eventsDict = {}, coloringMap })
       },
       tooltip: {
         trigger: "item",
+        confine: true,
         formatter: chartTooltipFormatter,
       },
       series: [

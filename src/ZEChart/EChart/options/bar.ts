@@ -24,6 +24,7 @@ export default (labelInside?: boolean) => {
     },
     xAxis: {
       type: "value",
+      confine: true,
     },
     tooltip: {
       trigger: "axis",
