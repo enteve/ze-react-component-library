@@ -1,8 +1,13 @@
-import { getNameProperty, LogicformAPIResultType } from "zeroetp-api-sdk";
+import {
+  getNameProperty,
+  LogicformAPIResultType,
+  PropertyType,
+} from "zeroetp-api-sdk";
+import numeral from "numeral";
 import type { ZEChartProps } from "./ZEChart.types";
 import { useRef } from "react";
 import moment, { Moment } from "moment";
-import { drilldownLogicform } from "../util";
+import { drilldownLogicform, customValueTypes } from "../util";
 
 // 这个namekey用来给chart
 export const getNameKeyForChart = (logicform, data: LogicformAPIResultType) => {
@@ -23,23 +28,45 @@ export const getNameKeyForChart = (logicform, data: LogicformAPIResultType) => {
   return ret;
 };
 
-export const formatBarData = (data: any[], valueKey: string, preds: any, showLabel?: boolean, coloringMap?: (record: any) => string) => {
+export const formatChartData = ({
+  data,
+  valueKey,
+  valueName,
+  coloringMap,
+  showLabel,
+  preds,
+  isBar,
+  properties,
+}: {
+  data: any[];
+  valueKey: string;
+  valueName?: (i:any) => string;
+  preds: any;
+  showLabel?: boolean;
+  coloringMap?: (record: any) => string;
+  isBar?: boolean;
+  properties?: PropertyType[];
+}) => {
   return data.map((d) => {
-    const weight = d[valueKey] / Math.max(...data.map(m => m[valueKey]));
+    const weight = d[valueKey] / Math.max(...data.map((m) => m[valueKey]));
     return {
+      name: valueName ? valueName(d) :undefined,
       value: d[valueKey],
       itemStyle: {
         color: coloringMap?.(d),
       },
-      label: {
-        show: showLabel,
-        position: weight > 0.5 ? "inside" : "right",
-        formatter: (p) => `${p.name}`,
-        color: weight > 0.5 ? "#fff" : "#000",
-        fontWeight: "bolder",
-      },
+      label: isBar
+        ? {
+          show: showLabel,
+          position: weight > 0.5 ? "inside" : "right",
+          formatter: (p) => `${p.name}`,
+          color: weight > 0.5 ? "#fff" : "#000",
+          fontWeight: "bolder",
+        }
+        : undefined,
       ...d,
       preds,
+      properties,
     };
   });
 };
@@ -76,28 +103,38 @@ export function useDrillDownDbClick(
   return { onDbClick };
 }
 
-// 千分位分割
-export function toThousands(param) {
-  if (!param) return 0;
-  const n = param.toString().split('.');
-  if (n.length > 1) {
-    return `${(n[0] || 0).toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,')}.${n[1]}`;
-  }
-  return (n[0] || 0).toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
-}
-
 export function chartTooltipFormatter(params: any): string {
-  let res: string = '';
+  let res: string = "";
   if (!params) {
     return res;
   }
   const data: any[] = params instanceof Array ? params : [params];
-  data.forEach(d => {
-    let itemTip = '';
-    d?.data?.preds?.forEach(f => {
-      itemTip = `${itemTip}${d?.marker}${f.name} <span style="float:right;margin-left:20px;font-size:14px;color:#666;font-weight:900">${toThousands(d?.data?.[f.name])}</span><br />`
-    })
-    res = `${res}${itemTip}`
-  })
+  data.slice(0,1).forEach((d) => {
+    let itemTip = d.name ? `${d.name} <br />` : '';
+    d?.data?.preds?.forEach((f) => {
+      const property: PropertyType | undefined = d.data?.properties?.find(
+        (i) => i?.name === f?.name
+      );
+      let render = (v) => v;
+      if (property && property.primal_type === "number") {
+        // 默认千分位分割、保留两位小数
+        render = (v) => numeral(v).format("0,0.00");
+        // 根据type格式化
+        const typeRender = customValueTypes[property.type]?.render;
+        if (typeRender) {
+          render = typeRender;
+        }
+        // 根据ui的formatter格式化，优先级最高
+        if (property.ui?.formatter) {
+          render = (v) => numeral(v).format(property.ui.formatter);
+        }
+      }
+      itemTip = `${itemTip}${d?.marker}${f.name
+        } <span style="float:right;margin-left:20px;font-size:14px;color:#666;font-weight:900">${render(
+          d?.data?.[f.name]
+        )}</span><br />`;
+    });
+    res = `${res}${itemTip}`;
+  });
   return res;
 }
