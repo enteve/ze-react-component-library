@@ -131,6 +131,7 @@ const Map: React.FC<Props> = ({ logicform, data, eventsDict = {}, coloringMap })
         text: ["最高", "最低"],
         realtime: false,
         calculable: true,
+        show: coloringMap ? false : true,
       },
       tooltip: {
         trigger: "item",
