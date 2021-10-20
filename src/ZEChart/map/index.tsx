@@ -163,6 +163,7 @@ const Map: React.FC<Props> = ({
             preds: logicform.preds,
             coloringMap,
             properties: data.columnProperties,
+            schema: data.schema,
           }),
         },
       ],

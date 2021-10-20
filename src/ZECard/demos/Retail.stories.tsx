@@ -27,9 +27,9 @@ export const MapCard = () => {
             name: "总销量",
           },
           {
-            operator: "$avg",
+            operator: "$percentage",
             pred: "销售量",
-            name: "平均销量",
+            name: "销售量占比",
           },
         ],
         query: {

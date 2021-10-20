@@ -65,6 +65,7 @@ const ZEChart: React.FC<ZEChartProps> = ({
           valueKey: predItem.name,
           preds: logicform.preds,
           properties: data.columnProperties,
+          schema: data.schema,
         }),
         animationDuration: 500,
       }));
@@ -85,6 +86,7 @@ const ZEChart: React.FC<ZEChartProps> = ({
         valueName: (i) => _.get(i, nameProp),
         preds: logicform.preds,
         properties: data.columnProperties,
+        schema: data.schema,
       });
     }
 
@@ -105,6 +107,7 @@ const ZEChart: React.FC<ZEChartProps> = ({
           valueKey: predItem.name,
           preds: logicform.preds,
           properties: data.columnProperties,
+          schema: data.schema,
         }),
         animationDuration: 500,
         barMaxWidth: 48,
@@ -132,6 +135,7 @@ const ZEChart: React.FC<ZEChartProps> = ({
           coloringMap,
           isBar: true,
           properties: data.columnProperties,
+          schema: data.schema,
         }),
         animationDuration: 500,
         barMaxWidth: 48,
