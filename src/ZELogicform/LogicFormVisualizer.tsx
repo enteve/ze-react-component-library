@@ -12,6 +12,7 @@ export type LogicFormVisualizerDisplayProp = {
   preds?: boolean;
   query?: boolean;
   groupby?: boolean;
+  sort?: boolean;
 };
 
 export interface LogicFormVisualizerProps {
@@ -309,7 +310,7 @@ export const LogicFormVisualizer: React.FC<LogicFormVisualizerProps> = ({
     }
   }
 
-  if (logicform.sort) {
+  if (!(display.sort === false) && logicform.sort) {
     Object.entries(logicform.sort).forEach(([k, v]) => {
       badges.push({
         color: "gold",
