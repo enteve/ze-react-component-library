@@ -73,6 +73,11 @@ const getDefaultRepresentation = (
       return "pie";
     }
 
+    // 如果是timestamp，用line
+    if (groupbyProp?.type === "timestamp") {
+      return "line";
+    }
+
     return "bar";
   }
 
