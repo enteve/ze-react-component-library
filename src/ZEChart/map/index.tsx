@@ -30,9 +30,9 @@ const Map: React.FC<Props> = ({
   eventsDict = {},
   coloringMap,
 }) => {
-  const [map, setMap] = useState<string>("100000");
+  const [map, setMap] = useState<string | undefined>();
 
-  const { data: mapData } = useRequest(
+  useRequest(
     () => {
       if (logicform?.groupby && data && data.schema) {
         // 朱曦炽：这里就直接假定了地图有以下level：区域、省市、城市、区县
@@ -108,7 +108,7 @@ const Map: React.FC<Props> = ({
 
   let option: any = {};
 
-  if (mapData && data && data.result) {
+  if (map && data && data.result) {
     if (!logicform.groupby)
       return <Result status="error" title="地图不支持非分组数据" />;
     normaliseGroupby(logicform);
