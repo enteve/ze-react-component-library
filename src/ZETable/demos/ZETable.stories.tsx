@@ -220,6 +220,7 @@ export const StatsAndCalcInFront = () => (
         { name: "销售额", operator: "$sum", pred: "销售额" },
       ],
       groupby: "商品",
+      sort: { 销量: -1 },
     }}
     preds={["商品", "销售额", "销量", "件单价"]}
     customColumns={{
