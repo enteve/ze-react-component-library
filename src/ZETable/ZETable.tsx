@@ -251,12 +251,13 @@ const ZETable: React.FC<ZETableProps> = ({
       }
     });
 
-    // Sort
-    Object.entries(sort).forEach(([k, v]) => {
-      if (!("sort" in newLF)) newLF.sort = {};
-
-      newLF.sort[k] = v === "ascend" ? 1 : -1;
-    });
+    // Sort，新的sort覆盖掉原始sort。此逻辑代表同时只允许一种sort key
+    if (Object.keys(sort).length > 0) {
+      newLF.sort = {};
+      Object.entries(sort).forEach(([k, v]) => {
+        newLF.sort[k] = v === "ascend" ? 1 : -1;
+      });
+    }
 
     try {
       const ret = await requestLogicform(newLF);
