@@ -32,12 +32,13 @@ export const dataToCrossTable = (
   const newData: any[] = [];
 
   data.forEach((item) => {
-    if (
-      newData.length === 0 ||
-      newData[newData.length - 1]._id !== item[idProp0.name]
-    ) {
+    const id =
+      typeof item[idProp0.name] === "string"
+        ? item[idProp0.name]
+        : item[idProp0.name]._id;
+    if (newData.length === 0 || newData[newData.length - 1]._id !== id) {
       newData.push({
-        _id: item[idProp0.name],
+        _id: id,
         [idProp0.name]: item[idProp0.name],
       });
     }
@@ -65,6 +66,7 @@ export const columnToCrossTable = (
       dataIndex: idProp0.name,
       fixed: "left",
       width: defaultColWidth,
+      valueType: valueTypeMapping(idProp0),
     },
   ];
 
