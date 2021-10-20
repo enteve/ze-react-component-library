@@ -221,6 +221,7 @@ export const StatsAndCalcInFront = () => (
       ],
       groupby: "商品",
       sort: { 销量: -1 },
+      limit: 5,
     }}
     preds={["商品", "销售额", "销量", "件单价"]}
     customColumns={{
