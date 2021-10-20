@@ -25,7 +25,6 @@ export const MapCard = () => {
             operator: "$sum",
             pred: "销售量",
             name: "总销量",
-            
           },
           {
             operator: "$avg",
@@ -39,7 +38,7 @@ export const MapCard = () => {
         groupby: { _id: "店铺_地址", level: "省市" },
       }}
       coloringMap={(record) => {
-        if(record.总销量 > 20000){
+        if (record.总销量 > 20000) {
           return "pink";
         }
         return undefined;
@@ -55,7 +54,7 @@ export const BarCard = () => {
       title="今年各品类销量"
       coloringMap={(record) => {
         console.log(record);
-        if(record.总销量 > 140000){
+        if (record.总销量 > 140000) {
           return "#722ed1";
         }
         return "#eb2f96";
@@ -226,5 +225,33 @@ export const CardSwitcher = () => {
       <Button onClick={() => setLF(lf2)}>switch!</Button>
       <ZECard key={JSON.stringify(lf)} title="今年各产品销量" logicform={lf} />
     </>
+  );
+};
+
+export const ByTimeWindow = () => {
+  return (
+    <ZECard
+      title="今年各产品销量"
+      logicform={{
+        schema: "sales",
+        preds: [
+          {
+            operator: "$sum",
+            pred: "销售量",
+            name: "总销量",
+          },
+        ],
+        query: {
+          日期: { $offset: { year: 0 } },
+          产品: {
+            operator: "$ent",
+            schema: "product",
+            field: "名称",
+            name: "美丽无敌女长袖",
+          },
+        },
+        groupby: "$month",
+      }}
+    />
   );
 };
