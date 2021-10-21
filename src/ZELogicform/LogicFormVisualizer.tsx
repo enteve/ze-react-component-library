@@ -12,7 +12,7 @@ export type LogicFormVisualizerDisplayProp = {
   preds?: boolean;
   query?: boolean;
   groupby?: boolean;
-  sort?: boolean;
+  sort?: boolean; // sort同时掌管着skip，sort，limit
 };
 
 export interface LogicFormVisualizerProps {
@@ -323,7 +323,7 @@ export const LogicFormVisualizer: React.FC<LogicFormVisualizerProps> = ({
     });
   }
 
-  if (logicform.limit && logicform.limit > 0) {
+  if (!(display.sort === false) && logicform.limit && logicform.limit > 0) {
     badges.push({
       color: "pink",
       text: (
