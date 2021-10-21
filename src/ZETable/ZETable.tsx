@@ -30,6 +30,7 @@ import { requestLogicform, request as requestAPI } from "../request";
 import { getColumnDateProps, getColumnSearchProps } from "./FilterComponents";
 import {
   canUseCrossTable,
+  columnPropertiesToCrossTable,
   columnToCrossTable,
   dataToCrossTable,
 } from "./crossTableGen";
@@ -373,7 +374,14 @@ const ZETable: React.FC<ZETableProps> = ({
 
   // result的schema中的properties其实没啥用，应该改为columnProperties的
   if (result?.columnProperties) {
-    result.schema.properties = result.columnProperties;
+    if (canUseCrossTable(logicform)) {
+      result.schema.properties = columnPropertiesToCrossTable(
+        result?.columnProperties,
+        result.result
+      );
+    } else {
+      result.schema.properties = result.columnProperties;
+    }
   }
 
   const tableProps: any = {

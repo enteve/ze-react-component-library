@@ -51,6 +51,30 @@ export const dataToCrossTable = (
   return newData;
 };
 
+export const columnPropertiesToCrossTable = (
+  columnProperties: PropertyType[],
+  data: any[]
+): any[] => {
+  const idProp0 = columnProperties[0];
+  const idProp1 = columnProperties[1];
+
+  const newColumnProperties: any[] = [idProp0];
+
+  const columnSet = new Set();
+  data.forEach((item) => {
+    const idKey = getIDKey(idProp1, item);
+    if (!columnSet.has(idKey)) {
+      newColumnProperties.push({
+        ...columnProperties[2],
+        name: idKey,
+      });
+      columnSet.add(idKey);
+    }
+  });
+
+  return newColumnProperties;
+};
+
 export const columnToCrossTable = (
   columnProperties: PropertyType[],
   data: any[],
