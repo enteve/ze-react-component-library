@@ -94,6 +94,7 @@ const ZECard: React.FC<ZECardProps> = ({
   extra,
   footer,
   bodyStyle = {},
+  headStyle = {},
   representation: repr,
   getResult,
   exportToExcel,
@@ -275,7 +276,13 @@ const ZECard: React.FC<ZECardProps> = ({
   if (showMainContentOnly) return component;
 
   return (
-    <Card title={title} loading={loading} extra={extra} bodyStyle={bodyStyle}>
+    <Card
+      title={title}
+      loading={loading}
+      extra={extra}
+      bodyStyle={bodyStyle}
+      headStyle={headStyle}
+    >
       <div>
         <LogicFormVisualizer
           {...visualizerProps}
