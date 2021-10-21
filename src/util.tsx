@@ -61,7 +61,7 @@ export const findProperty = (schema: SchemaType, propName: string) => {
 export const valueTypeMapping = (property: PropertyType) => {
   switch (property.type) {
     case "currency":
-      return "digit"; // 不用money，不然导出Excel之后，这些列无法被操作
+      return "number"; // 不用money，不然导出Excel之后，这些列无法被操作
     case "percentage":
       return "percentage";
     case "object":
@@ -100,7 +100,7 @@ export const valueTypeMapping = (property: PropertyType) => {
       return "date";
 
     case "number":
-      return "digit";
+      return "number";
     case "string":
       if (property.constraints.enum) {
         if (property.constraints.enum.length >= 10) {
@@ -149,7 +149,13 @@ export const valueEnumMapping = (property: PropertyType) => {
 
 export const customValueTypes = (schema: SchemaType) => ({
   percentage: {
-    render: (number: number) => {
+    render: (number: number, props) => {
+      const propName = props.proFieldKey.split("-").pop();
+      const property = findPropByName(schema, propName);
+
+      if (property?.ui?.formatter) {
+        return numeral(number).format(property?.ui?.formatter);
+      }
       return numeral(number).format("0.0%");
     },
     renderFormItem: (text, props) => {
@@ -260,6 +266,20 @@ export const customValueTypes = (schema: SchemaType) => ({
           }}
         />
       );
+    },
+  },
+  number: {
+    render: (number: number, props) => {
+      const propName = props.proFieldKey.split("-").pop();
+      const property = findPropByName(schema, propName);
+
+      if (property?.ui?.formatter) {
+        return numeral(number).format(property?.ui?.formatter);
+      }
+      return numeral(number).format("0,0");
+    },
+    renderFormItem: (text, props) => {
+      return <InputNumber {...props?.fieldProps} />;
     },
   },
 });
