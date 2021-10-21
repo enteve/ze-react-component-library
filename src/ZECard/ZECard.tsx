@@ -104,6 +104,7 @@ const ZECard: React.FC<ZECardProps> = ({
   tableProps = {},
   visualizerProps = {},
   coloringMap,
+  compact = false,
 }) => {
   const {
     value: logicform,
@@ -296,15 +297,15 @@ const ZECard: React.FC<ZECardProps> = ({
         />
       </div>
       {warning?.length > 0 && (
-        <div style={{ marginTop: 10 }}>
+        <div style={{ marginTop: compact ? 5 : 10 }}>
           <ExclamationCircleOutlined className="warningIcon" />
           <span style={{ marginLeft: 5, color: "#525252" }}>{warning}</span>
         </div>
       )}
-      <div style={{ marginTop: 20 }}>{component}</div>
+      <div style={{ marginTop: compact ? 5 : 20 }}>{component}</div>
       {footer && (
         <>
-          <Divider />
+          <Divider style={{ margin: compact ? 5 : 10 }} />
           {typeof footer !== "function" && footer}
           {typeof footer === "function" && footer(logicform)}
         </>
