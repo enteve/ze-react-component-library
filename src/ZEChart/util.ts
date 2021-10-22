@@ -126,8 +126,11 @@ export function chartTooltipFormatter(params: any): string {
         render = (v) => numeral(v).format("0,0.00");
         // 根据type格式化
         if (d.data.schema) {
-          const typeRender = customValueTypes(d.data.schema)[property.type]
+          let typeRender = customValueTypes(d.data.schema)[property.type]
             ?.render;
+          if (!typeRender)
+            typeRender = customValueTypes(d.data.schema)[property.primal_type]
+              ?.render;
           if (typeRender) {
             render = typeRender;
           }
