@@ -86,6 +86,7 @@ export const BarCard = () => {
 export const SingleBar = () => {
   return (
     <ZECard
+      horizontalBarChart
       title="今年各产品销量"
       logicform={{
         schema: "sales",

@@ -105,6 +105,7 @@ const ZECard: React.FC<ZECardProps> = ({
   visualizerProps = {},
   coloringMap,
   compact = false,
+  horizontalBarChart = false,
 }) => {
   const {
     value: logicform,
@@ -203,7 +204,10 @@ const ZECard: React.FC<ZECardProps> = ({
       }
 
       // chartType有两种形式，column和bar。
-      if (finalRepresentation === "bar" && logicform.sort) {
+      if (
+        finalRepresentation === "bar" &&
+        (logicform.sort || horizontalBarChart)
+      ) {
         chartType = "bar";
       }
 

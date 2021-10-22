@@ -21,4 +21,5 @@ export type ZECardProps = {
   coloringMap?: (record: any) => string;
   tableProps?: Omit<ZETableProps, "logicform">;
   visualizerProps?: Omit<LogicFormVisualizerProps, "logicform">;
+  horizontalBarChart?: boolean; //是不是用横向的barchart
 };
