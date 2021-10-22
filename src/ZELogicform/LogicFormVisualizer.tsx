@@ -154,6 +154,7 @@ export const LogicFormVisualizer: React.FC<LogicFormVisualizerProps> = ({
               <span>
                 {k}：
                 <Dropdown
+                  trigger={["click"]}
                   overlay={
                     <Menu>
                       {filters[k].map((f) => (
