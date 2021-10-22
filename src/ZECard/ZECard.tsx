@@ -2,7 +2,7 @@
  * 这个控件通过接受Logicform，展示复杂结果
  */
 import { useRequest, useHistoryTravel } from "@umijs/hooks";
-import { Empty, Card, Divider, Result } from "antd";
+import { Empty, Card, Divider, Result, Typography, Button } from "antd";
 
 import React from "react";
 import _ from "underscore";
@@ -14,7 +14,7 @@ import {
   LogicformType,
   PropertyType,
 } from "zeroetp-api-sdk";
-import { requestLogicform } from "../request";
+import { requestLogicform, requestRecommend } from "../request";
 import ZEChart, { useDrillDownDbClick } from "../ZEChart";
 import ZEDescription from "../ZEDescription/ZEDescription";
 import { LogicFormVisualizer } from "../ZELogicform";
@@ -25,6 +25,8 @@ import ValueDisplayer from "./ValueDisplayer";
 import RepresentationChanger from "./RepresentationChanger";
 import "./ZECard.less";
 import LogicFormTraveler from "./LogicFormTraveler";
+
+const { Paragraph, Title } = Typography;
 
 const getDefaultRepresentation = (
   logicform: LogicformType,
@@ -99,7 +101,8 @@ const ZECard: React.FC<ZECardProps> = ({
   getResult,
   exportToExcel,
   xlsx,
-  showRecommender = false,
+  showRecommender = true,
+  askMore,
   showMainContentOnly,
   tableProps = {},
   visualizerProps = {},
@@ -132,6 +135,19 @@ const ZECard: React.FC<ZECardProps> = ({
     {
       refreshDeps: [logicform],
       onSuccess: (res) => getResult?.(res),
+    }
+  );
+  const { data: recommends } = useRequest(
+    () => {
+      if (!initialLogicform) {
+        return new Promise((resolve) => resolve({ recommends: [] }));
+      }
+
+      return requestRecommend(initialLogicform);
+    },
+    {
+      initialData: [],
+      formatResult: (res: any) => res.recommends,
     }
   );
   const [representation, setRepresentation] = useState<string>(repr);
@@ -170,13 +186,7 @@ const ZECard: React.FC<ZECardProps> = ({
       />
     );
   } else if (finalRepresentation === "value") {
-    component = (
-      <ValueDisplayer
-        logicform={logicform}
-        data={data}
-        showRecommender={showRecommender}
-      />
-    );
+    component = <ValueDisplayer logicform={logicform} data={data} />;
   } else {
     if (data?.result?.length === 0) {
       component = <Empty description="没有数据" />;
@@ -280,6 +290,35 @@ const ZECard: React.FC<ZECardProps> = ({
 
   if (showMainContentOnly) return component;
 
+  // Recommends
+  let recommendComponent: React.ReactNode | undefined;
+  if (showRecommender && recommends?.length > 0) {
+    recommendComponent = (
+      <Typography>
+        <Title level={5}>您还可以这样问：</Title>
+        <Paragraph>
+          <ul>
+            {recommends.map((r: any) => {
+              return (
+                <li key={r.question}>
+                  <Button
+                    type="link"
+                    style={{ padding: 0 }}
+                    onClick={() => {
+                      askMore?.(r.question);
+                    }}
+                  >
+                    {r.question}
+                  </Button>
+                </li>
+              );
+            })}
+          </ul>
+        </Paragraph>
+      </Typography>
+    );
+  }
+
   return (
     <Card
       title={title}
@@ -307,11 +346,12 @@ const ZECard: React.FC<ZECardProps> = ({
         </div>
       )}
       <div style={{ marginTop: compact ? 5 : 20 }}>{component}</div>
-      {footer && (
+      {(footer || recommendComponent) && (
         <>
           <Divider style={{ margin: compact ? 5 : 10 }} />
           {typeof footer !== "function" && footer}
           {typeof footer === "function" && footer(logicform)}
+          {recommendComponent}
         </>
       )}
     </Card>
