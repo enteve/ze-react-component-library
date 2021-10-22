@@ -150,11 +150,13 @@ export const valueEnumMapping = (property: PropertyType) => {
 export const customValueTypes = (schema: SchemaType) => ({
   percentage: {
     render: (number: number, props) => {
-      const propName = props.proFieldKey.split("-").pop();
-      const property = findPropByName(schema, propName);
+      if (props) {
+        const propName = props.proFieldKey.split("-").pop();
+        const property = findPropByName(schema, propName);
 
-      if (property?.ui?.formatter) {
-        return numeral(number).format(property?.ui?.formatter);
+        if (property?.ui?.formatter) {
+          return numeral(number).format(property?.ui?.formatter);
+        }
       }
       return numeral(number).format("0.0%");
     },
@@ -270,11 +272,12 @@ export const customValueTypes = (schema: SchemaType) => ({
   },
   number: {
     render: (number: number, props) => {
-      const propName = props.proFieldKey.split("-").pop();
-      const property = findPropByName(schema, propName);
-
-      if (property?.ui?.formatter) {
-        return numeral(number).format(property?.ui?.formatter);
+      if (props) {
+        const propName = props.proFieldKey.split("-").pop();
+        const property = findPropByName(schema, propName);
+        if (property?.ui?.formatter) {
+          return numeral(number).format(property?.ui?.formatter);
+        }
       }
       return numeral(number).format("0,0");
     },
