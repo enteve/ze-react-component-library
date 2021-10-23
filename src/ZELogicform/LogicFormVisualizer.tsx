@@ -1,6 +1,6 @@
 import React from "react";
 import moment from "moment";
-import { Badge, Dropdown, Menu } from "antd";
+import { Badge, Button, Dropdown, Menu } from "antd";
 
 import type { LogicformType } from "zeroetp-api-sdk";
 
@@ -173,9 +173,10 @@ export const LogicFormVisualizer: React.FC<LogicFormVisualizerProps> = ({
                     </Menu>
                   }
                 >
-                  <strong>
-                    {basicValueDisplay(v)} <DownOutlined />
-                  </strong>
+                  <Button>
+                    {basicValueDisplay(v)}
+                    <DownOutlined />
+                  </Button>
                 </Dropdown>
               </span>
             ),
