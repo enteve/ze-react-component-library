@@ -22,6 +22,7 @@ interface Props {
   data: LogicformAPIResultType;
   eventsDict?: Record<string, Function>;
   coloringMap?: (record: any) => string;
+  option?: any; // echarts的option，覆盖默认option
 }
 
 const Map: React.FC<Props> = ({
@@ -29,6 +30,7 @@ const Map: React.FC<Props> = ({
   data,
   eventsDict = {},
   coloringMap,
+  option: userOption = {},
 }) => {
   const [map, setMap] = useState<string | undefined>();
 
@@ -170,7 +172,9 @@ const Map: React.FC<Props> = ({
     };
   }
 
-  return <EChart option={option} eventsDict={eventsDict} />;
+  return (
+    <EChart option={{ ...option, ...userOption }} eventsDict={eventsDict} />
+  );
 };
 
 export default Map;

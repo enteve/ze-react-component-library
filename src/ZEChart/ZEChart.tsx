@@ -27,6 +27,7 @@ const ZEChart: React.FC<ZEChartProps> = ({
   width,
   onDbClick,
   coloringMap,
+  option: userOption = {},
 }) => {
   const { data } = useRequest<LogicformAPIResultType>(
     () => {
@@ -73,7 +74,12 @@ const ZEChart: React.FC<ZEChartProps> = ({
     }
 
     option.tooltip.formatter = chartTooltipFormatter;
-    chartDom = <EChart option={option} eventsDict={chartEventDict} />;
+    chartDom = (
+      <EChart
+        option={{ ...option, ...userOption }}
+        eventsDict={chartEventDict}
+      />
+    );
   } else if (type === "pie") {
     const option: any = getPieOption();
 
@@ -91,7 +97,12 @@ const ZEChart: React.FC<ZEChartProps> = ({
     }
 
     option.tooltip.formatter = chartTooltipFormatter;
-    chartDom = <EChart option={option} eventsDict={chartEventDict} />;
+    chartDom = (
+      <EChart
+        option={{ ...option, ...userOption }}
+        eventsDict={chartEventDict}
+      />
+    );
   } else if (type === "column") {
     const option: any = getColumnOption();
 
@@ -116,7 +127,12 @@ const ZEChart: React.FC<ZEChartProps> = ({
     }
 
     option.tooltip.formatter = chartTooltipFormatter;
-    chartDom = <EChart option={option} eventsDict={chartEventDict} />;
+    chartDom = (
+      <EChart
+        option={{ ...option, ...userOption }}
+        eventsDict={chartEventDict}
+      />
+    );
   } else if (type === "bar") {
     const option: any = getBarOption(width && width < 900);
 
@@ -144,7 +160,12 @@ const ZEChart: React.FC<ZEChartProps> = ({
       option.tooltip.formatter = chartTooltipFormatter;
     }
 
-    chartDom = <EChart option={option} eventsDict={chartEventDict} />;
+    chartDom = (
+      <EChart
+        option={{ ...option, ...userOption }}
+        eventsDict={chartEventDict}
+      />
+    );
   } else if (type === "map") {
     chartDom = (
       <Map
@@ -152,6 +173,7 @@ const ZEChart: React.FC<ZEChartProps> = ({
         logicform={logicform}
         eventsDict={chartEventDict}
         coloringMap={coloringMap}
+        option={userOption}
       />
     );
   } else {
