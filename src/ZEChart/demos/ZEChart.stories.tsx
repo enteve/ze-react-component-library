@@ -38,6 +38,13 @@ export const Bar = () => {
       type="bar"
       logicform={logicform}
       onChangeLogicform={setLogicform}
+      option={{
+        legend: {
+          type: "scroll",
+          bottom: 0,
+          padding: [0, 50],
+        },
+      }}
     />
   );
 };

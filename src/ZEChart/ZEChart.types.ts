@@ -9,4 +9,5 @@ export interface ZEChartProps {
   onChangeLogicform?: (logicform: LogicformType) => void;
   width?: number;
   coloringMap?: (record: any) => string;
+  option?: any; // echarts的option，覆盖默认option
 }
