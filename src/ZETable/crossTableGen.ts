@@ -98,11 +98,20 @@ export const columnToCrossTable = (
     const idKey = getIDKey(idProp1, item);
 
     if (!columns.find((c) => c.title === idKey)) {
+      let align: "left" | "right" | "center" = "left";
+      if (
+        measurementProp.primal_type === "number" ||
+        measurementProp.primal_type === "boolean"
+      ) {
+        align = "right";
+      }
+
       columns.push({
         title: idKey,
         dataIndex: idKey,
         width: defaultColWidth,
         valueType: valueTypeMapping(measurementProp),
+        align,
       });
     }
   });
