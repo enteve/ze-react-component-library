@@ -1,6 +1,6 @@
 {
   "name": "ze-react-component-library",
-  "version": "1.0.86",
+  "version": "1.0.89",
   "main": "lib/index.js",
   "module": "es/index.js",
   "files": [
@@ -107,7 +107,7 @@
     "typescript": "^4.3.2",
     "underscore": "^1.13.1",
     "xlsx": "^0.17.0",
-    "zeroetp-api-sdk": "^1.1.31"
+    "zeroetp-api-sdk": "^1.1.33"
   },
   "dependencies": {
     "escape-string-regexp": "^5.0.0",
