@@ -86,6 +86,19 @@ export const BarCard = () => {
 export const SingleBar = () => {
   return (
     <ZECard
+      chartProps={{
+        option: {
+          legend: {
+            // legend放下面去
+            type: "scroll",
+            bottom: 0,
+            padding: [0, 50],
+          },
+          toolbox: {
+            feature: {}, // 关闭saveAsImage
+          },
+        },
+      }}
       horizontalBarChart
       title="今年各产品销量"
       logicform={{
