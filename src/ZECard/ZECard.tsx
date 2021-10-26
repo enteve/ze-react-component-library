@@ -106,6 +106,7 @@ const ZECard: React.FC<ZECardProps> = ({
   showMainContentOnly,
   tableProps = {},
   visualizerProps = {},
+  chartProps = {},
   coloringMap,
   compact = false,
   horizontalBarChart = false,
@@ -229,6 +230,7 @@ const ZECard: React.FC<ZECardProps> = ({
           onChangeLogicform={setLogicform}
           onDbClick={onDbClick}
           coloringMap={coloringMap}
+          {...chartProps}
         />
       );
     } else if (finalRepresentation === "entity" && data.result?.length === 1) {
