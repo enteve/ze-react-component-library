@@ -2,7 +2,7 @@ import React from "react";
 import moment from "moment";
 import { Badge, Button, Dropdown, Menu } from "antd";
 
-import type { LogicformType } from "zeroetp-api-sdk";
+import { isSimpleQuery, LogicformType } from "zeroetp-api-sdk";
 
 import { isRelativeDateForm, normaliseRelativeDateForm } from "zeroetp-api-sdk";
 import { DownOutlined } from "@ant-design/icons";
@@ -116,13 +116,17 @@ export const LogicFormVisualizer: React.FC<LogicFormVisualizerProps> = ({
           v.$lte instanceof Date ||
           v.$lte instanceof moment)
       ) {
-        let startDate = moment(v.$gte).format("YYYY-MM-DD HH:mm:ss");
-        let endDate = moment(v.$lte).format("YYYY-MM-DD HH:mm:ss");
+        let startDate = moment(v.$gte).format("YYYY.MM.DD HH:mm:ss");
+        let endDate = moment(v.$lte).format("YYYY.MM.DD HH:mm:ss");
 
         // 优化一下显示方式
         if (startDate.endsWith(" 00:00:00") && endDate.endsWith(" 23:59:59")) {
           startDate = startDate.substring(0, 10);
           endDate = endDate.substring(0, 10);
+        }
+
+        if (startDate === endDate) {
+          return startDate;
         }
 
         return `${startDate} ~ ${endDate}`;
@@ -283,19 +287,26 @@ export const LogicFormVisualizer: React.FC<LogicFormVisualizerProps> = ({
     }
   }
   if (!(display.preds === false) && logicform.preds) {
-    const preds = logicform.preds.map((p, index) => (
-      <span key={index}>
-        {p.operator && (
-          <>
-            <strong>{p.operator}</strong> {p.pred && `(${p.pred})`}
-          </>
-        )}
-        {!p.operator && <>{typeof p === "object" ? p.pred : p}</>}
-        {index < logicform.preds!.length - 1 && "，"}
-      </span>
-    ));
+    const preds = logicform.preds.map((p, index) => {
+      // TODO: Traverse尚未支持
+      if (Array.isArray(p)) {
+        p = p[0];
+      }
 
-    if (logicform.groupby) {
+      return (
+        <span key={index}>
+          {p.operator && (
+            <>
+              <strong>{p.operator}</strong> {p.pred && `(${p.pred})`}
+            </>
+          )}
+          {!p.operator && <>{typeof p === "object" ? p.pred : p}</>}
+          {index < logicform.preds!.length - 1 && "，"}
+        </span>
+      );
+    });
+
+    if (!isSimpleQuery(logicform)) {
       badges.push({
         color: "orange",
         text: <span>公式： {preds}</span>,

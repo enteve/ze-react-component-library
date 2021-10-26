@@ -332,7 +332,11 @@ const ZECard: React.FC<ZECardProps> = ({
       <div>
         <LogicFormVisualizer
           {...visualizerProps}
-          logicform={logicform}
+          logicform={
+            data?.logicform
+              ? { ...data.logicform, schemaName: data.schema.name }
+              : logicform
+          }
           onQueryChange={(query) => {
             setLogicform({
               ...logicform,

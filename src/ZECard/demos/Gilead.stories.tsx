@@ -25,7 +25,7 @@ export const MapCard = () => {
     <ZECard
       logicform={{
         schema: "ddi_sales",
-        query: { 日期: { $offset: { month: 0 } } },
+        query: { 日期: "MTD" },
         operator: "$sum",
         pred: "销量",
       }}
