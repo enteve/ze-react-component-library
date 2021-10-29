@@ -101,7 +101,7 @@ const ZECard: React.FC<ZECardProps> = ({
   getResult,
   exportToExcel,
   xlsx,
-  showRecommender = true,
+  showRecommender = false,
   askMore,
   showMainContentOnly,
   tableProps = {},
@@ -140,7 +140,7 @@ const ZECard: React.FC<ZECardProps> = ({
   );
   const { data: recommends } = useRequest(
     () => {
-      if (!initialLogicform) {
+      if (!initialLogicform || !showRecommender) {
         return new Promise((resolve) => resolve({ recommends: [] }));
       }
 
@@ -294,7 +294,7 @@ const ZECard: React.FC<ZECardProps> = ({
 
   // Recommends
   let recommendComponent: React.ReactNode | undefined;
-  if (showRecommender && recommends?.length > 0) {
+  if (recommends?.length > 0) {
     recommendComponent = (
       <Typography>
         <Title level={5}>您还可以这样问：</Title>
