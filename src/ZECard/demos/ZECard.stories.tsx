@@ -227,12 +227,15 @@ export const LFVisualizerAsFilter = () => (
           $gte: { $offset: { month: 0 }, day: 1 },
           $lte: { $offset: { day: 0 } },
         },
-        商品_分类: undefined,
+        商品_分类: "组合",
       },
     }}
     visualizerProps={{
       filters: {
-        商品_分类: [undefined, "单品", "组合", "耗材"],
+        商品_分类: {
+          support_all: false,
+          distincts: ["单品", "组合", "耗材"],
+        },
       },
     }}
   />
