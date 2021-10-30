@@ -8,7 +8,11 @@ import "antd/dist/antd.css";
 const { Statistic } = StatisticCard;
 
 // prepare server
-import { AskAPIResultType, config } from "zeroetp-api-sdk";
+import {
+  AskAPIResultType,
+  config,
+  getLogicformByTimeOffset,
+} from "zeroetp-api-sdk";
 import { useRequest } from "@umijs/hooks";
 import { requestRecommend, requestAsk } from "../../request";
 import { Button, message, Progress, Skeleton, Space } from "antd";
@@ -29,7 +33,19 @@ export const MapCard = () => {
         operator: "$sum",
         pred: "销量",
       }}
+      showRecommender
       askMore={(question) => message.info(`ASK: ${question}`)}
+      mainContent={(logicform) => {
+        const momLF = getLogicformByTimeOffset(logicform, {
+          日期: { $offset: { month: -1 } },
+        });
+        return (
+          <>
+            <div>{JSON.stringify(logicform)}</div>
+            <div>{JSON.stringify(momLF)}</div>
+          </>
+        );
+      }}
     />
   );
 };
