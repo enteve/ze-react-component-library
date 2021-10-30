@@ -174,8 +174,8 @@ const ZECard: React.FC<ZECardProps> = ({
   const finalRepresentation = representation || defaultRepresentation;
 
   let component: any;
-  if (mainContent) {
-    component = mainContent(logicform);
+  if (mainContent && data?.logicform) {
+    component = mainContent(data.logicform);
   } else if (isSimpleQuery(logicform)) {
     component = (
       <ZETable
