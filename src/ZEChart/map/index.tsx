@@ -154,6 +154,10 @@ const Map: React.FC<Props> = ({
           name: logicform.preds[0].name,
           roam: true,
           type: "map",
+          scaleLimit: {
+            min: 1,
+            max: 5,
+          },
           map,
           label: {
             show: logicform?.groupby[0]?.level !== "省市",
