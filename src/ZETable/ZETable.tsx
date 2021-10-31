@@ -333,6 +333,16 @@ const ZETable: React.FC<ZETableProps> = ({
     );
   });
 
+  // Groupby的id columns需要fixed
+  if (logicform.groupby && columns.length > 0) {
+    const groupbyCount = Array.isArray(logicform.groupby)
+      ? logicform.groupby.length
+      : 1;
+    for (let i = 0; i < groupbyCount; i++) {
+      columns[i].fixed = "left";
+    }
+  }
+
   // Pagination
   let pagination: false | TablePaginationConfig = false;
   if ("limit" in logicform && logicform.limit !== -1 && !logicform.groupby) {
