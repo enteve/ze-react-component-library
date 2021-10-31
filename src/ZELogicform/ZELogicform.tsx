@@ -14,17 +14,16 @@ const ZELogicform: React.FC<ZELogicformProps> = ({
   const { data, loading } = useRequest<LogicformAPIResultType>(
     () => requestLogicform(logicform),
     {
-      formatResult: (res) => res.result,
       refreshDeps: [JSON.stringify(logicform)],
     }
   );
 
   if (content) {
-    return <>{content(data)}</>;
+    return <>{content(data.result, data)}</>;
   }
 
   const prop: any = {
-    [dataKey]: data,
+    [dataKey]: data.result,
   };
   if (loadingKey) prop[loadingKey] = loading;
 
