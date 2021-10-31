@@ -590,3 +590,23 @@ export const drilldownLogicform = (
 
   return null;
 };
+
+// 主要是把chained的query给弄回来，方便显示和做filter change
+// 目前只做了一层chain的unnormalize，以后遇到再说
+export const unnormalizeQuery = (query: any) => {
+  const newQuery = {};
+
+  for (const [k, v] of Object.entries<any>(query)) {
+    if (
+      typeof v === "object" &&
+      v.schema &&
+      Object.keys(v.query).length === 1
+    ) {
+      newQuery[`${k}_${Object.keys(v.query)[0]}`] = Object.values(v.query)[0];
+    } else {
+      newQuery[k] = v;
+    }
+  }
+
+  return newQuery;
+};
