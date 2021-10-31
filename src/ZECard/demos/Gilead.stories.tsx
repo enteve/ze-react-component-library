@@ -33,6 +33,14 @@ export const MapCard = () => {
         operator: "$sum",
         pred: "销量",
       }}
+      visualizerProps={{
+        filters: {
+          产品_TA: {
+            support_all: true,
+            distincts: ["HIV", "HBV", "HCV"],
+          },
+        },
+      }}
       showRecommender
       askMore={(question) => message.info(`ASK: ${question}`)}
       mainContent={(logicform) => {

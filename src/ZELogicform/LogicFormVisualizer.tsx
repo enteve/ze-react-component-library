@@ -6,6 +6,7 @@ import { isSimpleQuery, LogicformType } from "zeroetp-api-sdk";
 
 import { isRelativeDateForm, normaliseRelativeDateForm } from "zeroetp-api-sdk";
 import { DownOutlined } from "@ant-design/icons";
+import { unnormalizeQuery } from "../util";
 
 export type LogicFormVisualizerDisplayProp = {
   schema?: boolean;
@@ -16,7 +17,7 @@ export type LogicFormVisualizerDisplayProp = {
 };
 
 export interface LogicFormVisualizerProps {
-  logicform: LogicformType;
+  logicform: LogicformType; // 20211031: 应该是normed的LF。还有一些地方没有检查过
 
   // 表达要不要显示某一些的部分。默认都是true。可以把schema和preds关掉
   display?: LogicFormVisualizerDisplayProp;
@@ -32,18 +33,23 @@ export interface LogicFormVisualizerProps {
 }
 
 /**
- * TODO: 有Bug，会改变LF里面时间的数据。这个函数应该是Mutable的
  * @param param0
  * @returns
  */
 export const LogicFormVisualizer: React.FC<LogicFormVisualizerProps> = ({
-  logicform,
+  logicform: initLogicform,
   display = {},
   filters = {},
   onQueryChange,
 }) => {
   const badges: { color: string; text: React.ReactNode }[] = [];
   const filterColor = "green";
+
+  // unnormalizeQuery
+  const logicform = {
+    ...initLogicform,
+    query: unnormalizeQuery(initLogicform.query || {}),
+  };
 
   if (!(display.schema === false)) {
     badges.push({
