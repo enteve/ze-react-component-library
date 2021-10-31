@@ -19,11 +19,11 @@ const ZELogicform: React.FC<ZELogicformProps> = ({
   );
 
   if (content) {
-    return <>{content(data.result, data)}</>;
+    return <>{content(data?.result, loading, data)}</>;
   }
 
   const prop: any = {
-    [dataKey]: data.result,
+    [dataKey]: data?.result,
   };
   if (loadingKey) prop[loadingKey] = loading;
 
