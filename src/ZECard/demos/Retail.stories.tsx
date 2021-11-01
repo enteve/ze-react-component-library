@@ -37,12 +37,12 @@ export const MapCard = () => {
         },
         groupby: { _id: "店铺_地址", level: "省市" },
       }}
-      coloringMap={(record) => {
-        if (record.总销量 > 20000) {
-          return "pink";
-        }
-        return undefined;
-      }}
+      // coloringMap={(record) => {
+      //   if (record.总销量 > 20000) {
+      //     return "pink";
+      //   }
+      //   return undefined;
+      // }}
       footer={(logicform) => <div>{JSON.stringify(logicform)})</div>} // footer随着logicform的变化而变化
     />
   );
