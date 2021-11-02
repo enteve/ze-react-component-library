@@ -340,6 +340,11 @@ const ZETable: React.FC<ZETableProps> = ({
       : 1;
     for (let i = 0; i < groupbyCount; i++) {
       columns[i].fixed = "left";
+
+      // TODO：为什么在这里还要设一遍defaultColWidth？为什么不统一设一下？
+      if (!columns[i].width) {
+        columns[i].width = defaultColWidth;
+      }
     }
   }
 
