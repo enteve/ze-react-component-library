@@ -21,6 +21,8 @@ import escapeStringRegexp from "escape-string-regexp";
 
 const { Option } = Select;
 
+import "./formatNumeral";
+
 /**
  * 相比zeroetp-api-sdk里面的findPropByName，多了对.号的predChain的支持
  * @param schema

@@ -1,6 +1,7 @@
 // Generated with util/create-component.js
 import React from "react";
 import _ from "underscore";
+import numeral from "numeral";
 import { ZEChartProps } from "./ZEChart.types";
 import Map from "./map";
 
@@ -105,7 +106,6 @@ const ZEChart: React.FC<ZEChartProps> = ({
     );
   } else if (type === "column") {
     const option: any = getColumnOption();
-
     // 灌入Data
     if (data) {
       const nameProp = getNameKeyForChart(logicform, data);
@@ -124,9 +124,25 @@ const ZEChart: React.FC<ZEChartProps> = ({
         barMaxWidth: 48,
       }));
       option.xAxis.data = data.result.map((r) => _.get(r, nameProp));
+
+      if (logicform.preds.length === 1) {
+        // 拿第一个value的formatter
+        const firstValueProp = data.columnProperties.find(
+          (c) => c.name === logicform.preds[0].name
+        );
+        if (firstValueProp?.ui?.formatter) {
+          option.yAxis.axisLabel = {
+            formatter: (v) => numeral(v).format(firstValueProp.ui.formatter),
+          };
+        }
+        if (firstValueProp?.unit) {
+          option.yAxis.name = `单位：${firstValueProp.unit}`;
+        }
+      }
     }
 
     option.tooltip.formatter = chartTooltipFormatter;
+
     chartDom = (
       <EChart
         option={{ ...option, ...userOption }}
@@ -158,6 +174,21 @@ const ZEChart: React.FC<ZEChartProps> = ({
       }));
       option.yAxis.data = data.result.map((r) => _.get(r, nameProp));
       option.tooltip.formatter = chartTooltipFormatter;
+
+      if (logicform.preds.length === 1) {
+        // 拿第一个value的formatter
+        const firstValueProp = data.columnProperties.find(
+          (c) => c.name === logicform.preds[0].name
+        );
+        if (firstValueProp?.ui?.formatter) {
+          option.xAxis.axisLabel = {
+            formatter: (v) => numeral(v).format(firstValueProp.ui.formatter),
+          };
+        }
+        if (firstValueProp?.unit) {
+          option.xAxis.name = `单位：${firstValueProp.unit}`;
+        }
+      }
     }
 
     chartDom = (
