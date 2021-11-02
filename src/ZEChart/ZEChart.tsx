@@ -125,7 +125,7 @@ const ZEChart: React.FC<ZEChartProps> = ({
       }));
       option.xAxis.data = data.result.map((r) => _.get(r, nameProp));
 
-      if (logicform.preds.length === 1) {
+      if (logicform.preds.length >= 1) {
         // 拿第一个value的formatter
         const firstValueProp = data.columnProperties.find(
           (c) => c.name === logicform.preds[0].name
@@ -175,7 +175,7 @@ const ZEChart: React.FC<ZEChartProps> = ({
       option.yAxis.data = data.result.map((r) => _.get(r, nameProp));
       option.tooltip.formatter = chartTooltipFormatter;
 
-      if (logicform.preds.length === 1) {
+      if (logicform.preds.length >= 1) {
         // 拿第一个value的formatter
         const firstValueProp = data.columnProperties.find(
           (c) => c.name === logicform.preds[0].name
