@@ -90,6 +90,7 @@ const getDefaultRepresentation = (
 
 const ZECard: React.FC<ZECardProps> = ({
   logicform: initialLogicform,
+  formatResult,
   title,
   warning,
   mainContent,
@@ -136,6 +137,13 @@ const ZECard: React.FC<ZECardProps> = ({
     {
       refreshDeps: [logicform],
       onSuccess: (res) => getResult?.(res),
+      formatResult: (res) => {
+        if (formatResult) {
+          return formatResult(res);
+        }
+
+        return res;
+      },
     }
   );
   const { data: recommends } = useRequest(

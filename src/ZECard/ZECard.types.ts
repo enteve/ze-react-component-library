@@ -6,6 +6,7 @@ import { ZEChartProps } from "..";
 export type ZECardProps = {
   title?: string;
   logicform: LogicformType;
+  formatResult?: (data: any) => any;
   representation?: string;
   warning?: string; // 显示在visualizer下方，一个warning
   extra?: React.ReactNode;
