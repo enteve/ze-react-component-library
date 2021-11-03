@@ -24,7 +24,6 @@ export type ZECardProps = {
   showRecommender?: boolean; // 是不是要显示更多推荐的相关数值
   askMore?: (question: string) => void;
 
-  coloringMap?: (record: any) => string;
   tableProps?: Omit<ZETableProps, "logicform">;
   visualizerProps?: Omit<LogicFormVisualizerProps, "logicform">;
   chartProps?: Omit<ZEChartProps, "logicform" | "type">;

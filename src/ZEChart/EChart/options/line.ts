@@ -1,13 +1,10 @@
 export default () => {
   return {
-    legend: {
-      type: "scroll",
-      top: 0,
-      padding: [0, 50],
-    },
     xAxis: {
       type: "category",
-      data: [],
+      axisLabel: {
+        rotate: 45,
+      },
     },
     yAxis: {
       type: "value",
@@ -16,6 +13,5 @@ export default () => {
       trigger: "axis",
       confine: true,
     },
-    series: [],
   };
 };

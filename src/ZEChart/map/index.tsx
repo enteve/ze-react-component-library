@@ -10,27 +10,22 @@ import {
 import * as echarts from "echarts";
 import EChart from "../EChart";
 import _ from "underscore";
-import {
-  getNameKeyForChart,
-  chartTooltipFormatter,
-  formatChartData,
-} from "../util";
 import { Result } from "antd";
 
 interface Props {
   logicform: LogicformType;
   data: LogicformAPIResultType;
   eventsDict?: Record<string, Function>;
-  coloringMap?: (record: any) => string;
   option?: any; // echarts的option，覆盖默认option
+  width: number;
 }
 
 const Map: React.FC<Props> = ({
   logicform,
   data,
   eventsDict = {},
-  coloringMap,
   option: userOption = {},
+  width,
 }) => {
   const [map, setMap] = useState<string | undefined>();
 
@@ -108,77 +103,72 @@ const Map: React.FC<Props> = ({
     }
   );
 
-  let option: any = {};
+  let option: any = userOption;
 
-  if (map && data && data.result) {
-    if (!logicform.groupby)
-      return <Result status="error" title="地图不支持非分组数据" />;
-    normaliseGroupby(logicform);
-    if (logicform.groupby.length !== 1)
-      return <Result status="error" title="地图组件不支持多维分组" />;
-    if (data.columnProperties?.[0].schema?._id !== "geo") {
-      return <Result status="error" title="必须以地理位置分组" />;
-    }
-    if (!logicform.groupby[0].level) {
-      return <Result status="error" title="分组必须要有level信息" />;
-    }
+  if (
+    !logicform.groupby ||
+    data?.columnProperties?.[0].schema?._id !== "geo" ||
+    data?.logicform.groupby.length !== 1 ||
+    !data?.logicform.groupby[0].level
+  )
+    return <Result status="info" title="此数据不支持地图类型" />;
+
+  if (map && data?.result && data?.logicform) {
+    const { logicform } = data;
     const level = logicform.groupby[0].level;
     if (["省市", "城市", "区县"].indexOf(level) < 0) {
-      return <Result status="error" title="暂不支持的地图类型" />;
+      return <Result status="info" title="暂不支持的地图类型" />;
     }
 
-    const values = data.result.map((i) => i[logicform.preds[0].name]);
+    option.series = [
+      {
+        roam: true,
+        type: "map",
+        scaleLimit: {
+          min: 1,
+          max: 5,
+        },
+        map,
+        label: {
+          show: logicform?.groupby[0]?.level !== "省市",
+        },
+      },
+    ];
+
+    let dimension = 1;
+    if (option.visualMap?.dimension) {
+      dimension = option.visualMap?.dimension;
+    }
+
+    // VisualMap，确定一下min和max
+    const values = data.result.map(
+      (i) => i[logicform.preds[dimension - 1][0].name]
+    );
     const max = _.max(values);
     let min = _.min(values);
     if (min === max) {
       if (min > 0) min = 0; // feat: 如果上下限一样，那么下限变为0
     }
-    const nameProp = getNameKeyForChart(logicform, data);
 
-    option = {
-      visualMap: {
-        min,
-        max,
-        text: ["最高", "最低"],
-        realtime: false,
-        calculable: true,
-        show: coloringMap ? false : true,
-      },
-      tooltip: {
-        trigger: "item",
-        confine: true,
-        formatter: chartTooltipFormatter,
-      },
-      series: [
-        {
-          name: logicform.preds[0].name,
-          roam: true,
-          type: "map",
-          scaleLimit: {
-            min: 1,
-            max: 5,
-          },
-          map,
-          label: {
-            show: logicform?.groupby[0]?.level !== "省市",
-          },
-          data: formatChartData({
-            data: data.result,
-            valueKey: logicform.preds[0].name,
-            valueName: (i) => _.get(i, nameProp),
-            preds: logicform.preds,
-            coloringMap,
-            properties: data.columnProperties,
-            schema: data.schema,
-          }),
-        },
-      ],
+    // precision
+    let precision = 0;
+    if (data.columnProperties[dimension].type === "percentage") {
+      precision = 2;
+    }
+
+    option.visualMap = {
+      min,
+      max,
+      precision,
+      text: ["最高", "最低"],
+      realtime: false,
+      calculable: true,
+      dimension,
+      ...option.visualMap, // 用户设定的visualMap可以覆盖原来的
     };
   }
 
-  return (
-    <EChart option={{ ...option, ...userOption }} eventsDict={eventsDict} />
-  );
+  return <EChart option={option} eventsDict={eventsDict} width={width} />;
 };
 
 export default Map;

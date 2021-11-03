@@ -1,6 +1,6 @@
 {
   "name": "ze-react-component-library",
-  "version": "1.0.96",
+  "version": "1.0.100",
   "main": "lib/index.js",
   "module": "es/index.js",
   "files": [
@@ -48,7 +48,7 @@
     "@ant-design/pro-table": ">=2.40.0",
     "@umijs/hooks": ">1.9.0",
     "antd": ">=4.15.0",
-    "echarts": ">=5.2.0",
+    "echarts": ">=5.2.2",
     "echarts-for-react": ">=3.0.1",
     "moment": ">=2.28.0",
     "numeral": "=2.0.4",
@@ -83,7 +83,7 @@
     "babel-plugin-import": "^1.13.3",
     "babel-preset-react-app": "^10.0.0",
     "cross-env": "^7.0.3",
-    "echarts": "^5.2.0",
+    "echarts": "^5.2.2",
     "echarts-for-react": "^3.0.1",
     "father-build": "^1.19.8",
     "husky": ">=6",
@@ -110,6 +110,7 @@
     "zeroetp-api-sdk": "^1.1.33"
   },
   "dependencies": {
+    "deepmerge": "^4.2.2",
     "escape-string-regexp": "^5.0.0",
     "react-sizeme": "^3.0.2"
   },
