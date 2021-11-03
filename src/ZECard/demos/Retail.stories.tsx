@@ -17,6 +17,14 @@ export default {
 export const MapCard = () => {
   return (
     <ZECard
+      chartProps={{
+        option: {
+          toolbox: {},
+          visualMap: {
+            dimension: 2,
+          },
+        },
+      }}
       title="今年各省市销量"
       logicform={{
         schema: "sales",
@@ -37,12 +45,6 @@ export const MapCard = () => {
         },
         groupby: { _id: "店铺_地址", level: "省市" },
       }}
-      // coloringMap={(record) => {
-      //   if (record.总销量 > 20000) {
-      //     return "pink";
-      //   }
-      //   return undefined;
-      // }}
       footer={(logicform) => <div>{JSON.stringify(logicform)})</div>} // footer随着logicform的变化而变化
     />
   );
@@ -51,13 +53,12 @@ export const MapCard = () => {
 export const BarCard = () => {
   return (
     <ZECard
+      representation="bar"
       title="今年各品类销量"
-      coloringMap={(record) => {
-        console.log(record);
-        if (record.总销量 > 140000) {
-          return "#722ed1";
-        }
-        return "#eb2f96";
+      chartProps={{
+        option: {
+          toolbox: {},
+        },
       }}
       logicform={{
         schema: "sales",

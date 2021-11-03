@@ -149,18 +149,36 @@ export const valueEnumMapping = (property: PropertyType) => {
   return valueEnum;
 };
 
+export const formatWithProperty = (property: PropertyType, value: any) => {
+  if (property.ui?.formatter) {
+    return numeral(value).format(property.ui?.formatter);
+  }
+
+  if (property.type === "percentage") {
+    return numeral(value).format("0.0%");
+  }
+
+  if (property.primal_type === "number") {
+    return numeral(value).format("0,0");
+  }
+
+  return value;
+};
+
 export const customValueTypes = (schema: SchemaType) => ({
   percentage: {
     render: (number: number, props) => {
+      let property: any;
       if (props) {
         const propName = props.proFieldKey.split("-").pop();
-        const property = findPropByName(schema, propName);
-
-        if (property?.ui?.formatter) {
-          return numeral(number).format(property?.ui?.formatter);
-        }
+        property = findPropByName(schema, propName);
       }
-      return numeral(number).format("0.0%");
+
+      if (!property) {
+        property = { type: "percentage" };
+      }
+
+      return formatWithProperty(property, number);
     },
     renderFormItem: (text, props) => {
       const propName = props.proFieldKey.split("-").pop();
@@ -274,14 +292,16 @@ export const customValueTypes = (schema: SchemaType) => ({
   },
   number: {
     render: (number: number, props) => {
+      let property: any;
       if (props) {
         const propName = props.proFieldKey.split("-").pop();
-        const property = findPropByName(schema, propName);
-        if (property?.ui?.formatter) {
-          return numeral(number).format(property?.ui?.formatter);
-        }
+        property = findPropByName(schema, propName);
       }
-      return numeral(number).format("0,0");
+
+      if (!property) {
+        property = { primal_type: "number" };
+      }
+      return formatWithProperty(property, number);
     },
     renderFormItem: (text, props) => {
       return <InputNumber {...props?.fieldProps} />;

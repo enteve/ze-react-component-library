@@ -1,25 +1,26 @@
 // Generated with util/create-component.js
 import React from "react";
 import _ from "underscore";
-import numeral from "numeral";
+import merge from "deepmerge";
 import { ZEChartProps } from "./ZEChart.types";
 import Map from "./map";
 
 import "./ZEChart.less";
 import { useRequest } from "@umijs/hooks";
-import { LogicformAPIResultType } from "zeroetp-api-sdk";
+import {
+  getNameProperty,
+  LogicformAPIResultType,
+  PropertyType,
+} from "zeroetp-api-sdk";
 import { SizeMe } from "react-sizeme";
 import { requestLogicform } from "../request";
 import EChart from "./EChart";
 import getPieOption from "./EChart/options/pie";
 import getLineOption from "./EChart/options/line";
 import getBarOption from "./EChart/options/bar";
-import getColumnOption from "./EChart/options/column";
-import {
-  getNameKeyForChart,
-  formatChartData,
-  chartTooltipFormatter,
-} from "./util";
+import { chartTooltipFormatter } from "./util";
+import { formatWithProperty } from "../util";
+import { Result } from "antd";
 
 const ZEChart: React.FC<ZEChartProps> = ({
   type,
@@ -27,7 +28,6 @@ const ZEChart: React.FC<ZEChartProps> = ({
   result,
   width,
   onDbClick,
-  coloringMap,
   option: userOption = {},
 }) => {
   const { data } = useRequest<LogicformAPIResultType>(
@@ -50,165 +50,118 @@ const ZEChart: React.FC<ZEChartProps> = ({
     },
   };
 
+  let option: any = {};
+  // 第一个数值的prop。目前每张图都只采用第一个measurements。以后都要显示的。
+  let measurementProp: PropertyType;
+
+  if (data?.result && data?.logicform) {
+    // result to dataset:
+    // 要对entity进行一个改写
+    const entityColumns = data.columnProperties
+      .slice(0, data.logicform.groupby?.length)
+      .filter((p) => p.type === "object");
+
+    option.dataset = {
+      source: data.result.map((i) => {
+        const newI = { ...i };
+        entityColumns.forEach((colProp) => {
+          if (typeof i[colProp.name] === "object") {
+            const nameProp = getNameProperty(colProp.schema);
+            if (nameProp) {
+              newI[colProp.name] = i[colProp.name][nameProp.name];
+            }
+          }
+        });
+        return newI;
+      }),
+      dimensions: data.columnProperties.map((col) => col.name),
+    };
+
+    measurementProp = data.columnProperties[data.logicform.groupby.length];
+
+    // tooltip
+    option.tooltip = {
+      formatter: (params) => {
+        return chartTooltipFormatter(
+          params,
+          data.columnProperties.slice(data.logicform.groupby.length)
+        );
+      },
+    };
+  }
+
   // 设定正确的chart
-  let chartDom: React.ReactNode = <div />;
-  if (type === "line") {
-    const option: any = getLineOption();
+  let chartDom: React.ReactNode;
 
-    // 灌入Data
-    if (data) {
-      const nameProp = getNameKeyForChart(logicform, data);
+  if (type === "bar" || type === "column") {
+    // Bar是horizontal的，column是vertical的。这里用的是ant charts的表达方法。有点怪怪的。
+    option = merge(option, getBarOption());
+    option.series = [
+      {
+        type: "bar",
+      },
+    ];
 
-      option.series = logicform.preds.map((predItem) => ({
-        name: predItem.name,
-        type: "line",
-        data: formatChartData({
-          data: data.result,
-          valueKey: predItem.name,
-          preds: logicform.preds,
-          properties: data.columnProperties,
-          schema: data.schema,
-        }),
-        animationDuration: 500,
-      }));
-      option.xAxis.data = data.result.map((r) => _.get(r, nameProp));
+    // 显示单位
+    if (measurementProp?.unit) {
+      option.xAxis.name = `单位：${measurementProp.unit}`;
     }
 
-    option.tooltip.formatter = chartTooltipFormatter;
-    chartDom = (
-      <EChart
-        option={{ ...option, ...userOption }}
-        eventsDict={chartEventDict}
-      />
-    );
+    // value轴format
+    option.xAxis.axisLabel.formatter = (value) =>
+      formatWithProperty(measurementProp, value);
+
+    if (type === "column") {
+      // inverse要去掉
+      option.yAxis.inverse = false;
+
+      // x,y轴和bar的倒一倒
+      const xAxis = option.xAxis;
+      option.xAxis = option.yAxis;
+      option.yAxis = xAxis;
+    }
   } else if (type === "pie") {
-    const option: any = getPieOption();
-
-    // 灌入Data
-    if (data) {
-      const nameProp = getNameKeyForChart(logicform, data);
-      option.series[0].data = formatChartData({
-        data: data.result,
-        valueKey: logicform.preds[0].name,
-        valueName: (i) => _.get(i, nameProp),
-        preds: logicform.preds,
-        properties: data.columnProperties,
-        schema: data.schema,
-      });
-    }
-
-    option.tooltip.formatter = chartTooltipFormatter;
-    chartDom = (
-      <EChart
-        option={{ ...option, ...userOption }}
-        eventsDict={chartEventDict}
-      />
-    );
-  } else if (type === "column") {
-    const option: any = getColumnOption();
-    // 灌入Data
-    if (data) {
-      const nameProp = getNameKeyForChart(logicform, data);
-
-      option.series = logicform.preds.map((predItem) => ({
-        name: predItem.name,
-        type: "bar",
-        data: formatChartData({
-          data: data.result,
-          valueKey: predItem.name,
-          preds: logicform.preds,
-          properties: data.columnProperties,
-          schema: data.schema,
-        }),
-        animationDuration: 500,
-        barMaxWidth: 48,
-      }));
-      option.xAxis.data = data.result.map((r) => _.get(r, nameProp));
-
-      if (logicform.preds.length >= 1) {
-        // 拿第一个value的formatter
-        const firstValueProp = data.columnProperties.find(
-          (c) => c.name === logicform.preds[0].name
-        );
-        if (firstValueProp?.ui?.formatter) {
-          option.yAxis.axisLabel = {
-            formatter: (v) => numeral(v).format(firstValueProp.ui.formatter),
-          };
-        }
-        if (firstValueProp?.unit) {
-          option.yAxis.name = `单位：${firstValueProp.unit}`;
-        }
-      }
-    }
-
-    option.tooltip.formatter = chartTooltipFormatter;
-
-    chartDom = (
-      <EChart
-        option={{ ...option, ...userOption }}
-        eventsDict={chartEventDict}
-      />
-    );
-  } else if (type === "bar") {
-    const option: any = getBarOption(width && width < 900);
-
-    // 灌入Data
-    if (data) {
-      const nameProp = getNameKeyForChart(logicform, data);
-      // 默认取第一个pred为主value
-      option.series = logicform.preds.slice(0, 1).map((predItem) => ({
-        name: predItem.name,
-        type: "bar",
-        data: formatChartData({
-          data: data.result,
-          valueKey: predItem.name,
-          preds: logicform.preds,
-          showLabel: width && width < 900,
-          coloringMap,
-          isBar: true,
-          properties: data.columnProperties,
-          schema: data.schema,
-        }),
-        animationDuration: 500,
-        barMaxWidth: 48,
-      }));
-      option.yAxis.data = data.result.map((r) => _.get(r, nameProp));
-      option.tooltip.formatter = chartTooltipFormatter;
-
-      if (logicform.preds.length >= 1) {
-        // 拿第一个value的formatter
-        const firstValueProp = data.columnProperties.find(
-          (c) => c.name === logicform.preds[0].name
-        );
-        if (firstValueProp?.ui?.formatter) {
-          option.xAxis.axisLabel = {
-            formatter: (v) => numeral(v).format(firstValueProp.ui.formatter),
-          };
-        }
-        if (firstValueProp?.unit) {
-          option.xAxis.name = `单位：${firstValueProp.unit}`;
-        }
-      }
-    }
-
-    chartDom = (
-      <EChart
-        option={{ ...option, ...userOption }}
-        eventsDict={chartEventDict}
-      />
-    );
+    option = merge(option, getPieOption());
+    option.series = [
+      {
+        type: "pie",
+      },
+    ];
+  } else if (type === "line") {
+    option = merge(option, getLineOption());
+    option.series = [
+      {
+        type: "line",
+      },
+    ];
   } else if (type === "map") {
     chartDom = (
       <Map
-        data={data}
         logicform={logicform}
+        data={data}
+        width={width}
         eventsDict={chartEventDict}
-        coloringMap={coloringMap}
-        option={userOption}
+        option={merge(option, userOption)}
       />
     );
   } else {
-    chartDom = <div>暂未支持</div>;
+    chartDom = (
+      <Result
+        status="info"
+        title="暂不支持的图表格式"
+        subTitle="请联系开发团队以获取支持"
+      />
+    );
+  }
+
+  if (!chartDom) {
+    chartDom = (
+      <EChart
+        option={merge(option, userOption)}
+        eventsDict={chartEventDict}
+        width={width}
+      />
+    );
   }
   return <div data-testid="ZEChart">{chartDom}</div>;
 };

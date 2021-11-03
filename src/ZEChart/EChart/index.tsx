@@ -3,18 +3,20 @@
  */
 import React, { useState, useEffect, useRef } from "react";
 import ReactECharts from "echarts-for-react";
-
+import _ from "underscore";
 interface Props {
   option: any;
+  width: number;
   style?: React.CSSProperties;
   ref?: any;
   eventsDict?: Record<string, Function>;
 }
 
-const CHART_DEFAULT_HEIGHT = 400;
+const CHART_MAX_HEIGHT = 400;
 
 const EChart: React.FC<Props> = ({
   option,
+  width,
   style = {},
   ref,
   eventsDict = {},
@@ -44,10 +46,11 @@ const EChart: React.FC<Props> = ({
       mountRef.current = false;
     };
   }, []);
+
   return (
     <ReactECharts
       ref={ref}
-      style={{ height: CHART_DEFAULT_HEIGHT, ...style }}
+      style={{ height: _.min([width / 1.25, CHART_MAX_HEIGHT]), ...style }}
       option={{ ...defaultOption, ...trueOption }}
       notMerge={true}
       lazyUpdate={true}

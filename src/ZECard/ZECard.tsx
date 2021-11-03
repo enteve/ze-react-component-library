@@ -108,7 +108,6 @@ const ZECard: React.FC<ZECardProps> = ({
   tableProps = {},
   visualizerProps = {},
   chartProps = {},
-  coloringMap,
   compact = false,
   horizontalBarChart = false,
 }) => {
@@ -237,7 +236,6 @@ const ZECard: React.FC<ZECardProps> = ({
           result={data}
           onChangeLogicform={setLogicform}
           onDbClick={onDbClick}
-          coloringMap={coloringMap}
           {...chartProps}
         />
       );
