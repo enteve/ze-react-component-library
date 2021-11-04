@@ -18,7 +18,7 @@ import EChart from "./EChart";
 import getPieOption from "./EChart/options/pie";
 import getLineOption from "./EChart/options/line";
 import getBarOption from "./EChart/options/bar";
-import { chartTooltipFormatter } from "./util";
+import { chartTooltipFormatter, formatChartOptionGrid } from "./util";
 import { formatWithProperty } from "../util";
 import { Result } from "antd";
 
@@ -157,7 +157,7 @@ const ZEChart: React.FC<ZEChartProps> = ({
   if (!chartDom) {
     chartDom = (
       <EChart
-        option={merge(option, userOption)}
+        option={formatChartOptionGrid(merge(option, userOption))}
         eventsDict={chartEventDict}
         width={width}
       />

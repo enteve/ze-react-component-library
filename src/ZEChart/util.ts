@@ -65,3 +65,18 @@ export function chartTooltipFormatter(
   });
   return res;
 }
+
+export function formatChartOptionGrid(options: any) {
+  if(options?.series?.[0]?.type === "map"){
+    return options
+  }
+  return {
+    ...options,
+    grid: {
+      containLabel: true,
+      top: 12,
+      bottom: options?.legend?.bottom === 0 ? 24 : 0,
+      left: 0
+    }
+  }
+}
