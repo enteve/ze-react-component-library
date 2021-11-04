@@ -27,6 +27,7 @@ const ZEChart: React.FC<ZEChartProps> = ({
   logicform,
   result,
   width,
+  height,
   onDbClick,
   option: userOption = {},
 }) => {
@@ -140,6 +141,7 @@ const ZEChart: React.FC<ZEChartProps> = ({
         logicform={logicform}
         data={data}
         width={width}
+        height={height}
         eventsDict={chartEventDict}
         option={merge(option, userOption)}
       />
@@ -168,7 +170,11 @@ const ZEChart: React.FC<ZEChartProps> = ({
 
 const ZEChartWrapper: React.FC<Omit<ZEChartProps, "width">> = (props) => {
   return (
-    <SizeMe>{({ size }) => <ZEChart width={size.width} {...props} />}</SizeMe>
+    <SizeMe monitorHeight>
+      {({ size }) => (
+        <ZEChart width={size.width} height={size.height} {...props} />
+      )}
+    </SizeMe>
   );
 };
 
