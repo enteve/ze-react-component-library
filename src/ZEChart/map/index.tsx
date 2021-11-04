@@ -11,6 +11,7 @@ import * as echarts from "echarts";
 import EChart from "../EChart";
 import _ from "underscore";
 import { Result } from "antd";
+import { formatChartOptionGrid } from '../util'
 
 interface Props {
   logicform: LogicformType;
@@ -124,6 +125,7 @@ const Map: React.FC<Props> = ({
       {
         roam: true,
         type: "map",
+        left: 0, top: 0, right: 0, bottom: 0,
         scaleLimit: {
           min: 1,
           max: 5,
@@ -168,7 +170,7 @@ const Map: React.FC<Props> = ({
     };
   }
 
-  return <EChart option={option} eventsDict={eventsDict} width={width} />;
+  return <EChart option={formatChartOptionGrid(option)} eventsDict={eventsDict} width={width} />;
 };
 
 export default Map;
