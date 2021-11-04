@@ -11,7 +11,7 @@ import * as echarts from "echarts";
 import EChart from "../EChart";
 import _ from "underscore";
 import { Result } from "antd";
-import { formatChartOptionGrid } from '../util'
+import { formatChartOptionGrid } from "../util";
 
 interface Props {
   logicform: LogicformType;
@@ -19,6 +19,7 @@ interface Props {
   eventsDict?: Record<string, Function>;
   option?: any; // echarts的option，覆盖默认option
   width: number;
+  height: number;
 }
 
 const Map: React.FC<Props> = ({
@@ -27,6 +28,7 @@ const Map: React.FC<Props> = ({
   eventsDict = {},
   option: userOption = {},
   width,
+  height,
 }) => {
   const [map, setMap] = useState<string | undefined>();
 
@@ -125,7 +127,8 @@ const Map: React.FC<Props> = ({
       {
         roam: true,
         type: "map",
-        left: 0, top: 0, right: 0, bottom: 0,
+        layoutSize: (width > height ? height : width) * 1.24,
+        layoutCenter: ["50%", "50%"],
         scaleLimit: {
           min: 1,
           max: 5,
@@ -170,7 +173,13 @@ const Map: React.FC<Props> = ({
     };
   }
 
-  return <EChart option={formatChartOptionGrid(option)} eventsDict={eventsDict} width={width} />;
+  return (
+    <EChart
+      option={formatChartOptionGrid(option)}
+      eventsDict={eventsDict}
+      width={width}
+    />
+  );
 };
 
 export default Map;
