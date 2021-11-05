@@ -1,12 +1,9 @@
 import React from "react";
 import moment from "moment";
 import { Badge, Button, Dropdown, Menu } from "antd";
-
-import { isSimpleQuery, LogicformType } from "zeroetp-api-sdk";
-
-import { isRelativeDateForm, normaliseRelativeDateForm } from "zeroetp-api-sdk";
+import { isRelativeDateForm, isSimpleQuery, LogicformType } from "zeroetp-api-sdk";
 import { DownOutlined } from "@ant-design/icons";
-import { unnormalizeQuery } from "../util";
+import { unnormalizeQuery, basicValueDisplay } from "../util";
 
 export type LogicFormVisualizerDisplayProp = {
   schema?: boolean;
@@ -92,64 +89,6 @@ export const LogicFormVisualizer: React.FC<LogicFormVisualizerProps> = ({
     });
   }
   if (!(display.query === false) && logicform.query) {
-    const dateReg = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
-    const basicValueDisplay = (oldV: any) => {
-      let v = oldV;
-      if (v === undefined) {
-        return "全部";
-      }
-
-      if (typeof v === "boolean") {
-        return v ? "是" : "否";
-      }
-      if (typeof v !== "object") {
-        return v;
-      }
-
-      if (v.$lte && isRelativeDateForm(v.$lte)) {
-        v.$lte = normaliseRelativeDateForm(v.$lte);
-        v.$lte = v.$lte.$lte;
-      }
-
-      if (v.$gte && isRelativeDateForm(v.$gte)) {
-        v.$gte = normaliseRelativeDateForm(v.$gte);
-        v.$gte = v.$gte.$gte;
-      }
-
-      if (isRelativeDateForm(v)) {
-        v = normaliseRelativeDateForm(v);
-      }
-
-      if (
-        v.$lte &&
-        v.$gte &&
-        (dateReg.test(v.$lte) ||
-          v.$lte instanceof Date ||
-          v.$lte instanceof moment)
-      ) {
-        let startDate = moment(v.$gte).format("YYYY.MM.DD HH:mm:ss");
-        let endDate = moment(v.$lte).format("YYYY.MM.DD HH:mm:ss");
-
-        // 优化一下显示方式
-        if (startDate.endsWith(" 00:00:00") && endDate.endsWith(" 23:59:59")) {
-          startDate = startDate.substring(0, 10);
-          endDate = endDate.substring(0, 10);
-        }
-
-        if (startDate === endDate) {
-          return startDate;
-        }
-
-        return `${startDate} ~ ${endDate}`;
-      }
-
-      if (typeof v === "object" && v.operator === "$ent") {
-        return v.name;
-      }
-
-      return "";
-    };
-
     let { query } = logicform;
     if (logicform.having) {
       query = { ...query, ...logicform.having };

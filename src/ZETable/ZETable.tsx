@@ -20,7 +20,7 @@ import {
 } from "zeroetp-api-sdk";
 import type { LogicformAPIResultType } from "zeroetp-api-sdk";
 
-import { customValueTypes, valueEnumMapping, valueTypeMapping } from "../util";
+import { customValueTypes, valueEnumMapping, valueTypeMapping, basicValueDisplay } from "../util";
 
 import ZESchemaForm from "../ZESchemaForm";
 
@@ -110,8 +110,13 @@ const mapColumnItem = (
 
   const valueEnum = valueEnumMapping(property);
   const sortOrder = logicform.sort?.[predItem];
+  const filters: Record<string, any> = {};
+  Object.keys(logicform?.query || {}).forEach(k => {
+    filters[k] = basicValueDisplay(logicform?.query?.[k], true)
+  })
   const defaultColumnType: any = {
     title: property.name,
+    defaultFilteredValue: filters[predItem],
     defaultSortOrder: [1, -1].includes(sortOrder)
       ? sortOrder === -1
         ? "descend"
