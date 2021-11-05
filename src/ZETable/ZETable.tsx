@@ -123,6 +123,10 @@ const mapColumnItem = (
     ...additionalProps,
   };
 
+  // unit
+  if (property.unit)
+    defaultColumnType.title = `${defaultColumnType.title}(${property.unit})`;
+
   // 以下是用来给createMode=list用的
   // formItemProps
   if (!defaultColumnType.formItemProps) defaultColumnType.formItemProps = {};
