@@ -280,7 +280,7 @@ export const LogicFormVisualizer: React.FC<LogicFormVisualizerProps> = ({
                 </Menu>
               }
             >
-              <Button>
+              <Button type="primary" shape="round" size="small">
                 {basicValueDisplay(query[k])}
                 <DownOutlined />
               </Button>
