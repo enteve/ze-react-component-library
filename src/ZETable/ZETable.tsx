@@ -532,7 +532,9 @@ const ZETable: React.FC<ZETableProps> = ({
       <ProProvider.Provider
         value={{
           ...values,
-          valueTypeMap: result ? customValueTypes(result.schema) : {},
+          valueTypeMap: result
+            ? customValueTypes(result.schema, { colWidth: defaultColWidth })
+            : {},
         }}
       >
         {creationMode !== "list" && <ProTable {...tableProps} />}

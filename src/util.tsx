@@ -12,7 +12,7 @@ import {
 } from "zeroetp-api-sdk";
 import numeral from "numeral";
 import { EditableProTable } from "@ant-design/pro-table";
-import { Select, InputNumber, Radio, Cascader, Spin } from "antd";
+import { Select, InputNumber, Radio, Cascader, Spin, Typography } from "antd";
 import { useRequest } from "@umijs/hooks";
 import { requestLogicform } from "./request";
 import "antd/lib/cascader/style/index";
@@ -20,6 +20,7 @@ import { useEffect } from "react";
 import escapeStringRegexp from "escape-string-regexp";
 
 const { Option } = Select;
+const { Text } = Typography;
 
 import "./formatNumeral";
 
@@ -165,7 +166,9 @@ export const formatWithProperty = (property: PropertyType, value: any) => {
   return value;
 };
 
-export const customValueTypes = (schema: SchemaType) => ({
+// config里面目前有table的defaultColWidth.用于计算object的ellipsis。
+// TODO：上述解决方案很不行。如果有更好的解决方案就好了。
+export const customValueTypes = (schema: SchemaType, config: any = {}) => ({
   percentage: {
     render: (number: number, props) => {
       let property: any;
@@ -212,17 +215,30 @@ export const customValueTypes = (schema: SchemaType) => ({
   },
   object: {
     render: (entity: any, props) => {
-      if (typeof entity !== "object") return <div>{entity}</div>;
+      let text: string;
 
-      const propName = props.proFieldKey.split("-").pop();
-      const property = findPropByName(schema, propName);
-      const nameProperty = getNameProperty(property.schema);
+      if (typeof entity === "string") {
+        text = entity;
+      } else {
+        const propName = props.proFieldKey.split("-").pop();
+        const property = findPropByName(schema, propName);
+        const nameProperty = getNameProperty(property.schema);
 
-      if (!property.isArray) {
-        return entity[nameProperty.name];
+        if (!property.isArray) {
+          text = entity[nameProperty.name];
+        } else {
+          text = entity.map((i) => i[nameProperty.name]).join(",");
+        }
       }
 
-      return <div>{entity.map((i) => i[nameProperty.name]).join(",")}</div>;
+      return (
+        <Text
+          style={{ width: config.colWidth || 200 }}
+          ellipsis={{ tooltip: text }}
+        >
+          {text}
+        </Text>
+      );
     },
     renderFormItem: (_text, props) => {
       const propName =
