@@ -9,7 +9,11 @@ import {
   getNameProperty,
   LogicformType,
   normaliseGroupby,
+  isRelativeDateForm,
+  normaliseRelativeDateForm,
 } from "zeroetp-api-sdk";
+
+import moment from "moment";
 import numeral from "numeral";
 import { EditableProTable } from "@ant-design/pro-table";
 import { Select, InputNumber, Radio, Cascader, Spin, Typography } from "antd";
@@ -647,4 +651,73 @@ export const unnormalizeQuery = (query: any) => {
   }
 
   return newQuery;
+};
+
+export const basicValueDisplay = (oldV: any, toValue?: boolean) => {
+  const dateReg = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+  let v = oldV;
+  if (v === undefined) {
+    if (toValue) {
+      return v;
+    }
+    return "全部";
+  }
+
+  if (typeof v === "boolean") {
+    if (toValue) {
+      return v;
+    }
+    return v ? "是" : "否";
+  }
+  if (typeof v !== "object") {
+    return v;
+  }
+
+  if (v.$lte && isRelativeDateForm(v.$lte)) {
+    v.$lte = normaliseRelativeDateForm(v.$lte);
+    v.$lte = v.$lte.$lte;
+  }
+
+  if (v.$gte && isRelativeDateForm(v.$gte)) {
+    v.$gte = normaliseRelativeDateForm(v.$gte);
+    v.$gte = v.$gte.$gte;
+  }
+
+  if (isRelativeDateForm(v)) {
+    v = normaliseRelativeDateForm(v);
+  }
+
+  if (
+    v.$lte &&
+    v.$gte &&
+    (dateReg.test(v.$lte) || v.$lte instanceof Date || v.$lte instanceof moment)
+  ) {
+    let startDate = moment(v.$gte).format("YYYY.MM.DD HH:mm:ss");
+    let endDate = moment(v.$lte).format("YYYY.MM.DD HH:mm:ss");
+    // 优化一下显示方式
+    if (startDate.endsWith(" 00:00:00") && endDate.endsWith(" 23:59:59")) {
+      startDate = startDate.substring(0, 10);
+      endDate = endDate.substring(0, 10);
+    }
+
+    if (toValue) {
+      return [startDate, endDate];
+    }
+
+    if (startDate === endDate) {
+      return startDate;
+    }
+
+    return `${startDate} ~ ${endDate}`;
+  }
+
+  if(v.$in){
+    return v.$in;
+  }
+
+  if (typeof v === "object" && v.operator === "$ent") {
+    return v.name;
+  }
+
+  return "";
 };
