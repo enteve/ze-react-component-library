@@ -98,6 +98,7 @@ const ZECard: React.FC<ZECardProps> = ({
   footer,
   bodyStyle = {},
   headStyle = {},
+  size = "default",
   representation: repr,
   getResult,
   exportToExcel,
@@ -329,6 +330,7 @@ const ZECard: React.FC<ZECardProps> = ({
 
   return (
     <Card
+      size={size}
       title={title}
       loading={loading}
       extra={extra}
