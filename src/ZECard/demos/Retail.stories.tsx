@@ -50,6 +50,31 @@ export const MapCard = () => {
   );
 };
 
+export const TableControlsSync = () => {
+  return (
+    <ZECard
+      representation="table"
+      title="搜索控件状态"
+      logicform={{
+        schema: "sales",
+        query: {
+          // 日期选择器
+          日期: { $offset: { year: 0 } },
+
+          // 筛选器
+          // 渠道: "拼多多",
+          渠道: { $in: ["天猫", "京东"] },
+
+          // 搜索器
+          // 产品: { $contains: "女" },
+        },
+        // 排序器
+        sort: { 销售量: -1, 原价: 1 },
+      }}
+    />
+  );
+};
+
 export const BarCard = () => {
   return (
     <ZECard
