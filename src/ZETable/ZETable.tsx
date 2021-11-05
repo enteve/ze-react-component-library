@@ -1,4 +1,4 @@
-import React, { useContext, useState, useRef } from "react";
+import React, { useContext, useState, useRef, useEffect } from "react";
 import ProTable, {
   ActionType,
   EditableProTable,
@@ -10,7 +10,7 @@ import type { TablePaginationConfig } from "antd";
 import { DownloadOutlined, PlusOutlined } from "@ant-design/icons";
 import excelExporter from "./excelExporter";
 import escapeStringRegexp from "escape-string-regexp";
-
+import type { LogicformType } from "zeroetp-api-sdk";
 import { ZETableProps, PredItemType } from "./ZETable.types";
 import {
   createData,
@@ -36,6 +36,7 @@ import {
 } from "./crossTableGen";
 
 const mapColumnItem = (
+  logicform: LogicformType,
   predItem: string,
   customColumn: ProColumnType,
   properties: any[],
@@ -108,8 +109,14 @@ const mapColumnItem = (
   }
 
   const valueEnum = valueEnumMapping(property);
+  const sortOrder = logicform.sort?.[predItem];
   const defaultColumnType: any = {
     title: property.name,
+    defaultSortOrder: [1, -1].includes(sortOrder)
+      ? sortOrder === -1
+        ? "descend"
+        : "ascend"
+      : undefined,
     dataIndex: property.name.split("."),
     ellipsis:
       property.ui?.ellipsis ||
@@ -146,7 +153,7 @@ const mapColumnItem = (
       ...customColumn,
     };
   }
-
+  // console.log(defaultColumnType);
   return defaultColumnType;
 };
 
@@ -316,6 +323,7 @@ const ZETable: React.FC<ZETableProps> = ({
         title: predItem.title,
         children: predItem.children.map((pred) =>
           mapColumnItem(
+            logicform,
             pred,
             customColumns[pred],
             properties,
@@ -326,6 +334,7 @@ const ZETable: React.FC<ZETableProps> = ({
     }
 
     return mapColumnItem(
+      logicform,
       predItem,
       customColumns[predItem],
       properties,
@@ -527,6 +536,10 @@ const ZETable: React.FC<ZETableProps> = ({
     );
   }
 
+  useEffect(() => {
+    request({ pageSize: logicform?.limit, current: logicform?.limit ? 1 : undefined });
+  }, [logicform]);
+
   return (
     <div data-testid="ZETable" className={className}>
       <ProProvider.Provider
@@ -537,7 +550,9 @@ const ZETable: React.FC<ZETableProps> = ({
             : {},
         }}
       >
-        {creationMode !== "list" && <ProTable {...tableProps} />}
+        {creationMode !== "list" && tableProps.columns.length > 0 && (
+          <ProTable {...tableProps} />
+        )}
         {creationMode === "list" && (
           <EditableProTable
             {...tableProps}
