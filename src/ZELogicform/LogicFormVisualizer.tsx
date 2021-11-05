@@ -30,6 +30,9 @@ export interface LogicFormVisualizerProps {
     };
   };
   onQueryChange?: (query: any) => void;
+
+  // feat: 设定一个统一的badgeColor
+  badgeColor?: string;
 }
 
 /**
@@ -38,6 +41,7 @@ export interface LogicFormVisualizerProps {
  */
 export const LogicFormVisualizer: React.FC<LogicFormVisualizerProps> = ({
   logicform: initLogicform,
+  badgeColor,
   display = {},
   filters = {},
   onQueryChange,
@@ -372,6 +376,11 @@ export const LogicFormVisualizer: React.FC<LogicFormVisualizerProps> = ({
         </span>
       ),
     });
+  }
+
+  // badge color
+  if (badgeColor) {
+    badges.forEach((b) => (b.color = badgeColor));
   }
 
   return (
