@@ -93,6 +93,7 @@ export const VisualizerWithFilter = () => {
           query,
         });
       }}
+      badgeColor="black"
     />
   );
 };
