@@ -105,7 +105,7 @@ const ZEChart: React.FC<ZEChartProps> = ({
 
     // 显示单位
     if (measurementProp?.unit) {
-      option.xAxis.name = `单位：${measurementProp.unit}`;
+      option.xAxis.name = measurementProp?.unit;
     }
 
     // value轴format

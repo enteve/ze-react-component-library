@@ -70,6 +70,8 @@ export function formatChartOptionGrid(options: any) {
     (options?.legend && "bottom" in options.legend) ||
     options?.visualMap?.orient === "horizontal";
 
+  const needRightSapce = options?.xAxis?.name !== undefined;
+
   return {
     ...options,
     grid: {
@@ -77,6 +79,7 @@ export function formatChartOptionGrid(options: any) {
       top: 12,
       bottom: needBottomSpace ? 35 : 0,
       left: 0,
+      right: needRightSapce ? 50 : 0,
     },
   };
 }
