@@ -123,23 +123,6 @@ const Map: React.FC<Props> = ({
       return <Result status="info" title="暂不支持的地图类型" />;
     }
 
-    option.series = [
-      {
-        roam: true,
-        type: "map",
-        layoutSize: (width > height ? height : width) * 1.24,
-        layoutCenter: ["50%", "50%"],
-        scaleLimit: {
-          min: 1,
-          max: 5,
-        },
-        map,
-        label: {
-          show: logicform?.groupby[0]?.level !== "省市",
-        },
-      },
-    ];
-
     let dimension = 1;
     if (option.visualMap?.dimension) {
       dimension = option.visualMap?.dimension;
@@ -171,6 +154,29 @@ const Map: React.FC<Props> = ({
       dimension,
       ...option.visualMap, // 用户设定的visualMap可以覆盖原来的
     };
+
+    option.series = [
+      {
+        roam: true,
+        type: "map",
+        scaleLimit: {
+          min: 1,
+          max: 5,
+        },
+        map,
+        label: {
+          show: logicform?.groupby[0]?.level !== "省市",
+        },
+      },
+    ];
+    // 根据visualMap的样式来决定地图的大小
+    if (option.visualMap?.orient === "horizontal") {
+      option.series[0].top = 0;
+      option.series[0].bottom = 30;
+    } else {
+      option.series[0].layoutSize = (width > height ? height : width) * 1.24;
+      option.series[0].layoutCenter = ["50%", "50%"];
+    }
   }
 
   return (
