@@ -43,6 +43,7 @@ export const MapCard = () => {
         query: {
           日期: { $offset: { year: 0 } },
         },
+        sort: { 总销量: -1 },
         groupby: { _id: "店铺_地址", level: "省市" },
       }}
       footer={(logicform) => <div>{JSON.stringify(logicform)})</div>} // footer随着logicform的变化而变化
@@ -146,6 +147,7 @@ export const SingleBar = () => {
           },
         },
         groupby: { _id: "产品" },
+        sort: { 总销量: -1 },
       }}
     />
   );
@@ -244,6 +246,7 @@ export const CardSwitcher = () => {
       },
     },
     groupby: { _id: "产品" },
+    sort: { 总销量: -1 },
   };
 
   const lf2 = {
@@ -256,6 +259,7 @@ export const CardSwitcher = () => {
       },
     ],
     groupby: { _id: "产品" },
+    sort: { 总销量: -1 },
   };
 
   const [lf, setLF] = useState<LogicformType>(lf1);
