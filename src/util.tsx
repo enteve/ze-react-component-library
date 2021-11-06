@@ -16,7 +16,15 @@ import {
 import moment from "moment";
 import numeral from "numeral";
 import { EditableProTable } from "@ant-design/pro-table";
-import { Select, InputNumber, Radio, Cascader, Spin, Typography } from "antd";
+import {
+  Select,
+  InputNumber,
+  Radio,
+  Cascader,
+  Spin,
+  Typography,
+  Popover,
+} from "antd";
 import { useRequest } from "@umijs/hooks";
 import { requestLogicform } from "./request";
 import "antd/lib/cascader/style/index";
@@ -27,6 +35,7 @@ const { Option } = Select;
 const { Text } = Typography;
 
 import "./formatNumeral";
+import ZECard from "./ZECard/ZECard";
 
 /**
  * 相比zeroetp-api-sdk里面的findPropByName，多了对.号的predChain的支持
@@ -220,27 +229,56 @@ export const customValueTypes = (schema: SchemaType, config: any = {}) => ({
   object: {
     render: (entity: any, props) => {
       let text: string;
+      let isSingleEntity = true;
+      let property: PropertyType;
+      let nameProperty: PropertyType;
 
       if (typeof entity === "string") {
         text = entity;
       } else {
         const propName = props.proFieldKey.split("-").pop();
-        const property = findPropByName(schema, propName);
-        const nameProperty = getNameProperty(property.schema);
+        property = findPropByName(schema, propName);
+        nameProperty = getNameProperty(property.schema);
 
         if (!property.isArray) {
           text = entity[nameProperty.name];
         } else {
+          isSingleEntity = false;
           text = entity.map((i) => i[nameProperty.name]).join(",");
         }
       }
 
+      if (!isSingleEntity || !nameProperty || !property) {
+        return (
+          <Text
+            style={{ width: config.colWidth || 200 }}
+            ellipsis={{ tooltip: text }}
+          >
+            {text}
+          </Text>
+        );
+      }
       return (
-        <Text
-          style={{ width: config.colWidth || 200 }}
-          ellipsis={{ tooltip: text }}
-        >
-          {text}
+        <Text style={{ width: config.colWidth || 200 }}>
+          <Popover
+            overlayStyle={{ width: "50%" }}
+            placement="top"
+            arrowPointAtCenter
+            zIndex={999}
+            content={
+              <ZECard
+                logicform={{
+                  operator: "$ent",
+                  field: nameProperty.name,
+                  name: text,
+                  schema: property.schema._id,
+                }}
+                showMainContentOnly
+              />
+            }
+          >
+            {text}
+          </Popover>
         </Text>
       );
     },
@@ -711,7 +749,7 @@ export const basicValueDisplay = (oldV: any, toValue?: boolean) => {
     return `${startDate} ~ ${endDate}`;
   }
 
-  if(v.$in){
+  if (v.$in) {
     return v.$in;
   }
 
