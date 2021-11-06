@@ -1,9 +1,4 @@
-import {
-  getNameProperty,
-  LogicformAPIResultType,
-  PropertyType,
-  SchemaType,
-} from "zeroetp-api-sdk";
+import { PropertyType } from "zeroetp-api-sdk";
 import type { ZEChartProps } from "./ZEChart.types";
 import { useRef } from "react";
 import moment, { Moment } from "moment";
@@ -67,16 +62,21 @@ export function chartTooltipFormatter(
 }
 
 export function formatChartOptionGrid(options: any) {
-  if(options?.series?.[0]?.type === "map"){
-    return options
+  if (options?.series?.[0]?.type === "map") {
+    return options;
   }
+
+  const needBottomSpace =
+    (options?.legend && "bottom" in options.legend) ||
+    options?.visualMap?.orient === "horizontal";
+
   return {
     ...options,
     grid: {
       containLabel: true,
       top: 12,
-      bottom: options?.legend?.bottom === 0 ? 24 : 0,
-      left: 0
-    }
-  }
+      bottom: needBottomSpace ? 35 : 0,
+      left: 0,
+    },
+  };
 }
