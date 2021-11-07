@@ -179,6 +179,10 @@ export const formatWithProperty = (property: PropertyType, value: any) => {
   return value;
 };
 
+const getPropNameFromProFieldKey = (key: string) => {
+  return key.split("-").slice(2).join("-");
+};
+
 // config里面目前有table的defaultColWidth.用于计算object的ellipsis。
 // TODO：上述解决方案很不行。如果有更好的解决方案就好了。
 export const customValueTypes = (schema: SchemaType, config: any = {}) => ({
@@ -186,7 +190,7 @@ export const customValueTypes = (schema: SchemaType, config: any = {}) => ({
     render: (number: number, props) => {
       let property: any;
       if (props) {
-        const propName = props.proFieldKey.split("-").pop();
+        const propName = getPropNameFromProFieldKey(props.proFieldKey);
         property = findPropByName(schema, propName);
       }
 
@@ -197,7 +201,7 @@ export const customValueTypes = (schema: SchemaType, config: any = {}) => ({
       return formatWithProperty(property, number);
     },
     renderFormItem: (text, props) => {
-      const propName = props.proFieldKey.split("-").pop();
+      const propName = getPropNameFromProFieldKey(props.proFieldKey);
       const property = findPropByName(schema, propName);
 
       // enum
@@ -236,7 +240,7 @@ export const customValueTypes = (schema: SchemaType, config: any = {}) => ({
       if (typeof entity === "string") {
         text = entity;
       } else {
-        const propName = props.proFieldKey.split("-").pop();
+        const propName = getPropNameFromProFieldKey(props.proFieldKey);
         property = findPropByName(schema, propName);
         nameProperty = getNameProperty(property.schema);
 
@@ -284,7 +288,8 @@ export const customValueTypes = (schema: SchemaType, config: any = {}) => ({
     },
     renderFormItem: (_text, props) => {
       const propName =
-        props?.fieldProps?.propName || props.proFieldKey.split("-").pop();
+        props?.fieldProps?.propName ||
+        getPropNameFromProFieldKey(props.proFieldKey);
 
       const property = findPropByName(schema, propName);
 
@@ -352,7 +357,7 @@ export const customValueTypes = (schema: SchemaType, config: any = {}) => ({
     render: (number: number, props) => {
       let property: any;
       if (props) {
-        const propName = props.proFieldKey.split("-").pop();
+        const propName = getPropNameFromProFieldKey(props.proFieldKey);
         property = findPropByName(schema, propName);
       }
 
