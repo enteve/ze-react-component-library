@@ -30,6 +30,8 @@ export type ZETableProps = {
   creationMode?: "form" | "list"; // form是单个单个新增，产生一个form。而list是直接在列表里面操作
   creationColumns?: ZESchemaFormColumnType[]; // 就是ZESchemaForm里面的columns属性
   defaultColWidth?: number;
+
+  horizontalColumns?: string[]; // 给crosstable用的，可以指定横向的groupbyProp的顺序、以及加一些数据库里没反悔的列
 } & Omit<
   ProTableProps<ProColumnType, ParamsType>,
   "columns" | "request" | "pagination" | "toolBarRender" | "scroll"
