@@ -106,6 +106,19 @@ const ZEChart: React.FC<ZEChartProps> = ({
     // 显示单位
     if (measurementProp?.unit) {
       option.xAxis.name = measurementProp?.unit;
+
+      // feat: 单位不宜过长。每隔2位给个换行
+      if (option.xAxis.name.length > 3) {
+        const chars = option.xAxis.name.split("");
+        option.xAxis.name = "";
+        for (let i = 0; i < chars.length; i++) {
+          const char = chars[i];
+          if (i > 0 && i % 2 === 0) {
+            option.xAxis.name += "\n";
+          }
+          option.xAxis.name += char;
+        }
+      }
     }
 
     // value轴format
