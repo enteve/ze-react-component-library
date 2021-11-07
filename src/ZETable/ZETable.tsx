@@ -20,7 +20,12 @@ import {
 } from "zeroetp-api-sdk";
 import type { LogicformAPIResultType } from "zeroetp-api-sdk";
 
-import { customValueTypes, valueEnumMapping, valueTypeMapping, basicValueDisplay } from "../util";
+import {
+  customValueTypes,
+  valueEnumMapping,
+  valueTypeMapping,
+  basicValueDisplay,
+} from "../util";
 
 import ZESchemaForm from "../ZESchemaForm";
 
@@ -111,9 +116,9 @@ const mapColumnItem = (
   const valueEnum = valueEnumMapping(property);
   const sortOrder = logicform.sort?.[predItem];
   const filters: Record<string, any> = {};
-  Object.keys(logicform?.query || {}).forEach(k => {
-    filters[k] = basicValueDisplay(logicform?.query?.[k], true)
-  })
+  Object.keys(logicform?.query || {}).forEach((k) => {
+    filters[k] = basicValueDisplay(logicform?.query?.[k], true);
+  });
   const defaultColumnType: any = {
     title: property.name,
     defaultFilteredValue: filters[predItem],
@@ -182,6 +187,7 @@ const ZETable: React.FC<ZETableProps> = ({
   creationMode,
   creationColumns,
   defaultColWidth = 200,
+  horizontalColumns,
   ...restProps
 }) => {
   const values = useContext(ProProvider); // 用来自定义ValueType
@@ -541,12 +547,16 @@ const ZETable: React.FC<ZETableProps> = ({
     tableProps.columns = columnToCrossTable(
       result.columnProperties,
       result.result,
-      defaultColWidth
+      defaultColWidth,
+      horizontalColumns
     );
   }
 
   useEffect(() => {
-    request({ pageSize: logicform?.limit, current: logicform?.limit ? 1 : undefined });
+    request({
+      pageSize: logicform?.limit,
+      current: logicform?.limit ? 1 : undefined,
+    });
   }, [logicform]);
 
   return (

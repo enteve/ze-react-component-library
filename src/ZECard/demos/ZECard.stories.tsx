@@ -209,6 +209,14 @@ export const StatsCrossTable = () => (
           },
         },
       ],
+      horizontalColumns: [
+        "S-深海鱼-200ml",
+        "S-原浆特酿-200ml",
+        "S-冰油-200ml",
+        "L-原浆特酿-500ml",
+        "L-冰油-500ml",
+        "猪猪套餐",
+      ], // 有顺序地显示某些entity
     }}
   />
 );

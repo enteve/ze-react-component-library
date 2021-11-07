@@ -78,7 +78,8 @@ export const columnPropertiesToCrossTable = (
 export const columnToCrossTable = (
   columnProperties: PropertyType[],
   data: any[],
-  defaultColWidth
+  defaultColWidth,
+  horizontalColumns?: string[]
 ): ProColumnType<any, any>[] => {
   const idProp0 = columnProperties[0];
   const idProp1 = columnProperties[1];
@@ -94,27 +95,39 @@ export const columnToCrossTable = (
     },
   ];
 
-  data.forEach((item) => {
-    const idKey = getIDKey(idProp1, item);
+  let align: "left" | "right" | "center" = "left";
+  if (
+    measurementProp.primal_type === "number" ||
+    measurementProp.primal_type === "boolean"
+  ) {
+    align = "right";
+  }
 
-    if (!columns.find((c) => c.title === idKey)) {
-      let align: "left" | "right" | "center" = "left";
-      if (
-        measurementProp.primal_type === "number" ||
-        measurementProp.primal_type === "boolean"
-      ) {
-        align = "right";
-      }
-
+  if (horizontalColumns) {
+    for (const col of horizontalColumns) {
       columns.push({
-        title: idKey,
-        dataIndex: idKey,
+        title: col,
+        dataIndex: col,
         width: defaultColWidth,
         valueType: valueTypeMapping(measurementProp),
         align,
       });
     }
-  });
+  } else {
+    data.forEach((item) => {
+      const idKey = getIDKey(idProp1, item);
+
+      if (!columns.find((c) => c.title === idKey)) {
+        columns.push({
+          title: idKey,
+          dataIndex: idKey,
+          width: defaultColWidth,
+          valueType: valueTypeMapping(measurementProp),
+          align,
+        });
+      }
+    });
+  }
 
   return columns;
 };
