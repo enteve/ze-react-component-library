@@ -5,9 +5,9 @@ export interface ZEChartProps {
   type: string;
   logicform: LogicformType;
   result?: LogicformAPIResultType;
-  onDbClick?: (item: any) => void;
+  onDbClick?: (item: any, triggerBack?: boolean) => void;
   onChangeLogicform?: (logicform: LogicformType) => void;
   width?: number;
-  height?:number;
+  height?: number;
   option?: any; // echarts的option，覆盖默认option
 }

@@ -165,6 +165,7 @@ const ZECard: React.FC<ZECardProps> = ({
     logicform,
     onChangeLogicform: setLogicform,
     data,
+    back,
   });
 
   const onRow = (record) => {
