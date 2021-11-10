@@ -5,12 +5,12 @@ import moment, { Moment } from "moment";
 import { drilldownLogicform, formatWithProperty } from "../util";
 
 export function useDrillDownDbClick(
-  props: Pick<ZEChartProps, "logicform" | "onChangeLogicform"> & { data: any }
+  props: Pick<ZEChartProps, "logicform" | "onChangeLogicform"> & { data: any, back: () => void }
 ) {
   const clickRef = useRef<Moment>();
-  const { logicform, onChangeLogicform, data } = props;
+  const { logicform, onChangeLogicform, data, back } = props;
 
-  const onDbClick = (item: any) => {
+  const onDbClick = (item: any, triggerBack?: boolean) => {
     const current = moment();
     if (
       !clickRef.current ||
@@ -19,6 +19,10 @@ export function useDrillDownDbClick(
       !onChangeLogicform
     ) {
       clickRef.current = current;
+      return;
+    }
+    if (triggerBack) {
+      back();
       return;
     }
     if (item) {
@@ -49,12 +53,11 @@ export function chartTooltipFormatter(
     let itemTip = d.name ? `${d.name} <br />` : "";
     properties.forEach((property) => {
       itemTip = `${itemTip}${d?.marker}${property.name}
-      ${
-        property.unit ? `(${property.unit})` : ""
-      } <span style="float:right;margin-left:20px;font-size:14px;color:#666;font-weight:900">${formatWithProperty(
-        property,
-        d?.data?.[property.name]
-      )}</span><br />`;
+      ${property.unit ? `(${property.unit})` : ""
+        } <span style="float:right;margin-left:20px;font-size:14px;color:#666;font-weight:900">${formatWithProperty(
+          property,
+          d?.data?.[property.name]
+        )}</span><br />`;
     });
     res = `${res}${itemTip}`;
   });
