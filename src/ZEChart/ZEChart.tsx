@@ -82,6 +82,7 @@ const ZEChart: React.FC<ZEChartProps> = ({
 
     // tooltip
     option.tooltip = {
+      confine: true,
       formatter: (params) => {
         return chartTooltipFormatter(
           params,

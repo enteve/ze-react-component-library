@@ -175,7 +175,7 @@ const ZECard: React.FC<ZECardProps> = ({
     };
   };
 
-  if (!logicform) return <Result status="error" title="出现错误" />;
+  if (!logicform) return <Result status="error" title="出现错误" />;
   // console.log(data);
 
   const defaultRepresentation = getDefaultRepresentation(logicform, data);
