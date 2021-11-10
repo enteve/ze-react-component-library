@@ -252,39 +252,41 @@ export const customValueTypes = (schema: SchemaType, config: any = {}) => ({
         }
       }
 
-      if (!isSingleEntity || !nameProperty || !property) {
-        return (
-          <Text
-            style={{ width: config.colWidth || 200 }}
-            ellipsis={{ tooltip: text }}
-          >
-            {text}
-          </Text>
-        );
-      }
-      return (
-        <Text style={{ width: config.colWidth || 200 }}>
-          <Popover
-            overlayStyle={{ width: "50%" }}
-            placement="top"
-            arrowPointAtCenter
-            zIndex={999}
-            content={
-              <ZECard
-                logicform={{
-                  operator: "$ent",
-                  field: nameProperty.name,
-                  name: text,
-                  schema: property.schema._id,
-                }}
-                showMainContentOnly
-              />
-            }
-          >
-            {text}
-          </Popover>
+      const ellipsisedText = (
+        <Text
+          style={{ width: config.colWidth || 200 }}
+          ellipsis={{ tooltip: text }}
+        >
+          {text}
         </Text>
       );
+      return ellipsisedText;
+
+      // 下面解决方案不太成熟，先关了。
+      // 如果用下面的话，上面的文字应该是ellipsis的，但是不弹出tooltip
+      // if (!isSingleEntity || !nameProperty || !property) {
+      // }
+      // return (
+      //   <Popover
+      //     overlayStyle={{ width: "50%" }}
+      //     placement="top"
+      //     arrowPointAtCenter
+      //     zIndex={999}
+      //     content={
+      //       <ZECard
+      //         logicform={{
+      //           operator: "$ent",
+      //           field: nameProperty.name,
+      //           name: text,
+      //           schema: property.schema._id,
+      //         }}
+      //         showMainContentOnly
+      //       />
+      //     }
+      //   >
+      //     {ellipsisedText}
+      //   </Popover>
+      // );
     },
     renderFormItem: (_text, props) => {
       const propName =
