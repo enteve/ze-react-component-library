@@ -299,3 +299,34 @@ export const ByTimeWindow = () => {
     />
   );
 };
+
+export const Transpose = () => {
+  const lf: LogicformType = {
+    schema: "sales",
+    preds: [
+      {
+        operator: "$sum",
+        pred: "销售量",
+        name: "总销量",
+      },
+      {
+        operator: "$avg",
+        pred: "销售量",
+        name: "平均销量",
+      },
+      {
+        operator: "$max",
+        pred: "销售量",
+        name: "最高销量",
+      },
+    ],
+    groupby: "产品",
+  };
+
+  return (
+    <>
+      <ZETable logicform={lf} />
+      <ZETable logicform={lf} transpose="全指标" />
+    </>
+  );
+};

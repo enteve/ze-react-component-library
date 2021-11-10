@@ -39,6 +39,7 @@ import {
   columnToCrossTable,
   dataToCrossTable,
 } from "./crossTableGen";
+import { transposeResult } from "./transposeGen";
 
 const mapColumnItem = (
   logicform: LogicformType,
@@ -188,6 +189,7 @@ const ZETable: React.FC<ZETableProps> = ({
   creationColumns,
   defaultColWidth = 200,
   horizontalColumns,
+  transpose,
   ...restProps
 }) => {
   const values = useContext(ProProvider); // 用来自定义ValueType
@@ -288,7 +290,17 @@ const ZETable: React.FC<ZETableProps> = ({
         refLFs.map((r) => requestLogicform(r.logicform))
       );
       // console.log(ret);
-      setResult(ret);
+      if (transpose && ret) {
+        const newRet = transposeResult(ret, transpose);
+        setResult(newRet);
+        return {
+          data: newRet.result,
+          success: true,
+          total: newRet.result.length,
+        };
+      } else {
+        setResult(ret);
+      }
 
       let result = JSON.parse(JSON.stringify(ret.result));
       refLFs.forEach(
@@ -550,6 +562,15 @@ const ZETable: React.FC<ZETableProps> = ({
       defaultColWidth,
       horizontalColumns
     );
+  }
+
+  // 对transpose的columns再处理一下，去掉搜索之类的
+  if (transpose) {
+    tableProps.columns.forEach((col) => {
+      delete col.filterDropdown;
+      delete col.filterIcon;
+      delete col.sorter;
+    });
   }
 
   useEffect(() => {
