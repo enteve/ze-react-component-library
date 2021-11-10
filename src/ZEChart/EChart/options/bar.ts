@@ -32,7 +32,6 @@ export default () => {
     },
     xAxis: {
       type: "value",
-      confine: true,
       axisLabel: {
         hideOverlap: true,
       },

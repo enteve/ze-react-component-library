@@ -7,7 +7,6 @@ export default () => {
     },
     tooltip: {
       trigger: "item",
-      confine: true,
     },
   };
 };

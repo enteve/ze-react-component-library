@@ -11,7 +11,6 @@ export default () => {
     },
     tooltip: {
       trigger: "axis",
-      confine: true,
     },
   };
 };
