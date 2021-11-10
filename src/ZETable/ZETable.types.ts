@@ -31,7 +31,8 @@ export type ZETableProps = {
   creationColumns?: ZESchemaFormColumnType[]; // 就是ZESchemaForm里面的columns属性
   defaultColWidth?: number;
 
-  horizontalColumns?: string[]; // 给crosstable用的，可以指定横向的groupbyProp的顺序、以及加一些数据库里没反悔的列
+  horizontalColumns?: string[]; // 给crosstable用的，可以指定横向的groupbyProp的顺序、以及加一些数据库里没返回的列(缺失的entity之类的)
+  transpose?: string; // 是否转置整个table，这个转置后的第一列的名称
 } & Omit<
   ProTableProps<ProColumnType, ParamsType>,
   "columns" | "request" | "pagination" | "toolBarRender" | "scroll"
