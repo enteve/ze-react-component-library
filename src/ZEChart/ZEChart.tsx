@@ -45,6 +45,7 @@ const ZEChart: React.FC<ZEChartProps> = ({
   );
   const chartEventDict: Record<string, Function> = {
     click: (params: any) => {
+      params?.event?.stop("click");
       const { dataIndex } = params;
       const item = data.result[dataIndex];
       onDbClick?.(item);
@@ -179,7 +180,18 @@ const ZEChart: React.FC<ZEChartProps> = ({
       />
     );
   }
-  return <div data-testid="ZEChart">{chartDom}</div>;
+  return (
+    <div
+      data-testid="ZEChart"
+      onClick={() => {
+        if (type === "map") {
+          onDbClick(null, true);
+        }
+      }}
+    >
+      {chartDom}
+    </div>
+  );
 };
 
 const ZEChartWrapper: React.FC<Omit<ZEChartProps, "width">> = (props) => {
