@@ -630,14 +630,13 @@ export const drilldownLogicform = (
       let drilldownLevel = 1;
       let groupbyItemID = groupbyItem._id;
 
-      // 特殊逻辑，对于geo来说，4个直辖市直接下钻2级
+      // 特殊逻辑，对于geo来说，直辖市直接下钻2级(重庆市除外，重庆市就算是直辖市，也有两个子分区)
       if (groupbyProp.schema._id === "geo") {
         if (newLF.groupby[0].level === "省市") {
           if (
             groupbyItemID.endsWith("31") ||
             groupbyItemID.endsWith("11") ||
-            groupbyItemID.endsWith("12") ||
-            groupbyItemID.endsWith("50")
+            groupbyItemID.endsWith("12")
           ) {
             // 4个直辖市判断
             drilldownLevel = 2;
