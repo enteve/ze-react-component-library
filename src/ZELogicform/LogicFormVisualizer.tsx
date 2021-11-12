@@ -1,7 +1,11 @@
 import React from "react";
 import moment from "moment";
 import { Badge, Button, Dropdown, Menu } from "antd";
-import { isRelativeDateForm, isSimpleQuery, LogicformType } from "zeroetp-api-sdk";
+import {
+  isRelativeDateForm,
+  isSimpleQuery,
+  LogicformType,
+} from "zeroetp-api-sdk";
 import { DownOutlined } from "@ant-design/icons";
 import { unnormalizeQuery, basicValueDisplay } from "../util";
 
@@ -23,7 +27,8 @@ export interface LogicFormVisualizerProps {
   filters?: {
     [key: string]: {
       support_all?: boolean;
-      distincts: string[];
+      distincts?: string[];
+      show?: boolean; // 可以直接隐藏某一个filter，不显示在Visualizer上面。特殊情况用
     };
   };
   onQueryChange?: (query: any) => void;
@@ -185,6 +190,7 @@ export const LogicFormVisualizer: React.FC<LogicFormVisualizerProps> = ({
     });
 
     Object.entries(filters).forEach(([k, v]) => {
+      if (v.show === false) return;
       badges.push({
         color: filterColor,
         text: (

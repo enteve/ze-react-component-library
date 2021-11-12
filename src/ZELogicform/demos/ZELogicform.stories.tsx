@@ -72,6 +72,7 @@ export const VisualizerWithFilter = () => {
         $lte: { $offset: { day: 0 } },
       },
       商品_分类: "组合",
+      平台: "天猫",
     },
   });
 
@@ -85,6 +86,9 @@ export const VisualizerWithFilter = () => {
         商品_分类: {
           support_all: true,
           distincts: ["单品", "组合", "耗材"],
+        },
+        平台: {
+          show: false, //不显示某一个字段
         },
       }}
       onQueryChange={(query) => {
