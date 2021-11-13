@@ -428,7 +428,8 @@ const ZETable: React.FC<ZETableProps> = ({
     if (canUseCrossTable(logicform)) {
       result.schema.properties = columnPropertiesToCrossTable(
         result?.columnProperties,
-        result.result
+        result.result,
+        horizontalColumns
       );
     } else {
       result.schema.properties = result.columnProperties;
