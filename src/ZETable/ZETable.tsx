@@ -291,7 +291,7 @@ const ZETable: React.FC<ZETableProps> = ({
       );
       // console.log(ret);
       if (transpose && ret) {
-        const newRet = transposeResult(ret, transpose);
+        const newRet = transposeResult(ret, transpose, horizontalColumns);
         setResult(newRet);
         return {
           data: newRet.result,

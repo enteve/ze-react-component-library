@@ -15,7 +15,8 @@ const getIDKey = (prop: PropertyType, item: any) => {
 
 export const transposeResult = (
   ret: LogicformAPIResultType,
-  firstColumnName: string
+  firstColumnName: string,
+  horizontalColumns?: string[]
 ): LogicformAPIResultType => {
   const { result, columnProperties } = ret;
 
@@ -32,11 +33,20 @@ export const transposeResult = (
   });
 
   // 第一列的数据变为columnProperties。
-  for (const item of result) {
-    newColumnProperties.push({
-      ...columnProperties[1],
-      name: getIDKey(columnProperties[0], item),
-    });
+  if (horizontalColumns) {
+    for (const item of horizontalColumns) {
+      newColumnProperties.push({
+        ...columnProperties[1],
+        name: item,
+      });
+    }
+  } else {
+    for (const item of result) {
+      newColumnProperties.push({
+        ...columnProperties[1],
+        name: getIDKey(columnProperties[0], item),
+      });
+    }
   }
 
   // 除去第一列，后面有几列，就是数据有几行
@@ -44,6 +54,7 @@ export const transposeResult = (
     const property = columnProperties[i];
 
     const item: any = {
+      _id: property.name,
       [firstColumnName]: property.name,
     };
 
