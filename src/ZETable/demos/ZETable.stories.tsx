@@ -494,6 +494,30 @@ export const MultiSchema = () => {
   );
 };
 
+export const HorizontalColumnsWithTranspose = () => {
+  return (
+    <ZETable
+      logicform={{
+        schema: "productsale",
+        groupby: "商品",
+        preds: [
+          { name: "s1", operator: "$count" },
+          { name: "s2", operator: "$sum", pred: "销量" },
+        ],
+      }}
+      transpose="指标"
+      horizontalColumns={[
+        "S-深海鱼-200ml",
+        "S-原浆特酿-200ml",
+        "S-冰油-200ml",
+        "L-原浆特酿-500ml",
+        "L-冰油-500ml",
+        "猪猪套餐",
+      ]} // 有顺序地显示某些entity
+    />
+  );
+};
+
 // export const TMP = () => {
 //   return (
 //     <ZETable
