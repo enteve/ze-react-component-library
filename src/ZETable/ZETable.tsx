@@ -168,7 +168,7 @@ const mapColumnItem = (
       ...customColumn,
     };
   }
-  // console.log(defaultColumnType);
+  // console.log(JSON.stringify(defaultColumnType))
   return defaultColumnType;
 };
 
@@ -198,6 +198,7 @@ const ZETable: React.FC<ZETableProps> = ({
   const [creationFormVisible, setCreationFormVisible] =
     useState<boolean>(false);
   const tableRef = useRef<ActionType>();
+  const [mountTable, setMountTable] = useState(false);
 
   const request = async (
     params: {
@@ -311,12 +312,14 @@ const ZETable: React.FC<ZETableProps> = ({
         result = dataToCrossTable(ret.columnProperties, result);
       }
 
+      setMountTable(true);
       return {
         data: result,
         success: true,
         total: ret.total,
       };
     } catch (error) {
+      setMountTable(false);
       return {
         data: [],
         success: false,
@@ -579,7 +582,7 @@ const ZETable: React.FC<ZETableProps> = ({
       pageSize: logicform?.limit,
       current: logicform?.limit ? 1 : undefined,
     });
-  }, [logicform]);
+  }, [JSON.stringify({ logicform })]);
 
   return (
     <div data-testid="ZETable" className={className}>
@@ -591,9 +594,9 @@ const ZETable: React.FC<ZETableProps> = ({
             : {},
         }}
       >
-        {creationMode !== "list" && tableProps.columns.length > 0 && (
-          <ProTable {...tableProps} />
-        )}
+        {creationMode !== "list" &&
+          tableProps.columns.length > 0 &&
+          mountTable && <ProTable {...tableProps} />}
         {creationMode === "list" && (
           <EditableProTable
             {...tableProps}
