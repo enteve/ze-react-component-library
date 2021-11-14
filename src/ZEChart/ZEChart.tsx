@@ -124,21 +124,21 @@ const ZEChart: React.FC<ZEChartProps> = ({
     }
 
     // label format
+    if (!option.label) option.label = { show: false }; // 这个备着
+    option.label.formatter = (item: any) => {
+      // 这个label formatter有时会返回整个axis，很奇怪。不过这个时候没有data
+      if (!item.data) {
+        return;
+      }
+
+      return formatWithProperty(
+        measurementProp,
+        item.data[measurementProp.name]
+      );
+    };
     if (type === "bar") {
-      if (!option.label) option.label = {};
       option.label.show = true;
       option.label.position = "right";
-      option.label.formatter = (item: any) => {
-        // 这个label formatter有时会返回整个axis，很奇怪。不过这个时候没有data
-        if (!item.data) {
-          return;
-        }
-
-        return formatWithProperty(
-          measurementProp,
-          item.data[measurementProp.name]
-        );
-      };
     }
     // value轴format
     option.xAxis.axisLabel.formatter = (value) =>
