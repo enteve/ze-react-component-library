@@ -270,7 +270,20 @@ const ZETable: React.FC<ZETableProps> = ({
 
         // 如果LF已经有了该字段的筛选，那么用$and来解决
         if (targetKey in newLF.query) {
-          newLF.query[targetKey] = { $and: [newLF.query[targetKey], targetV] };
+          if (newLF.query[targetKey] !== targetV) {
+            if (
+              typeof newLF.query[targetKey] === "string" &&
+              typeof targetV === "string"
+            ) {
+              newLF.query[targetKey] = {
+                $in: [newLF.query[targetKey], targetV],
+              };
+            } else {
+              newLF.query[targetKey] = {
+                $and: [newLF.query[targetKey], targetV],
+              };
+            }
+          }
         } else {
           newLF.query[targetKey] = targetV;
         }
