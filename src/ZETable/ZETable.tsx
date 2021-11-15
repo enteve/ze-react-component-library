@@ -294,6 +294,7 @@ const ZETable: React.FC<ZETableProps> = ({
       if (transpose && ret) {
         const newRet = transposeResult(ret, transpose, horizontalColumns);
         setResult(newRet);
+        setMountTable(true);
         return {
           data: newRet.result,
           success: true,
