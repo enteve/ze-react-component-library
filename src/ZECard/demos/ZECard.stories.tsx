@@ -122,9 +122,21 @@ export const StatsDefaultBar = () => (
     title="商品销量从大到小排序"
     logicform={{
       schema: "productsale",
-      preds: [{ name: "销量", operator: "$sum", pred: "销量" }],
+      preds: [
+        { name: "订单量", operator: "$count" },
+        { name: "平均", operator: "$avg", pred: "销量" },
+        {
+          name: "总销量",
+          operator: "$sql",
+          pred: "sum(`销量` * 4)",
+          type: "int",
+        },
+      ],
       groupby: ["商品"],
-      sort: { 销量: -1 },
+      sort: { 订单量: -1 },
+    }}
+    chartProps={{
+      targetPred: "总销量",
     }}
   />
 );
