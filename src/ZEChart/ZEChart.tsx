@@ -30,6 +30,7 @@ const ZEChart: React.FC<ZEChartProps> = ({
   height,
   onDbClick,
   option: userOption = {},
+  targetPred,
 }) => {
   const { data } = useRequest<LogicformAPIResultType>(
     () => {
@@ -139,6 +140,23 @@ const ZEChart: React.FC<ZEChartProps> = ({
     if (type === "bar") {
       option.label.show = true;
       option.label.position = "right";
+
+      if (targetPred && option.dataset?.dimensions) {
+        // 加上target series
+        option.series[0].barGap = "-100%";
+        option.series[0].z = 3;
+        option.series.push({
+          type: "bar",
+          label: { show: false },
+          encode: {
+            x: targetPred,
+          },
+          itemStyle: { color: "#f2f2f2" },
+          emphasis: {
+            itemStyle: { color: "#f2f2f2" },
+          },
+        });
+      }
     }
     // value轴format
     option.xAxis.axisLabel.formatter = (value) =>
