@@ -42,7 +42,8 @@ const mapColumnItem = (
   customColumn: ProColumnType,
   properties: any[],
   exporting: boolean, // 是否需要导出，导出的话，ellipse不要了
-  showUnit: boolean
+  showUnit: boolean,
+  showSorter: boolean
 ): ProColumnType => {
   let property = properties.find((p) => p.name === predItem);
 
@@ -106,7 +107,7 @@ const mapColumnItem = (
   }
 
   // Sorter
-  if (property.primal_type === "number") {
+  if (showSorter && property.primal_type === "number") {
     additionalProps.sorter = true;
   }
 
@@ -187,6 +188,7 @@ const ZETable: React.FC<ZETableProps> = ({
   horizontalColumns,
   transpose,
   showUnit = true,
+  showSorter = true,
   ...restProps
 }) => {
   const values = useContext(ProProvider); // 用来自定义ValueType
@@ -361,7 +363,8 @@ const ZETable: React.FC<ZETableProps> = ({
             customColumns[pred],
             properties,
             exportToExcel != undefined,
-            showUnit
+            showUnit,
+            showSorter
           )
         ),
       };
@@ -373,7 +376,8 @@ const ZETable: React.FC<ZETableProps> = ({
       customColumns[predItem],
       properties,
       exportToExcel != undefined,
-      showUnit
+      showUnit,
+      showSorter
     );
   });
 
