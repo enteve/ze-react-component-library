@@ -41,7 +41,8 @@ const mapColumnItem = (
   predItem: string,
   customColumn: ProColumnType,
   properties: any[],
-  exporting: boolean // 是否需要导出，导出的话，ellipse不要了
+  exporting: boolean, // 是否需要导出，导出的话，ellipse不要了
+  showUnit: boolean
 ): ProColumnType => {
   let property = properties.find((p) => p.name === predItem);
 
@@ -137,7 +138,7 @@ const mapColumnItem = (
   };
 
   // unit
-  if (property.unit)
+  if (showUnit && property.unit)
     defaultColumnType.title = `${defaultColumnType.title}(${property.unit})`;
 
   // 以下是用来给createMode=list用的
@@ -185,6 +186,7 @@ const ZETable: React.FC<ZETableProps> = ({
   defaultColWidth = 200,
   horizontalColumns,
   transpose,
+  showUnit = true,
   ...restProps
 }) => {
   const values = useContext(ProProvider); // 用来自定义ValueType
@@ -358,7 +360,8 @@ const ZETable: React.FC<ZETableProps> = ({
             pred,
             customColumns[pred],
             properties,
-            exportToExcel != undefined
+            exportToExcel != undefined,
+            showUnit
           )
         ),
       };
@@ -369,7 +372,8 @@ const ZETable: React.FC<ZETableProps> = ({
       predItem,
       customColumns[predItem],
       properties,
-      exportToExcel != undefined
+      exportToExcel != undefined,
+      showUnit
     );
   });
 

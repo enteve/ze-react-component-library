@@ -84,9 +84,6 @@ export const crossResult = (
     newData[newData.length - 1][idKey] = item[measurementName];
   });
 
-  console.log(newColumnProperties);
-  console.log(newData);
-
   return {
     ...ret,
     columnProperties: newColumnProperties,
