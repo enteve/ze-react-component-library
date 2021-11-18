@@ -1,6 +1,9 @@
-import { ProColumnType } from "@ant-design/pro-table";
-import { getNameProperty, LogicformType, PropertyType } from "zeroetp-api-sdk";
-import { valueTypeMapping } from "../util";
+import {
+  getNameProperty,
+  LogicformAPIResultType,
+  LogicformType,
+  PropertyType,
+} from "zeroetp-api-sdk";
 
 export const canUseCrossTable = (logicform: LogicformType): boolean => {
   if (Array.isArray(logicform.groupby) && logicform.groupby.length === 2) {
@@ -21,17 +24,50 @@ const getIDKey = (prop: PropertyType, item: any) => {
   return item[prop.name][nameProp.name];
 };
 
-export const dataToCrossTable = (
-  columnProperties: PropertyType[],
-  data: any[]
-): any[] => {
+export const crossResult = (
+  ret: LogicformAPIResultType,
+  horizontalColumns?: string[]
+): LogicformAPIResultType => {
+  const { result, columnProperties } = ret;
+
   const idProp0 = columnProperties[0];
   const idProp1 = columnProperties[1];
   const measurementName = columnProperties[2].name;
 
   const newData: any[] = [];
+  const newColumnProperties: PropertyType[] = [];
 
-  data.forEach((item) => {
+  // 1. 搞newColumnProperties
+  newColumnProperties.push({
+    name: idProp0.name,
+    type: "string",
+    primal_type: "string",
+    constraints: {},
+  });
+
+  // 第一列的数据变为columnProperties。
+  if (horizontalColumns) {
+    for (const item of horizontalColumns) {
+      newColumnProperties.push({
+        ...columnProperties[2],
+        name: item,
+      });
+    }
+  } else {
+    const secondColKeys = new Set<string>();
+    for (const item of result) {
+      secondColKeys.add(getIDKey(columnProperties[1], item));
+    }
+
+    for (const key of Array.from(secondColKeys)) {
+      newColumnProperties.push({
+        ...columnProperties[2],
+        name: key,
+      });
+    }
+  }
+
+  result.forEach((item) => {
     const id =
       typeof item[idProp0.name] === "string"
         ? item[idProp0.name]
@@ -48,97 +84,12 @@ export const dataToCrossTable = (
     newData[newData.length - 1][idKey] = item[measurementName];
   });
 
-  return newData;
-};
+  console.log(newColumnProperties);
+  console.log(newData);
 
-export const columnPropertiesToCrossTable = (
-  columnProperties: PropertyType[],
-  data: any[],
-  horizontalColumns?: string[]
-): any[] => {
-  const idProp0 = columnProperties[0];
-  const idProp1 = columnProperties[1];
-
-  const newColumnProperties: any[] = [idProp0];
-
-  const columnSet = new Set();
-
-  if (horizontalColumns) {
-    horizontalColumns.forEach((item) => {
-      newColumnProperties.push({
-        ...columnProperties[2],
-        name: item,
-      });
-    });
-  } else {
-    data.forEach((item) => {
-      const idKey = getIDKey(idProp1, item);
-      if (!columnSet.has(idKey)) {
-        newColumnProperties.push({
-          ...columnProperties[2],
-          name: idKey,
-        });
-        columnSet.add(idKey);
-      }
-    });
-  }
-
-  return newColumnProperties;
-};
-
-export const columnToCrossTable = (
-  columnProperties: PropertyType[],
-  data: any[],
-  defaultColWidth,
-  horizontalColumns?: string[]
-): ProColumnType<any, any>[] => {
-  const idProp0 = columnProperties[0];
-  const idProp1 = columnProperties[1];
-  const measurementProp = columnProperties[2];
-
-  const columns: ProColumnType<any, any>[] = [
-    {
-      title: idProp0.name,
-      dataIndex: idProp0.name,
-      fixed: "left",
-      width: defaultColWidth,
-      valueType: valueTypeMapping(idProp0),
-    },
-  ];
-
-  let align: "left" | "right" | "center" = "left";
-  if (
-    measurementProp.primal_type === "number" ||
-    measurementProp.primal_type === "boolean"
-  ) {
-    align = "right";
-  }
-
-  if (horizontalColumns) {
-    for (const col of horizontalColumns) {
-      columns.push({
-        title: col,
-        dataIndex: col,
-        width: defaultColWidth,
-        valueType: valueTypeMapping(measurementProp),
-        align,
-      });
-    }
-  } else {
-    data.forEach((item) => {
-      const idKey = getIDKey(idProp1, item);
-
-      if (!columns.find((c) => c.title === idKey)) {
-        columns.push({
-          title: idKey,
-          dataIndex: idKey,
-          width: defaultColWidth,
-          valueType: valueTypeMapping(measurementProp),
-          align,
-        });
-      }
-    });
-  }
-
-  return columns;
+  return {
+    ...ret,
+    columnProperties: newColumnProperties,
+    result: newData,
+  };
 };

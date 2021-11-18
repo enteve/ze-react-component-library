@@ -33,12 +33,7 @@ import "./ZETable.less";
 
 import { requestLogicform, request as requestAPI } from "../request";
 import { getColumnDateProps, getColumnSearchProps } from "./FilterComponents";
-import {
-  canUseCrossTable,
-  columnPropertiesToCrossTable,
-  columnToCrossTable,
-  dataToCrossTable,
-} from "./crossTableGen";
+import { canUseCrossTable, crossResult } from "./crossTableGen";
 import { transposeResult } from "./transposeGen";
 
 const mapColumnItem = (
@@ -299,36 +294,28 @@ const ZETable: React.FC<ZETableProps> = ({
     }
 
     try {
-      const ret = await requestLogicform(newLF);
+      let ret = await requestLogicform(newLF);
       const refResults = await Promise.all(
         refLFs.map((r) => requestLogicform(r.logicform))
       );
       // console.log(ret);
-      if (transpose && ret) {
-        const newRet = transposeResult(ret, transpose, horizontalColumns);
-        setResult(newRet);
-        setMountTable(true);
-        return {
-          data: newRet.result,
-          success: true,
-          total: newRet.result.length,
-        };
-      } else {
-        setResult(ret);
-      }
 
       let result = JSON.parse(JSON.stringify(ret.result));
       refLFs.forEach(
         (r, index) => (result = r.merge(result, refResults[index].result))
       );
+      ret.result = result;
 
-      if (canUseCrossTable(logicform)) {
-        result = dataToCrossTable(ret.columnProperties, result);
+      if (transpose) {
+        ret = transposeResult(ret, transpose, horizontalColumns);
+      } else if (canUseCrossTable(logicform)) {
+        ret = crossResult(ret, horizontalColumns);
       }
 
       setMountTable(true);
+      setResult(ret);
       return {
-        data: result,
+        data: ret.result,
         success: true,
         total: ret.total,
       };
@@ -398,6 +385,11 @@ const ZETable: React.FC<ZETableProps> = ({
       if (!columns[i].width) {
         columns[i].width = defaultColWidth;
       }
+
+      // crosstable，只要第一个就行了
+      if (canUseCrossTable(logicform)) {
+        break;
+      }
     }
   }
 
@@ -442,15 +434,7 @@ const ZETable: React.FC<ZETableProps> = ({
 
   // result的schema中的properties其实没啥用，应该改为columnProperties的
   if (result?.columnProperties) {
-    if (canUseCrossTable(logicform)) {
-      result.schema.properties = columnPropertiesToCrossTable(
-        result?.columnProperties,
-        result.result,
-        horizontalColumns
-      );
-    } else {
-      result.schema.properties = result.columnProperties;
-    }
+    result.schema.properties = result.columnProperties;
   }
 
   const tableProps: any = {
@@ -571,15 +555,6 @@ const ZETable: React.FC<ZETableProps> = ({
         </Popconfirm>,
       ],
     });
-  }
-
-  if (result && canUseCrossTable(logicform)) {
-    tableProps.columns = columnToCrossTable(
-      result.columnProperties,
-      result.result,
-      defaultColWidth,
-      horizontalColumns
-    );
   }
 
   // 对transpose的columns再处理一下，去掉搜索之类的

@@ -217,6 +217,11 @@ export const StatsCrossTable = () => (
         "L-冰油-500ml",
         "猪猪套餐",
       ], // 有顺序地显示某些entity
+      customColumns: {
+        猪猪套餐: {
+          render: () => "Custom Render",
+        },
+      },
     }}
   />
 );
