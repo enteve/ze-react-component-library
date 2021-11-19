@@ -119,6 +119,9 @@ export const CustomRender = () => (
           );
         },
       },
+      公司全称: {
+        filters: false,
+      },
     }}
   />
 );
