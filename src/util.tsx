@@ -32,7 +32,7 @@ import { useEffect } from "react";
 import escapeStringRegexp from "escape-string-regexp";
 
 const { Option } = Select;
-const { Text } = Typography;
+const { Text, Paragraph } = Typography;
 
 import "./formatNumeral";
 import ZECard from "./ZECard/ZECard";
@@ -253,12 +253,11 @@ export const customValueTypes = (schema: SchemaType, config: any = {}) => ({
       }
 
       const ellipsisedText = (
-        <Text
-          style={{ width: config.colWidth || 200 }}
-          ellipsis={{ tooltip: text }}
+        <Paragraph
+          ellipsis={{ rows: props?.fieldProps?.ellipsis?.row || 1, expandable: false, tooltip: text }}
         >
           {text}
-        </Text>
+        </Paragraph>
       );
       return ellipsisedText;
 
