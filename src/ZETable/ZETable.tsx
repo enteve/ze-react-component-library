@@ -19,6 +19,7 @@ import {
   updateDataByID,
 } from "zeroetp-api-sdk";
 import type { LogicformAPIResultType } from "zeroetp-api-sdk";
+import './ZETable.less'
 
 import {
   customValueTypes,
