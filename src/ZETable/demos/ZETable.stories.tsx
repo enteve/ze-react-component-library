@@ -228,6 +228,14 @@ export const StatsAndCalcInFront = () => (
     }}
     preds={["商品", "销售额", "销量", "件单价"]}
     customColumns={{
+      商品: {
+        width: 70,
+        fieldProps: {
+          ellipsis: {
+            row: 2,
+          },
+        },
+      },
       件单价: {
         render: (v: any, record: any) => (
           <span>{record.销售额 / record.销量}</span>

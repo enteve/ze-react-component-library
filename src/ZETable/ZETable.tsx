@@ -19,6 +19,7 @@ import {
   updateDataByID,
 } from "zeroetp-api-sdk";
 import type { LogicformAPIResultType } from "zeroetp-api-sdk";
+import './ZETable.less'
 
 import {
   customValueTypes,
@@ -198,7 +199,6 @@ const ZETable: React.FC<ZETableProps> = ({
   const [creationFormVisible, setCreationFormVisible] =
     useState<boolean>(false);
   const tableRef = useRef<ActionType>();
-  const [mountTable, setMountTable] = useState(false);
 
   const request = async (
     params: {
@@ -317,7 +317,6 @@ const ZETable: React.FC<ZETableProps> = ({
         ret = crossResult(ret, horizontalColumns);
       }
 
-      setMountTable(true);
       setResult(ret);
       return {
         data: ret.result,
@@ -325,7 +324,6 @@ const ZETable: React.FC<ZETableProps> = ({
         total: ret.total,
       };
     } catch (error) {
-      setMountTable(false);
       return {
         data: [],
         success: false,
@@ -353,34 +351,37 @@ const ZETable: React.FC<ZETableProps> = ({
 
   const properties = result?.columnProperties || [];
 
-  const columns: ProColumnType[] = predsToShow.map((predItem) => {
-    if (typeof predItem === "object" && "title" in predItem) {
-      return {
-        title: predItem.title,
-        children: predItem.children.map((pred) =>
-          mapColumnItem(
+  const columns: ProColumnType[] =
+    properties.length > 0
+      ? predsToShow.map((predItem) => {
+          if (typeof predItem === "object" && "title" in predItem) {
+            return {
+              title: predItem.title,
+              children: predItem.children.map((pred) =>
+                mapColumnItem(
+                  logicform,
+                  pred,
+                  customColumns[pred],
+                  properties,
+                  exportToExcel != undefined,
+                  showUnit,
+                  showSorter
+                )
+              ),
+            };
+          }
+
+          return mapColumnItem(
             logicform,
-            pred,
-            customColumns[pred],
+            predItem,
+            customColumns[predItem],
             properties,
             exportToExcel != undefined,
             showUnit,
             showSorter
-          )
-        ),
-      };
-    }
-
-    return mapColumnItem(
-      logicform,
-      predItem,
-      customColumns[predItem],
-      properties,
-      exportToExcel != undefined,
-      showUnit,
-      showSorter
-    );
-  });
+          );
+        })
+      : [];
 
   // Groupby的id columns需要fixed
   if (logicform.groupby && columns.length > 0) {
@@ -592,9 +593,9 @@ const ZETable: React.FC<ZETableProps> = ({
             : {},
         }}
       >
-        {creationMode !== "list" &&
-          tableProps.columns.length > 0 &&
-          mountTable && <ProTable {...tableProps} />}
+        {creationMode !== "list" && tableProps.columns.length > 0 && (
+          <ProTable {...tableProps} />
+        )}
         {creationMode === "list" && (
           <EditableProTable
             {...tableProps}
