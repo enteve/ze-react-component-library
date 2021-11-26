@@ -30,7 +30,8 @@ const { Paragraph, Title } = Typography;
 
 const getDefaultRepresentation = (
   logicform: LogicformType,
-  result?: LogicformAPIResultType
+  result?: LogicformAPIResultType,
+  pieThreshold: number = 5
 ) => {
   if (!result) return null;
 
@@ -70,7 +71,7 @@ const getDefaultRepresentation = (
     // 如果是categorical的，并且，用pie
     if (
       groupbyProp?.is_categorical &&
-      groupbyProp?.stats?.distincts?.length <= 5
+      groupbyProp?.stats?.distincts?.length <= pieThreshold
     ) {
       return "pie";
     }
@@ -111,6 +112,7 @@ const ZECard: React.FC<ZECardProps> = ({
   chartProps = {},
   compact = false,
   horizontalBarChart = false,
+  pieThreshold,
 }) => {
   const {
     value: logicform,
@@ -179,7 +181,11 @@ const ZECard: React.FC<ZECardProps> = ({
   if (!logicform) return <Result status="error" title="出现错误" />;
   // console.log(data);
 
-  const defaultRepresentation = getDefaultRepresentation(logicform, data);
+  const defaultRepresentation = getDefaultRepresentation(
+    logicform,
+    data,
+    pieThreshold
+  );
   const finalRepresentation = representation || defaultRepresentation;
 
   let component: any;
