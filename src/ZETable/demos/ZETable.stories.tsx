@@ -365,6 +365,20 @@ export const Totals = () => (
   />
 );
 
+export const Expandable = () => (
+  <ZETable
+    logicform={{
+      schema: "productsale",
+      groupby: "商品_分类",
+      preds: [
+        { name: "销量", operator: "$sum", pred: "销量" },
+        { name: "销售额", operator: "$sum", pred: "销售额" },
+      ],
+    }}
+    // expandFirstCol
+  />
+);
+
 // 以下代码只有在周黑鸭的数据库里面才能运行
 export const RefLogicforms = () => {
   return (
