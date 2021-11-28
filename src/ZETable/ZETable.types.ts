@@ -36,6 +36,7 @@ export type ZETableProps = {
 
   horizontalColumns?: string[]; // 给crosstable和transpose用的，可以指定横向的groupbyProp的顺序、以及加一些数据库里没返回的列(缺失的entity之类的)
   transpose?: string; // 是否转置整个table，这个转置后的第一列的名称
+  expandFirstCol?: boolean; // 表格第一列是否可展开
 } & Omit<
   ProTableProps<ProColumnType, ParamsType>,
   "columns" | "request" | "pagination" | "toolBarRender" | "scroll"

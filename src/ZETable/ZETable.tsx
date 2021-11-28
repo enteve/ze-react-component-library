@@ -5,7 +5,7 @@ import ProTable, {
   ProColumnType,
 } from "@ant-design/pro-table";
 import ProProvider from "@ant-design/pro-provider";
-import { Tooltip, Result, Button, Popconfirm, Drawer } from "antd";
+import { Tooltip, Result, Button, Popconfirm, Drawer, Spin } from "antd";
 import type { TablePaginationConfig } from "antd";
 import { DownloadOutlined, PlusOutlined } from "@ant-design/icons";
 import excelExporter from "./excelExporter";
@@ -19,13 +19,14 @@ import {
   updateDataByID,
 } from "zeroetp-api-sdk";
 import type { LogicformAPIResultType } from "zeroetp-api-sdk";
-import './ZETable.less'
+import "./ZETable.less";
 
 import {
   customValueTypes,
   valueEnumMapping,
   valueTypeMapping,
   basicValueDisplay,
+  drilldownLogicform,
 } from "../util";
 
 import ZESchemaForm from "../ZESchemaForm";
@@ -191,6 +192,7 @@ const ZETable: React.FC<ZETableProps> = ({
   transpose,
   showUnit = true,
   showSorter = true,
+  expandFirstCol,
   ...restProps
 }) => {
   const values = useContext(ProProvider); // 用来自定义ValueType
@@ -199,6 +201,9 @@ const ZETable: React.FC<ZETableProps> = ({
   const [creationFormVisible, setCreationFormVisible] =
     useState<boolean>(false);
   const tableRef = useRef<ActionType>();
+  const [rowChildrenMap, setRowChildrenMap] = useState<Record<string, any[]>>(
+    {}
+  );
 
   const request = async (
     params: {
@@ -467,6 +472,45 @@ const ZETable: React.FC<ZETableProps> = ({
     pagination,
     toolBarRender: () => toolBarRender,
   };
+
+  const onExpand = async (expanded, record) => {
+    if (!expanded) {
+      return;
+    }
+    const parentGroupByName = logicform.groupby;
+    if (typeof parentGroupByName !== "string") {
+      return;
+    }
+    const theLogicForm = drilldownLogicform(logicform, result.schema, record);
+    const res = await requestLogicform(theLogicForm);
+    if (res) {
+      setRowChildrenMap({
+        ...rowChildrenMap,
+        [record._id]: res.result.map((d) => {
+          return {
+            ...d,
+            [parentGroupByName]: d[theLogicForm.groupby],
+          };
+        }),
+      });
+    }
+  };
+
+  if (expandFirstCol && result?.result?.length > 0) {
+    tableProps.dataSource = result.result.map((d) => {
+      if (d._id in rowChildrenMap) {
+        return {
+          ...d,
+          children: rowChildrenMap[d._id],
+        };
+      }
+      return {
+        ...d,
+        children: [],
+      };
+    });
+    tableProps.expandable = { onExpand, indentSize: 0 };
+  }
 
   // Creation
   const deleteRecord = (record: any) => {
