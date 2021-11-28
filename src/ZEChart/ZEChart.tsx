@@ -29,7 +29,7 @@ const ZEChart: React.FC<ZEChartProps> = ({
   width,
   height,
   onDbClick,
-  option: userOption = {},
+  option: inputOption = {},
   targetPred,
 }) => {
   const { data } = useRequest<LogicformAPIResultType>(
@@ -54,6 +54,7 @@ const ZEChart: React.FC<ZEChartProps> = ({
   };
 
   let option: any = {};
+  const userOption = JSON.parse(JSON.stringify(inputOption));
   // 第一个数值的prop。目前每张图都只采用第一个measurements。以后都要显示的。
   let measurementProp: PropertyType;
 
@@ -178,6 +179,9 @@ const ZEChart: React.FC<ZEChartProps> = ({
         type: "pie",
       },
     ];
+
+    // pie没有visualMap
+    delete userOption.visualMap;
   } else if (type === "line") {
     option = merge(option, getLineOption());
     option.series = [
