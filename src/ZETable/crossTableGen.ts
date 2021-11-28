@@ -39,10 +39,7 @@ export const crossResult = (
 
   // 1. 搞newColumnProperties
   newColumnProperties.push({
-    name: idProp0.name,
-    type: "string",
-    primal_type: "string",
-    constraints: {},
+    ...idProp0
   });
 
   // 第一列的数据变为columnProperties。
