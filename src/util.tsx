@@ -180,6 +180,9 @@ export const formatWithProperty = (property: PropertyType, value: any) => {
 };
 
 const getPropNameFromProFieldKey = (key: string) => {
+  if (!key?.includes("-")) {
+    return key;
+  }
   return key.split("-").slice(2).join("-");
 };
 
@@ -255,6 +258,7 @@ export const customValueTypes = (schema: SchemaType, config: any = {}) => ({
       const ellipsisedText = (
         <Paragraph
           ellipsis={{ rows: props?.fieldProps?.ellipsis?.row || 1, expandable: false, tooltip: text }}
+          style={{ margin: 0 }}
         >
           {text}
         </Paragraph>
