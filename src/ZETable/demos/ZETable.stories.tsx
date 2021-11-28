@@ -375,7 +375,7 @@ export const Expandable = () => (
         { name: "销售额", operator: "$sum", pred: "销售额" },
       ],
     }}
-    // expandFirstCol
+    expandFirstCol
   />
 );
 

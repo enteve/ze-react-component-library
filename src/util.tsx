@@ -662,6 +662,9 @@ export const drilldownLogicform = (
     }
   } else {
     if (groupbyProp.hierarchy?.down) {
+      newLF.query = {
+        ...newLF.query
+      }
       newLF.query[newLF.groupby[0]._id] = groupbyItem._id;
       const groupbyChain = newLF.groupby[0]._id.split("_");
       groupbyChain.pop();
