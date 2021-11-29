@@ -257,7 +257,11 @@ export const customValueTypes = (schema: SchemaType, config: any = {}) => ({
 
       const ellipsisedText = (
         <Paragraph
-          ellipsis={{ rows: props?.fieldProps?.ellipsis?.row || 1, expandable: false, tooltip: text }}
+          ellipsis={{
+            rows: props?.fieldProps?.ellipsis?.row || 1,
+            expandable: false,
+            tooltip: text,
+          }}
           style={{ margin: 0 }}
         >
           {text}
@@ -609,6 +613,7 @@ export const drilldownLogicform = (
   if (!logicform.groupby) return null; //必须有groupby才能下钻
   const newLF: LogicformType = JSON.parse(JSON.stringify(logicform));
   normaliseGroupby(newLF);
+  if (!newLF.query) newLF.query = {};
 
   if (newLF.groupby.length > 1) return null; // 暂时不支持多维数组下钻
 
@@ -663,8 +668,8 @@ export const drilldownLogicform = (
   } else {
     if (groupbyProp.hierarchy?.down) {
       newLF.query = {
-        ...newLF.query
-      }
+        ...newLF.query,
+      };
       newLF.query[newLF.groupby[0]._id] = groupbyItem._id;
       const groupbyChain = newLF.groupby[0]._id.split("_");
       groupbyChain.pop();
