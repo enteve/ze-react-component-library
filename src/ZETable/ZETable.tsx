@@ -1,4 +1,5 @@
 import React, { useContext, useState, useRef, useEffect } from "react";
+import _ from "underscore";
 import ProTable, {
   ActionType,
   EditableProTable,
@@ -447,11 +448,6 @@ const ZETable: React.FC<ZETableProps> = ({
     );
   }
 
-  // result的schema中的properties其实没啥用，应该改为columnProperties的
-  if (result?.columnProperties) {
-    result.schema.properties = result.columnProperties;
-  }
-
   const tableProps: any = {
     cardProps: {
       bodyStyle: { padding: 0 },
@@ -477,19 +473,36 @@ const ZETable: React.FC<ZETableProps> = ({
     if (!expanded) {
       return;
     }
-    const parentGroupByName = logicform.groupby;
+    let parentGroupByName = logicform.groupby;
+
     if (typeof parentGroupByName !== "string") {
-      return;
+      if (parentGroupByName._id) {
+        if (parentGroupByName.level) {
+          parentGroupByName = `${parentGroupByName._id}(${parentGroupByName.level})`;
+        } else {
+          parentGroupByName = parentGroupByName._id;
+        }
+      } else {
+        return;
+      }
     }
     const theLogicForm = drilldownLogicform(logicform, result.schema, record);
     const res = await requestLogicform(theLogicForm);
+
     if (res) {
+      // 一般来说，会出现expand的情况是上一层为分类信息，那么上一层的valueType是string,但是下一层可能是object，所以要在这里做一个转化
+      const nameKeys = [res.columnProperties[0].name];
+      if (res.columnProperties[0].schema) {
+        const nameProp = getNameProperty(res.columnProperties[0].schema);
+        nameKeys.push(nameProp.name);
+      }
+
       setRowChildrenMap({
         ...rowChildrenMap,
         [record._id]: res.result.map((d) => {
           return {
             ...d,
-            [parentGroupByName]: d[theLogicForm.groupby],
+            [parentGroupByName]: _.get(d, nameKeys),
           };
         }),
       });
@@ -633,7 +646,10 @@ const ZETable: React.FC<ZETableProps> = ({
         value={{
           ...values,
           valueTypeMap: result
-            ? customValueTypes(result.schema, { colWidth: defaultColWidth })
+            ? customValueTypes(
+                { ...result.schema, properties: result.columnProperties },
+                { colWidth: defaultColWidth }
+              )
             : {},
         }}
       >
