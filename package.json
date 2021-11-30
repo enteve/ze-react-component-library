@@ -112,6 +112,7 @@
   "dependencies": {
     "deepmerge": "^4.2.2",
     "escape-string-regexp": "^5.0.0",
+    "react-error-boundary": "^3.1.4",
     "react-sizeme": "^3.0.2"
   },
   "lint-staged": {
