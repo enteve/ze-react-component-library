@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, FC } from "react";
 import {
   PropertyType,
   SchemaType,
@@ -12,7 +12,7 @@ import {
   isRelativeDateForm,
   normaliseRelativeDateForm,
 } from "zeroetp-api-sdk";
-
+import type { FallbackProps } from "react-error-boundary";
 import moment from "moment";
 import numeral from "numeral";
 import { EditableProTable } from "@ant-design/pro-table";
@@ -23,7 +23,8 @@ import {
   Cascader,
   Spin,
   Typography,
-  Popover,
+  Card,
+  Result,
 } from "antd";
 import { useRequest } from "@umijs/hooks";
 import { requestLogicform } from "./request";
@@ -775,4 +776,19 @@ export const basicValueDisplay = (oldV: any, toValue?: boolean) => {
   }
 
   return "";
+};
+
+export const ErrorFallBack: FC<FallbackProps> = ({ error }) => {
+  return (
+    <Card>
+      <Result status="error" title="程序出错了" subTitle="请联系管理员处理!">
+        <div>
+          <Paragraph>
+            <Text strong>报错信息：</Text>
+            {error.message}
+          </Paragraph>
+        </div>
+      </Result>
+    </Card>
+  );
 };
