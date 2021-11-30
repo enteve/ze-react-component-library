@@ -265,3 +265,34 @@ export const LFVisualizerAsFilter = () => (
     }}
   />
 );
+
+export const ErrorBoundaryExample = () => (
+  <ZECard
+    title="LFVisualizerAsFilter"
+    logicform={{
+      schemaName: "销售流水",
+      schema: "productsale",
+      operator: "$sum",
+      pred: "销售额",
+      name: "总销售额",
+      query: {
+        日期: {
+          $gte: { $offset: { month: 0 }, day: 1 },
+          $lte: { $offset: { day: 0 } },
+        },
+        商品_分类: "组合",
+      },
+    }}
+    visualizerProps={{
+      filters: {
+        商品_分类: {
+          support_all: false,
+          distincts: ["单品", "组合", "耗材"],
+        },
+        商品_编码: {
+          support_all: false,
+        },
+      },
+    }}
+  />
+);
