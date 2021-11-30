@@ -600,6 +600,7 @@ const renderObjectFormItemHierarchy = (property: PropertyType, props: any) => {
  * 逻辑是这样的。
  * TODO：写testcase
  * groupby: "商品_分类"，从’单品‘开始下钻   ->  query:{商品_分类:'单品'}, groupby: "商品",
+ * 如果是多维groupby，按照第一个groupby去下钻
  * @param logicform
  * @param schema
  * @param groupbyItem
@@ -614,8 +615,6 @@ export const drilldownLogicform = (
   const newLF: LogicformType = JSON.parse(JSON.stringify(logicform));
   normaliseGroupby(newLF);
   if (!newLF.query) newLF.query = {};
-
-  if (newLF.groupby.length > 1) return null; // 暂时不支持多维数组下钻
 
   // 一般来说，__开头的，是前端自己添加的一些辅助行。例如汇总行之类的。
   if (
@@ -674,9 +673,9 @@ export const drilldownLogicform = (
       const groupbyChain = newLF.groupby[0]._id.split("_");
       groupbyChain.pop();
       if (groupbyProp.hierarchy.down === "_id") {
-        newLF.groupby = groupbyChain;
+        newLF.groupby[0] = groupbyChain[0];
       } else {
-        newLF.groupby = [...groupbyChain, groupbyProp.hierarchy?.down].join(
+        newLF.groupby[0] = [...groupbyChain, groupbyProp.hierarchy?.down].join(
           "_"
         );
       }

@@ -39,7 +39,7 @@ export const crossResult = (
 
   // 1. 搞newColumnProperties
   newColumnProperties.push({
-    ...idProp0
+    ...idProp0,
   });
 
   // 第一列的数据变为columnProperties。
@@ -65,10 +65,16 @@ export const crossResult = (
   }
 
   result.forEach((item) => {
-    const id =
+    let id =
       typeof item[idProp0.name] === "string"
         ? item[idProp0.name]
         : item[idProp0.name]._id;
+
+    // 看一下是不是有__开头合并项
+    if (item._id && item._id.startsWith("__")) {
+      id = `__${item._id.split("_")[2]}`;
+    }
+
     if (newData.length === 0 || newData[newData.length - 1]._id !== id) {
       newData.push({
         _id: id,

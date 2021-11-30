@@ -11,7 +11,7 @@ import type { TablePaginationConfig } from "antd";
 import { DownloadOutlined, PlusOutlined } from "@ant-design/icons";
 import excelExporter from "./excelExporter";
 import escapeStringRegexp from "escape-string-regexp";
-import type { LogicformType } from "zeroetp-api-sdk";
+import { LogicformType, normaliseGroupby } from "zeroetp-api-sdk";
 import { ZETableProps, PredItemType } from "./ZETable.types";
 import {
   createData,
@@ -473,21 +473,14 @@ const ZETable: React.FC<ZETableProps> = ({
     if (!expanded) {
       return;
     }
-    let parentGroupByName = logicform.groupby;
-
-    if (typeof parentGroupByName !== "string") {
-      if (parentGroupByName._id) {
-        if (parentGroupByName.level) {
-          parentGroupByName = `${parentGroupByName._id}(${parentGroupByName.level})`;
-        } else {
-          parentGroupByName = parentGroupByName._id;
-        }
-      } else {
-        return;
-      }
+    const normedLF: LogicformType = JSON.parse(JSON.stringify(logicform));
+    normaliseGroupby(normedLF);
+    let parentGroupByName = normedLF.groupby[0]._id;
+    if (normedLF.groupby[0].level) {
+      parentGroupByName = `${parentGroupByName}(${normedLF.groupby[0].level})`;
     }
     const theLogicForm = drilldownLogicform(logicform, result.schema, record);
-    const res = await requestLogicform(theLogicForm);
+    let res = await requestLogicform(theLogicForm);
 
     if (res) {
       // 一般来说，会出现expand的情况是上一层为分类信息，那么上一层的valueType是string,但是下一层可能是object，所以要在这里做一个转化
@@ -495,6 +488,10 @@ const ZETable: React.FC<ZETableProps> = ({
       if (res.columnProperties[0].schema) {
         const nameProp = getNameProperty(res.columnProperties[0].schema);
         nameKeys.push(nameProp.name);
+      }
+
+      if (canUseCrossTable(logicform)) {
+        res = crossResult(res, horizontalColumns);
       }
 
       setRowChildrenMap({
@@ -516,6 +513,11 @@ const ZETable: React.FC<ZETableProps> = ({
           ...d,
           children: rowChildrenMap[d._id],
         };
+      }
+
+      if (d._id && d._id.startsWith("__")) {
+        // __开头的是自己增加的统计行，例如total
+        return d;
       }
       return {
         ...d,
