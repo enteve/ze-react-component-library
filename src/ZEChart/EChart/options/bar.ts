@@ -11,14 +11,14 @@ export default () => {
           let newValue = "";
           for (let i = 0; i < chars.length; i++) {
             const char = chars[i];
-            if (i > 0 && i % 4 === 0) {
+            if (i > 0 && i % 8 === 0) {
               newValue += "\n";
             }
 
             newValue += char;
 
             // 最多11个字符
-            if (newValue.length >= 11) {
+            if (newValue.length >= 15) {
               newValue += "...";
               return newValue;
             }
