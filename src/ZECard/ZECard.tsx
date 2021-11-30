@@ -3,7 +3,7 @@
  */
 import { useRequest, useHistoryTravel } from "@umijs/hooks";
 import { Empty, Card, Divider, Result, Typography, Button } from "antd";
-
+import { withErrorBoundary } from "react-error-boundary";
 import React from "react";
 import _ from "underscore";
 import { useState } from "react";
@@ -25,6 +25,7 @@ import ValueDisplayer from "./ValueDisplayer";
 import RepresentationChanger from "./RepresentationChanger";
 import "./ZECard.less";
 import LogicFormTraveler from "./LogicFormTraveler";
+import { ErrorFallBack } from "../util";
 
 const { Paragraph, Title } = Typography;
 
@@ -379,4 +380,4 @@ const ZECard: React.FC<ZECardProps> = ({
   );
 };
 
-export default ZECard;
+export default withErrorBoundary(ZECard, { FallbackComponent: ErrorFallBack });
