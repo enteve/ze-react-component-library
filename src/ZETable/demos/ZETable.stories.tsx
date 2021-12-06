@@ -220,16 +220,19 @@ export const StatsAndCalcInFront = () => (
       schema: "productsale",
       preds: [
         { name: "销量", operator: "$sum", pred: "销量" },
-        { name: "销售额", operator: "$sum", pred: "销售额" },
+        { name: "销售额1", operator: "$sum", pred: "销售额" },
+        { name: "销售额2", operator: "$sum", pred: "销售额" },
+        { name: "销售额3", operator: "$sum", pred: "销售额" },
+        { name: "销售额4", operator: "$sum", pred: "销售额" },
       ],
       groupby: "商品",
       sort: { 销量: -1 },
       limit: 5,
     }}
-    preds={["商品", "销售额", "销量", "件单价"]}
+    // preds={["商品", "销售额", "销量", "件单价"]}
+    defaultColWidth={60}
     customColumns={{
       商品: {
-        width: 70,
         fieldProps: {
           ellipsis: {
             row: 2,
