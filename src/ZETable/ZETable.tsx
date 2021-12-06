@@ -46,7 +46,8 @@ const mapColumnItem = (
   properties: any[],
   exporting: boolean, // 是否需要导出，导出的话，ellipse不要了
   showUnit: boolean,
-  showSorter: boolean
+  showSorter: boolean,
+  defaultColWidth: number
 ): ProColumnType => {
   let property = properties.find((p) => p.name === predItem);
 
@@ -121,6 +122,7 @@ const mapColumnItem = (
   Object.keys(logicform?.query || {}).forEach((k) => {
     filters[k] = basicValueDisplay(logicform?.query?.[k], true);
   });
+  const width = customColumn?.width || defaultColWidth;
   const defaultColumnType: any = {
     title: property.name,
     defaultFilteredValue: filters[predItem],
@@ -140,6 +142,7 @@ const mapColumnItem = (
     onFilter: false,
     valueEnum,
     ...additionalProps,
+    width,
   };
 
   // unit
@@ -163,14 +166,22 @@ const mapColumnItem = (
     defaultColumnType.editable = false;
   }
 
-  if (customColumn) {
-    return {
-      ...defaultColumnType,
-      ...customColumn,
+  const formattedColumn: ProColumnType = {
+    ...defaultColumnType,
+    ...(customColumn || {}),
+  };
+
+  // object类型会走自定义的render，里面有ellipsis逻辑，需要把Column的ellipsis关掉，否则会嵌套两层受到影响
+  if (property.primal_type === "object") {
+    formattedColumn.ellipsis = false;
+    // 给object自定义的render提供width
+    formattedColumn.fieldProps = {
+      ...(formattedColumn.fieldProps || {}),
+      width,
     };
   }
-  // console.log(JSON.stringify(defaultColumnType))
-  return defaultColumnType;
+
+  return formattedColumn;
 };
 
 const ZETable: React.FC<ZETableProps> = ({
@@ -371,7 +382,8 @@ const ZETable: React.FC<ZETableProps> = ({
                   properties,
                   exportToExcel != undefined,
                   showUnit,
-                  showSorter
+                  showSorter,
+                  defaultColWidth
                 )
               ),
             };
@@ -384,7 +396,8 @@ const ZETable: React.FC<ZETableProps> = ({
             properties,
             exportToExcel != undefined,
             showUnit,
-            showSorter
+            showSorter,
+            defaultColWidth
           );
         })
       : [];
@@ -396,12 +409,6 @@ const ZETable: React.FC<ZETableProps> = ({
       : 1;
     for (let i = 0; i < groupbyCount; i++) {
       columns[i].fixed = "left";
-
-      // TODO：为什么在这里还要设一遍defaultColWidth？为什么不统一设一下？
-      if (!columns[i].width) {
-        columns[i].width = defaultColWidth;
-      }
-
       // crosstable，只要第一个就行了
       if (canUseCrossTable(logicform)) {
         break;

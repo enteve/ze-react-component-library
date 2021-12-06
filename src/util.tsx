@@ -36,7 +36,6 @@ const { Option } = Select;
 const { Text, Paragraph } = Typography;
 
 import "./formatNumeral";
-import ZECard from "./ZECard/ZECard";
 
 /**
  * 相比zeroetp-api-sdk里面的findPropByName，多了对.号的predChain的支持
@@ -236,6 +235,7 @@ export const customValueTypes = (schema: SchemaType, config: any = {}) => ({
   },
   object: {
     render: (entity: any, props) => {
+      const width = (props?.fieldProps?.width || 200) - 16;
       let text: string;
       let isSingleEntity = true;
       let property: PropertyType;
@@ -256,19 +256,25 @@ export const customValueTypes = (schema: SchemaType, config: any = {}) => ({
         }
       }
 
-      const ellipsisedText = (
-        <Paragraph
-          ellipsis={{
-            rows: props?.fieldProps?.ellipsis?.row || 1,
-            expandable: false,
-            tooltip: text,
-          }}
-          style={{ margin: 0 }}
-        >
-          {text}
-        </Paragraph>
+      return (
+        <div style={{ display: "flex" }}>
+          <Paragraph
+            ellipsis={{
+              rows: props?.fieldProps?.ellipsis?.row || 1,
+              expandable: false,
+              tooltip: text,
+            }}
+            style={{
+              margin: 0,
+              width,
+              flexGrow: 1,
+              flexShrink: 0,
+            }}
+          >
+            {text}
+          </Paragraph>
+        </div>
       );
-      return ellipsisedText;
 
       // 下面解决方案不太成熟，先关了。
       // 如果用下面的话，上面的文字应该是ellipsis的，但是不弹出tooltip
