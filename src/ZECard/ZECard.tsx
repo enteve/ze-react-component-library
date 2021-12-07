@@ -72,7 +72,8 @@ const getDefaultRepresentation = (
     // 如果是categorical的，并且，用pie
     if (
       groupbyProp?.is_categorical &&
-      groupbyProp?.stats?.distincts?.length <= pieThreshold
+      Array.isArray(result.result) &&
+      result.result.length <= pieThreshold
     ) {
       return "pie";
     }
