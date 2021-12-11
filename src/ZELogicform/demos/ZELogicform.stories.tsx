@@ -58,7 +58,7 @@ export const VisualizerDisplay = () => (
   />
 );
 
-// 展示如果无中生有显示filter
+// 展示如何无中生有显示filter
 export const VisualizerWithFilter = () => {
   const [logicform, setLogicform] = useState<LogicformType>({
     schemaName: "销售流水",
@@ -100,4 +100,29 @@ export const VisualizerWithFilter = () => {
       badgeColor="black"
     />
   );
+};
+
+export const FilterInPreds = () => {
+  const [logicform, setLogicform] = useState<LogicformType>({
+    schemaName: "销售流水",
+    schema: "productsale",
+    preds: [
+      {
+        operator: "$sum",
+        pred: "销售额",
+        name: "总销售额",
+        query: {
+          日期: {
+            $gte: { $offset: { month: 0 }, day: 1 },
+            $lte: { $offset: { day: 0 } },
+          },
+          商品_分类: "组合",
+          平台: "天猫",
+        },
+      },
+    ],
+    groupby: "平台",
+  });
+
+  return <LogicFormVisualizer logicform={logicform} />;
 };

@@ -57,6 +57,13 @@ export const LogicFormVisualizer: React.FC<LogicFormVisualizerProps> = ({
     query: unnormalizeQuery(initLogicform.query || {}),
   };
 
+  // 有个逻辑，如果有preds且只有一个，且里面有query那么拿到外面去，这样可以绕过preds不显示的问题。
+  if (logicform.preds?.length === 1 && logicform.preds[0].query) {
+    if (!logicform.query) logicform.query = {};
+    logicform.query = { ...logicform.query, ...logicform.preds[0].query };
+    delete logicform.preds[0].query;
+  }
+
   if (!(display.schema === false)) {
     badges.push({
       color: "red",
