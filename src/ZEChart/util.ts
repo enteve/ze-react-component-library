@@ -2,10 +2,13 @@ import { PropertyType } from "zeroetp-api-sdk";
 import type { ZEChartProps } from "./ZEChart.types";
 import { useRef } from "react";
 import moment, { Moment } from "moment";
-import { drilldownLogicform, formatWithProperty } from "../util";
+import { drilldownLogicform, formatWithProperty, getFormatter } from "../util";
 
 export function useDrillDownDbClick(
-  props: Pick<ZEChartProps, "logicform" | "onChangeLogicform"> & { data: any, back: () => void }
+  props: Pick<ZEChartProps, "logicform" | "onChangeLogicform"> & {
+    data: any;
+    back: () => void;
+  }
 ) {
   const clickRef = useRef<Moment>();
   const { logicform, onChangeLogicform, data, back } = props;
@@ -52,12 +55,19 @@ export function chartTooltipFormatter(
   data.slice(0, 1).forEach((d) => {
     let itemTip = d.name ? `${d.name} <br />` : "";
     properties.forEach((property) => {
+      let unit: any = property.unit;
+      const formatter = getFormatter(property, d?.data?.[property.name]);
+      if (formatter) {
+        unit = `${formatter.prefix}${unit}`;
+      }
+
       itemTip = `${itemTip}${d?.marker}${property.name}
-      ${property.unit ? `(${property.unit})` : ""
-        } <span style="float:right;margin-left:20px;font-size:14px;color:#666;font-weight:900">${formatWithProperty(
-          property,
-          d?.data?.[property.name]
-        )}</span><br />`;
+      ${
+        unit ? `(${unit})` : ""
+      } <span style="float:right;margin-left:20px;font-size:14px;color:#666;font-weight:900">${formatWithProperty(
+        property,
+        d?.data?.[property.name]
+      )}</span><br />`;
     });
     res = `${res}${itemTip}`;
   });

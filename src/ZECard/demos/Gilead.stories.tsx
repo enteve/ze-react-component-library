@@ -24,35 +24,72 @@ export default {
   title: "Gilead",
 };
 
-export const MapCard = () => {
+// TO ADD TO TEST
+// 下面2个是测试UI formatters。以后放到统一的测试环境里去
+export const UIFormatters1 = () => {
   return (
     <ZECard
       logicform={{
         schema: "ddi_sales",
-        query: { 日期: "MTD" },
         operator: "$sum",
-        pred: "销量",
+        query: { TS_姓名: "汪文俊" },
+        pred: "salesQty",
       }}
-      visualizerProps={{
-        filters: {
-          产品_TA: {
-            support_all: true,
-            distincts: ["HIV", "HBV", "HCV"],
-          },
+    />
+  );
+};
+
+// 和上面为一组
+export const UIFormatters2 = () => {
+  return (
+    <ZECard
+      logicform={{
+        schema: "ddi_sales",
+        operator: "$sum",
+        pred: "salesQty",
+        query: {
+          ID: "080DFF37D6560834C2333415BDAC58",
         },
       }}
-      showRecommender
-      askMore={(question) => message.info(`ASK: ${question}`)}
-      mainContent={(logicform) => {
-        const momLF = getLogicformByTimeOffset(logicform, {
-          日期: { $offset: { month: -1 } },
-        });
-        return (
-          <>
-            <div>{JSON.stringify(logicform)}</div>
-            <div>{JSON.stringify(momLF)}</div>
-          </>
-        );
+    />
+  );
+};
+
+// 要保证每列数据的formatter都一致
+export const UIFormattersTable = () => {
+  return (
+    <ZECard
+      logicform={{
+        schema: "ddi_sales",
+        preds: [
+          {
+            name: "数量",
+            operator: "$sum",
+            pred: "salesQty",
+          },
+        ],
+        groupby: "TS",
+      }}
+    />
+  );
+};
+
+export const UIFormattersTable2 = () => {
+  return (
+    <ZECard
+      logicform={{
+        schema: "ddi_sales",
+        preds: [
+          {
+            name: "数量",
+            operator: "$sum",
+            pred: "salesQty",
+          },
+        ],
+        query: {
+          日期: "MTD",
+        },
+        groupby: "TS",
       }}
     />
   );
