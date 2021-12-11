@@ -163,9 +163,41 @@ export const valueEnumMapping = (property: PropertyType) => {
   return valueEnum;
 };
 
-export const formatWithProperty = (property: PropertyType, value: any) => {
+export const getFormatter = (property: PropertyType, value: number): any => {
+  // 单个的formatter优先。因为table模式下要决定单个formatter
   if (property.ui?.formatter) {
-    return numeral(value).format(property.ui?.formatter);
+    return {
+      formatter: property.ui?.formatter,
+      prefix: "",
+    };
+  }
+  if (property.ui?.formatters) {
+    const formatter = property.ui?.formatters.find((f) => {
+      let hit = true;
+
+      if (f.max && f.max <= value) {
+        hit = false;
+      }
+      if (f.min && value < f.min) {
+        hit = false;
+      }
+
+      return hit;
+    });
+    if (formatter) {
+      if (!formatter.prefix) formatter.prefix = "";
+      return formatter;
+    }
+  }
+
+  return null;
+};
+
+export const formatWithProperty = (property: PropertyType, value: any) => {
+  const formatter = getFormatter(property, value);
+
+  if (formatter) {
+    return numeral(value).format(formatter.formatter);
   }
 
   if (property.type === "percentage") {

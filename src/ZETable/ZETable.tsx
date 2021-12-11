@@ -28,6 +28,7 @@ import {
   valueTypeMapping,
   basicValueDisplay,
   drilldownLogicform,
+  getFormatter,
 } from "../util";
 
 import ZESchemaForm from "../ZESchemaForm";
@@ -146,8 +147,14 @@ const mapColumnItem = (
   };
 
   // unit
-  if (showUnit && property.unit)
-    defaultColumnType.title = `${defaultColumnType.title}(${property.unit})`;
+  if (showUnit && property.unit) {
+    let unit: any = property.unit;
+    const formatter = getFormatter(property, 0);
+    if (formatter) {
+      unit = `${formatter.prefix}${unit}`;
+    }
+    defaultColumnType.title = `${defaultColumnType.title}(${unit})`;
+  }
 
   // 以下是用来给createMode=list用的
   // formItemProps

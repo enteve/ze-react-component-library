@@ -19,7 +19,7 @@ import getPieOption from "./EChart/options/pie";
 import getLineOption from "./EChart/options/line";
 import getBarOption from "./EChart/options/bar";
 import { chartTooltipFormatter, formatChartOptionGrid } from "./util";
-import { formatWithProperty } from "../util";
+import { formatWithProperty, getFormatter } from "../util";
 import { Result } from "antd";
 
 const ZEChart: React.FC<ZEChartProps> = ({
@@ -110,6 +110,12 @@ const ZEChart: React.FC<ZEChartProps> = ({
     // 显示单位
     if (measurementProp?.unit) {
       option.xAxis.name = measurementProp?.unit;
+      if (measurementProp?.ui?.formatters) {
+        const formatter = getFormatter(measurementProp, 0);
+        if (formatter) {
+          option.xAxis.name = `${formatter.prefix}${option.xAxis.name}`;
+        }
+      }
 
       // feat: 单位不宜过长。每隔2位给个换行
       if (option.xAxis.name.length > 3) {

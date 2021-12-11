@@ -2,6 +2,7 @@ import { Statistic } from "antd";
 import React from "react";
 import numeral from "numeral";
 import { LogicformAPIResultType, LogicformType } from "zeroetp-api-sdk";
+import { getFormatter } from "../util";
 
 type Props = {
   logicform: LogicformType;
@@ -28,11 +29,12 @@ const ValueDisplayer: React.FC<Props> = ({ data }) => {
       precision = 0;
     }
 
-    if (firstColProp.ui?.formatter) {
+    let formatter = getFormatter(firstColProp, value);
+    if (formatter) {
       return (
         <Statistic
-          value={numeral(value).format(firstColProp.ui?.formatter)}
-          suffix={unit}
+          value={numeral(value).format(formatter.formatter)}
+          suffix={`${formatter.prefix}${unit}`}
         />
       );
     }
