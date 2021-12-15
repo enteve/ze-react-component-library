@@ -2,7 +2,7 @@
  * 这个控件通过接受Logicform，展示复杂结果
  */
 import { useRequest, useHistoryTravel } from "@umijs/hooks";
-import { Empty, Card, Divider, Result, Typography, Button } from "antd";
+import { Empty, Card, Divider, Result, Typography, Button, Space } from "antd";
 import { withErrorBoundary } from "react-error-boundary";
 import React from "react";
 import _ from "underscore";
@@ -14,7 +14,13 @@ import {
   LogicformType,
   PropertyType,
 } from "zeroetp-api-sdk";
-import { requestLogicform, requestRecommend } from "../request";
+import {
+  request,
+  requestLogicform,
+  requestRecommend,
+  requestPinToDashboard,
+  requestUnPinToDashboard,
+} from "../request";
 import ZEChart, { useDrillDownDbClick } from "../ZEChart";
 import ZEDescription from "../ZEDescription/ZEDescription";
 import { LogicFormVisualizer } from "../ZELogicform";
@@ -26,6 +32,7 @@ import RepresentationChanger from "./RepresentationChanger";
 import "./ZECard.less";
 import LogicFormTraveler from "./LogicFormTraveler";
 import { ErrorFallBack } from "../util";
+import PinHandler from "./PinHandler";
 
 const { Paragraph, Title } = Typography;
 
@@ -115,6 +122,8 @@ const ZECard: React.FC<ZECardProps> = ({
   compact = false,
   horizontalBarChart = false,
   pieThreshold,
+  pinable,
+  dashboardID,
 }) => {
   const {
     value: logicform,
@@ -274,18 +283,9 @@ const ZECard: React.FC<ZECardProps> = ({
   // 暂时只有带groupby的是支持RepresentationChanger的
   if (!extra && logicform.groupby) {
     extra = (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-        }}
-      >
+      <Space>
         {backLength > 0 && (
-          <div
-            style={{
-              marginRight: 10,
-            }}
-          >
+          <div>
             <LogicFormTraveler
               go={go}
               back={back}
@@ -302,7 +302,17 @@ const ZECard: React.FC<ZECardProps> = ({
             onChange={setRepresentation}
           />
         )}
-      </div>
+        {pinable && (
+          <PinHandler
+            dashboardID={dashboardID}
+            logicform={logicform}
+            representationType={finalRepresentation}
+            title={title}
+            onPin={requestPinToDashboard}
+            onUnPin={requestUnPinToDashboard}
+          />
+        )}
+      </Space>
     );
   }
 
