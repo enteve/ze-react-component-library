@@ -31,4 +31,6 @@ export type ZECardProps = {
   horizontalBarChart?: boolean; //是不是用横向的barchart
 
   pieThreshold?: number; // distincts数量小于多少自动用pie，默认为5
+  dashboardID?: string;
+  pinable?: boolean;
 };

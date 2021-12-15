@@ -17,6 +17,7 @@ export default {
 export const MapCard = () => {
   return (
     <ZECard
+      pinable
       chartProps={{
         option: {
           toolbox: {},
