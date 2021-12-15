@@ -1,6 +1,6 @@
 import { PropertyType } from "zeroetp-api-sdk";
 import type { ZEChartProps } from "./ZEChart.types";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import moment, { Moment } from "moment";
 import { drilldownLogicform, formatWithProperty, getFormatter } from "../util";
 
@@ -12,9 +12,13 @@ export function useDrillDownDbClick(
 ) {
   const clickRef = useRef<Moment>();
   const { logicform, onChangeLogicform, data, back } = props;
+  const [selectedItem, setSelectedItem] = useState<any>();
 
   const onDbClick = (item: any, triggerBack?: boolean) => {
     const current = moment();
+    if (item) {
+      setSelectedItem(item);
+    }
     if (
       !clickRef.current ||
       current.diff(clickRef.current, "millisecond") > 200 ||
@@ -25,6 +29,7 @@ export function useDrillDownDbClick(
       return;
     }
     if (triggerBack) {
+      setSelectedItem(undefined);
       back();
       return;
     }
@@ -32,6 +37,7 @@ export function useDrillDownDbClick(
       // 下钻
       const drilledLF = drilldownLogicform(logicform, data.schema, item);
       if (drilledLF) {
+        setSelectedItem(undefined);
         onChangeLogicform(drilledLF);
       }
     } else {
@@ -39,8 +45,7 @@ export function useDrillDownDbClick(
     }
     clickRef.current = current;
   };
-
-  return { onDbClick };
+  return { onDbClick, selectedItem, setSelectedItem };
 }
 
 export function chartTooltipFormatter(
@@ -62,12 +67,11 @@ export function chartTooltipFormatter(
       }
 
       itemTip = `${itemTip}${d?.marker}${property.name}
-      ${
-        unit ? `(${unit})` : ""
-      } <span style="float:right;margin-left:20px;font-size:14px;color:#666;font-weight:900">${formatWithProperty(
-        property,
-        d?.data?.[property.name]
-      )}</span><br />`;
+      ${unit ? `(${unit})` : ""
+        } <span style="float:right;margin-left:20px;font-size:14px;color:#666;font-weight:900">${formatWithProperty(
+          property,
+          d?.data?.[property.name]
+        )}</span><br />`;
     });
     res = `${res}${itemTip}`;
   });

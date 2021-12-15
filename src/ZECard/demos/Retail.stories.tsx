@@ -14,6 +14,28 @@ export default {
   title: "Retail",
 };
 
+export const ValueCard = () => {
+  return (
+    <ZECard
+      pinable
+      title="总销量"
+      chartProps={{
+        option: {
+          toolbox: {},
+        },
+      }}
+      logicform={{
+        schema: "sales",
+        pred: "销售量",
+        operator: "$sum",
+        query: {
+          日期: { $offset: { year: 0 } },
+        },
+      }}
+    />
+  );
+};
+
 export const MapCard = () => {
   return (
     <ZECard

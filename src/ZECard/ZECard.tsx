@@ -2,7 +2,16 @@
  * 这个控件通过接受Logicform，展示复杂结果
  */
 import { useRequest, useHistoryTravel } from "@umijs/hooks";
-import { Empty, Card, Divider, Result, Typography, Button, Space } from "antd";
+import {
+  Empty,
+  Card,
+  Divider,
+  Result,
+  Typography,
+  Button,
+  Space,
+  Tag,
+} from "antd";
 import { withErrorBoundary } from "react-error-boundary";
 import React from "react";
 import _ from "underscore";
@@ -15,7 +24,6 @@ import {
   PropertyType,
 } from "zeroetp-api-sdk";
 import {
-  request,
   requestLogicform,
   requestRecommend,
   requestPinToDashboard,
@@ -33,6 +41,7 @@ import "./ZECard.less";
 import LogicFormTraveler from "./LogicFormTraveler";
 import { ErrorFallBack } from "../util";
 import PinHandler from "./PinHandler";
+import GroupByMenu from "./GroupByMenu";
 
 const { Paragraph, Title } = Typography;
 
@@ -174,7 +183,7 @@ const ZECard: React.FC<ZECardProps> = ({
   );
   const [representation, setRepresentation] = useState<string>(repr);
 
-  const { onDbClick } = useDrillDownDbClick({
+  const { onDbClick, selectedItem, setSelectedItem } = useDrillDownDbClick({
     logicform,
     onChangeLogicform: setLogicform,
     data,
@@ -280,10 +289,20 @@ const ZECard: React.FC<ZECardProps> = ({
   }
 
   // extra
-  // 暂时只有带groupby的是支持RepresentationChanger的
-  if (!extra && logicform.groupby) {
+  if (!extra) {
     extra = (
       <Space>
+        {(finalRepresentation === "value" || selectedItem) && (
+          <GroupByMenu
+            logicform={logicform}
+            result={data}
+            onChangeLogicform={(newLF) => {
+              setLogicform(newLF);
+              setSelectedItem(undefined);
+            }}
+            selectedItem={selectedItem}
+          />
+        )}
         {backLength > 0 && (
           <div>
             <LogicFormTraveler
@@ -295,8 +314,8 @@ const ZECard: React.FC<ZECardProps> = ({
             />
           </div>
         )}
-        {/* 有mainContent的话，没有RepresentationChanger */}
-        {!mainContent && (
+        {/* 有mainContent的话，没有RepresentationChanger,暂时只有带groupby的是支持RepresentationChanger的 */}
+        {!mainContent && logicform.groupby && (
           <RepresentationChanger
             representationType={finalRepresentation}
             onChange={setRepresentation}
@@ -356,7 +375,7 @@ const ZECard: React.FC<ZECardProps> = ({
       bodyStyle={bodyStyle}
       headStyle={headStyle}
     >
-      <div>
+      <div style={{ position: "relative" }}>
         <LogicFormVisualizer
           {...visualizerProps}
           logicform={
@@ -371,6 +390,18 @@ const ZECard: React.FC<ZECardProps> = ({
             });
           }}
         />
+        <div style={{ position: "absolute", left: 0, bottom: -24 }}>
+          {selectedItem && (
+            <Tag
+              closable
+              onClose={() => {
+                setSelectedItem(undefined);
+              }}
+            >
+              已选中：{selectedItem._id}
+            </Tag>
+          )}
+        </div>
       </div>
       {warning?.length > 0 && (
         <div style={{ marginTop: compact ? 5 : 10 }}>
