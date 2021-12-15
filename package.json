@@ -1,6 +1,6 @@
 {
   "name": "ze-react-component-library",
-  "version": "1.0.131",
+  "version": "1.0.133",
   "main": "lib/index.js",
   "module": "es/index.js",
   "files": [
@@ -46,6 +46,8 @@
     "@ant-design/pro-layout": ">=6.19.4",
     "@ant-design/pro-provider": ">=1.4.13",
     "@ant-design/pro-table": ">=2.40.0",
+    "@antv/s2": ">=1.2.0",
+    "@antv/s2-react": ">=1.2.0",
     "@umijs/hooks": ">1.9.0",
     "antd": ">=4.15.0",
     "echarts": ">=5.2.2",
@@ -68,6 +70,8 @@
     "@ant-design/pro-layout": "^6.19.4",
     "@ant-design/pro-provider": "^1.4.13",
     "@ant-design/pro-table": "^2.40.0",
+    "@antv/s2": "^1.2.0",
+    "@antv/s2-react": "^1.2.0",
     "@babel/core": "^7.12.10",
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-node-resolve": "^11.0.1",
