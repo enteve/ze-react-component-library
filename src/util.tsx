@@ -726,6 +726,35 @@ export const drilldownLogicform = (
   return null;
 };
 
+export function drillDownPropForLogicform(schema: SchemaType) {
+  if (!schema) return []; // 如果没有schema，代表logicform result报错了
+  const propNames: string[] = [];
+  schema.properties.forEach((property) => {
+    if (property.is_categorical) {
+      propNames.push(property.name);
+    } else if (property.type === "object" && property.schema) {
+      propNames.push(property.name);
+
+      // 这里要获取其他schema的属性！
+      property.schema.properties.forEach((refProperty: PropertyType) => {
+        if (refProperty.is_categorical) {
+          propNames.push(`${property.name}_${refProperty.name}`);
+        }
+        if (refProperty.type === "object") {
+          if (refProperty.schema && refProperty.schema.hierarchy) {
+            refProperty.schema.hierarchy.forEach((h: any) => {
+              propNames.push(`${property.name}_${refProperty.name}(${h.name})`);
+            });
+          } else {
+            propNames.push(`${property.name}_${refProperty.name}`);
+          }
+        }
+      });
+    }
+  });
+  return propNames;
+}
+
 // 主要是把chained的query给弄回来，方便显示和做filter change
 // 目前只做了一层chain的unnormalize，以后遇到再说
 export const unnormalizeQuery = (query: any) => {
