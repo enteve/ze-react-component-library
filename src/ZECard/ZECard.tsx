@@ -2,7 +2,16 @@
  * 这个控件通过接受Logicform，展示复杂结果
  */
 import { useRequest, useHistoryTravel } from "@umijs/hooks";
-import { Empty, Card, Divider, Result, Typography, Button } from "antd";
+import {
+  Empty,
+  Card,
+  Divider,
+  Result,
+  Typography,
+  Button,
+  Space,
+  Tag,
+} from "antd";
 import { withErrorBoundary } from "react-error-boundary";
 import React from "react";
 import _ from "underscore";
@@ -14,7 +23,12 @@ import {
   LogicformType,
   PropertyType,
 } from "zeroetp-api-sdk";
-import { requestLogicform, requestRecommend } from "../request";
+import {
+  requestLogicform,
+  requestRecommend,
+  requestPinToDashboard,
+  requestUnPinToDashboard,
+} from "../request";
 import ZEChart, { useDrillDownDbClick } from "../ZEChart";
 import ZEDescription from "../ZEDescription/ZEDescription";
 import { LogicFormVisualizer } from "../ZELogicform";
@@ -26,6 +40,8 @@ import RepresentationChanger from "./RepresentationChanger";
 import "./ZECard.less";
 import LogicFormTraveler from "./LogicFormTraveler";
 import { ErrorFallBack } from "../util";
+import PinHandler from "./PinHandler";
+import GroupByMenu from "./GroupByMenu";
 
 const { Paragraph, Title } = Typography;
 
@@ -115,6 +131,8 @@ const ZECard: React.FC<ZECardProps> = ({
   compact = false,
   horizontalBarChart = false,
   pieThreshold,
+  pinable,
+  dashboardID,
 }) => {
   const {
     value: logicform,
@@ -165,7 +183,7 @@ const ZECard: React.FC<ZECardProps> = ({
   );
   const [representation, setRepresentation] = useState<string>(repr);
 
-  const { onDbClick } = useDrillDownDbClick({
+  const { onDbClick, selectedItem, setSelectedItem } = useDrillDownDbClick({
     logicform,
     onChangeLogicform: setLogicform,
     data,
@@ -271,21 +289,22 @@ const ZECard: React.FC<ZECardProps> = ({
   }
 
   // extra
-  // 暂时只有带groupby的是支持RepresentationChanger的
-  if (!extra && logicform.groupby) {
+  if (!extra) {
     extra = (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-        }}
-      >
-        {backLength > 0 && (
-          <div
-            style={{
-              marginRight: 10,
+      <Space>
+        {(finalRepresentation === "value" || selectedItem) && (
+          <GroupByMenu
+            logicform={logicform}
+            result={data}
+            onChangeLogicform={(newLF) => {
+              setLogicform(newLF);
+              setSelectedItem(undefined);
             }}
-          >
+            selectedItem={selectedItem}
+          />
+        )}
+        {backLength > 0 && (
+          <div>
             <LogicFormTraveler
               go={go}
               back={back}
@@ -295,14 +314,24 @@ const ZECard: React.FC<ZECardProps> = ({
             />
           </div>
         )}
-        {/* 有mainContent的话，没有RepresentationChanger */}
-        {!mainContent && (
+        {/* 有mainContent的话，没有RepresentationChanger,暂时只有带groupby的是支持RepresentationChanger的 */}
+        {!mainContent && logicform.groupby && (
           <RepresentationChanger
             representationType={finalRepresentation}
             onChange={setRepresentation}
           />
         )}
-      </div>
+        {pinable && (
+          <PinHandler
+            dashboardID={dashboardID}
+            logicform={logicform}
+            representationType={finalRepresentation}
+            title={title}
+            onPin={requestPinToDashboard}
+            onUnPin={requestUnPinToDashboard}
+          />
+        )}
+      </Space>
     );
   }
 
@@ -346,7 +375,7 @@ const ZECard: React.FC<ZECardProps> = ({
       bodyStyle={bodyStyle}
       headStyle={headStyle}
     >
-      <div>
+      <div style={{ position: "relative" }}>
         <LogicFormVisualizer
           {...visualizerProps}
           logicform={
@@ -361,6 +390,18 @@ const ZECard: React.FC<ZECardProps> = ({
             });
           }}
         />
+        <div style={{ position: "absolute", left: 0, bottom: -24 }}>
+          {selectedItem && (
+            <Tag
+              closable
+              onClose={() => {
+                setSelectedItem(undefined);
+              }}
+            >
+              已选中：{selectedItem._id}
+            </Tag>
+          )}
+        </div>
       </div>
       {warning?.length > 0 && (
         <div style={{ marginTop: compact ? 5 : 10 }}>

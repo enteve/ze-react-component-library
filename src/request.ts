@@ -89,3 +89,29 @@ export async function requestRecommend(logicform: LogicformType): Promise<any> {
   );
   return ret;
 }
+
+export async function requestPinToDashboard(params: {
+  title: string;
+  representationType: string;
+  logicform?: string;
+  question?: string;
+}) {
+  const ret = await request(
+    commonRequest("/dashboard", {
+      method: "POST",
+      data: {
+        question: params
+      },
+    })
+  );
+  return ret;
+}
+
+export async function requestUnPinToDashboard(id: string) {
+  const ret = await request(
+    commonRequest(`/dashboard/${id}`, {
+      method: "DELETE",
+    })
+  );
+  return ret;
+}
