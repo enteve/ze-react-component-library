@@ -13,7 +13,7 @@ import {
   Tag,
 } from "antd";
 import { withErrorBoundary } from "react-error-boundary";
-import React from "react";
+import React, { useEffect } from "react";
 import _ from "underscore";
 import { useState } from "react";
 import {
@@ -168,6 +168,7 @@ const ZECard: React.FC<ZECardProps> = ({
       },
     }
   );
+
   const { data: recommends } = useRequest(
     () => {
       if (!initialLogicform || !showRecommender) {
@@ -365,6 +366,10 @@ const ZECard: React.FC<ZECardProps> = ({
       </Typography>
     );
   }
+
+  useEffect(() => {
+    setRepresentation(defaultRepresentation);
+  }, [defaultRepresentation]);
 
   return (
     <Card
