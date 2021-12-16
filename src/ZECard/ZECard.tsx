@@ -211,8 +211,12 @@ const ZECard: React.FC<ZECardProps> = ({
   );
   let finalRepresentation = representation || defaultRepresentation;
 
-  if (data?.result instanceof Array && finalRepresentation === "value") {
-    finalRepresentation = defaultRepresentation;
+  if (data?.result instanceof Array) {
+    if (finalRepresentation === "value" && defaultRepresentation !== "value") {
+      finalRepresentation = defaultRepresentation;
+    }
+  } else {
+    finalRepresentation = "value";
   }
 
   let component: any;

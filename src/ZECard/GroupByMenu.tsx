@@ -60,21 +60,21 @@ const getNewLogicform = ({
     ];
   }
   if (selectedItem) {
-    if(!newLogicForm.query){
+    if (!newLogicForm.query) {
       newLogicForm.query = {};
     }
-    if(groupByProperty){
+    if (groupByProperty) {
       newLogicForm.query = {
         ...newLogicForm.query,
-        [groupByProperty]: selectedItem._id
-      }
+        [groupByProperty]: selectedItem._id,
+      };
     }
     const newLF = drilldownLogicform(logicform, scheme, selectedItem);
     if (newLF) {
       newLogicForm.query = {
         ...newLogicForm.query,
-        ...(newLF.query || {})
-      }
+        ...(newLF.query || {}),
+      };
     }
   }
   return newLogicForm;
@@ -99,7 +99,9 @@ const GroupByMenu: FC<GroupByMenuProps> = ({
   }
 
   let drillDownMenus: React.ReactNode[] = [];
-  const props = drillDownPropForLogicform(result.schema);
+  const props = result?.schema
+    ? drillDownPropForLogicform(result.schema)
+    : undefined;
 
   if (props && props.length > 0) {
     drillDownMenus = props.map((propertyName: string) => (
