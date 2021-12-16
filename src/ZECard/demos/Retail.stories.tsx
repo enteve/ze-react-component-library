@@ -41,6 +41,7 @@ export const MapCard = () => {
   return (
     <ZECard
       pinable
+      enableGroupByMenu
       chartProps={{
         option: {
           toolbox: {},
@@ -103,6 +104,7 @@ export const TableControlsSync = () => {
 export const BarCard = () => {
   return (
     <ZECard
+      enableGroupByMenu
       representation="bar"
       title="今年各品类销量"
       chartProps={{
@@ -299,6 +301,7 @@ export const CardSwitcher = () => {
 export const ByTimeWindow = () => {
   return (
     <ZECard
+      enableGroupByMenu
       title="今年各产品销量"
       logicform={{
         schema: "sales",

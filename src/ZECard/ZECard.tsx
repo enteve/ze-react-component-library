@@ -184,13 +184,13 @@ const ZECard: React.FC<ZECardProps> = ({
     }
   );
   const [representation, setRepresentation] = useState<string>(repr);
+  const [selectedItem, setSelectedItem] = useState<any>();
 
-  const { onDbClick, selectedItem, setSelectedItem } = useDrillDownDbClick({
+  const { onDbClick } = useDrillDownDbClick({
     logicform,
     onChangeLogicform: setLogicform,
     data,
     back,
-    enableSelectedItem: enableGroupByMenu,
   });
 
   const onRow = (record) => {
@@ -209,7 +209,11 @@ const ZECard: React.FC<ZECardProps> = ({
     data,
     pieThreshold
   );
-  const finalRepresentation = representation || defaultRepresentation;
+  let finalRepresentation = representation || defaultRepresentation;
+
+  if (data?.result instanceof Array && finalRepresentation === "value") {
+    finalRepresentation = defaultRepresentation;
+  }
 
   let component: any;
   if (mainContent && data?.logicform) {
@@ -267,6 +271,7 @@ const ZECard: React.FC<ZECardProps> = ({
           result={data}
           onChangeLogicform={setLogicform}
           onDbClick={onDbClick}
+          onItemSelect={enableGroupByMenu ? setSelectedItem : undefined}
           {...chartProps}
         />
       );
@@ -382,10 +387,6 @@ const ZECard: React.FC<ZECardProps> = ({
     );
   }
 
-  useEffect(() => {
-    setRepresentation(defaultRepresentation);
-  }, [defaultRepresentation]);
-
   return (
     <Card
       size={size}
@@ -395,34 +396,20 @@ const ZECard: React.FC<ZECardProps> = ({
       bodyStyle={bodyStyle}
       headStyle={headStyle}
     >
-      <div style={{ position: "relative", paddingBottom: 24 }}>
-        <LogicFormVisualizer
-          {...visualizerProps}
-          logicform={
-            data?.logicform
-              ? { ...data.logicform, schemaName: data.schema.name }
-              : logicform
-          }
-          onQueryChange={(query) => {
-            setLogicform({
-              ...logicform,
-              query,
-            });
-          }}
-        />
-        <div style={{ position: "absolute", left: 0, bottom: 0 }}>
-          {selectedItem && (
-            <Tag
-              closable
-              onClose={() => {
-                setSelectedItem(undefined);
-              }}
-            >
-              已选中：{selectedItem._id}
-            </Tag>
-          )}
-        </div>
-      </div>
+      <LogicFormVisualizer
+        {...visualizerProps}
+        logicform={
+          data?.logicform
+            ? { ...data.logicform, schemaName: data.schema.name }
+            : logicform
+        }
+        onQueryChange={(query) => {
+          setLogicform({
+            ...logicform,
+            query,
+          });
+        }}
+      />
       {warning?.length > 0 && (
         <div style={{ marginTop: compact ? 5 : 10 }}>
           <ExclamationCircleOutlined className="warningIcon" />

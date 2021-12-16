@@ -1,6 +1,6 @@
 import { PropertyType } from "zeroetp-api-sdk";
 import type { ZEChartProps } from "./ZEChart.types";
-import { useRef, useState, useCallback } from "react";
+import { useRef, useCallback } from "react";
 import moment, { Moment } from "moment";
 import { drilldownLogicform, formatWithProperty, getFormatter } from "../util";
 
@@ -8,18 +8,13 @@ export function useDrillDownDbClick(
   props: Pick<ZEChartProps, "logicform" | "onChangeLogicform"> & {
     data: any;
     back: () => void;
-    enableSelectedItem?: boolean;
   }
 ) {
   const clickRef = useRef<Moment>();
-  const { logicform, onChangeLogicform, data, back, enableSelectedItem } = props;
-  const [selectedItem, setSelectedItem] = useState<any>();
+  const { logicform, onChangeLogicform, data, back } = props;
 
   const onDbClick = useCallback((item: any, triggerBack?: boolean) => {
     const current = moment();
-    if (item && enableSelectedItem) {
-      setSelectedItem(item);
-    }
     if (
       !clickRef.current ||
       current.diff(clickRef.current, "millisecond") > 200 ||
@@ -30,7 +25,6 @@ export function useDrillDownDbClick(
       return;
     }
     if (triggerBack) {
-      enableSelectedItem && setSelectedItem(undefined);
       back();
       return;
     }
@@ -38,16 +32,15 @@ export function useDrillDownDbClick(
       // 下钻
       const drilledLF = drilldownLogicform(logicform, data.schema, item);
       if (drilledLF) {
-        enableSelectedItem && setSelectedItem(undefined);
         onChangeLogicform(drilledLF);
       }
     } else {
       console.error("item不存在");
     }
     clickRef.current = current;
-  }, [JSON.stringify({ data, logicform, enableSelectedItem }), back, onChangeLogicform]);
+  }, [JSON.stringify({ data, logicform }), back, onChangeLogicform]);
 
-  return { onDbClick, selectedItem, setSelectedItem };
+  return { onDbClick };
 }
 
 export function chartTooltipFormatter(
