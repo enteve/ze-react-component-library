@@ -1,5 +1,5 @@
 // Generated with util/create-component.js
-import React from "react";
+import React, { useMemo } from "react";
 import _ from "underscore";
 import merge from "deepmerge";
 import { ZEChartProps } from "./ZEChart.types";
@@ -44,14 +44,17 @@ const ZEChart: React.FC<ZEChartProps> = ({
       refreshDeps: [logicform, result],
     }
   );
-  const chartEventDict: Record<string, Function> = {
-    click: (params: any) => {
-      params?.event?.stop("click");
-      const { dataIndex } = params;
-      const item = data.result[dataIndex];
-      onDbClick?.(item);
-    },
-  };
+  
+  const chartEventDict: Record<string, Function> = useMemo(() => {
+    return {
+      click: (params: any) => {
+        params?.event?.stop("click");
+        const { dataIndex } = params;
+        const item = data.result[dataIndex];
+        onDbClick?.(item);
+      },
+    };
+  }, [onDbClick, data]);
 
   let option: any = {};
   const userOption = JSON.parse(JSON.stringify(inputOption));

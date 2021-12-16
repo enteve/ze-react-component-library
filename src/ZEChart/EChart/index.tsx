@@ -1,7 +1,7 @@
 /**
  * 单纯的EChart的Wrapper
  */
-import React, { useState, useEffect, useRef } from "react";
+import React, { memo } from "react";
 import ReactECharts from "echarts-for-react";
 import _ from "underscore";
 interface Props {
@@ -14,52 +14,29 @@ interface Props {
 
 const CHART_MAX_HEIGHT = 400;
 
-const EChart: React.FC<Props> = ({
-  option,
-  width,
-  style = {},
-  ref,
-  eventsDict = {},
-}) => {
-  const mountRef = useRef<boolean>(false);
-  // 之所以要用一个trueOption，然后在useEffect里面用timeout去改option，是因为这样可以显示图表的change动画。不然第一次初始化数据的时候直接显示图表，没有动画
-  const [trueOption, setTrueOption] = useState({});
-  const defaultOption = {
-    toolbox: {
-      feature: {
-        saveAsImage: {},
+const EChart: React.FC<Props> = memo(
+  ({ option, width, style = {}, ref, eventsDict = {} }) => {
+    const defaultOption = {
+      toolbox: {
+        feature: {
+          saveAsImage: {},
+        },
       },
-    },
-  };
-
-  useEffect(() => {
-    setTimeout(() => {
-      if (mountRef.current) {
-        setTrueOption(option);
-      }
-    }, 100);
-  }, [JSON.stringify(option)]);
-
-  useEffect(() => {
-    mountRef.current = true;
-    return () => {
-      mountRef.current = false;
     };
-  }, []);
-
-  return (
-    <ReactECharts
-      ref={ref}
-      style={{ height: _.min([width / 1.25, CHART_MAX_HEIGHT]), ...style }}
-      option={{ ...defaultOption, ...trueOption }}
-      notMerge={true}
-      lazyUpdate={true}
-      onEvents={eventsDict}
-      // onChartReady={this.onChartReadyCallback}
-      // opts={}
-    />
-  );
-};
+    return (
+      <ReactECharts
+        ref={ref}
+        style={{ height: _.min([width / 1.25, CHART_MAX_HEIGHT]), ...style }}
+        option={{ ...defaultOption, ...option }}
+        notMerge={true}
+        lazyUpdate={true}
+        onEvents={eventsDict}
+        // onChartReady={this.onChartReadyCallback}
+        // opts={}
+      />
+    );
+  }
+);
 
 export default EChart;
 

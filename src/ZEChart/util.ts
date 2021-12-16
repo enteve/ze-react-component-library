@@ -1,6 +1,6 @@
 import { PropertyType } from "zeroetp-api-sdk";
 import type { ZEChartProps } from "./ZEChart.types";
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback } from "react";
 import moment, { Moment } from "moment";
 import { drilldownLogicform, formatWithProperty, getFormatter } from "../util";
 
@@ -14,7 +14,7 @@ export function useDrillDownDbClick(
   const { logicform, onChangeLogicform, data, back } = props;
   const [selectedItem, setSelectedItem] = useState<any>();
 
-  const onDbClick = (item: any, triggerBack?: boolean) => {
+  const onDbClick = useCallback((item: any, triggerBack?: boolean) => {
     const current = moment();
     if (item) {
       setSelectedItem(item);
@@ -44,7 +44,8 @@ export function useDrillDownDbClick(
       console.error("item不存在");
     }
     clickRef.current = current;
-  };
+  }, [JSON.stringify({ data, logicform }), back, onChangeLogicform]);
+
   return { onDbClick, selectedItem, setSelectedItem };
 }
 
