@@ -18,6 +18,7 @@ export const ValueCard = () => {
   return (
     <ZECard
       pinable
+      enableGroupByMenu
       title="总销量"
       chartProps={{
         option: {

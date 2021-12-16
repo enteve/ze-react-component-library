@@ -33,4 +33,5 @@ export type ZECardProps = {
   pieThreshold?: number; // distincts数量小于多少自动用pie，默认为5
   dashboardID?: string;
   pinable?: boolean;
+  enableGroupByMenu?: boolean;
 };
