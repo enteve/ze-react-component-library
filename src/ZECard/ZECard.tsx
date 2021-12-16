@@ -133,6 +133,7 @@ const ZECard: React.FC<ZECardProps> = ({
   pieThreshold,
   pinable,
   dashboardID,
+  enableGroupByMenu,
 }) => {
   const {
     value: logicform,
@@ -189,6 +190,7 @@ const ZECard: React.FC<ZECardProps> = ({
     onChangeLogicform: setLogicform,
     data,
     back,
+    enableSelectedItem: enableGroupByMenu,
   });
 
   const onRow = (record) => {
@@ -293,17 +295,18 @@ const ZECard: React.FC<ZECardProps> = ({
   if (!extra) {
     extra = (
       <Space>
-        {(finalRepresentation === "value" || selectedItem) && (
-          <GroupByMenu
-            logicform={logicform}
-            result={data}
-            onChangeLogicform={(newLF) => {
-              setLogicform(newLF);
-              setSelectedItem(undefined);
-            }}
-            selectedItem={selectedItem}
-          />
-        )}
+        {(finalRepresentation === "value" || selectedItem) &&
+          enableGroupByMenu && (
+            <GroupByMenu
+              logicform={logicform}
+              result={data}
+              onChangeLogicform={(newLF) => {
+                setLogicform(newLF);
+                setSelectedItem(undefined);
+              }}
+              selectedItem={selectedItem}
+            />
+          )}
         {backLength > 0 && (
           <div>
             <LogicFormTraveler

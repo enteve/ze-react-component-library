@@ -8,15 +8,16 @@ export function useDrillDownDbClick(
   props: Pick<ZEChartProps, "logicform" | "onChangeLogicform"> & {
     data: any;
     back: () => void;
+    enableSelectedItem?: boolean;
   }
 ) {
   const clickRef = useRef<Moment>();
-  const { logicform, onChangeLogicform, data, back } = props;
+  const { logicform, onChangeLogicform, data, back, enableSelectedItem } = props;
   const [selectedItem, setSelectedItem] = useState<any>();
 
   const onDbClick = useCallback((item: any, triggerBack?: boolean) => {
     const current = moment();
-    if (item) {
+    if (item && enableSelectedItem) {
       setSelectedItem(item);
     }
     if (
@@ -29,7 +30,7 @@ export function useDrillDownDbClick(
       return;
     }
     if (triggerBack) {
-      setSelectedItem(undefined);
+      enableSelectedItem && setSelectedItem(undefined);
       back();
       return;
     }
@@ -37,14 +38,14 @@ export function useDrillDownDbClick(
       // 下钻
       const drilledLF = drilldownLogicform(logicform, data.schema, item);
       if (drilledLF) {
-        setSelectedItem(undefined);
+        enableSelectedItem && setSelectedItem(undefined);
         onChangeLogicform(drilledLF);
       }
     } else {
       console.error("item不存在");
     }
     clickRef.current = current;
-  }, [JSON.stringify({ data, logicform }), back, onChangeLogicform]);
+  }, [JSON.stringify({ data, logicform, enableSelectedItem }), back, onChangeLogicform]);
 
   return { onDbClick, selectedItem, setSelectedItem };
 }
