@@ -307,9 +307,18 @@ const ZECard: React.FC<ZECardProps> = ({
         {backLength > 0 && (
           <div>
             <LogicFormTraveler
-              go={go}
-              back={back}
-              forward={forward}
+              go={(step) => {
+                go(step);
+                setSelectedItem(undefined);
+              }}
+              back={() => {
+                back();
+                setSelectedItem(undefined);
+              }}
+              forward={() => {
+                forward();
+                setSelectedItem(undefined);
+              }}
               backLength={backLength}
               forwardLength={forwardLength}
             />
@@ -319,7 +328,10 @@ const ZECard: React.FC<ZECardProps> = ({
         {!mainContent && logicform.groupby && (
           <RepresentationChanger
             representationType={finalRepresentation}
-            onChange={setRepresentation}
+            onChange={(v) => {
+              setRepresentation(v);
+              setSelectedItem(undefined);
+            }}
           />
         )}
         {pinable && (
@@ -380,7 +392,7 @@ const ZECard: React.FC<ZECardProps> = ({
       bodyStyle={bodyStyle}
       headStyle={headStyle}
     >
-      <div style={{ position: "relative" }}>
+      <div style={{ position: "relative", paddingBottom: 24 }}>
         <LogicFormVisualizer
           {...visualizerProps}
           logicform={
@@ -395,7 +407,7 @@ const ZECard: React.FC<ZECardProps> = ({
             });
           }}
         />
-        <div style={{ position: "absolute", left: 0, bottom: -24 }}>
+        <div style={{ position: "absolute", left: 0, bottom: 0 }}>
           {selectedItem && (
             <Tag
               closable
