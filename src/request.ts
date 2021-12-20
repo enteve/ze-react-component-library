@@ -115,3 +115,23 @@ export async function requestUnPinToDashboard(id: string) {
   );
   return ret;
 }
+
+export async function requestSuggest(s: string) {
+  const ret = await request(commonRequest(`/suggest?s=${encodeURIComponent(s)}`));
+  return ret;
+}
+
+export async function requestSuggestByVoice(formData: FormData) {
+  const ret = await request(commonRequest('/nlq/voice', {
+    method: "POST",
+    data: formData
+  }));
+  return ret;
+}
+
+
+// 获取微信小程序端的问答
+export async function requestPollingMicrophoneText() {
+  const ret = await request(commonRequest(`/nlq/microphoneQuestion`));
+  return ret;
+}
