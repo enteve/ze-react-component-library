@@ -7,6 +7,7 @@ export { default as ZEChart } from "./ZEChart";
 export type { ZEChartProps } from "./ZEChart/ZEChart.types";
 export { default as ZEAsk } from "./ZEAsk";
 export { default as ZESchemaForm } from "./ZESchemaForm";
+export { default as ZESchemaEditor } from "./ZESchemaEditor";
 export type {
   ZESchemaFormColumnType,
   ZESchemaFormProps,
@@ -15,8 +16,8 @@ export { default as ZELogicform, LogicFormVisualizer } from "./ZELogicform";
 export type { ZELogicformProps } from "./ZELogicform/ZELogicform.types";
 export { default as ZELogicformEditor } from "./ZELogicformEditor";
 export type { ZELogicformEditorProps } from "./ZELogicformEditor/ZELogicformEditor.types";
-export type { ZESearchBarProps } from './ZESearchBar';
-export { default as ZESearchBar } from './ZESearchBar';
+export type { ZESearchBarProps } from "./ZESearchBar";
+export { default as ZESearchBar } from "./ZESearchBar";
 
 /* ---------------------------------- utils --------------------------------- */
 export { getFormatter } from "./util";
