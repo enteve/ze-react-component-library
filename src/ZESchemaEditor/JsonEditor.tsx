@@ -164,20 +164,9 @@ const propertyTemplate = {
   type: null,
   is_name: false,
   is_categorical: false,
-  ref: null,
-  unit: null,
   constraints: {
     required: true,
-    enum: [],
-  },
-  ui: {
-    formatter: null,
-    formatters: [
-      {
-        formatter: null,
-      },
-    ],
-  },
+  }
 };
 
 const hierarchyTemplate = {
@@ -196,7 +185,6 @@ export const schemaTemplate = {
   use_db_date_as_mtd: false,
   use_view: false,
   properties: [propertyTemplate],
-  hierarchy: [hierarchyTemplate],
 };
 
 const JsonEditor: FC<JsonEditorProps> = ({
@@ -222,7 +210,7 @@ const JsonEditor: FC<JsonEditorProps> = ({
       editorRef.current = new JSONEditor(
         containerRef.current,
         {
-          mode: "code",
+          mode: "tree",
           // 传入modes可开启模式切换
           modes,
           schema: getSchema(json),
