@@ -31,9 +31,6 @@ const ZESchemaEditor: React.FC = () => {
     setMode("edit");
     setDrawerVisible(false);
     setEditingRecord(null);
-    if (editorRef.current) {
-      editorRef.current.setMode("tree");
-    }
   };
 
   const onFinish = async () => {
@@ -144,7 +141,7 @@ const ZESchemaEditor: React.FC = () => {
 
   useEffect(() => {
     if (editorRef.current && drawerVisible) {
-      editorRef.current.setMode("code");
+      editorRef.current.setMode("tree");
     }
   }, [drawerVisible]);
 
