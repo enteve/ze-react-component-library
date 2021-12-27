@@ -203,7 +203,7 @@ const JsonEditor: FC<JsonEditorProps> = ({
       editorRef.current.setSchema(getSchema(json));
       editorRef.current.set(json || { ...schemaTemplate, type });
     }
-  }, [json]);
+  }, [json, type]);
 
   useEffect(() => {
     if (containerRef.current) {
