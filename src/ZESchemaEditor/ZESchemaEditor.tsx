@@ -88,10 +88,6 @@ const ZESchemaEditor: React.FC = () => {
       dataIndex: "type",
     },
     {
-      title: "syno",
-      dataIndex: "syno",
-    },
-    {
       title: "description",
       dataIndex: "description",
     },
