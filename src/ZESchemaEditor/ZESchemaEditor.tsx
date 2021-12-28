@@ -88,6 +88,14 @@ const ZESchemaEditor: React.FC = () => {
       dataIndex: "type",
     },
     {
+      title: "syno",
+      dataIndex: "syno",
+      render: (text, record) => {
+        const syno: string[] = record?.syno || [];
+        return syno.length > 0 ? syno.join(", ") : "-";
+      },
+    },
+    {
       title: "description",
       dataIndex: "description",
     },
