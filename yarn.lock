@@ -290,19 +290,19 @@
     "@antv/util" "^2.0.9"
     tslib "^2.0.3"
 
-"@antv/s2-react@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.npmjs.org/@antv/s2-react/-/s2-react-1.2.0.tgz#469b2c9759bfe8124e57bb3dee2e996c26ef755a"
-  integrity sha512-/OKx33gVnU836OmGKFLhruiJBXFL9QzM2d8LXlBGSQsP5ZkuOf2a3Ma12IDcBiCK6J4avq+PbrKkYGz40YrZoQ==
+"@antv/s2-react@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.npmjs.org/@antv/s2-react/-/s2-react-1.4.0.tgz#b148a1c212d1fdf9eb1c695b5f49e701d64cd674"
+  integrity sha512-yNoVXWWdng4ey/bTKk+PVrkKDyl87fdOorEczKGKgCXYqsV4CGOMaQ1XT1svCz2cx5OOKiK+oEKSH5sDJGJVNA==
   dependencies:
     classnames "^2.3.1"
     lodash "^4.17.21"
     react-beautiful-dnd "^13.1.0"
 
-"@antv/s2@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.npmjs.org/@antv/s2/-/s2-1.2.0.tgz#10a17450f510ce4d891715f75340b734b27ca92d"
-  integrity sha512-oBw1YnjmD/oGKlE/1OU+xZKBYCfNqUJD+zU/M2PQKcSQCLFbBwEyRBRqWNIaWD4ZBqV3x+BXkr1dyW4ulXlJ8w==
+"@antv/s2@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.npmjs.org/@antv/s2/-/s2-1.4.0.tgz#d8bcdcf34f4006a27f7f2ca3c8e2eeb6ec462337"
+  integrity sha512-O60lnvVT/zHkoDhFmR22KToYi5xLkPUNxI+brmBx1+BiGO7JaHev8WBddFL5kE2MpBMVhN02lsw+jgwSpDPCYQ==
   dependencies:
     "@antv/event-emitter" "~0.1.2"
     "@antv/g-canvas" "^0.5.12"
