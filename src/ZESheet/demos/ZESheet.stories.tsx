@@ -1683,14 +1683,35 @@ export const ZHYReport1 = () => {
       总实销: 1632.2,
       上月实销: 144.7,
     },
-  ];
+  ].map((d) => ({ ...d, 渠道: d.渠道._id }));
 
   const s2DataConfig = {
     fields: {
       rows: ["门店_地理位置_商贸单元", "渠道"],
       values: ["总实销", "上月实销"],
     },
+    meta: [
+      {
+        field: "门店_地理位置_商贸单元",
+        // 修改展示名称
+        name: "门店",
+        // 格式化展示，但无法对object类型的数据进行格式化
+        formatter: v => {
+          console.log(v);
+          return v;
+        }
+      },
+    ],
+    // data需转换为扁平结构的数据
     data,
+    // 如果需要展示小计/总计的话，需要提前算好统计数据
+    totalData: [
+      {
+        门店_地理位置_商贸单元: "上海商贸单元",
+        总实销: 161740.63,
+        上月实销: 33374.46,
+      },
+    ],
   };
 
   return (
@@ -1699,6 +1720,14 @@ export const ZHYReport1 = () => {
       options={{
         width: 600,
         height: 480,
+        totals: {
+          row: {
+            showSubTotals: true,
+            // 控制小计展示在上面还是下面
+            reverseSubLayout: false,
+            subTotalsDimensions: ["门店_地理位置_商贸单元"],
+          },
+        },
       }}
     />
   );
