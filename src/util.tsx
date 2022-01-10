@@ -760,15 +760,18 @@ export function drillDownPropForLogicform(schema: SchemaType) {
 export const unnormalizeQuery = (query: any) => {
   const newQuery = {};
 
-  for (const [k, v] of Object.entries<any>(query)) {
-    if (
-      typeof v === "object" &&
-      v.schema &&
-      Object.keys(v.query).length === 1
-    ) {
-      newQuery[`${k}_${Object.keys(v.query)[0]}`] = Object.values(v.query)[0];
-    } else {
-      newQuery[k] = v;
+  if (query) {
+    for (const [k, v] of Object.entries<any>(query)) {
+      if (
+        typeof v === "object" &&
+        v.schema &&
+        v.query &&
+        Object.keys(v.query).length === 1
+      ) {
+        newQuery[`${k}_${Object.keys(v.query)[0]}`] = Object.values(v.query)[0];
+      } else {
+        newQuery[k] = v;
+      }
     }
   }
 
