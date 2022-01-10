@@ -31,7 +31,7 @@ import {
 } from "../request";
 import ZEChart, { useDrillDownDbClick } from "../ZEChart";
 import ZEDescription from "../ZEDescription/ZEDescription";
-import { LogicFormVisualizer } from "../ZELogicform";
+import ZELogicformVisualizer from "../ZELogicformVisualizer/ZELogicformVisualizer";
 import ZETable from "../ZETable";
 import { ZECardProps } from "./ZECard.types";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
@@ -400,7 +400,7 @@ const ZECard: React.FC<ZECardProps> = ({
       bodyStyle={bodyStyle}
       headStyle={headStyle}
     >
-      <LogicFormVisualizer
+      <ZELogicformVisualizer
         {...visualizerProps}
         logicform={
           data?.logicform

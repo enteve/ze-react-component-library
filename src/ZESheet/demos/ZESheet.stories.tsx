@@ -1694,12 +1694,12 @@ export const ZHYReport1 = () => {
       {
         field: "门店_地理位置_商贸单元",
         // 修改展示名称
-        name: "门店",
+        name: "商贸单元",
         // 格式化展示，但无法对object类型的数据进行格式化
-        formatter: v => {
+        formatter: (v) => {
           console.log(v);
           return v;
-        }
+        },
       },
     ],
     // data需转换为扁平结构的数据

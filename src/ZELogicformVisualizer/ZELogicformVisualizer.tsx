@@ -1,47 +1,15 @@
 import React from "react";
-import moment from "moment";
 import { Badge, Button, Dropdown, Menu } from "antd";
-import {
-  isRelativeDateForm,
-  isSimpleQuery,
-  LogicformType,
-} from "zeroetp-api-sdk";
+import { isRelativeDateForm, isSimpleQuery } from "zeroetp-api-sdk";
 import { DownOutlined } from "@ant-design/icons";
 import { unnormalizeQuery, basicValueDisplay } from "../util";
-
-export type LogicFormVisualizerDisplayProp = {
-  schema?: boolean;
-  preds?: boolean;
-  query?: boolean;
-  groupby?: boolean;
-  sort?: boolean; // sort同时掌管着skip，sort，limit
-};
-
-export interface LogicFormVisualizerProps {
-  logicform: LogicformType; // 20211031: 应该是normed的LF。还有一些地方没有检查过
-
-  // 表达要不要显示某一些的部分。默认都是true。可以把schema和preds关掉
-  display?: LogicFormVisualizerDisplayProp;
-
-  // feat: 支持筛选控件
-  filters?: {
-    [key: string]: {
-      support_all?: boolean;
-      distincts?: string[];
-      show?: boolean; // 可以直接隐藏某一个filter，不显示在Visualizer上面。特殊情况用
-    };
-  };
-  onQueryChange?: (query: any) => void;
-
-  // feat: 设定一个统一的badgeColor
-  badgeColor?: string;
-}
+import { ZELogicformVisualizerProps } from "./ZELogicformVisualizer.types";
 
 /**
  * @param param0
  * @returns
  */
-export const LogicFormVisualizer: React.FC<LogicFormVisualizerProps> = ({
+const ZELogicformVisualizer: React.FC<ZELogicformVisualizerProps> = ({
   logicform: initLogicform,
   badgeColor,
   display = {},
@@ -344,3 +312,5 @@ export const LogicFormVisualizer: React.FC<LogicFormVisualizerProps> = ({
     </div>
   );
 };
+
+export default ZELogicformVisualizer;

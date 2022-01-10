@@ -1,7 +1,7 @@
 import { LogicformAPIResultType, LogicformType } from "zeroetp-api-sdk";
 import { ZETableProps } from "../ZETable/ZETable.types";
-import { LogicFormVisualizerProps } from "../ZELogicform/LogicFormVisualizer";
 import { ZEChartProps } from "..";
+import { ZELogicformVisualizerProps } from "../ZELogicformVisualizer/ZELogicformVisualizer.types";
 
 export type ZECardProps = {
   title?: string;
@@ -26,7 +26,7 @@ export type ZECardProps = {
   askMore?: (question: string) => void;
 
   tableProps?: Omit<ZETableProps, "logicform">;
-  visualizerProps?: Omit<LogicFormVisualizerProps, "logicform">;
+  visualizerProps?: Omit<ZELogicformVisualizerProps, "logicform">;
   chartProps?: Omit<ZEChartProps, "logicform" | "type">;
   horizontalBarChart?: boolean; //是不是用横向的barchart
 
