@@ -69,7 +69,8 @@ export const ProductWithEditableTableSupportEnums = () => (
           {
             dataIndex: "匹配规则",
             title: "匹配规则",
-            valueType: "select",
+            valueType: "text"
+            // valueType: "select",
           },
           {
             dataIndex: "数量",

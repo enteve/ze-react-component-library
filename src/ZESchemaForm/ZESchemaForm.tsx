@@ -61,6 +61,9 @@ const ZESchemaForm: React.FC<ZESchemaFormProps> = ({
     } else {
       valueType = valueTypeMapping(p);
     }
+    if (col?.valueType) {
+      valueType = col.valueType;
+    }
 
     // readonly
     let readonly = p.udf || p.name.indexOf(".") > 0; // 第二个判断条件是前端predChain
@@ -79,12 +82,24 @@ const ZESchemaForm: React.FC<ZESchemaFormProps> = ({
       render = () => <div>自动计算</div>;
     }
 
+    const valueEnum = valueEnumMapping(p);
+    const valueOptions = valueEnum
+      ? Object.keys(valueEnum).map((k) => ({
+          label: valueEnum[k]?.text || k,
+          value: k,
+        }))
+      : undefined;
+
     const column: ProFormColumnsType<any, ExtendValueTypes> = {
       title: p.name,
       dataIndex: p.name,
       valueType,
-      valueEnum: valueType === "text" ? undefined : valueEnumMapping(p),
+      valueEnum: valueType === "text" ? undefined : valueEnum,
       formItemProps: { ...formItemProps, ...col?.formItemProps },
+      fieldProps:
+        valueType === "text"
+          ? { options: valueOptions, ...col?.fieldProps }
+          : col?.fieldProps,
       readonly,
       render,
       tooltip: p.description,
