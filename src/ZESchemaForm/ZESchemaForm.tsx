@@ -83,7 +83,7 @@ const ZESchemaForm: React.FC<ZESchemaFormProps> = ({
       title: p.name,
       dataIndex: p.name,
       valueType,
-      valueEnum: valueEnumMapping(p),
+      valueEnum: valueType === "text" ? undefined : valueEnumMapping(p),
       formItemProps: { ...formItemProps, ...col?.formItemProps },
       readonly,
       render,
