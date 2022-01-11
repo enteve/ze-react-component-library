@@ -22,4 +22,4 @@ export type { ZESearchBarProps } from "./ZESearchBar";
 export { default as ZESearchBar } from "./ZESearchBar";
 
 /* ---------------------------------- utils --------------------------------- */
-export { getFormatter } from "./util";
+export { default as ZEUtil } from "./ZEUtil";
