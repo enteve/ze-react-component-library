@@ -25,6 +25,7 @@ import {
   Typography,
   Card,
   Result,
+  AutoComplete,
 } from "antd";
 import { useRequest } from "@umijs/hooks";
 import { requestLogicform } from "./request";
@@ -220,7 +221,10 @@ const getPropNameFromProFieldKey = (key: string) => {
 
 // config里面目前有table的defaultColWidth.用于计算object的ellipsis。
 // TODO：上述解决方案很不行。如果有更好的解决方案就好了。
-export const customValueTypes = (schema: SchemaType, config: any = {}) => ({
+export const customValueTypes = (
+  schema: SchemaType,
+  config: any = {}
+): any => ({
   percentage: {
     render: (number: number, props) => {
       let property: any;
@@ -416,6 +420,19 @@ export const customValueTypes = (schema: SchemaType, config: any = {}) => ({
     },
     renderFormItem: (text, props) => {
       return <InputNumber {...props?.fieldProps} />;
+    },
+  },
+  text: {
+    render: (v, props) => {
+      return v;
+    },
+    renderFormItem: (text, props) => {
+      return (
+        <AutoComplete
+          placeholder={props.placeholder || "请输入"}
+          {...props?.fieldProps}
+        />
+      );
     },
   },
 });
