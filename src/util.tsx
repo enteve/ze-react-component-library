@@ -422,11 +422,19 @@ export const customValueTypes = (
       return <InputNumber {...props?.fieldProps} />;
     },
   },
+  // 用户自定义的render具有最高优先级
+  // 通常用户自定义render的时候，会不传valueType，此时valueType默认为text，就会走下面的逻辑
   text: {
-    render: (v, props) => {
+    render: (v, props, ...rest) => {
+      if (props.render) {
+        return props.render(v, props, ...rest);
+      }
       return v;
     },
-    renderFormItem: (text, props) => {
+    renderFormItem: (text, props, form) => {
+      if (props.renderFormItem) {
+        return props.renderFormItem(text, props, form);
+      }
       return (
         <AutoComplete
           placeholder={props.placeholder || "请输入"}
