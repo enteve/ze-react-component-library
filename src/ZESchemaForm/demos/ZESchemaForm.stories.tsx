@@ -62,6 +62,11 @@ export const ProductWithEditableTableSupportEnums = () => (
     columns={[
       { dataIndex: "名称", title: "规则名称" },
       {
+        // readonly: true,
+        render: () => <h3>只读：物流匹配规则</h3>,
+        renderFormItem: () => <h3>物流匹配规则</h3>,
+      },
+      {
         dataIndex: "匹配规则",
         title: "",
         valueType: "table",
@@ -69,7 +74,7 @@ export const ProductWithEditableTableSupportEnums = () => (
           {
             dataIndex: "匹配规则",
             title: "匹配规则",
-            valueType: "text"
+            valueType: "text",
             // valueType: "select",
           },
           {
