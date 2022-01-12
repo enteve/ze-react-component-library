@@ -221,10 +221,7 @@ const getPropNameFromProFieldKey = (key: string) => {
 
 // config里面目前有table的defaultColWidth.用于计算object的ellipsis。
 // TODO：上述解决方案很不行。如果有更好的解决方案就好了。
-export const customValueTypes = (
-  schema: SchemaType,
-  config: any = {}
-): any => ({
+export const customValueTypes = (schema: SchemaType): any => ({
   percentage: {
     render: (number: number, props) => {
       let property: any;
