@@ -48,7 +48,7 @@ const mapColumnItem = (
   exporting: boolean, // 是否需要导出，导出的话，ellipse不要了
   showUnit: boolean,
   showSorter: boolean,
-  defaultColWidth: number
+  defaultColWidth?: number
 ): ProColumnType => {
   let property = properties.find((p) => p.name === predItem);
 
@@ -206,7 +206,7 @@ const ZETable: React.FC<ZETableProps> = ({
   refLFs = [],
   creationMode,
   creationColumns,
-  defaultColWidth = 200,
+  defaultColWidth: defaultColWidthOfProps = 200,
   horizontalColumns,
   transpose,
   showUnit = true,
@@ -214,6 +214,8 @@ const ZETable: React.FC<ZETableProps> = ({
   expandFirstCol,
   ...restProps
 }) => {
+  // 关闭滚动时，不应该给column设置默认宽度
+  const defaultColWidth = scroll === null ? undefined : defaultColWidthOfProps;
   const values = useContext(ProProvider); // 用来自定义ValueType
   const [result, setResult] = useState<LogicformAPIResultType>();
   const [selectedRecord, setSelectedRecord] = useState<any>(undefined);
@@ -662,10 +664,10 @@ const ZETable: React.FC<ZETableProps> = ({
         value={{
           ...values,
           valueTypeMap: result
-            ? customValueTypes(
-                { ...result.schema, properties: result.columnProperties },
-                { colWidth: defaultColWidth }
-              )
+            ? customValueTypes({
+                ...result.schema,
+                properties: result.columnProperties,
+              })
             : {},
         }}
       >
