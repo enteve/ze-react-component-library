@@ -1,8 +1,10 @@
 // Generated with util/create-component.js
 import { ArrowUpOutlined } from "@ant-design/icons";
-import { Card, Statistic } from "antd";
+import { Card, Skeleton, Statistic } from "antd";
+import flatten from "flat";
 import React from "react";
 import ZESheet from "../index";
+import ZELogicform from "../../ZELogicform";
 
 import "@antv/s2-react/dist/style.min.css";
 import { SheetComponent } from "@antv/s2-react";
@@ -1728,6 +1730,45 @@ export const ZHYReport1 = () => {
             subTotalsDimensions: ["门店_地理位置_商贸单元"],
           },
         },
+      }}
+    />
+  );
+};
+
+export const BigData = () => {
+  return (
+    <ZELogicform
+      logicform={{
+        schema: "sales",
+        groupby: ["店铺", "$day"],
+        preds: [{ name: "s", operator: "$sum", pred: "销售量" }],
+      }}
+      content={(value, loading) => {
+        let flattenValue: any[] = [];
+
+        if (value) {
+          flattenValue = value.map((v) => flatten(v));
+          console.log("数据下下来了，并且已经flat了");
+          console.log(flattenValue[0]);
+        }
+
+        return (
+          <Skeleton loading={loading}>
+            <SheetComponent
+              dataCfg={{
+                fields: {
+                  rows: ["日期(day)", "店铺.名称"],
+                  values: ["s"],
+                },
+                data: flattenValue,
+              }}
+              options={{
+                width: 600,
+                height: 480,
+              }}
+            />
+          </Skeleton>
+        );
       }}
     />
   );
