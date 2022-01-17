@@ -2,8 +2,6 @@
 import React from "react";
 import ZESheet from "../index";
 
-import "@antv/s2-react/dist/style.min.css";
-
 // prepare server
 import prepareServerForStories from "../../../util/prepareServerForStories";
 prepareServerForStories();
@@ -16,14 +14,22 @@ export const Basic = () => (
   <ZESheet
     logicform={{
       schema: "sales",
-      groupby: ["店铺"],
-      preds: [{ name: "s", operator: "$sum", pred: "销售量" }],
+      groupby: ["店铺", "$year"],
+      preds: [{ name: "总销量", operator: "$sum", pred: "销售量" }],
     }}
     s2DataConfig={{
       fields: {
         rows: ["店铺.名称"],
-        values: ["s"],
+        columns: ["日期(year)"],
+        values: ["总销量"],
       },
+      meta: [
+        {
+          field: "店铺.名称",
+          // 修改展示名称
+          name: "店铺名称",
+        },
+      ],
     }}
   />
 );
