@@ -1,6 +1,5 @@
 import React from "react";
 import { ZESheetProps } from "./ZESheet.types";
-import "@antv/s2-react/dist/style.min.css";
 import { SheetComponent } from "@antv/s2-react";
 import { LogicformAPIResultType } from "zeroetp-api-sdk";
 import { useRequest } from "@umijs/hooks";
