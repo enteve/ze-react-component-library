@@ -33,3 +33,26 @@ export const Basic = () => (
     }}
   />
 );
+
+export const ZESheetWithFormatter = () => (
+  <ZESheet
+    logicform={{
+      schema: "sales",
+      groupby: ["渠道", "$year"],
+      preds: [{ name: "总销量", operator: "$sum", pred: "销售量" }],
+    }}
+    s2DataConfig={{
+      fields: {
+        rows: ["渠道"],
+        columns: ["日期(year)"],
+        values: ["总销量"],
+      },
+      meta: [
+        {
+          field: "总销量",
+          // formatter: (v) => `${v}元`,
+        },
+      ],
+    }}
+  />
+);
