@@ -9,6 +9,7 @@ import { Result, Skeleton } from "antd";
 import flatten from "flat";
 import { S2DataConfig } from "@antv/s2";
 import { DownloadOutlined } from "@ant-design/icons";
+import "@antv/s2-react/dist/style.min.css";
 
 const ZESheet: React.FC<ZESheetProps> = ({
   logicform,
