@@ -30,6 +30,7 @@ export const Basic = () => (
           name: "店铺名称",
         },
       ],
+      sortParams: [{ sortFieldId: "日期(year)", sortMethod: "asc" }],
     }}
   />
 );
@@ -39,13 +40,16 @@ export const ZESheetWithFormatter = () => (
     logicform={{
       schema: "sales",
       groupby: ["渠道", "$year"],
-      preds: [{ name: "总销量", operator: "$sum", pred: "销售量" }],
+      preds: [
+        { name: "总销量", operator: "$sum", pred: "销售量" },
+        { name: "毛利率", operator: "毛利率" },
+      ],
     }}
     s2DataConfig={{
       fields: {
         rows: ["渠道"],
         columns: ["日期(year)"],
-        values: ["总销量"],
+        values: ["总销量", "毛利率"],
       },
       meta: [
         {
