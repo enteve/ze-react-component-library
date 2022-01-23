@@ -32,6 +32,7 @@ import { requestLogicform } from "./request";
 import "antd/lib/cascader/style/index";
 import { useEffect } from "react";
 import escapeStringRegexp from "escape-string-regexp";
+import JsonEditor from "./ZESchemaEditor/JsonEditor";
 
 const { Option } = Select;
 const { Text, Paragraph } = Typography;
@@ -119,8 +120,8 @@ export const valueTypeMapping = (property: PropertyType) => {
     case "number":
       return "number";
     case "string":
-      if (property.constraints.enum) {
-        if (property.constraints.enum.length >= 10) {
+      if (property.constraints?.enum) {
+        if (property.constraints?.enum.length >= 10) {
           return "select";
         }
 
@@ -143,9 +144,9 @@ export const valueEnumMapping = (property: PropertyType) => {
         text: "否",
       },
     };
-  } else if (property.constraints.enum) {
+  } else if (property.constraints?.enum) {
     valueEnum = {};
-    property.constraints.enum.forEach((enumItem) => {
+    property.constraints?.enum.forEach((enumItem) => {
       const enumValue = Array.isArray(enumItem) ? enumItem[0] : enumItem;
       valueEnum[enumValue] = { text: enumValue };
     });
@@ -436,6 +437,27 @@ export const customValueTypes = (schema: SchemaType): any => ({
         <AutoComplete
           placeholder={props.placeholder || "请输入"}
           {...props?.fieldProps}
+        />
+      );
+    },
+  },
+  json: {
+    render: (v, props, ...rest) => {
+      return (
+        <JsonEditor
+          editable={false}
+          defaultMode="code"
+          value={props?.fieldProps?.value}
+        />
+      );
+    },
+    renderFormItem: (text, props, form) => {
+      return (
+        <JsonEditor
+          editable
+          defaultMode="code"
+          value={props?.fieldProps?.value}
+          onChange={props?.fieldProps?.onChange}
         />
       );
     },

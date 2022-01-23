@@ -19,14 +19,15 @@ import {
 
 const ZESchemaForm: React.FC<ZESchemaFormProps> = ({
   schemaID,
+  schema: _schema,
   columns: _columns,
   propertyConfig,
   ...props
 }) => {
   const values = useContext(ProProvider); // 用来自定义ValueType
-  const { data } = useRequest<SchemaAPIResultType>(() =>
-    request(getSchemaByID(schemaID))
-  );
+  const { data } = _schema
+    ? { data: { schema: _schema } }
+    : useRequest<SchemaAPIResultType>(() => request(getSchemaByID(schemaID)));
 
   if (!data) return <div></div>;
 
@@ -43,7 +44,7 @@ const ZESchemaForm: React.FC<ZESchemaFormProps> = ({
       rules: [],
       initialValue: col?.initialValue || p.default,
     };
-    if (p.constraints.required && !p.udf) {
+    if (p.constraints?.required && !p.udf) {
       formItemProps.rules.push({
         required: true,
         message: "此项为必填项",

@@ -1,4 +1,5 @@
-import { ProFormColumnsType } from "@ant-design/pro-form";
+import { ProFormColumnsType, ProFormProps } from "@ant-design/pro-form";
+import { SchemaType } from "zeroetp-api-sdk";
 import { FormSchema } from "@ant-design/pro-form/lib/components/SchemaForm";
 export type ExtendValueTypes =
   | "percentage"
@@ -14,7 +15,9 @@ export type ZESchemaFormColumnType = ProFormColumnsType<
 >;
 export type ZESchemaFormProps = Omit<FormSchema<any>, "columns"> & {
   schemaID: string;
+  schema?: SchemaType;
   columns?: ZESchemaFormColumnType[];
+  isKeyPressSubmit?: ProFormProps["isKeyPressSubmit"];
   propertyConfig?: {
     [key: string]: {
       readonly?: boolean;

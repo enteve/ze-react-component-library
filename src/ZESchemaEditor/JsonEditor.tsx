@@ -4,14 +4,17 @@ import "jsoneditor/dist/jsoneditor.css";
 
 export const types = ["entity", "event"] as const;
 export type Type = typeof types[number];
+const modes = ["tree", "code"] as const;
 
 type JsonEditorProps = {
-  json?: Record<string, any>;
+  isSchema?: boolean;
+  defaultMode?: typeof modes[number];
+  value?: Record<string, any>;
+  onChange?: (v: Record<string, any>) => void;
   editorRef?: React.MutableRefObject<any>;
   editable: boolean;
-  type: Type;
+  type?: Type;
 };
-const modes = ["tree", "code"] as const;
 
 const propertySchema = {
   type: "object",
@@ -224,51 +227,61 @@ export const schemaTemplate = {
 };
 
 const JsonEditor: FC<JsonEditorProps> = ({
-  json,
+  value: json,
+  defaultMode = "tree",
+  onChange,
   editorRef: editorInstanceRef,
   editable,
   type,
+  isSchema,
 }) => {
   const containerRef = useRef<HTMLDivElement>();
   const editorRef = useRef<any>();
   const editableRef = useRef<boolean>(true);
   editableRef.current = editable;
+  const value = json || (isSchema ? { ...schemaTemplate, type } : {});
 
   useEffect(() => {
     if (editorRef.current) {
-      editorRef.current.setSchema(getSchema(json));
-      editorRef.current.set(json || { ...schemaTemplate, type });
+      isSchema && editorRef.current.setSchema(getSchema(json));
+      editorRef.current.set(value);
     }
-  }, [json, type]);
+  }, [JSON.stringify({ value }), type]);
 
   useEffect(() => {
     if (containerRef.current) {
       editorRef.current = new JSONEditor(
         containerRef.current,
         {
-          mode: "tree",
+          mode: defaultMode,
           // 传入modes可开启模式切换
           modes,
-          schema: getSchema(json),
+          schema: isSchema ? getSchema(json) : undefined,
           onEditable: () => {
             return editableRef.current;
           },
-          templates: [
-            {
-              text: "property",
-              title: "新增一个属性",
-              field: "properties",
-              value: propertyTemplate,
-            },
-            {
-              text: "hierarchy",
-              title: "新增一个hierarchy",
-              field: "hierarchy",
-              value: hierarchyTemplate,
-            },
-          ],
+          templates: isSchema
+            ? [
+                {
+                  text: "property",
+                  title: "新增一个属性",
+                  field: "properties",
+                  value: propertyTemplate,
+                },
+                {
+                  text: "hierarchy",
+                  title: "新增一个hierarchy",
+                  field: "hierarchy",
+                  value: hierarchyTemplate,
+                },
+              ]
+            : undefined,
+          onChange: () => {
+            const newJson = editorRef.current.get();
+            onChange?.(newJson);
+          },
         },
-        json || { ...schemaTemplate, type }
+        value
       );
       if (editorInstanceRef) {
         editorInstanceRef.current = editorRef.current;
