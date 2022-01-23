@@ -20,6 +20,7 @@ export { default as ZELogicformEditor } from "./ZELogicformEditor";
 export type { ZELogicformEditorProps } from "./ZELogicformEditor/ZELogicformEditor.types";
 export type { ZESearchBarProps } from "./ZESearchBar";
 export { default as ZESearchBar } from "./ZESearchBar";
+export { default as ZEAuthEditor } from "./ZEAuthEditor";
 
 /* ---------------------------------- utils --------------------------------- */
 export { default as ZEUtil } from "./ZEUtil";
