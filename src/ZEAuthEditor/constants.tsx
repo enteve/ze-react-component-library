@@ -1,11 +1,6 @@
 import type { ZESchemaFormColumnType } from "../ZESchemaForm/ZESchemaForm.types";
 export const roleColumns: ZESchemaFormColumnType[] = [
   {
-    title: "_id",
-    dataIndex: "_id",
-    hideInForm: true,
-  },
-  {
     title: "角色",
     dataIndex: "role",
   },
@@ -16,20 +11,22 @@ export const roleColumns: ZESchemaFormColumnType[] = [
 ];
 
 export const accountColumns: ZESchemaFormColumnType[] = [
-  {
-    title: "_id",
-    dataIndex: "_id",
-    hideInForm: true,
-  },
-  {
-    title: "头像",
-    hideInForm: true,
-    dataIndex: "avatar",
-    valueType: "image",
-  },
+  // 头像暂时隐藏
+  // {
+  //   title: "头像",
+  //   hideInForm: true,
+  //   dataIndex: "avatar",
+  //   valueType: "image",
+  // },
   {
     title: "用户名",
     dataIndex: "username",
+  },
+  {
+    // 这东西吧，SSO的时候不需要
+    title: "密码",
+    dataIndex: "password",
+    valueType: "password",
   },
   {
     title: "名字",
@@ -45,5 +42,5 @@ export const accountColumns: ZESchemaFormColumnType[] = [
     dataIndex: "default_query",
     valueType: "json" as any,
     hideInTable: true,
-  }
+  },
 ];
