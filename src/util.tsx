@@ -39,6 +39,12 @@ const { Text, Paragraph } = Typography;
 
 import "./formatNumeral";
 
+const findProFieldKey = (props: any) => {
+  const res =
+    props?.proFieldKey || `${props?.id || ""}`.split("_").reverse()[0];
+  return res;
+};
+
 /**
  * 相比zeroetp-api-sdk里面的findPropByName，多了对.号的predChain的支持
  * @param schema
@@ -227,7 +233,7 @@ export const customValueTypes = (schema: SchemaType): any => ({
     render: (number: number, props) => {
       let property: any;
       if (props) {
-        const propName = getPropNameFromProFieldKey(props.proFieldKey);
+        const propName = getPropNameFromProFieldKey(findProFieldKey(props));
         property = findPropByName(schema, propName);
       }
 
@@ -238,7 +244,7 @@ export const customValueTypes = (schema: SchemaType): any => ({
       return formatWithProperty(property, number);
     },
     renderFormItem: (text, props) => {
-      const propName = getPropNameFromProFieldKey(props.proFieldKey);
+      const propName = getPropNameFromProFieldKey(findProFieldKey(props));
       const property = findPropByName(schema, propName);
 
       // enum
@@ -278,7 +284,7 @@ export const customValueTypes = (schema: SchemaType): any => ({
       if (typeof entity === "string") {
         text = entity;
       } else {
-        const propName = getPropNameFromProFieldKey(props.proFieldKey);
+        const propName = getPropNameFromProFieldKey(findProFieldKey(props));
         property = findPropByName(schema, propName);
         nameProperty = getNameProperty(property.schema);
 
@@ -339,7 +345,7 @@ export const customValueTypes = (schema: SchemaType): any => ({
     renderFormItem: (_text, props) => {
       const propName =
         props?.fieldProps?.propName ||
-        getPropNameFromProFieldKey(props.proFieldKey);
+        getPropNameFromProFieldKey(findProFieldKey(props));
 
       const property = findPropByName(schema, propName);
 
@@ -407,7 +413,7 @@ export const customValueTypes = (schema: SchemaType): any => ({
     render: (number: number, props) => {
       let property: any;
       if (props) {
-        const propName = getPropNameFromProFieldKey(props.proFieldKey);
+        const propName = getPropNameFromProFieldKey(findProFieldKey(props));
         property = findPropByName(schema, propName);
       }
 
