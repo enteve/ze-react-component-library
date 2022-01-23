@@ -181,9 +181,10 @@ const mapColumnItem = (
   // object类型会走自定义的render，里面有ellipsis逻辑，需要把Column的ellipsis关掉，否则会嵌套两层受到影响
   if (property.primal_type === "object") {
     formattedColumn.ellipsis = false;
+    const colFieldProps: any = formattedColumn.fieldProps || {};
     // 给object自定义的render提供width
     formattedColumn.fieldProps = {
-      ...(formattedColumn.fieldProps || {}),
+      ...colFieldProps,
       width,
     };
   }

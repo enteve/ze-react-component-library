@@ -91,6 +91,8 @@ const ZESchemaForm: React.FC<ZESchemaFormProps> = ({
         }))
       : undefined;
 
+    const colFieldProps: any = col?.fieldProps || {};
+
     const column: ProFormColumnsType<any, ExtendValueTypes> = {
       title: p.name,
       dataIndex: p.name,
@@ -99,8 +101,8 @@ const ZESchemaForm: React.FC<ZESchemaFormProps> = ({
       formItemProps: { ...formItemProps, ...col?.formItemProps },
       fieldProps:
         valueType === "text"
-          ? { options: valueOptions, ...col?.fieldProps }
-          : col?.fieldProps,
+          ? { options: valueOptions, ...colFieldProps }
+          : colFieldProps,
       readonly,
       render,
       tooltip: p.description,
