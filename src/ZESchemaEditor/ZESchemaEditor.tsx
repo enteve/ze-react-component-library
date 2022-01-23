@@ -213,7 +213,8 @@ const ZESchemaEditor: React.FC = () => {
         }
       >
         <JsonEditor
-          json={editingRecord}
+          isSchema
+          value={editingRecord}
           editorRef={editorRef}
           editable={mode === "edit"}
           type={type}
