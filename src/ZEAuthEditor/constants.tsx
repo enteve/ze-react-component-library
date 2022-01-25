@@ -1,4 +1,8 @@
+import ZEJsonEditor from "../ZEJsonEditor";
 import type { ZESchemaFormColumnType } from "../ZESchemaForm/ZESchemaForm.types";
+
+const { ZEJsonEditorRender } = ZEJsonEditor;
+
 export const roleColumns: ZESchemaFormColumnType[] = [
   {
     title: "角色",
@@ -40,7 +44,8 @@ export const accountColumns: ZESchemaFormColumnType[] = [
   {
     title: "default_query",
     dataIndex: "default_query",
-    valueType: "json" as any,
     hideInTable: true,
+    render: ZEJsonEditorRender.render,
+    renderFormItem: ZEJsonEditorRender.renderFormItem,
   },
 ];

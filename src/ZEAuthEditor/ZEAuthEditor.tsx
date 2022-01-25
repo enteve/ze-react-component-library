@@ -55,6 +55,9 @@ const ZEAuthEditor: React.FC = () => {
     setMode("edit");
     setDrawerVisible(false);
     setEditingRecord(null);
+    if(formRef.current){
+      formRef.current.resetFields();
+    }
   };
 
   const onFinish = async (formData: any) => {
@@ -139,7 +142,7 @@ const ZEAuthEditor: React.FC = () => {
           try {
             parsedQuery[k] = JSON.parse(defaultQuery[k]);
           } catch (error) {
-            console.error(error);
+            parsedQuery[k] = defaultQuery[k];
           }
         });
       }
@@ -147,8 +150,6 @@ const ZEAuthEditor: React.FC = () => {
         ...editingRecord,
         default_query: parsedQuery,
       });
-    } else {
-      formRef?.current?.resetFields();
     }
   }, [editingRecord]);
 
@@ -264,7 +265,7 @@ const ZEAuthEditor: React.FC = () => {
                   name: "password",
                   primal_type: "string",
                   type: "string",
-                  constraints: { required: true },
+                  constraints: { required: editingRecord ? false : true },
                 },
                 {
                   name: "role",

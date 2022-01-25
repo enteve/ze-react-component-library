@@ -21,6 +21,8 @@ export type { ZELogicformEditorProps } from "./ZELogicformEditor/ZELogicformEdit
 export type { ZESearchBarProps } from "./ZESearchBar";
 export { default as ZESearchBar } from "./ZESearchBar";
 export { default as ZEAuthEditor } from "./ZEAuthEditor";
+export { default as ZEJsonEditor } from "./ZEJsonEditor";
+export type { ZEJsonEditorProps } from "./ZEJsonEditor";
 
 /* ---------------------------------- utils --------------------------------- */
 export { default as ZEUtil } from "./ZEUtil";

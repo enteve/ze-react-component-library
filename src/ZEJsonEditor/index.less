@@ -1,0 +1,21 @@
+@import "~antd/es/style/themes/default.less";
+
+.ze-json-editor {
+  position: relative;
+  &.mode-changeable {
+    .jsoneditor-menu {
+      padding-left: 80px;
+    }
+  }
+  .ze-json-editor-mode-switcher {
+    position: absolute;
+    top: 2px;
+    left: 4px;
+    z-index: 1;
+    color: rgba(white, 0.8);
+    max-width: 80px;
+    .ant-select-arrow {
+      color: rgba(white, 0.5);
+    }
+  }
+}
