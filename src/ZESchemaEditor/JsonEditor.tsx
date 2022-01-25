@@ -1,16 +1,11 @@
-import React, { FC, useRef, useEffect } from "react";
-import JSONEditor from "jsoneditor";
-import "jsoneditor/dist/jsoneditor.css";
+import React, { FC } from "react";
+import ZEJsonEditor from "../ZEJsonEditor";
 
 export const types = ["entity", "event"] as const;
 export type Type = typeof types[number];
-const modes = ["tree", "code"] as const;
 
 type JsonEditorProps = {
-  isSchema?: boolean;
-  defaultMode?: typeof modes[number];
   value?: Record<string, any>;
-  onChange?: (v: Record<string, any>) => void;
   editorRef?: React.MutableRefObject<any>;
   editable: boolean;
   type?: Type;
@@ -227,73 +222,33 @@ export const schemaTemplate = {
 };
 
 const JsonEditor: FC<JsonEditorProps> = ({
-  value: json,
-  defaultMode = "tree",
-  onChange,
-  editorRef: editorInstanceRef,
+  value,
+  editorRef,
   editable,
   type,
-  isSchema,
 }) => {
-  const containerRef = useRef<HTMLDivElement>();
-  const editorRef = useRef<any>();
-  const editableRef = useRef<boolean>(true);
-  editableRef.current = editable;
-  const value = json || (isSchema ? { ...schemaTemplate, type } : {});
-
-  useEffect(() => {
-    if (editorRef.current) {
-      isSchema && editorRef.current.setSchema(getSchema(json));
-      editorRef.current.set(value);
-    }
-  }, [JSON.stringify({ value }), type]);
-
-  useEffect(() => {
-    if (containerRef.current) {
-      editorRef.current = new JSONEditor(
-        containerRef.current,
-        {
-          mode: defaultMode,
-          // 传入modes可开启模式切换
-          modes,
-          schema: isSchema ? getSchema(json) : undefined,
-          onEditable: () => {
-            return editableRef.current;
-          },
-          templates: isSchema
-            ? [
-                {
-                  text: "property",
-                  title: "新增一个属性",
-                  field: "properties",
-                  value: propertyTemplate,
-                },
-                {
-                  text: "hierarchy",
-                  title: "新增一个hierarchy",
-                  field: "hierarchy",
-                  value: hierarchyTemplate,
-                },
-              ]
-            : undefined,
-          onChange: () => {
-            const newJson = editorRef.current.get();
-            onChange?.(newJson);
-          },
-        },
-        value
-      );
-      if (editorInstanceRef) {
-        editorInstanceRef.current = editorRef.current;
-      }
-    }
-  }, []);
-
   return (
-    <div
-      className="ze-json-editor"
-      ref={containerRef}
-      style={{ height: "100%" }}
+    <ZEJsonEditor
+      value={value || { ...schemaTemplate, type }}
+      editorRef={editorRef}
+      editable={editable}
+      mode={editable ? "tree" : "view"}
+      modes={editable ? ["tree", "code"] : undefined}
+      schema={getSchema(value)}
+      templates={[
+        {
+          text: "property",
+          title: "新增一个属性",
+          field: "properties",
+          value: propertyTemplate,
+        },
+        {
+          text: "hierarchy",
+          title: "新增一个hierarchy",
+          field: "hierarchy",
+          value: hierarchyTemplate,
+        },
+      ]}
     />
   );
 };

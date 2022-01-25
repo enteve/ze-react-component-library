@@ -10,7 +10,7 @@ import {
 import { useRequest } from "@umijs/hooks";
 import ProTable from "@ant-design/pro-table";
 import { request } from "../request";
-import JsonEditor, { types, Type } from "./JsonEditor";
+import JsonEditor, { types, Type, schemaTemplate } from "./JsonEditor";
 
 const ZESchemaEditor: React.FC = () => {
   const {
@@ -31,6 +31,9 @@ const ZESchemaEditor: React.FC = () => {
     setMode("edit");
     setDrawerVisible(false);
     setEditingRecord(null);
+    if (editorRef) {
+      editorRef.current.set({ ...schemaTemplate, type });
+    }
   };
 
   const onFinish = async () => {
@@ -143,12 +146,6 @@ const ZESchemaEditor: React.FC = () => {
       } as any,
     ]);
 
-  useEffect(() => {
-    if (editorRef.current && drawerVisible) {
-      editorRef.current.setMode("tree");
-    }
-  }, [drawerVisible]);
-
   return (
     <Spin spinning={loading}>
       <ProTable<SchemaType>
@@ -213,7 +210,6 @@ const ZESchemaEditor: React.FC = () => {
         }
       >
         <JsonEditor
-          isSchema
           value={editingRecord}
           editorRef={editorRef}
           editable={mode === "edit"}

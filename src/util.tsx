@@ -32,7 +32,6 @@ import { requestLogicform } from "./request";
 import "antd/lib/cascader/style/index";
 import { useEffect } from "react";
 import escapeStringRegexp from "escape-string-regexp";
-import JsonEditor from "./ZESchemaEditor/JsonEditor";
 
 const { Option } = Select;
 const { Text, Paragraph } = Typography;
@@ -443,27 +442,6 @@ export const customValueTypes = (schema: SchemaType): any => ({
         <AutoComplete
           placeholder={props.placeholder || "请输入"}
           {...props?.fieldProps}
-        />
-      );
-    },
-  },
-  json: {
-    render: (v, props, ...rest) => {
-      return (
-        <JsonEditor
-          editable={false}
-          defaultMode="code"
-          value={props?.fieldProps?.value}
-        />
-      );
-    },
-    renderFormItem: (text, props, form) => {
-      return (
-        <JsonEditor
-          editable
-          defaultMode="code"
-          value={props?.fieldProps?.value}
-          onChange={props?.fieldProps?.onChange}
         />
       );
     },
