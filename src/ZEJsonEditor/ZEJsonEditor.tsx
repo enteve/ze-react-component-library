@@ -16,6 +16,7 @@ export type ZEJsonEditorProps = {
   editable: boolean;
   schema?: Record<string, any>;
   templates?: Record<string, any>[];
+  style?: React.CSSProperties;
 };
 
 const ZEJsonEditor: FC<ZEJsonEditorProps> = ({
@@ -27,6 +28,7 @@ const ZEJsonEditor: FC<ZEJsonEditorProps> = ({
   editable,
   schema,
   templates,
+  style = {},
 }) => {
   const containerRef = useRef<HTMLDivElement>();
   const editorRef = useRef<any>();
@@ -93,7 +95,7 @@ const ZEJsonEditor: FC<ZEJsonEditorProps> = ({
       className={`ze-json-editor ${
         modeOptions?.length > 0 ? "mode-changeable" : ""
       }`}
-      style={{ height: "100%" }}
+      style={{ height: "100%", ...style }}
     >
       {modeOptions?.length > 0 && (
         <Select
