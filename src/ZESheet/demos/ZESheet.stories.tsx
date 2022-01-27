@@ -1,6 +1,7 @@
 // Generated with util/create-component.js
 import React from "react";
 import ZESheet from "../index";
+import "./index.less";
 
 // prepare server
 import prepareServerForStories from "../../../util/prepareServerForStories";
@@ -57,6 +58,9 @@ export const ZESheetWithFormatter = () => (
           // formatter: (v) => `${v}元`,
         },
       ],
+    }}
+    onSave={(values) => {
+      console.log(values);
     }}
   />
 );
