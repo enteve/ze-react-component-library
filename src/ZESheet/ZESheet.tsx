@@ -53,7 +53,7 @@ const ZESheet: React.FC<ZESheetProps> = ({
       return requestLogicform(logicform);
     },
     {
-      refreshDeps: [logicform, result],
+      refreshDeps: [JSON.stringify(logicform), result],
     }
   );
 
