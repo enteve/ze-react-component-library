@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ZESheetProps } from "./ZESheet.types";
 import { SheetComponent } from "@antv/s2-react";
-import { LogicformAPIResultType, LogicformType } from "zeroetp-api-sdk";
+import { LogicformAPIResultType } from "zeroetp-api-sdk";
 import { useRequest } from "@umijs/hooks";
 import { findProperty, formatWithProperty } from "../util";
 import { requestLogicform } from "../request";
@@ -9,7 +9,7 @@ import ZEJsonEditor from "../ZEJsonEditor";
 import { Result, Button, Tooltip, Space, Row, Col, Select } from "antd";
 import flatten from "flat";
 import { S2DataConfig } from "@antv/s2";
-import { DownloadOutlined, EditOutlined } from "@ant-design/icons";
+import { DownloadOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
 import "@antv/s2-react/dist/style.min.css";
 
 const s2FieldOptions: {
@@ -19,6 +19,7 @@ const s2FieldOptions: {
   { label: "s2DataConfig", value: "s2DataConfig" },
   { label: "s2Options", value: "s2Options" },
 ];
+
 type S2FieldType = typeof s2FieldOptions[number]["value"];
 
 const ZESheet: React.FC<ZESheetProps> = ({
@@ -32,13 +33,16 @@ const ZESheet: React.FC<ZESheetProps> = ({
   style = {},
 }) => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const adaptiveRef = React.useRef<HTMLDivElement>();
+  const adaptiveRef = useRef<HTMLDivElement>();
   const [s2Field, setS2Field] = useState<S2FieldType>("s2DataConfig");
   const [innerLogicform, setInnerLogicForm] =
-    useState<LogicformType>(logicform);
+    useState<ZESheetProps["logicform"]>(logicform);
   const [innerS2DataConfig, setInnerS2DataConfig] =
-    useState<Record<string, any>>(s2DataConfig);
-  const [innerS2Options, setInnerS2Options] = useState<any>(s2Options);
+    useState<ZESheetProps["s2DataConfig"]>(s2DataConfig);
+  const [innerS2Options, setInnerS2Options] =
+    useState<ZESheetProps["s2Options"]>(s2Options);
+  const [previewConfig, setPreviewConfig] =
+    useState<Pick<ZESheetProps, "logicform" | "s2DataConfig" | "s2Options">>();
 
   const { data, loading } = useRequest<LogicformAPIResultType>(
     () => {
@@ -46,22 +50,26 @@ const ZESheet: React.FC<ZESheetProps> = ({
         return new Promise((resolve) => resolve(result));
       }
 
-      if (!logicform) {
+      if (!logicform && !previewConfig?.logicform) {
         return Promise.resolve(null);
       }
 
-      return requestLogicform(logicform);
+      return requestLogicform(previewConfig?.logicform || logicform);
     },
     {
-      refreshDeps: [JSON.stringify(logicform), result],
+      refreshDeps: [
+        JSON.stringify(previewConfig?.logicform || logicform),
+        result,
+      ],
     }
   );
 
   const dataCfg: S2DataConfig = {
     fields: undefined,
     data: [],
-    ...s2DataConfig,
+    ...(previewConfig?.s2DataConfig || s2DataConfig),
   };
+
   if (data?.result) {
     if (!Array.isArray(data.result)) {
       return <Result title="此组件仅支持数组" />;
@@ -96,6 +104,14 @@ const ZESheet: React.FC<ZESheetProps> = ({
     dataCfg.meta = meta;
   }
 
+  const reset = () => {
+    setInnerS2Options(s2Options);
+    setInnerS2DataConfig(s2DataConfig);
+    setInnerLogicForm(logicform);
+    setS2Field("s2DataConfig");
+    setPreviewConfig(undefined);
+  };
+
   const handleSave = () => {
     onSave?.({
       logicform: innerLogicform,
@@ -105,10 +121,16 @@ const ZESheet: React.FC<ZESheetProps> = ({
     setIsEditing(false);
   };
 
+  const handlePreview = () => {
+    setPreviewConfig({
+      logicform: innerLogicform,
+      s2DataConfig: innerS2DataConfig,
+      s2Options: innerS2Options,
+    });
+  };
+
   const handleCancel = () => {
-    setInnerS2Options(s2Options);
-    setInnerS2DataConfig(s2DataConfig);
-    setInnerLogicForm(logicform);
+    reset();
     setIsEditing(false);
   };
 
@@ -138,9 +160,7 @@ const ZESheet: React.FC<ZESheetProps> = ({
             getContainer: () => adaptiveRef.current,
           }}
           dataCfg={dataCfg}
-          options={{
-            ...s2Options,
-          }}
+          options={previewConfig?.s2Options || s2Options}
           sheetType={sheetType}
           header={
             isEditing
@@ -148,6 +168,9 @@ const ZESheet: React.FC<ZESheetProps> = ({
                   extra: (
                     <Space>
                       <Button onClick={handleCancel}>取消</Button>
+                      <Button onClick={handlePreview}>
+                        <EyeOutlined /> 预览
+                      </Button>
                       <Button type="primary" onClick={handleSave}>
                         保存
                       </Button>
