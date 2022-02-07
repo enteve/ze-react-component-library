@@ -26,17 +26,18 @@ import {
   Card,
   Result,
   AutoComplete,
+  Image,
 } from "antd";
 import { useRequest } from "@umijs/hooks";
 import { requestLogicform } from "./request";
 import "antd/lib/cascader/style/index";
 import { useEffect } from "react";
 import escapeStringRegexp from "escape-string-regexp";
+import ImageUpload from "./ImageUpload";
+import "./formatNumeral";
 
 const { Option } = Select;
 const { Text, Paragraph } = Typography;
-
-import "./formatNumeral";
 
 const findProFieldKey = (props: any) => {
   const res =
@@ -446,6 +447,26 @@ export const customValueTypes = (schema: SchemaType): any => ({
           {...props?.fieldProps}
         />
       );
+    },
+  },
+  image: {
+    render: (v, props, ...rest) => {
+      if (props.render) {
+        return props.render(v, props, ...rest);
+      }
+      return (
+        <Image
+          {...props?.fieldProps}
+          src={v}
+          width={props?.fieldProps?.width || 32}
+        />
+      );
+    },
+    renderFormItem: (text, props, form) => {
+      if (props.renderFormItem) {
+        return props.renderFormItem(text, props, form);
+      }
+      return <ImageUpload {...props?.fieldProps} />;
     },
   },
 });
