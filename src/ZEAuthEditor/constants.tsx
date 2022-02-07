@@ -12,6 +12,18 @@ export const roleColumns: ZESchemaFormColumnType[] = [
     title: "resource",
     dataIndex: "resource",
   },
+  {
+    title: "父角色",
+    dataIndex: "parent",
+    valueType: "select",
+  },
+  {
+    title: "default_query",
+    dataIndex: "default_query",
+    hideInTable: true,
+    render: ZEJsonEditorRender.render,
+    renderFormItem: ZEJsonEditorRender.renderFormItem,
+  },
 ];
 
 export const accountColumns: ZESchemaFormColumnType[] = [
