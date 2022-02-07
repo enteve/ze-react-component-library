@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import type { ProFormColumnsType } from "@ant-design/pro-form";
+import { Typography } from "antd";
 import ProProvider from "@ant-design/pro-provider";
 import { BetaSchemaForm } from "@ant-design/pro-form";
 import type {
@@ -16,6 +17,8 @@ import {
   customValueTypes,
   findProperty,
 } from "../util";
+
+const { Text } = Typography;
 
 const ZESchemaForm: React.FC<ZESchemaFormProps> = ({
   schemaID,
@@ -67,7 +70,7 @@ const ZESchemaForm: React.FC<ZESchemaFormProps> = ({
     }
 
     // readonly
-    let readonly = p.udf || p.name.indexOf(".") > 0; // 第二个判断条件是前端predChain
+    let readonly = "udf" in p || p.name.indexOf(".") > 0; // 第二个判断条件是前端predChain
     if (
       propertyConfig &&
       propertyConfig[p.name] &&
@@ -78,9 +81,9 @@ const ZESchemaForm: React.FC<ZESchemaFormProps> = ({
 
     // render
     let render = undefined;
-    if (p.udf && !readonly) {
+    if (p.udf) {
       // 这个readonly是给可编辑表格用的
-      render = () => <div>自动计算</div>;
+      render = () => <Text disabled>自动计算</Text>;
     }
 
     const valueEnum = valueEnumMapping(p);

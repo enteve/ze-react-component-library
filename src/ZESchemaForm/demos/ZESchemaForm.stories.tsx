@@ -146,39 +146,42 @@ export const LayoutType = () => (
   />
 );
 
-export const ProductWithEditableTable = () => (
-  <ZESchemaForm
-    schemaID="product"
-    onFinish={onFinish}
-    columns={[
-      {
-        dataIndex: "编号",
-      },
-      {
-        dataIndex: "子商品列表",
-        valueType: "table",
-        fieldProps: { placeholder: "新增商品" },
-        columns: [
-          {
-            title: "商品编号",
-            dataIndex: "子商品.编号",
-          },
-          {
-            title: "商品名称",
-            dataIndex: "子商品",
-            fieldProps: { query: { 分类: "单品" } },
-          },
-          {
-            title: "数量",
-            dataIndex: "数量",
-            valueType: "digit",
-          },
-          {
-            title: "操作",
-            valueType: "option",
-          },
-        ],
-      },
-    ]}
-  />
+export const PropertyWithEditableTable = () => (
+  <StoryBookUseCaseDescription info="property可以是一个ObjectArrayTable。值得注意的是，dataIndex里面带有.的字段无法被编辑">
+    <ZESchemaForm
+      schemaID="product"
+      onFinish={onFinish}
+      columns={[
+        {
+          dataIndex: "编号",
+        },
+        {
+          title: "子商品",
+          dataIndex: "子商品列表",
+          valueType: "table",
+          fieldProps: { placeholder: "新增商品" },
+          columns: [
+            {
+              title: "商品编号",
+              dataIndex: "子商品.编号",
+            },
+            {
+              title: "商品名称",
+              dataIndex: "子商品",
+              fieldProps: { query: { 分类: "单品" } },
+            },
+            {
+              title: "数量",
+              dataIndex: "数量",
+              valueType: "digit",
+            },
+            {
+              title: "操作",
+              valueType: "option",
+            },
+          ],
+        },
+      ]}
+    />
+  </StoryBookUseCaseDescription>
 );
