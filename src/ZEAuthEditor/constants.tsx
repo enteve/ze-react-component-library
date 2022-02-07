@@ -15,7 +15,7 @@ export const roleColumns: ZESchemaFormColumnType[] = [
   {
     title: "父角色",
     dataIndex: "parent",
-    valueType: "select",
+    valueType: "treeSelect",
   },
   {
     title: "default_query",
@@ -51,7 +51,7 @@ export const accountColumns: ZESchemaFormColumnType[] = [
   {
     title: "角色",
     dataIndex: "role",
-    valueType: "select",
+    valueType: "treeSelect",
   },
   {
     title: "default_query",

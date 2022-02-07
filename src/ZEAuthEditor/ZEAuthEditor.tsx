@@ -21,6 +21,32 @@ const types = [
   { label: "账号", value: "account" },
 ];
 
+const loopRoles = (
+  arr: any[],
+  source: any[],
+  level: number,
+  currentRole?: string
+) => {
+  return arr
+    .map((d) => {
+      const disabled = d.role === currentRole;
+      const children = source.filter((a) => a.parent === d.role);
+      const restSource = source.filter((a) => a.parent !== d.role);
+      if (d.parent && level === 0) {
+        return null;
+      }
+      if (disabled) {
+        return null;
+      }
+      return {
+        label: d.role,
+        value: d.role,
+        children: loopRoles(children, restSource, level + 1, currentRole),
+      };
+    })
+    .filter((f) => f);
+};
+
 const ZEAuthEditor: React.FC = () => {
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
   const [editingRecord, setEditingRecord] = useState<any>();
@@ -55,7 +81,7 @@ const ZEAuthEditor: React.FC = () => {
     setMode("edit");
     setDrawerVisible(false);
     setEditingRecord(null);
-    if(formRef.current){
+    if (formRef.current) {
       formRef.current.resetFields();
     }
   };
@@ -76,8 +102,6 @@ const ZEAuthEditor: React.FC = () => {
       message.success("保存成功");
       onCancel();
       fetchData();
-    } else {
-      message.error("保存失败，请重试");
     }
   };
 
@@ -87,8 +111,6 @@ const ZEAuthEditor: React.FC = () => {
       if (res) {
         message.success("删除成功");
         fetchData();
-      } else {
-        message.error("删除失败，请重试！");
       }
     }
   };
@@ -127,8 +149,10 @@ const ZEAuthEditor: React.FC = () => {
       } as any,
     ]);
 
+  const roleOptions = loopRoles(roles, roles, 0);
+
   useEffect(() => {
-    if (type === "account" && drawerVisible) {
+    if (drawerVisible) {
       loadRoles();
     }
   }, [drawerVisible]);
@@ -220,7 +244,27 @@ const ZEAuthEditor: React.FC = () => {
           <ZESchemaForm
             schemaID="role"
             formRef={formRef}
-            columns={roleColumns}
+            columns={roleColumns.map((d) => {
+              if (d.dataIndex === "role" && editingRecord) {
+                return {
+                  ...d,
+                  readonly: true,
+                };
+              }
+              if (d.dataIndex === "parent") {
+                return {
+                  ...d,
+                  fieldProps: (form, config) => {
+                    const currentRole = form.getFieldValue("role");
+                    return {
+                      options: loopRoles(roles, roles, 0, currentRole),
+                      treeDefaultExpandAll: true,
+                    };
+                  },
+                };
+              }
+              return d;
+            })}
             isKeyPressSubmit={false}
             schema={{
               _id: "role",
@@ -248,7 +292,24 @@ const ZEAuthEditor: React.FC = () => {
           <ZESchemaForm
             schemaID="account"
             formRef={formRef}
-            columns={accountColumns}
+            columns={accountColumns.map((d) => {
+              if (d.dataIndex === "username" && editingRecord) {
+                return {
+                  ...d,
+                  readonly: true,
+                };
+              }
+              if (d.dataIndex === "role") {
+                return {
+                  ...d,
+                  fieldProps: {
+                    options: roleOptions,
+                    treeDefaultExpandAll: true,
+                  },
+                };
+              }
+              return d;
+            })}
             isKeyPressSubmit={false}
             schema={{
               _id: "account",
@@ -273,7 +334,6 @@ const ZEAuthEditor: React.FC = () => {
                   type: "string",
                   constraints: {
                     required: true,
-                    enum: roles.map((d) => d.role),
                   },
                 },
               ],
