@@ -21,7 +21,14 @@ const onFinish = async (formData: any) => {
 
 export const AutoFormWithSchema = () => (
   <StoryBookUseCaseDescription info="根据Schema生成Form">
-    <ZESchemaForm schemaID="product" onFinish={onFinish} />
+    <ZESchemaForm
+      schemaID="product"
+      onFinish={onFinish}
+      // propertyConfig={{ 图片: { readonly: true } }}
+      // initialValues={{
+      //   图片: "https://retail.yiwendata.com/images/retail/e45620530c120f401f9b14961a397da7.jpeg",
+      // }}
+    />
   </StoryBookUseCaseDescription>
 );
 
