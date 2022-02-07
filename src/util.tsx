@@ -422,7 +422,9 @@ export const customValueTypes = (schema: SchemaType): any => ({
       return formatWithProperty(property, number);
     },
     renderFormItem: (text, props) => {
-      return <InputNumber {...props?.fieldProps} />;
+      return (
+        <InputNumber placeholder={props?.placeholder} {...props?.fieldProps} />
+      );
     },
   },
   // 用户自定义的render具有最高优先级
@@ -496,22 +498,26 @@ const renderObjectFormItem = (schema, props: any) => {
       allowClear
       {...props?.fieldProps}
       labelInValue
-      value={{
-        value:
-          typeof props?.fieldProps?.value === "object"
-            ? props?.fieldProps?.value._id
-            : props?.fieldProps?.value,
-        label:
-          typeof props?.fieldProps?.value === "object"
-            ? `${props?.fieldProps?.value[nameProperty.name]}(${
-                props?.fieldProps?.value._id
-              })`
-            : props?.fieldProps?.value,
-        key:
-          typeof props?.fieldProps?.value === "object"
-            ? props?.fieldProps?.value._id
-            : props?.fieldProps?.value,
-      }}
+      value={
+        props?.fieldProps?.value
+          ? {
+              value:
+                typeof props?.fieldProps?.value === "object"
+                  ? props?.fieldProps?.value._id
+                  : props?.fieldProps?.value,
+              label:
+                typeof props?.fieldProps?.value === "object"
+                  ? `${props?.fieldProps?.value[nameProperty.name]}(${
+                      props?.fieldProps?.value._id
+                    })`
+                  : props?.fieldProps?.value,
+              key:
+                typeof props?.fieldProps?.value === "object"
+                  ? props?.fieldProps?.value._id
+                  : props?.fieldProps?.value,
+            }
+          : undefined
+      }
       onChange={(v: any) => {
         const { value } = v;
         // 为了便于前端显示，这里需要返回整个object。
