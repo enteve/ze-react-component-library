@@ -1,18 +1,48 @@
 // Generated with util/create-component.js
-import React from "react";
+import React, { useState } from "react";
 import moment from "moment";
 import XLSX from "xlsx";
 import ZETable from "../ZETable";
-import { Tag } from "antd";
+import { Button, Dropdown, Menu, Tag } from "antd";
 import "antd/dist/antd.css";
 import "./ZETable.stories.less";
+import StoryBookUseCaseDescription from "../../StoryBookUseCaseDescription";
 
 // prepare server
 import prepareServerForStories from "../../../util/prepareServerForStories";
+import { DownOutlined } from "@ant-design/icons";
 prepareServerForStories();
 
 export default {
   title: "ZETable",
+};
+
+export const Basic = () => {
+  const [schema, setSchema] = useState<string>("product");
+  const schemas = ["product", "store", "geo", "sales", "visit"];
+
+  const menu = (
+    <Menu onClick={(e) => setSchema(e.key)}>
+      {schemas.map((s) => (
+        <Menu.Item key={s}>{s}</Menu.Item>
+      ))}
+    </Menu>
+  );
+
+  return (
+    <StoryBookUseCaseDescription info="基础用法">
+      <Dropdown overlay={menu}>
+        <Button>
+          {schema} <DownOutlined />
+        </Button>
+      </Dropdown>
+      <ZETable
+        logicform={{
+          schema,
+        }}
+      />
+    </StoryBookUseCaseDescription>
+  );
 };
 
 export const NormalWithRowClick = () => (

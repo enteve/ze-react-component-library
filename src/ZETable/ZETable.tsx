@@ -428,9 +428,9 @@ const ZETable: React.FC<ZETableProps> = ({
 
   // Pagination
   let pagination: false | TablePaginationConfig = false;
-  if ("limit" in logicform && logicform.limit !== -1 && !logicform.groupby) {
+  if (logicform.limit !== -1 && !logicform.groupby) {
     pagination = {
-      pageSize: logicform.limit,
+      pageSize: logicform.limit || 20,
     };
   }
 
@@ -481,7 +481,7 @@ const ZETable: React.FC<ZETableProps> = ({
     options:
       options !== undefined
         ? options
-        : { reload: true, setting: false, density: false },
+        : { reload: true, setting: true, density: false },
     pagination,
     toolBarRender: () => toolBarRender,
   };
