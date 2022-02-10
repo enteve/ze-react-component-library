@@ -39,6 +39,7 @@ export const Basic = () => {
       <ZETable
         logicform={{
           schema,
+          sort: { 成本: -1 },
         }}
       />
     </StoryBookUseCaseDescription>
@@ -236,9 +237,9 @@ export const FiltersWithLFQuery = () => (
 export const Stats = () => (
   <ZETable
     logicform={{
-      schema: "productsale",
-      preds: [{ name: "销量", operator: "$sum", pred: "销量" }],
-      groupby: ["商品", "经销商"],
+      schema: "sales",
+      preds: [{ name: "销量", operator: "$sum", pred: "销售量" }],
+      groupby: ["渠道", "产品"],
     }}
     options={false}
   />
