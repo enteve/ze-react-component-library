@@ -902,6 +902,10 @@ export const basicValueDisplay = (oldV: any, toValue?: boolean) => {
     return v.name;
   }
 
+  if (typeof v === "object" && "$regex" in v) {
+    return v['$regex'];
+  }
+
   return "";
 };
 

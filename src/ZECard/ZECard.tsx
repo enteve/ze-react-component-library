@@ -10,12 +10,11 @@ import {
   Typography,
   Button,
   Space,
-  Tag,
+  Spin,
 } from "antd";
 import { withErrorBoundary } from "react-error-boundary";
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import _ from "underscore";
-import { useState } from "react";
 import {
   findPropByName,
   isSimpleQuery,
@@ -32,7 +31,7 @@ import {
 import ZEChart, { useDrillDownDbClick } from "../ZEChart";
 import ZEDescription from "../ZEDescription/ZEDescription";
 import ZELogicformVisualizer from "../ZELogicformVisualizer/ZELogicformVisualizer";
-import ZETable from "../ZETable";
+import Table, { useTableParams } from "./Table";
 import { ZECardProps } from "./ZECard.types";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import ValueDisplayer from "./ValueDisplayer";
@@ -42,7 +41,6 @@ import LogicFormTraveler from "./LogicFormTraveler";
 import { ErrorFallBack } from "../util";
 import PinHandler from "./PinHandler";
 import GroupByMenu from "./GroupByMenu";
-
 const { Paragraph, Title } = Typography;
 
 const getDefaultRepresentation = (
@@ -134,6 +132,7 @@ const ZECard: React.FC<ZECardProps> = ({
   pinable,
   dashboardID,
   enableGroupByMenu,
+  tableOnly,
 }) => {
   const {
     value: logicform,
@@ -144,28 +143,75 @@ const ZECard: React.FC<ZECardProps> = ({
     back,
     forward,
   } = useHistoryTravel<LogicformType>(initialLogicform);
-  const { data, loading } = useRequest<LogicformAPIResultType>(
+
+  const { tableParams, onTableChange, setData } = useTableParams({
+    logicform,
+    setLogicform,
+  });
+
+  const pagination = tableParams?.["0"] || {};
+  let sorter: any = tableParams?.["2"] || {};
+  if (sorter.columnKey) {
+    sorter = {
+      [sorter.columnKey]: sorter.order,
+    };
+  } else {
+    sorter = {};
+  }
+
+  const {
+    data,
+    loading,
+    run: fetchData,
+  } = useRequest<LogicformAPIResultType>(
     () => {
       if (!logicform) {
         throw new Error("no logicform");
       }
-
-      if (isSimpleQuery(logicform)) {
-        // simplequery让ZETable自己处理，因为要翻页
-        return new Promise((resolve) => resolve(undefined));
+      const newLF = JSON.parse(JSON.stringify(logicform));
+      const { pageSize, current } = pagination;
+      if (pageSize && current) {
+        // 支持翻页
+        newLF.limit = pageSize;
+        newLF.skip = pageSize * (current - 1);
       }
 
-      return requestLogicform(logicform);
+      // Sort，新的sort覆盖掉原始sort。此逻辑代表同时只允许一种sort key
+      if (Object.keys(sorter).length > 0) {
+        newLF.sort = {};
+        Object.entries(sorter).forEach(([k, v]) => {
+          switch (v) {
+            case "ascend":
+              newLF.sort[k] = 1;
+              break;
+            case "descend":
+              newLF.sort[k] = -1;
+              break;
+            default:
+              newLF.sort[k] = undefined;
+              break;
+          }
+        });
+      }
+
+      return requestLogicform(newLF);
     },
     {
-      refreshDeps: [logicform],
+      refreshDeps: [
+        JSON.stringify({
+          logicform,
+          pagination,
+          sorter,
+        }),
+      ],
       onSuccess: (res) => getResult?.(res),
       formatResult: (res) => {
+        let resData = res;
         if (formatResult) {
-          return formatResult(res);
+          resData = formatResult(res);
         }
-
-        return res;
+        setData(resData);
+        return resData;
       },
     }
   );
@@ -201,9 +247,6 @@ const ZECard: React.FC<ZECardProps> = ({
     };
   };
 
-  if (!logicform) return <Result status="error" title="出现错误" />;
-  // console.log(data);
-
   const defaultRepresentation = getDefaultRepresentation(
     logicform,
     data,
@@ -219,19 +262,26 @@ const ZECard: React.FC<ZECardProps> = ({
     finalRepresentation = "value";
   }
 
+  const tableContent = (
+    <Table
+      logicform={logicform}
+      xlsx={xlsx}
+      exportToExcel={exportToExcel}
+      onRow={onRow}
+      result={data}
+      loading={tableOnly ? loading : false}
+      tableParams={tableParams}
+      onChange={onTableChange}
+      reload={fetchData}
+      {...tableProps}
+    />
+  );
+
   let component: any;
   if (mainContent && data?.logicform) {
     component = mainContent(data.logicform);
   } else if (isSimpleQuery(logicform)) {
-    component = (
-      <ZETable
-        logicform={logicform}
-        xlsx={xlsx}
-        exportToExcel={exportToExcel}
-        onRow={onRow}
-        {...tableProps}
-      />
-    );
+    component = tableContent;
   } else if (finalRepresentation === "value") {
     component = <ValueDisplayer logicform={logicform} data={data} />;
   } else {
@@ -288,15 +338,7 @@ const ZECard: React.FC<ZECardProps> = ({
         />
       );
     } else {
-      component = (
-        <ZETable
-          logicform={logicform}
-          xlsx={xlsx}
-          exportToExcel={exportToExcel}
-          onRow={onRow}
-          {...tableProps}
-        />
-      );
+      component = tableContent;
     }
   }
 
@@ -360,8 +402,6 @@ const ZECard: React.FC<ZECardProps> = ({
     );
   }
 
-  if (showMainContentOnly) return component;
-
   // Recommends
   let recommendComponent: React.ReactNode | undefined;
   if (recommends?.length > 0) {
@@ -391,45 +431,58 @@ const ZECard: React.FC<ZECardProps> = ({
     );
   }
 
+  useEffect(() => {
+    if (JSON.stringify(logicform) !== JSON.stringify(initialLogicform)) {
+      setLogicform(initialLogicform);
+    }
+  }, [JSON.stringify(initialLogicform)]);
+
+  if (!logicform) return <Result status="error" title="出现错误" />;
+  if (tableOnly) {
+    return tableContent;
+  }
+  if (showMainContentOnly) return component;
+
   return (
-    <Card
-      size={size}
-      title={title}
-      loading={loading}
-      extra={extra}
-      bodyStyle={bodyStyle}
-      headStyle={headStyle}
-    >
-      <ZELogicformVisualizer
-        {...visualizerProps}
-        logicform={
-          data?.logicform
-            ? { ...data.logicform, schemaName: data.schema.name }
-            : logicform
-        }
-        onQueryChange={(query) => {
-          setLogicform({
-            ...logicform,
-            query,
-          });
-        }}
-      />
-      {warning?.length > 0 && (
-        <div style={{ marginTop: compact ? 5 : 10 }}>
-          <ExclamationCircleOutlined className="warningIcon" />
-          <span style={{ marginLeft: 5, color: "#525252" }}>{warning}</span>
-        </div>
-      )}
-      <div style={{ marginTop: compact ? 5 : 20 }}>{component}</div>
-      {(footer || recommendComponent) && (
-        <>
-          <Divider style={{ margin: compact ? 5 : 10 }} />
-          {typeof footer !== "function" && footer}
-          {typeof footer === "function" && footer(logicform)}
-          {recommendComponent}
-        </>
-      )}
-    </Card>
+    <Spin spinning={loading}>
+      <Card
+        size={size}
+        title={title}
+        extra={extra}
+        bodyStyle={bodyStyle}
+        headStyle={headStyle}
+      >
+        <ZELogicformVisualizer
+          {...visualizerProps}
+          logicform={
+            data?.logicform
+              ? { ...data.logicform, schemaName: data.schema.name }
+              : logicform
+          }
+          onQueryChange={(query) => {
+            setLogicform({
+              ...logicform,
+              query,
+            });
+          }}
+        />
+        {warning?.length > 0 && (
+          <div style={{ marginTop: compact ? 5 : 10 }}>
+            <ExclamationCircleOutlined className="warningIcon" />
+            <span style={{ marginLeft: 5, color: "#525252" }}>{warning}</span>
+          </div>
+        )}
+        <div style={{ marginTop: compact ? 5 : 20 }}>{component}</div>
+        {(footer || recommendComponent) && (
+          <>
+            <Divider style={{ margin: compact ? 5 : 10 }} />
+            {typeof footer !== "function" && footer}
+            {typeof footer === "function" && footer(logicform)}
+            {recommendComponent}
+          </>
+        )}
+      </Card>
+    </Spin>
   );
 };
 
