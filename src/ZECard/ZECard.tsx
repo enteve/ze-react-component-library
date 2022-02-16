@@ -10,7 +10,7 @@ import {
   Typography,
   Button,
   Space,
-  Tag,
+  Skeleton,
 } from "antd";
 import { withErrorBoundary } from "react-error-boundary";
 import React, { useEffect } from "react";
@@ -360,7 +360,8 @@ const ZECard: React.FC<ZECardProps> = ({
     );
   }
 
-  if (showMainContentOnly) return component;
+  if (showMainContentOnly)
+    return <Skeleton loading={loading}>{component}</Skeleton>;
 
   // Recommends
   let recommendComponent: React.ReactNode | undefined;
