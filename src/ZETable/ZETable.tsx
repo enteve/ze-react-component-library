@@ -213,6 +213,7 @@ const ZETable: React.FC<ZETableProps> = ({
   showUnit = true,
   showSorter = true,
   expandFirstCol,
+  formatExpandResult,
   ...restProps
 }) => {
   // 关闭滚动时，不应该给column设置默认宽度
@@ -500,6 +501,10 @@ const ZETable: React.FC<ZETableProps> = ({
     let res = await requestLogicform(theLogicForm);
 
     if (res) {
+      if (formatExpandResult) {
+        formatExpandResult(res);
+      }
+
       // 一般来说，会出现expand的情况是上一层为分类信息，那么上一层的valueType是string,但是下一层可能是object，所以要在这里做一个转化
       const nameKeys = [res.columnProperties[0].name];
       if (res.columnProperties[0].schema) {
