@@ -115,7 +115,7 @@ const ZEAuthEditor: React.FC = () => {
     }
   };
 
-  const columns = (type === "role" ? roleColumns : accountColumns)
+  const columns: any = (type === "role" ? roleColumns : accountColumns)
     .map((d) => ({ ...d, width: 200 }))
     .concat([
       {
