@@ -133,7 +133,6 @@ const ZECard: React.FC<ZECardProps> = ({
   pinable,
   dashboardID,
   enableGroupByMenu,
-  tableOnly,
 }) => {
   const {
     value: logicform,
@@ -144,21 +143,8 @@ const ZECard: React.FC<ZECardProps> = ({
     back,
     forward,
   } = useHistoryTravel<LogicformType>(initialLogicform);
-
-  const { tableParams, onTableChange, setData } = useTableParams({
-    logicform,
-    setLogicform,
-  });
-
-  const pagination = tableParams?.["0"] || {};
-  let sorter: any = tableParams?.["2"] || {};
-  if (sorter.columnKey) {
-    sorter = {
-      [sorter.columnKey]: sorter.order,
-    };
-  } else {
-    sorter = {};
-  }
+  const [logicFormWithSkipAndSort, setLogicFormWithSkipAndSort] =
+    useState<LogicformType>();
 
   const {
     data,
@@ -169,40 +155,14 @@ const ZECard: React.FC<ZECardProps> = ({
       if (!logicform) {
         throw new Error("no logicform");
       }
-      const newLF = JSON.parse(JSON.stringify(logicform));
-      const { pageSize, current } = pagination;
-      if (pageSize && current) {
-        // 支持翻页
-        newLF.limit = pageSize;
-        newLF.skip = pageSize * (current - 1);
-      }
 
-      // Sort，新的sort覆盖掉原始sort。此逻辑代表同时只允许一种sort key
-      if (Object.keys(sorter).length > 0) {
-        newLF.sort = {};
-        Object.entries(sorter).forEach(([k, v]) => {
-          switch (v) {
-            case "ascend":
-              newLF.sort[k] = 1;
-              break;
-            case "descend":
-              newLF.sort[k] = -1;
-              break;
-            default:
-              newLF.sort[k] = undefined;
-              break;
-          }
-        });
-      }
-
-      return requestLogicform(newLF);
+      return requestLogicform(logicFormWithSkipAndSort || logicform);
     },
     {
       refreshDeps: [
         JSON.stringify({
           logicform,
-          pagination,
-          sorter,
+          logicFormWithSkipAndSort,
         }),
       ],
       onSuccess: (res) => getResult?.(res),
@@ -211,7 +171,6 @@ const ZECard: React.FC<ZECardProps> = ({
         if (formatResult) {
           resData = formatResult(res);
         }
-        setData(resData);
         return resData;
       },
     }
@@ -266,13 +225,16 @@ const ZECard: React.FC<ZECardProps> = ({
   const tableContent = (
     <Table
       logicform={logicform}
+      setLogicform={(val, valWithSkipAndSorter) => {
+        if (val) {
+          setLogicform(val);
+        }
+        setLogicFormWithSkipAndSort(valWithSkipAndSorter);
+      }}
       xlsx={xlsx}
       exportToExcel={exportToExcel}
       onRow={onRow}
       result={data}
-      loading={tableOnly ? loading : false}
-      tableParams={tableParams}
-      onChange={onTableChange}
       reload={fetchData}
       {...tableProps}
     />
@@ -439,12 +401,9 @@ const ZECard: React.FC<ZECardProps> = ({
   }, [JSON.stringify(initialLogicform)]);
 
   if (!logicform) return <Result status="error" title="出现错误" />;
-  if (tableOnly) {
-    return tableContent;
-  }
 
   if (showMainContentOnly)
-    return <Skeleton loading={loading}>{component}</Skeleton>;
+    return <Spin spinning={loading}>{component}</Spin>;
 
   return (
     <Spin spinning={loading}>
