@@ -7,7 +7,7 @@ import ProTable, {
 } from "@ant-design/pro-table";
 import { useRequest } from "@umijs/hooks";
 import ProProvider from "@ant-design/pro-provider";
-import { Tooltip, Result, Button, Popconfirm, Drawer, TableProps } from "antd";
+import { Tooltip, Result, Button, Popconfirm, Drawer } from "antd";
 import type { TablePaginationConfig } from "antd";
 import { DownloadOutlined, PlusOutlined } from "@ant-design/icons";
 import {
@@ -21,7 +21,7 @@ import {
 import type { LogicformAPIResultType } from "zeroetp-api-sdk";
 import excelExporter from "./excelExporter";
 import { requestLogicform, request as requestAPI } from "../../request";
-import type { ZETableProps, PredItemType } from "../../ZETable/ZETable.types";
+import type { TableProps, PredItemType } from "./Table.types";
 
 import {
   customValueTypes,
@@ -38,9 +38,7 @@ import "./Table.less";
 import { getColumnDateProps, getColumnSearchProps } from "./FilterComponents";
 import { canUseCrossTable, crossResult } from "./crossTableGen";
 import { transposeResult } from "./transposeGen";
-export type TableOnChangeParams = Parameters<
-  Required<TableProps<any>>["onChange"]
->;
+import { useTableParams } from "./useTableParams";
 
 const mapColumnItem = (
   logicform: LogicformType,
@@ -135,8 +133,12 @@ const mapColumnItem = (
   Object.keys(logicform?.query || {}).forEach((k) => {
     filters[k] = basicValueDisplay(logicform?.query?.[k], true);
   });
-
-  let filteredValue = filters[predItem];
+  let filterKey = predItem;
+  if (property?.primal_type === "object") {
+    const namePropInRef = getNameProperty(property.schema);
+    filterKey = `${predItem}_${namePropInRef.name}`;
+  }
+  let filteredValue = filters[filterKey];
   filteredValue = filteredValue
     ? filteredValue instanceof Array
       ? filteredValue
@@ -208,14 +210,9 @@ const mapColumnItem = (
   return formattedColumn;
 };
 
-const Table: React.FC<
-  ZETableProps & {
-    result?: LogicformAPIResultType;
-    tableParams?: TableOnChangeParams;
-    reload?: (...args) => void;
-  }
-> = ({
+const Table: React.FC<TableProps> = ({
   logicform: _logicform,
+  setLogicform,
   options,
   preds,
   search,
@@ -237,7 +234,6 @@ const Table: React.FC<
   expandFirstCol,
   result: ret,
   reload,
-  tableParams,
   formatExpandResult,
   ...restProps
 }) => {
@@ -249,6 +245,12 @@ const Table: React.FC<
         subTitle="请联系服务提供商获取技术支持"
       />
     );
+  const { tableParams, onTableChange } = useTableParams({
+    logicform: _logicform,
+    setLogicform,
+    data: ret,
+  });
+
   const [paginationParams] = tableParams || [];
   let logicform = JSON.parse(JSON.stringify(_logicform));
   if (ret?.logicform) {
@@ -407,6 +409,7 @@ const Table: React.FC<
         : { reload: reload ? reload : false, setting: true, density: false },
     pagination,
     toolBarRender: () => toolBarRender,
+    onChange: onTableChange,
   };
 
   const onExpand = async (expanded, record) => {

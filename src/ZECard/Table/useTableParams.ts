@@ -5,17 +5,21 @@ import {
   LogicformAPIResultType,
 } from "zeroetp-api-sdk";
 import escapeStringRegexp from "escape-string-regexp";
-import type { TableOnChangeParams } from "./Table";
+import type { TableOnChangeParams } from "./Table.types";
 
 export function useTableParams({
   logicform,
   setLogicform,
+  data,
 }: {
+  data?: LogicformAPIResultType;
   logicform: LogicformType;
-  setLogicform: (val: LogicformType) => void;
+  setLogicform: (
+    logicform?: LogicformType,
+    logicformWithSkipAndSort?: LogicformType
+  ) => void;
 }) {
   const [tableParams, setTableParams] = useState<TableOnChangeParams>();
-  const [data, setData] = useState<LogicformAPIResultType>();
 
   const resetTableParams = (params?: TableOnChangeParams) => {
     if (params) {
@@ -27,9 +31,8 @@ export function useTableParams({
 
   const onTableChange = (...params: TableOnChangeParams) => {
     const newLF: LogicformType = JSON.parse(JSON.stringify(logicform));
-    const [, filter, ...rest] = params;
+    const [pagination = {}, filter, sort = {}] = params;
     // Filters
-    if (!("query" in newLF)) newLF.query = {};
     Object.entries(filter).forEach(([k, v]) => {
       if (data) {
         const property = data.columnProperties.find((p) => p.name === k);
@@ -95,29 +98,67 @@ export function useTableParams({
         //     }
         //   }
         // }
-        newLF.query[targetKey] = targetV;
-        if (v === null) {
-          newLF.query[targetKey] = undefined;
+        if (v !== null) {
+          if (!("query" in newLF)) newLF.query = {};
+          newLF.query[targetKey] = targetV;
+        } else if (newLF.query && targetKey in newLF.query) {
+          // 重置筛选
+          delete newLF.query[targetKey];
         }
       }
     });
+    // Sorters And Pagination
+    const newLFWithSkipAndSort = JSON.parse(JSON.stringify(newLF));
+    let sorter: any = { ...sort };
+    if (sorter.columnKey) {
+      sorter = {
+        [sorter.columnKey]: sorter.order,
+      };
+    } else {
+      sorter = {};
+    }
+    const { pageSize, current } = pagination;
+    if (pageSize && current) {
+      // 支持翻页
+      newLFWithSkipAndSort.limit = pageSize;
+      newLFWithSkipAndSort.skip = pageSize * (current - 1);
+    }
 
+    // Sort，新的sort覆盖掉原始sort。此逻辑代表同时只允许一种sort key
+    if (Object.keys(sorter).length > 0) {
+      newLFWithSkipAndSort.sort = {};
+      Object.entries(sorter).forEach(([k, v]) => {
+        switch (v) {
+          case "ascend":
+            newLFWithSkipAndSort.sort[k] = 1;
+            break;
+          case "descend":
+            newLFWithSkipAndSort.sort[k] = -1;
+            break;
+          default:
+            newLFWithSkipAndSort.sort[k] = undefined;
+            break;
+        }
+      });
+    }
     if (JSON.stringify(newLF) !== JSON.stringify(logicform)) {
       resetTableParams(params);
       setLogicform(newLF);
     } else {
       setTableParams(params);
+      setLogicform(undefined, newLFWithSkipAndSort);
     }
   };
 
   useEffect(() => {
     resetTableParams(tableParams);
+    // 重置logicformWithSkipAndSort
+    setLogicform();
   }, [JSON.stringify(logicform)]);
 
   return {
     tableParams,
     setTableParams,
     onTableChange,
-    setData,
   };
 }
