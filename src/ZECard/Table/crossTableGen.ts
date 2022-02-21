@@ -26,7 +26,8 @@ const getIDKey = (prop: PropertyType, item: any) => {
 
 export const crossResult = (
   ret: LogicformAPIResultType,
-  horizontalColumns?: string[]
+  horizontalColumns?: string[],
+  parent?: any
 ): LogicformAPIResultType => {
   const { result, columnProperties } = ret;
 
@@ -69,6 +70,10 @@ export const crossResult = (
       typeof item[idProp0.name] === "string"
         ? item[idProp0.name]
         : item[idProp0.name]._id;
+
+    if (parent) {
+      id = `${parent._id}${id}`;
+    }
 
     // 看一下是不是有__开头合并项
     if (item._id && item._id.startsWith("__")) {
