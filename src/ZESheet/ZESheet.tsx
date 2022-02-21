@@ -153,7 +153,6 @@ const ZESheet: React.FC<ZESheetProps> = ({
         ref={adaptiveRef}
       >
         <SheetComponent
-          isLoading={loading}
           adaptive={{
             width: true,
             height: true,
