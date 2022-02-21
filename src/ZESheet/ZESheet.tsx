@@ -134,6 +134,8 @@ const ZESheet: React.FC<ZESheetProps> = ({
     setIsEditing(false);
   };
 
+  const defaultOptions: any = { hierarchyType: "grid" };
+
   useEffect(() => {
     setInnerS2Options(s2Options);
   }, [JSON.stringify({ s2Options })]);
@@ -153,13 +155,14 @@ const ZESheet: React.FC<ZESheetProps> = ({
         ref={adaptiveRef}
       >
         <SheetComponent
+          loading={loading}
           adaptive={{
             width: true,
             height: true,
             getContainer: () => adaptiveRef.current,
           }}
           dataCfg={dataCfg}
-          options={previewConfig?.s2Options || s2Options}
+          options={previewConfig?.s2Options || s2Options || defaultOptions}
           sheetType={sheetType}
           header={
             isEditing
