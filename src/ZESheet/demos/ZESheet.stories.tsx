@@ -163,9 +163,19 @@ export const TMP = () => {
         },
       },
     },
+    style: {
+      colCfg: {
+        hideMeasureColumn: true,
+      },
+    },
   });
 
   return (
-    <ZESheet logicform={lf} s2DataConfig={s2DataConfig} s2Options={s2Options} />
+    <ZESheet
+      logicform={lf}
+      s2DataConfig={s2DataConfig}
+      s2Options={s2Options}
+      // sheetType="gridAnalysis"
+    />
   );
 };
