@@ -13,35 +13,40 @@ export const getColumnSearchProps = (propertyName: string) => ({
     selectedKeys,
     confirm,
     clearFilters,
-  }: FilterDropdownProps) => (
-    <div style={{ padding: 8 }}>
-      <Input
-        placeholder={`搜索 ${propertyName}`}
-        value={selectedKeys[0]}
-        onChange={(e) =>
-          setSelectedKeys(e.target.value ? [e.target.value] : [])
-        }
-        onPressEnter={() => confirm()}
-        style={{ width: 188, marginBottom: 8, display: "block" }}
-      />
-      <Button
-        type="primary"
-        onClick={() => confirm()}
-        icon={<SearchOutlined />}
-        size="small"
-        style={{ width: 90, marginRight: 8 }}
-      >
-        搜索
-      </Button>
-      <Button
-        size="small"
-        style={{ width: 90 }}
-        onClick={() => clearFilters && clearFilters()}
-      >
-        重置
-      </Button>
-    </div>
-  ),
+  }: FilterDropdownProps) => {
+    return (
+      <div style={{ padding: 8 }}>
+        <Input
+          placeholder={`搜索 ${propertyName}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() => confirm()}
+          style={{ width: 188, marginBottom: 8, display: "block" }}
+        />
+        <Button
+          type="primary"
+          onClick={() => confirm()}
+          icon={<SearchOutlined />}
+          size="small"
+          style={{ width: 90, marginRight: 8 }}
+        >
+          搜索
+        </Button>
+        <Button
+          size="small"
+          style={{ width: 90 }}
+          onClick={() => {
+            clearFilters && clearFilters();
+            confirm();
+          }}
+        >
+          重置
+        </Button>
+      </div>
+    );
+  },
   filterIcon: (filtered: boolean) => (
     <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
   ),
@@ -79,7 +84,10 @@ export const getColumnDateProps = (propertyName: string) => ({
         <Button
           size="small"
           style={{ width: 120 }}
-          onClick={() => clearFilters && clearFilters()}
+          onClick={() => {
+            clearFilters && clearFilters();
+            confirm();
+          }}
         >
           重置
         </Button>
