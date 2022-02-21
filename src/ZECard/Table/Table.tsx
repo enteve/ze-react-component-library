@@ -133,10 +133,7 @@ const mapColumnItem = (
   }
   const filters: Record<string, any> = {};
   Object.keys(logicform?.query || {}).forEach((k) => {
-    filters[k] = basicValueDisplay(
-      logicform?.query?.[k],
-      true
-    );
+    filters[k] = basicValueDisplay(logicform?.query?.[k], true);
   });
 
   let filteredValue = filters[predItem];
@@ -241,6 +238,7 @@ const Table: React.FC<
   result: ret,
   reload,
   tableParams,
+  formatExpandResult,
   ...restProps
 }) => {
   if (ret?.error)
@@ -425,6 +423,10 @@ const Table: React.FC<
     let res = await requestLogicform(theLogicForm);
 
     if (res) {
+      if (formatExpandResult) {
+        formatExpandResult(res);
+      }
+
       // 一般来说，会出现expand的情况是上一层为分类信息，那么上一层的valueType是string,但是下一层可能是object，所以要在这里做一个转化
       const nameKeys = [res.columnProperties[0].name];
       if (res.columnProperties[0].schema) {
@@ -433,7 +435,7 @@ const Table: React.FC<
       }
 
       if (canUseCrossTable(logicform)) {
-        res = crossResult(res, horizontalColumns);
+        res = crossResult(res, horizontalColumns, record);
       }
 
       setRowChildrenMap({
