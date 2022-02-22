@@ -109,7 +109,7 @@ const Map: React.FC<Props> = ({
   );
 
   useEffect(() => {
-    let option: any = JSON.parse(JSON.stringify(userOption));
+    let option: any = {...userOption}
     if (map && data?.result && data?.logicform) {
       const { logicform } = data;
       let dimension = 1;
