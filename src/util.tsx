@@ -181,7 +181,7 @@ export const getFormatter = (property: PropertyType, value: number): any => {
   }
   if (property.ui?.formatters) {
     // 拿到第一个role合适的
-    const [formatter] = property.ui?.formatters.filter((f) => {
+    const [formatter] = property.ui?.formatters.filter((f:any) => {
       // 根据role做一个筛选
       if (f.role) {
         // ZXC: 这里借用了localStorage，需要外部的系统把当前用户的role给存入localStorage，不知道是不是一个好解决方案。
