@@ -159,12 +159,7 @@ const ZECard: React.FC<ZECardProps> = ({
       return requestLogicform(logicFormWithSkipAndSort || logicform);
     },
     {
-      refreshDeps: [
-        JSON.stringify({
-          logicform,
-          logicFormWithSkipAndSort,
-        }),
-      ],
+      refreshDeps: [logicform, logicFormWithSkipAndSort],
       onSuccess: (res) => getResult?.(res),
       formatResult: (res) => {
         let resData = res;
@@ -402,8 +397,7 @@ const ZECard: React.FC<ZECardProps> = ({
 
   if (!logicform) return <Result status="error" title="出现错误" />;
 
-  if (showMainContentOnly)
-    return <Spin spinning={loading}>{component}</Spin>;
+  if (showMainContentOnly) return <Spin spinning={loading}>{component}</Spin>;
 
   return (
     <Spin spinning={loading}>
