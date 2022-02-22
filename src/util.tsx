@@ -180,18 +180,29 @@ export const getFormatter = (property: PropertyType, value: number): any => {
     };
   }
   if (property.ui?.formatters) {
-    const formatter = property.ui?.formatters.find((f) => {
-      let hit = true;
+    const formatter = property.ui?.formatters
+      .filter((f) => {
+        // 根据role做一个筛选
+        if (f.role) {
+          // ZXC: 这里借用了localStorage，需要外部的系统把当前用户的role给存入localStorage，不知道是不是一个好解决方案。
+          const role = localStorage.getItem("role");
+          return role === f.role;
+        }
 
-      if (f.max && f.max <= value) {
-        hit = false;
-      }
-      if (f.min && value < f.min) {
-        hit = false;
-      }
+        return true;
+      })
+      .find((f) => {
+        let hit = true;
 
-      return hit;
-    });
+        if (f.max && f.max <= value) {
+          hit = false;
+        }
+        if (f.min && value < f.min) {
+          hit = false;
+        }
+
+        return hit;
+      });
     if (formatter) {
       if (!formatter.prefix) formatter.prefix = "";
       return formatter;
@@ -903,7 +914,7 @@ export const basicValueDisplay = (oldV: any, toValue?: boolean) => {
   }
 
   if (typeof v === "object" && "$regex" in v) {
-    return v['$regex'];
+    return v["$regex"];
   }
 
   return "";
