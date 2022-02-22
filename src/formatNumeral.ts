@@ -33,3 +33,20 @@ numeral.register("format", "thousand", {
     return numeral._.stringToNumber(string) * 1000;
   },
 });
+
+numeral.register("format", "tenthousand", {
+  regexps: {
+    format: /(w)/,
+    unformat: /(w)/,
+  },
+  format: function (value: number, format: string, roundingFunction: any) {
+    return numeral._.numberToFormat(
+      value / 10000,
+      format.substring(0, format.length - 1),
+      roundingFunction
+    );
+  },
+  unformat: function (string: string) {
+    return numeral._.stringToNumber(string) * 10000;
+  },
+});
