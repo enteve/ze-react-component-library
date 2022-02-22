@@ -281,9 +281,9 @@ const Table: React.FC<TableProps> = ({
       result.result = arr;
     }
     if (transpose) {
-      result = transposeResult(ret, transpose, horizontalColumns);
+      result = transposeResult(result, transpose, horizontalColumns);
     } else if (canUseCrossTable(logicform)) {
-      result = crossResult(ret, horizontalColumns);
+      result = crossResult(result, horizontalColumns);
     }
   }
 
