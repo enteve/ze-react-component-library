@@ -31,50 +31,6 @@ export async function requestLogicform(
     return null;
   }
 
-  // 20211211 ZXC: 这里有一个关于formatter的特殊逻辑，不知道有没有更好的解决方案
-  // 对于一个有ui.formatters的property来说，如果是有groupby的，那么一定要保证这个property的formatter是恒定的。在这里计算
-  // TODO： 放semanticdb里面去？
-  if (ret.result && logicform.groupby && ret.columnProperties) {
-    ret.columnProperties.forEach((property) => {
-      if (property.ui?.formatters) {
-        // 一个formatter 80%以上合格才行
-        const counts = property.ui?.formatters.map((f) => {
-          return ret.result.reduce((acc, r) => {
-            if (property.name in r) {
-              const value = r[property.name];
-              let hit = true;
-
-              if (f.max && f.max <= value) {
-                hit = false;
-              }
-              if (f.min && value < f.min) {
-                hit = false;
-              }
-
-              if (hit) {
-                return acc + 1;
-              }
-            }
-            return acc;
-          }, 0);
-        });
-        for (let i = 0; i < counts.length; i++) {
-          const element = counts[i];
-          if (element / parseFloat(ret.result.length) > 0.8) {
-            property.ui.formatters = [
-              {
-                ...property.ui?.formatters[i],
-                min: undefined,
-                max: undefined,
-              },
-            ];
-            break;
-          }
-        }
-      }
-    });
-  }
-
   return ret;
 }
 
