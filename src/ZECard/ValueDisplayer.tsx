@@ -34,7 +34,7 @@ const ValueDisplayer: React.FC<Props> = ({ data }) => {
       return (
         <Statistic
           value={numeral(value).format(formatter.formatter)}
-          suffix={`${formatter.prefix}${unit}`}
+          suffix={`${formatter.prefix}${unit}${formatter.postfix}`}
         />
       );
     }

@@ -13,32 +13,35 @@ export function useDrillDownDbClick(
   const clickRef = useRef<Moment>();
   const { logicform, onChangeLogicform, data, back } = props;
 
-  const onDbClick = useCallback((item: any, triggerBack?: boolean) => {
-    const current = moment();
-    if (
-      !clickRef.current ||
-      current.diff(clickRef.current, "millisecond") > 200 ||
-      !data?.schema ||
-      !onChangeLogicform
-    ) {
-      clickRef.current = current;
-      return;
-    }
-    if (triggerBack) {
-      back();
-      return;
-    }
-    if (item) {
-      // 下钻
-      const drilledLF = drilldownLogicform(logicform, data.schema, item);
-      if (drilledLF) {
-        onChangeLogicform(drilledLF);
+  const onDbClick = useCallback(
+    (item: any, triggerBack?: boolean) => {
+      const current = moment();
+      if (
+        !clickRef.current ||
+        current.diff(clickRef.current, "millisecond") > 200 ||
+        !data?.schema ||
+        !onChangeLogicform
+      ) {
+        clickRef.current = current;
+        return;
       }
-    } else {
-      console.error("item不存在");
-    }
-    clickRef.current = current;
-  }, [JSON.stringify({ data, logicform }), back, onChangeLogicform]);
+      if (triggerBack) {
+        back();
+        return;
+      }
+      if (item) {
+        // 下钻
+        const drilledLF = drilldownLogicform(logicform, data.schema, item);
+        if (drilledLF) {
+          onChangeLogicform(drilledLF);
+        }
+      } else {
+        console.error("item不存在");
+      }
+      clickRef.current = current;
+    },
+    [JSON.stringify({ data, logicform }), back, onChangeLogicform]
+  );
 
   return { onDbClick };
 }
@@ -58,15 +61,16 @@ export function chartTooltipFormatter(
       let unit: any = property.unit;
       const formatter = getFormatter(property, d?.data?.[property.name]);
       if (formatter) {
-        unit = `${formatter.prefix}${unit}`;
+        unit = `${formatter.prefix}${unit}${formatter.postfix}`;
       }
 
       itemTip = `${itemTip}${d?.marker}${property.name}
-      ${unit ? `(${unit})` : ""
-        } <span style="float:right;margin-left:20px;font-size:14px;color:#666;font-weight:900">${formatWithProperty(
-          property,
-          d?.data?.[property.name]
-        )}</span><br />`;
+      ${
+        unit ? `(${unit})` : ""
+      } <span style="float:right;margin-left:20px;font-size:14px;color:#666;font-weight:900">${formatWithProperty(
+        property,
+        d?.data?.[property.name]
+      )}</span><br />`;
     });
     res = `${res}${itemTip}`;
   });
