@@ -169,7 +169,7 @@ const mapColumnItem = (
     let unit: any = property.unit;
     const formatter = getFormatter(property, 0);
     if (formatter) {
-      unit = `${formatter.prefix}${unit}`;
+      unit = `${formatter.prefix}${unit}${formatter.postfix}`;
     }
     defaultColumnType.title = `${defaultColumnType.title}(${unit})`;
   }

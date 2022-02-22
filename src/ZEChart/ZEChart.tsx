@@ -135,7 +135,7 @@ const ZEChart: React.FC<ZEChartProps> = memo(
         if (measurementProp?.ui?.formatters) {
           const formatter = getFormatter(measurementProp, 0);
           if (formatter) {
-            option.xAxis.name = `${formatter.prefix}${option.xAxis.name}`;
+            option.xAxis.name = `${formatter.prefix}${option.xAxis.name}${formatter.postfix}`;
           }
         }
 
