@@ -32,7 +32,7 @@ import {
 import ZEChart, { useDrillDownDbClick } from "../ZEChart";
 import ZEDescription from "../ZEDescription/ZEDescription";
 import ZELogicformVisualizer from "../ZELogicformVisualizer/ZELogicformVisualizer";
-import Table, { useTableParams } from "./Table";
+import Table from "./Table";
 import { ZECardProps } from "./ZECard.types";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import ValueDisplayer from "./ValueDisplayer";
