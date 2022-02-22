@@ -145,9 +145,9 @@ export const StatsDefaultMap = () => (
   <ZECard
     title="地图"
     logicform={{
-      schema: "productsale",
-      preds: [{ name: "销量", operator: "$sum", pred: "销量" }],
-      groupby: [{ _id: "地理位置", level: "省市" }],
+      schema: "sales",
+      preds: [{ name: "销量", operator: "$sum", pred: "销售量" }],
+      groupby: [{ _id: "店铺_地址", level: "省市" }],
       sort: { 销量: -1 },
     }}
   />
