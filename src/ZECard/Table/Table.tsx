@@ -273,16 +273,17 @@ const Table: React.FC<TableProps> = ({
   let result: LogicformAPIResultType;
   if (ret) {
     result = { ...ret };
-    let arr = [...ret.result];
-    refLFs.forEach((r, index) => {
-      arr = r.merge(arr, refResults[index].result);
-    });
-    result.result = arr;
-
+    if (refResults.length > 0) {
+      let arr = [...ret.result];
+      refLFs.forEach((r, index) => {
+        arr = r.merge(arr, refResults[index].result);
+      });
+      result.result = arr;
+    }
     if (transpose) {
-      result = transposeResult(ret, transpose, horizontalColumns);
+      result = transposeResult(result, transpose, horizontalColumns);
     } else if (canUseCrossTable(logicform)) {
-      result = crossResult(ret, horizontalColumns);
+      result = crossResult(result, horizontalColumns);
     }
   }
 
@@ -346,7 +347,7 @@ const Table: React.FC<TableProps> = ({
 
   // Pagination
   let pagination: false | TablePaginationConfig = false;
-  if (logicform.limit !== -1) {
+  if (logicform.limit > 0) {
     pagination = {
       pageSize: logicform.limit || 20,
       total: result?.total,
