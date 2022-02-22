@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRequest } from "@umijs/hooks";
 import {
   LogicformAPIResultType,
@@ -31,6 +31,8 @@ const Map: React.FC<Props> = ({
   height,
 }) => {
   const [map, setMap] = useState<string | undefined>();
+  const [chartOption, setOption] = useState<any>(userOption);
+  const level = data?.logicform.groupby[0].level;
 
   useRequest(
     () => {
@@ -106,7 +108,67 @@ const Map: React.FC<Props> = ({
     }
   );
 
-  let option: any = userOption;
+  useEffect(() => {
+    let option: any = JSON.parse(JSON.stringify(userOption));
+    if (map && data?.result && data?.logicform) {
+      const { logicform } = data;
+      let dimension = 1;
+      if (option.visualMap?.dimension) {
+        dimension = option.visualMap?.dimension;
+      }
+
+      // VisualMap，确定一下min和max
+      const values = data.result.map(
+        (i) => i[logicform.preds[dimension - 1][0].name]
+      );
+      const max = _.max(values);
+      let min = _.min(values);
+      if (min === max) {
+        if (min > 0) min = 0; // feat: 如果上下限一样，那么下限变为0
+      }
+
+      // precision
+      let precision = 0;
+      if (data.columnProperties[dimension].type === "percentage") {
+        precision = 2;
+      }
+
+      option.visualMap = {
+        min,
+        max,
+        precision,
+        text: ["最高", "最低"],
+        realtime: false,
+        calculable: true,
+        dimension,
+        ...option.visualMap, // 用户设定的visualMap可以覆盖原来的
+      };
+
+      option.series = [
+        {
+          roam: true,
+          type: "map",
+          scaleLimit: {
+            min: 1,
+            max: 5,
+          },
+          map,
+          label: {
+            show: logicform?.groupby[0]?.level !== "省市",
+          },
+        },
+      ];
+      // 根据visualMap的样式来决定地图的大小
+      if (option.visualMap?.orient === "horizontal") {
+        option.series[0].top = 0;
+        option.series[0].bottom = 30;
+      } else {
+        option.series[0].layoutSize = (width > height ? height : width) * 1.24;
+        option.series[0].layoutCenter = ["50%", "50%"];
+      }
+    }
+    setOption(option);
+  }, [map, userOption, data]);
 
   if (
     !logicform.groupby ||
@@ -116,72 +178,13 @@ const Map: React.FC<Props> = ({
   )
     return <Result status="info" title="此数据不支持地图类型" />;
 
-  if (map && data?.result && data?.logicform) {
-    const { logicform } = data;
-    const level = logicform.groupby[0].level;
-    if (["省市", "城市", "区县"].indexOf(level) < 0) {
-      return <Result status="info" title="暂不支持的地图类型" />;
-    }
-
-    let dimension = 1;
-    if (option.visualMap?.dimension) {
-      dimension = option.visualMap?.dimension;
-    }
-
-    // VisualMap，确定一下min和max
-    const values = data.result.map(
-      (i) => i[logicform.preds[dimension - 1][0].name]
-    );
-    const max = _.max(values);
-    let min = _.min(values);
-    if (min === max) {
-      if (min > 0) min = 0; // feat: 如果上下限一样，那么下限变为0
-    }
-
-    // precision
-    let precision = 0;
-    if (data.columnProperties[dimension].type === "percentage") {
-      precision = 2;
-    }
-
-    option.visualMap = {
-      min,
-      max,
-      precision,
-      text: ["最高", "最低"],
-      realtime: false,
-      calculable: true,
-      dimension,
-      ...option.visualMap, // 用户设定的visualMap可以覆盖原来的
-    };
-
-    option.series = [
-      {
-        roam: true,
-        type: "map",
-        scaleLimit: {
-          min: 1,
-          max: 5,
-        },
-        map,
-        label: {
-          show: logicform?.groupby[0]?.level !== "省市",
-        },
-      },
-    ];
-    // 根据visualMap的样式来决定地图的大小
-    if (option.visualMap?.orient === "horizontal") {
-      option.series[0].top = 0;
-      option.series[0].bottom = 30;
-    } else {
-      option.series[0].layoutSize = (width > height ? height : width) * 1.24;
-      option.series[0].layoutCenter = ["50%", "50%"];
-    }
+  if (["省市", "城市", "区县"].indexOf(level) < 0) {
+    return <Result status="info" title="暂不支持的地图类型" />;
   }
 
   return (
     <EChart
-      option={formatChartOptionGrid(option)}
+      option={formatChartOptionGrid(chartOption)}
       eventsDict={eventsDict}
       width={width}
     />
