@@ -80,16 +80,18 @@ export const crossResult = (
       id = `__${item._id.split("_")[2]}`;
     }
 
-    if (newData.length === 0 || newData[newData.length - 1]._id !== id) {
+    let hitIndex = newData.findIndex((i) => i._id === id);
+
+    if (hitIndex < 0) {
       newData.push({
         _id: id,
         [idProp0.name]: item[idProp0.name],
       });
+      hitIndex = newData.length - 1;
     }
 
     const idKey = getIDKey(idProp1, item);
-
-    newData[newData.length - 1][idKey] = item[measurementName];
+    newData[hitIndex][idKey] = item[measurementName];
   });
 
   return {
