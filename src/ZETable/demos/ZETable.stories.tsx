@@ -37,9 +37,9 @@ export const Basic = () => {
         </Button>
       </Dropdown>
       <ZETable
+        key={schema}
         logicform={{
           schema,
-          sort: { 成本: -1 },
         }}
       />
     </StoryBookUseCaseDescription>
@@ -49,8 +49,9 @@ export const Basic = () => {
 export const NormalWithRowClick = () => (
   <ZETable
     logicform={{
-      schema: "order",
-      close_default_query: true,
+      schema: "ddi_sales",
+      preds: [{ name: "1", operator: "金额" }],
+      groupby: "产品",
     }}
     onRow={(record) => ({
       onClick: () => {
@@ -63,8 +64,7 @@ export const NormalWithRowClick = () => (
 export const DataCreationForm = () => (
   <ZETable
     logicform={{
-      schema: "supplier",
-      sort: { ID: 1 },
+      schema: "product",
     }}
     onRow={(record) => ({
       onClick: () => {
@@ -239,7 +239,7 @@ export const Stats = () => (
     logicform={{
       schema: "sales",
       preds: [{ name: "销量", operator: "$sum", pred: "销售量" }],
-      groupby: ["渠道", "产品"],
+      groupby: ["渠道"],
     }}
     options={false}
   />
