@@ -168,7 +168,7 @@ const Map: React.FC<Props> = ({
       }
     }
     setOption(option);
-  }, [map, userOption, data]);
+  }, [map]);
 
   if (
     !logicform.groupby ||
