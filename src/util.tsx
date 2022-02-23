@@ -769,6 +769,26 @@ export const drilldownLogicform = (
         );
       }
 
+      // 在这里change一下sort
+      if (newLF.sort) {
+        const newSort = {};
+
+        for (const [k, v] of Object.entries(newLF.sort)) {
+          if (k === groupbyProp.name) {
+            newSort[
+              typeof newLF.groupby[0] === "string"
+                ? newLF.groupby[0]
+                : newLF.groupby[0]._id
+            ] = v;
+          } else {
+            newSort[k] = v;
+          }
+        }
+
+        newLF.sort = newSort;
+        console.log(newLF.sort);
+      }
+
       return newLF;
     }
   }
