@@ -41,6 +41,8 @@ export type TableProps = {
   horizontalColumns?: string[]; // 给crosstable和transpose用的，可以指定横向的groupbyProp的顺序、以及加一些数据库里没返回的列(缺失的entity之类的)
   transpose?: string; // 是否转置整个table，这个转置后的第一列的名称
   expandFirstCol?: boolean; // 表格第一列是否可展开
+  expandFirstColNextLevel?: string; // 表格第一列展开的时候，可以手动指定下一层的prop
+
   formatExpandResult?: (result: any) => void; //
   result?: LogicformAPIResultType;
   setLogicform: (

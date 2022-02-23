@@ -698,7 +698,8 @@ const renderObjectFormItemHierarchy = (property: PropertyType, props: any) => {
 export const drilldownLogicform = (
   logicform: LogicformType,
   schema: SchemaType,
-  groupbyItem: any
+  groupbyItem: any,
+  downHierarchy?: string
 ) => {
   if (!logicform.groupby) return null; //必须有groupby才能下钻
   const newLF: LogicformType = JSON.parse(JSON.stringify(logicform));
@@ -754,19 +755,18 @@ export const drilldownLogicform = (
       return newLF;
     }
   } else {
-    if (groupbyProp.hierarchy?.down) {
+    if (downHierarchy || groupbyProp.hierarchy?.down) {
+      const nextLevel = downHierarchy || groupbyProp.hierarchy?.down;
       newLF.query = {
         ...newLF.query,
       };
       newLF.query[newLF.groupby[0]._id] = groupbyItem._id;
       const groupbyChain = newLF.groupby[0]._id.split("_");
       groupbyChain.pop();
-      if (groupbyProp.hierarchy.down === "_id") {
+      if (nextLevel === "_id") {
         newLF.groupby[0] = groupbyChain[0];
       } else {
-        newLF.groupby[0] = [...groupbyChain, groupbyProp.hierarchy?.down].join(
-          "_"
-        );
+        newLF.groupby[0] = [...groupbyChain, nextLevel].join("_");
       }
 
       // 在这里change一下sort
@@ -786,7 +786,6 @@ export const drilldownLogicform = (
         }
 
         newLF.sort = newSort;
-        console.log(newLF.sort);
       }
 
       return newLF;

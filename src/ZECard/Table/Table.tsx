@@ -232,6 +232,7 @@ const Table: React.FC<TableProps> = ({
   showUnit = true,
   showSorter = true,
   expandFirstCol,
+  expandFirstColNextLevel,
   result: ret,
   reload,
   formatExpandResult,
@@ -423,7 +424,12 @@ const Table: React.FC<TableProps> = ({
     if (normedLF.groupby[0].level) {
       parentGroupByName = `${parentGroupByName}(${normedLF.groupby[0].level})`;
     }
-    const theLogicForm = drilldownLogicform(logicform, result.schema, record);
+    const theLogicForm = drilldownLogicform(
+      logicform,
+      result.schema,
+      record,
+      expandFirstColNextLevel
+    );
     let res = await requestLogicform(theLogicForm);
 
     if (res) {
