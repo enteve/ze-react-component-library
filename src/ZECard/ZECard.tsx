@@ -10,11 +10,10 @@ import {
   Typography,
   Button,
   Space,
-  Skeleton,
   Spin,
 } from "antd";
 import { withErrorBoundary } from "react-error-boundary";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import _ from "underscore";
 import {
   findPropByName,
@@ -388,12 +387,6 @@ const ZECard: React.FC<ZECardProps> = ({
       </Typography>
     );
   }
-
-  useEffect(() => {
-    if (JSON.stringify(logicform) !== JSON.stringify(initialLogicform)) {
-      setLogicform(initialLogicform);
-    }
-  }, [JSON.stringify(initialLogicform)]);
 
   if (!logicform) return <Result status="error" title="出现错误" />;
 
