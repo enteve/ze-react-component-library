@@ -11,6 +11,7 @@ import flatten from "flat";
 import { S2DataConfig } from "@antv/s2";
 import { DownloadOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
 import "@antv/s2-react/dist/style.min.css";
+import { getDefaultS2Config } from "./util";
 
 const s2FieldOptions: {
   label: React.ReactNode;
@@ -27,7 +28,21 @@ const ZESheet: React.FC<ZESheetProps> = ({
   result,
   sheetType,
   s2DataConfig,
-  s2Options,
+  s2Options = {
+    tooltip: {
+      col: {
+        showTooltip: false,
+      },
+    },
+    totals: {
+      row: {
+        showGrandTotals: true,
+        calcTotals: {
+          aggregation: "SUM",
+        },
+      },
+    },
+  },
   showExport = true,
   onSave,
   style = {},
@@ -44,6 +59,10 @@ const ZESheet: React.FC<ZESheetProps> = ({
   const [previewConfig, setPreviewConfig] =
     useState<Pick<ZESheetProps, "logicform" | "s2DataConfig" | "s2Options">>();
 
+  const { data: totalData, run: requestTotalData } =
+    useRequest<LogicformAPIResultType>(requestLogicform, {
+      manual: true,
+    });
   const { data, loading } = useRequest<LogicformAPIResultType>(
     () => {
       if (result) {
@@ -61,18 +80,58 @@ const ZESheet: React.FC<ZESheetProps> = ({
         JSON.stringify(previewConfig?.logicform || logicform),
         result,
       ],
+      onSuccess: (res) => {
+        // TotalData
+        const speedishPreds = res.logicform.preds.filter(
+          (_prop, index) =>
+            res.columnProperties[res.logicform.groupby.length + index]
+              .is_speedish
+        );
+        console.log("speedishPreds");
+        console.log(speedishPreds);
+
+        if (speedishPreds.length > 0) {
+          requestTotalData({
+            ...res.logicform,
+            groupby: undefined,
+            preds: speedishPreds,
+            sort: undefined,
+          });
+        }
+      },
     }
   );
 
   const dataCfg: S2DataConfig = {
-    fields: undefined,
+    fields: {},
     data: [],
+    ...getDefaultS2Config(data),
     ...(previewConfig?.s2DataConfig || s2DataConfig),
   };
 
   if (data?.result) {
     if (!Array.isArray(data.result)) {
       return <Result title="此组件仅支持数组" />;
+    }
+
+    console.log("totalData");
+    console.log(totalData);
+
+    // TotalData
+    // 对于不可加的totalData来说，预填一个null
+    let hasSpeedishProp = false;
+    dataCfg.totalData = [{}];
+    data.columnProperties
+      .slice(data.logicform.groupby.length)
+      .forEach((prop) => {
+        if (prop.is_speedish) {
+          dataCfg.totalData[0][prop.name] = null;
+          hasSpeedishProp = true;
+        }
+      });
+
+    if (hasSpeedishProp) {
+      // 在这里request一下total
     }
 
     const meta: Required<S2DataConfig>["meta"] = ["rows", "columns", "values"]
