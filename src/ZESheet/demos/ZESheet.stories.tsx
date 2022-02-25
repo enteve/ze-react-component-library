@@ -17,56 +17,27 @@ export const Basic = () => (
   <ZESheet
     logicform={{
       schema: "sales",
-      groupby: ["店铺", "$year"],
-      preds: [{ name: "总销量", operator: "$sum", pred: "销售量" }],
-    }}
-    s2DataConfig={{
-      fields: {
-        rows: ["店铺.名称"],
-        columns: ["日期(year)"],
-        values: ["总销量"],
-      },
-      meta: [
-        {
-          field: "店铺.名称",
-          // 修改展示名称
-          name: "店铺名称",
-        },
+      groupby: ["渠道"],
+      preds: [
+        { name: "总销量", operator: "$sum", pred: "销售量" },
+        { name: "毛利率", operator: "毛利率" },
+        { name: "转化率", operator: "转化率" },
       ],
-      sortParams: [{ sortFieldId: "日期(year)", sortMethod: "asc" }],
     }}
   />
 );
 
-export const MultiZESheet = () => (
-  <>
-    <ZESheet
-      logicform={{
-        schema: "sales",
-        groupby: ["渠道"],
-        preds: [{ name: "总销量", operator: "$sum", pred: "销售量" }],
-      }}
-      s2DataConfig={{
-        fields: {
-          rows: ["渠道"],
-          values: ["总销量"],
-        },
-      }}
-    />
-    <ZESheet
-      logicform={{
-        schema: "sales",
-        groupby: ["渠道"],
-        preds: [{ name: "毛利率", operator: "毛利率" }],
-      }}
-      s2DataConfig={{
-        fields: {
-          rows: ["渠道"],
-          values: ["毛利率"],
-        },
-      }}
-    />
-  </>
+export const MultiGroupByAndPreds = () => (
+  <ZESheet
+    logicform={{
+      schema: "sales",
+      groupby: ["店铺", "$year"],
+      preds: [
+        { name: "总销量", operator: "$sum", pred: "销售量" },
+        { name: "数量", operator: "$count" },
+      ],
+    }}
+  />
 );
 
 export const ZESheetWithFormatter = () => {

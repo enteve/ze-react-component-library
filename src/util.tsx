@@ -194,6 +194,8 @@ export const getFormatter = (property: PropertyType, value: number): any => {
 };
 
 export const formatWithProperty = (property: PropertyType, value: any) => {
+  if (value === null) return "-";
+
   const formatter = getFormatter(property, value);
 
   if (formatter) {
