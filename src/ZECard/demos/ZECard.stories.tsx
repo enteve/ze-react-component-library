@@ -13,16 +13,14 @@ export default {
   title: "ZECard",
 };
 
-export const Table = () => (
+export const SimpleTable = () => (
   <ZECard
-    title="所有Dealer"
+    title="所有产品"
     logicform={{
-      schemaName: "经销商",
-      schema: "dealer",
-      limit: 10,
+      schema: "product",
     }}
     tableProps={{
-      defaultColWidth: 100,
+      defaultColWidth: 150,
     }}
   />
 );
@@ -31,16 +29,12 @@ export const Value = () => (
   <ZECard
     title="MTD销售额"
     logicform={{
-      schemaName: "销售流水",
-      schema: "productsale",
+      schema: "sales",
       operator: "$sum",
       pred: "销售额",
       name: "总销售额",
       query: {
-        日期: {
-          $gte: { $offset: { month: 0 }, day: 1 },
-          $lte: { $offset: { day: 0 } },
-        },
+        日期: "MTD",
       },
     }}
     showRecommender={true}
@@ -50,18 +44,14 @@ export const Value = () => (
 
 export const PercentageValue = () => (
   <ZECard
-    title="MTD销售额环比"
+    title="YTD销售额环比"
     logicform={{
-      schemaName: "销售流水",
-      schema: "productsale",
+      schema: "sales",
       operator: "$mom",
       pred: "销售额",
       name: "总销售额",
       query: {
-        日期: {
-          $gte: { $offset: { month: 0 }, day: 1 },
-          $lte: { $offset: { day: 0 } },
-        },
+        日期: "YTD",
       },
     }}
   />
@@ -69,13 +59,12 @@ export const PercentageValue = () => (
 
 export const Entity = () => (
   <ZECard
-    title="Dealer销售额"
+    title="女装礼包"
     logicform={{
-      schemaName: "经销商",
-      schema: "dealer",
+      schema: "product",
       operator: "$ent",
       field: "名称",
-      name: "上海展晓实业有限公司",
+      name: "女装礼包",
     }}
   />
 );
