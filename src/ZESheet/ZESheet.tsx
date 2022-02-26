@@ -87,9 +87,6 @@ const ZESheet: React.FC<ZESheetProps> = ({
             res.columnProperties[res.logicform.groupby.length + index]
               .is_speedish
         );
-        console.log("speedishPreds");
-        console.log(speedishPreds);
-
         if (speedishPreds.length > 0) {
           requestTotalData({
             ...res.logicform,
@@ -114,24 +111,27 @@ const ZESheet: React.FC<ZESheetProps> = ({
       return <Result title="此组件仅支持数组" />;
     }
 
-    console.log("totalData");
-    console.log(totalData);
-
     // TotalData
     // 对于不可加的totalData来说，预填一个null
-    let hasSpeedishProp = false;
     dataCfg.totalData = [{}];
     data.columnProperties
       .slice(data.logicform.groupby.length)
       .forEach((prop) => {
         if (prop.is_speedish) {
           dataCfg.totalData[0][prop.name] = null;
-          hasSpeedishProp = true;
         }
       });
-
-    if (hasSpeedishProp) {
-      // 在这里request一下total
+    // 具体填数据的地方
+    if (totalData) {
+      if (typeof totalData.result === "object") {
+        dataCfg.totalData[0] = {
+          ...dataCfg.totalData[0],
+          ...totalData.result,
+        };
+      } else {
+        dataCfg.totalData[0][totalData.columnProperties[0].name] =
+          totalData.result;
+      }
     }
 
     const meta: Required<S2DataConfig>["meta"] = ["rows", "columns", "values"]

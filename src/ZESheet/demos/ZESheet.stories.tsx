@@ -21,7 +21,7 @@ export const Basic = () => (
       preds: [
         { name: "总销量", operator: "$sum", pred: "销售量" },
         { name: "毛利率", operator: "毛利率" },
-        { name: "转化率", operator: "转化率" },
+        // { name: "转化率", operator: "转化率" },
       ],
     }}
   />
@@ -35,6 +35,40 @@ export const MultiGroupByAndPreds = () => (
       preds: [
         { name: "总销量", operator: "$sum", pred: "销售量" },
         { name: "数量", operator: "$count" },
+      ],
+    }}
+  />
+);
+
+export const Custom = () => (
+  <ZESheet
+    logicform={{
+      schema: "sales",
+      groupby: ["店铺", "$year"],
+      preds: [
+        { name: "总销量", operator: "$sum", pred: "销售量" },
+        { name: "折扣率", operator: "折扣率" },
+      ],
+    }}
+    s2DataConfig={{
+      meta: [
+        {
+          field: "日期(year)",
+          name: "年份",
+        },
+        {
+          field: "总销量",
+          name: "销售量",
+          formatter: (v) => `${v}个`,
+        },
+        {
+          field: "折扣率",
+          formatter: (v) => (v === null ? "-" : numeral(v).format("0%")),
+        },
+        {
+          field: "店铺.名称",
+          name: "店铺名",
+        },
       ],
     }}
   />
