@@ -224,7 +224,10 @@ const getPropNameFromProFieldKey = (key: string) => {
 // TODO：上述解决方案很不行。如果有更好的解决方案就好了。
 export const customValueTypes = (schema: SchemaType): any => ({
   percentage: {
-    render: (number: number, props) => {
+    render: (number: number, props, ...rest) => {
+      if (props.render) {
+        return props.render(number, props, ...rest);
+      }
       let property: any;
       if (props) {
         const propName = getPropNameFromProFieldKey(findProFieldKey(props));
@@ -237,7 +240,10 @@ export const customValueTypes = (schema: SchemaType): any => ({
 
       return formatWithProperty(property, number);
     },
-    renderFormItem: (text, props) => {
+    renderFormItem: (text, props, form) => {
+      if (props.renderFormItem) {
+        return props.renderFormItem(text, props, form);
+      }
       const propName = getPropNameFromProFieldKey(findProFieldKey(props));
       const property = findPropByName(schema, propName);
 
@@ -268,7 +274,10 @@ export const customValueTypes = (schema: SchemaType): any => ({
     },
   },
   object: {
-    render: (entity: any, props) => {
+    render: (entity: any, props, ...rest) => {
+      if (props.render) {
+        return props.render(entity, props, ...rest);
+      }
       const width = (props?.fieldProps?.width || 200) - 16;
       let text: string;
       let isSingleEntity = true;
@@ -336,7 +345,10 @@ export const customValueTypes = (schema: SchemaType): any => ({
       //   </Popover>
       // );
     },
-    renderFormItem: (_text, props) => {
+    renderFormItem: (_text, props, form) => {
+      if (props.renderFormItem) {
+        return props.renderFormItem(_text, props, form);
+      }
       const propName =
         props?.fieldProps?.propName ||
         getPropNameFromProFieldKey(findProFieldKey(props));
@@ -352,10 +364,18 @@ export const customValueTypes = (schema: SchemaType): any => ({
     },
   },
   boolean: {
-    render: (v: any) => <div>{v ? "是" : "否"}</div>,
+    render: (v: any, props, ...rest) => {
+      if (props.render) {
+        return props.render(v, props, ...rest);
+      }
+      return <div>{v ? "是" : "否"}</div>;
+    },
   },
   table: {
-    renderFormItem: (_text, props) => {
+    renderFormItem: (_text, props, form) => {
+      if (props.renderFormItem) {
+        return props.renderFormItem(_text, props, form);
+      }
       const initialValues = props?.fieldProps?.value || [];
       const [editableKeys, setEditableRowKeys] = useState<React.Key[]>(
         initialValues.map((i) => i.id)
@@ -404,7 +424,11 @@ export const customValueTypes = (schema: SchemaType): any => ({
     },
   },
   number: {
-    render: (number: number, props) => {
+    render: (number: number, props, ...rest) => {
+      // 如果column传入了render，优先级应该最高
+      if (props.render) {
+        return props.render(number, props, ...rest);
+      }
       let property: any;
       if (props) {
         const propName = getPropNameFromProFieldKey(findProFieldKey(props));
@@ -416,7 +440,10 @@ export const customValueTypes = (schema: SchemaType): any => ({
       }
       return formatWithProperty(property, number);
     },
-    renderFormItem: (text, props) => {
+    renderFormItem: (text, props, form) => {
+      if (props.renderFormItem) {
+        return props.renderFormItem(text, props, form);
+      }
       return (
         <InputNumber placeholder={props?.placeholder} {...props?.fieldProps} />
       );
