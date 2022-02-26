@@ -7,6 +7,8 @@ import "antd/dist/antd.css";
 
 // prepare server
 import prepareServerForStories from "../../../util/prepareServerForStories";
+import { LogicformType } from "zeroetp-api-sdk";
+import { Space } from "antd";
 prepareServerForStories();
 
 export default {
@@ -71,159 +73,99 @@ export const Entity = () => (
 
 export const EntityPreds = () => (
   <ZECard
-    title="Dealer销售额"
+    title="女装礼包"
     logicform={{
-      schemaName: "经销商",
-      schema: "dealer",
+      schema: "product",
       operator: "$ent",
       field: "名称",
-      name: "上海展晓实业有限公司",
-      preds: ["联系人电话"],
+      name: "女装礼包",
+      preds: ["名称", "品类", "子品类", "图片", "价格"],
     }}
   />
 );
 
 export const Stats = () => (
   <ZECard
-    title="Dealer数量 by 区域"
+    title="各省市销售额"
     logicform={{
-      schema: "dealer",
-      schemaName: "经销商",
-      groupby: { _id: "所在省市", level: "区域" },
-      preds: [{ name: "数量", operator: "$count" }],
+      schema: "sales",
+      groupby: { _id: "店铺_地址", level: "省市" },
+      preds: [{ name: "销售额", operator: "$sum", pred: "销售额" }],
     }}
   />
 );
 
-export const StatsDefaultColumn = () => (
+export const StatsHorizontalBar = () => (
   <ZECard
-    title="各商品销量"
+    title="各品类销售额"
     logicform={{
-      schema: "productsale",
-      preds: [{ name: "销量", operator: "$sum", pred: "销量" }],
-      groupby: ["商品"],
-    }}
-  />
-);
-
-export const StatsDefaultBar = () => (
-  <ZECard
-    title="商品销量从大到小排序"
-    logicform={{
-      schema: "productsale",
+      schema: "sales",
+      groupby: { _id: "产品_品类" },
       preds: [
-        { name: "订单量", operator: "$count" },
-        { name: "平均", operator: "$avg", pred: "销量" },
+        { name: "销售额", operator: "$sum", pred: "销售额" },
         {
-          name: "总销量",
+          name: "指标",
           operator: "$sql",
-          pred: "sum(`销量` * 4)",
+          pred: "sum(sales.`销售额` * 4)",
           type: "int",
         },
       ],
-      groupby: ["商品"],
-      sort: { 订单量: -1 },
     }}
+    horizontalBarChart
+    representation="bar"
     chartProps={{
-      targetPred: "总销量",
+      targetPred: "指标", // 可以显示指标
     }}
   />
 );
 
-export const StatsDefaultMap = () => (
+export const CrossTable = () => (
   <ZECard
-    title="地图"
+    title="各商品销量"
     logicform={{
       schema: "sales",
       preds: [{ name: "销量", operator: "$sum", pred: "销售量" }],
-      groupby: [{ _id: "店铺_地址", level: "省市" }],
-      sort: { 销量: -1 },
-    }}
-  />
-);
-
-export const StatsDefaultPie = () => (
-  <ZECard
-    title="各商品分类销售额"
-    logicform={{
-      schema: "productsale",
-      preds: [{ name: "销售额", operator: "$sum", pred: "销售额" }],
-      groupby: ["商品_分类"],
-    }}
-  />
-);
-
-export const StatsPie = () => (
-  <ZECard
-    title="各商品销量"
-    logicform={{
-      schema: "productsale",
-      preds: [{ name: "销量", operator: "$sum", pred: "销量" }],
-      groupby: ["商品"],
-    }}
-    representation="pie"
-  />
-);
-
-export const StatsDefaultRepresentation = () => (
-  <ZECard
-    title="各商品销量"
-    logicform={{
-      schema: "productsale",
-      preds: [{ name: "销量", operator: "$sum", pred: "销量" }],
-      groupby: ["商品"],
-    }}
-    representation="table"
-  />
-);
-
-export const StatsCrossTable = () => (
-  <ZECard
-    title="各商品销量"
-    logicform={{
-      schema: "productsale",
-      preds: [{ name: "销量", operator: "$sum", pred: "销量" }],
       query: { 日期: { $offset: { year: 0 } } },
-      groupby: ["$month", "商品"],
+      groupby: ["$month", "产品"],
     }}
     xlsx={xlsx}
     exportToExcel="交叉表"
-    tableProps={{
-      refLFs: [
-        {
-          // 这里演示一下Summary行的用法。之所以要另外调用logicform，是因为很多东西的【总计】，并不是所有数值加起来，所以还不如再调用一次。
-          logicform: {
-            schema: "productsale",
-            preds: [{ name: "销量", operator: "$sum", pred: "销量" }],
-            query: { 日期: { $offset: { year: 0 } } },
-            groupby: ["商品"],
-          },
-          merge: (mainData: any[], refData: any) => {
-            return [
-              ...mainData,
-              ...refData.map((r) => ({
-                ...r,
-                _id: `__Total_${r._id}`,
-                "日期(month)": "Total",
-              })),
-            ];
-          },
-        },
-      ],
-      horizontalColumns: [
-        "S-深海鱼-200ml",
-        "S-原浆特酿-200ml",
-        "S-冰油-200ml",
-        "L-原浆特酿-500ml",
-        "L-冰油-500ml",
-        "猪猪套餐",
-      ], // 有顺序地显示某些entity
-      customColumns: {
-        猪猪套餐: {
-          render: () => "Custom Render",
-        },
-      },
-    }}
+    // tableProps={{
+    //   refLFs: [
+    //     {
+    //       // 这里演示一下Summary行的用法。之所以要另外调用logicform，是因为很多东西的【总计】，并不是所有数值加起来，所以还不如再调用一次。
+    //       logicform: {
+    //         schema: "productsale",
+    //         preds: [{ name: "销量", operator: "$sum", pred: "销量" }],
+    //         query: { 日期: { $offset: { year: 0 } } },
+    //         groupby: ["商品"],
+    //       },
+    //       merge: (mainData: any[], refData: any) => {
+    //         return [
+    //           ...mainData,
+    //           ...refData.map((r) => ({
+    //             ...r,
+    //             _id: `__Total_${r._id}`,
+    //             "日期(month)": "Total",
+    //           })),
+    //         ];
+    //       },
+    //     },
+    //   ],
+    //   horizontalColumns: [
+    //     "S-深海鱼-200ml",
+    //     "S-原浆特酿-200ml",
+    //     "S-冰油-200ml",
+    //     "L-原浆特酿-500ml",
+    //     "L-冰油-500ml",
+    //     "猪猪套餐",
+    //   ], // 有顺序地显示某些entity
+    //   customColumns: {
+    //     猪猪套餐: {
+    //       render: () => "Custom Render",
+    //     },
+    //   },
+    // }}
   />
 );
 
@@ -231,8 +173,7 @@ export const LFVisualizerAsFilter = () => (
   <ZECard
     title="LFVisualizerAsFilter"
     logicform={{
-      schemaName: "销售流水",
-      schema: "productsale",
+      schema: "sales",
       operator: "$sum",
       pred: "销售额",
       name: "总销售额",
@@ -241,19 +182,114 @@ export const LFVisualizerAsFilter = () => (
           $gte: { $offset: { month: 0 }, day: 1 },
           $lte: { $offset: { day: 0 } },
         },
-        商品_分类: "组合",
+        产品_品类: "女装",
       },
     }}
     visualizerProps={{
       filters: {
-        商品_分类: {
-          support_all: false,
-          distincts: ["单品", "组合", "耗材"],
+        产品_品类: {
+          support_all: true,
+          distincts: ["女装", "男装", "童装"],
         },
       },
     }}
   />
 );
+
+export const GroupByMenu = () => {
+  return (
+    <ZECard
+      enableGroupByMenu
+      title="总销量"
+      chartProps={{
+        option: {
+          toolbox: {},
+        },
+      }}
+      logicform={{
+        schema: "sales",
+        pred: "销售量",
+        operator: "$sum",
+        query: {
+          日期: { $offset: { year: 0 } },
+        },
+      }}
+    />
+  );
+};
+
+export const MapVisualMapCard = () => {
+  return (
+    <ZECard
+      chartProps={{
+        option: {
+          toolbox: {},
+          visualMap: {
+            dimension: 2,
+          },
+        },
+      }}
+      title="今年各省市销量"
+      logicform={{
+        schema: "sales",
+        preds: [
+          {
+            operator: "$sum",
+            pred: "销售量",
+            name: "总销量",
+          },
+          {
+            operator: "$percentage",
+            pred: "销售量",
+            name: "销售量占比",
+          },
+        ],
+        query: {
+          日期: { $offset: { year: 0 } },
+        },
+        sort: { 总销量: -1 },
+        groupby: { _id: "店铺_地址", level: "省市" },
+      }}
+      footer={(logicform) => <div>{JSON.stringify(logicform)})</div>} // footer随着logicform的变化而变化
+    />
+  );
+};
+
+export const Transpose = () => {
+  const lf: LogicformType = {
+    schema: "sales",
+    preds: [
+      {
+        operator: "$sum",
+        pred: "销售量",
+        name: "总销量",
+      },
+      {
+        operator: "$avg",
+        pred: "销售量",
+        name: "平均销量",
+      },
+      {
+        operator: "$max",
+        pred: "销售量",
+        name: "最高销量",
+      },
+    ],
+    groupby: "产品",
+  };
+
+  return (
+    <Space direction="vertical" style={{ width: "100%" }}>
+      <ZECard title="转置前" logicform={lf} representation="table" />
+      <ZECard
+        title="转置后"
+        logicform={lf}
+        tableProps={{ transpose: "全指标" }}
+        representation="table"
+      />
+    </Space>
+  );
+};
 
 export const ErrorBoundaryExample = () => (
   <ZECard
