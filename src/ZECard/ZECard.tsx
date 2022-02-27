@@ -11,6 +11,7 @@ import {
   Button,
   Space,
   Spin,
+  Tooltip,
 } from "antd";
 import { withErrorBoundary } from "react-error-boundary";
 import React, { useState } from "react";
@@ -33,7 +34,7 @@ import ZEDescription from "../ZEDescription/ZEDescription";
 import ZELogicformVisualizer from "../ZELogicformVisualizer/ZELogicformVisualizer";
 import Table from "./Table";
 import { ZECardProps } from "./ZECard.types";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { CloseOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import ValueDisplayer from "./ValueDisplayer";
 import RepresentationChanger from "./RepresentationChanger";
 import "./ZECard.less";
@@ -130,6 +131,7 @@ const ZECard: React.FC<ZECardProps> = ({
   horizontalBarChart = false,
   pieThreshold,
   pinable,
+  close,
   dashboardID,
   enableGroupByMenu,
 }) => {
@@ -354,6 +356,11 @@ const ZECard: React.FC<ZECardProps> = ({
             onPin={requestPinToDashboard}
             onUnPin={requestUnPinToDashboard}
           />
+        )}
+        {close && (
+          <Tooltip title="关闭此卡片">
+            <Button icon={<CloseOutlined />} onClick={() => close()} />
+          </Tooltip>
         )}
       </Space>
     );

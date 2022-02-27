@@ -8,7 +8,7 @@ import "antd/dist/antd.css";
 // prepare server
 import prepareServerForStories from "../../../util/prepareServerForStories";
 import { LogicformType } from "zeroetp-api-sdk";
-import { Space } from "antd";
+import { message, Space } from "antd";
 prepareServerForStories();
 
 export default {
@@ -288,6 +288,28 @@ export const Transpose = () => {
         representation="table"
       />
     </Space>
+  );
+};
+
+export const Closable = () => {
+  return (
+    <ZECard
+      title="Extra"
+      logicform={{
+        schema: "sales",
+        operator: "$sum",
+        pred: "销售额",
+        name: "总销售额",
+        query: {
+          日期: "MTD",
+        },
+      }}
+      pinable
+      enableGroupByMenu
+      close={() => {
+        message.info("close card");
+      }}
+    />
   );
 };
 

@@ -24,7 +24,10 @@ export type ZECardProps = {
   showRecommender?: boolean; // 是不是要显示更多推荐的相关数值
   askMore?: (question: string) => void;
 
-  tableProps?: Omit<TableProps, "logicform" | "result" | "setLogicform" | "reload" | "onChange">;
+  tableProps?: Omit<
+    TableProps,
+    "logicform" | "result" | "setLogicform" | "reload" | "onChange"
+  >;
   visualizerProps?: Omit<ZELogicformVisualizerProps, "logicform">;
   chartProps?: Omit<ZEChartProps, "logicform" | "type">;
   horizontalBarChart?: boolean; //是不是用横向的barchart
@@ -32,5 +35,6 @@ export type ZECardProps = {
   pieThreshold?: number; // distincts数量小于多少自动用pie，默认为5
   dashboardID?: string;
   pinable?: boolean;
+  close?: () => void;
   enableGroupByMenu?: boolean;
 };
