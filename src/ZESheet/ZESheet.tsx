@@ -8,10 +8,11 @@ import { requestLogicform } from "../request";
 import ZEJsonEditor from "../ZEJsonEditor";
 import { Result, Button, Tooltip, Space, Row, Col, Select } from "antd";
 import flatten from "flat";
-import { S2DataConfig } from "@antv/s2";
+import { EAggregation, S2DataConfig } from "@antv/s2";
 import { DownloadOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
 import "@antv/s2-react/dist/style.min.css";
 import { getDefaultS2Config } from "./util";
+import { HeaderCfgProps } from "@antv/s2-react/esm/components/header";
 
 const s2FieldOptions: {
   label: React.ReactNode;
@@ -28,7 +29,14 @@ const ZESheet: React.FC<ZESheetProps> = ({
   result,
   sheetType,
   s2DataConfig,
-  s2Options = {
+  s2Options: s2OptionsSrc,
+  showExport = true,
+  showEditor = false,
+  onSave,
+  style = {},
+}) => {
+  // 加上一点default的设置
+  const s2Options: ZESheetProps["s2Options"] = {
     tooltip: {
       col: {
         showTooltip: false,
@@ -38,15 +46,13 @@ const ZESheet: React.FC<ZESheetProps> = ({
       row: {
         showGrandTotals: true,
         calcTotals: {
-          aggregation: "SUM",
+          aggregation: EAggregation.SUM,
         },
       },
     },
-  },
-  showExport = true,
-  onSave,
-  style = {},
-}) => {
+    ...s2OptionsSrc,
+  };
+
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const adaptiveRef = useRef<HTMLDivElement>();
   const [s2Field, setS2Field] = useState<S2FieldType>("s2DataConfig");
@@ -207,6 +213,43 @@ const ZESheet: React.FC<ZESheetProps> = ({
     setInnerLogicForm(logicform);
   }, [JSON.stringify({ logicform })]);
 
+  // 配置一下Editor
+  const sheetComponentHeader: HeaderCfgProps = {};
+  if (isEditing) {
+    sheetComponentHeader.extra = (
+      <Space>
+        <Button onClick={handleCancel}>取消</Button>
+        <Button onClick={handlePreview}>
+          <EyeOutlined /> 预览
+        </Button>
+        <Button type="primary" onClick={handleSave}>
+          保存
+        </Button>
+      </Space>
+    );
+  } else {
+    sheetComponentHeader.exportCfg = {
+      open: showExport,
+      icon: <DownloadOutlined />,
+    };
+
+    if (showEditor) {
+      sheetComponentHeader.extra = (
+        <Tooltip title="编辑">
+          <Button
+            type="link"
+            style={{ padding: 0 }}
+            onClick={() => {
+              setIsEditing(true);
+            }}
+          >
+            <EditOutlined />
+          </Button>
+        </Tooltip>
+      );
+    }
+  }
+
   return (
     <div className="ze-sheet" style={{ height: "100%", ...style }}>
       <div
@@ -223,41 +266,7 @@ const ZESheet: React.FC<ZESheetProps> = ({
           dataCfg={dataCfg}
           options={previewConfig?.s2Options || s2Options || defaultOptions}
           sheetType={sheetType}
-          header={
-            isEditing
-              ? {
-                  extra: (
-                    <Space>
-                      <Button onClick={handleCancel}>取消</Button>
-                      <Button onClick={handlePreview}>
-                        <EyeOutlined /> 预览
-                      </Button>
-                      <Button type="primary" onClick={handleSave}>
-                        保存
-                      </Button>
-                    </Space>
-                  ),
-                }
-              : {
-                  exportCfg: {
-                    open: showExport,
-                    icon: <DownloadOutlined />,
-                  },
-                  extra: (
-                    <Tooltip title="编辑">
-                      <Button
-                        type="link"
-                        style={{ padding: 0 }}
-                        onClick={() => {
-                          setIsEditing(true);
-                        }}
-                      >
-                        <EditOutlined />
-                      </Button>
-                    </Tooltip>
-                  ),
-                }
-          }
+          header={sheetComponentHeader}
         />
       </div>
       {isEditing && (

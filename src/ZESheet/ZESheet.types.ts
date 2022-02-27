@@ -9,6 +9,7 @@ export interface ZESheetProps {
   s2DataConfig?: Omit<S2DataConfig, "data">;
   s2Options?: S2Options;
   showExport?: boolean;
+  showEditor?: boolean; // 是否支持编辑模式
   style?: React.CSSProperties;
   onSave?: (values: {
     logicform?: LogicformType;

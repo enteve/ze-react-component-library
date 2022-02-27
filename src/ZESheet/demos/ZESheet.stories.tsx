@@ -7,6 +7,7 @@ import numeral from "numeral";
 // prepare server
 import prepareServerForStories from "../../../util/prepareServerForStories";
 import { LogicformType } from "zeroetp-api-sdk";
+import { Node } from "@antv/s2";
 prepareServerForStories();
 
 export default {
@@ -74,7 +75,7 @@ export const Custom = () => (
   />
 );
 
-export const ZESheetWithFormatter = () => {
+export const ZESheetEditor = () => {
   const [lf, setLF] = useState<LogicformType>({
     schema: "sales",
     groupby: ["渠道", "$year"],
@@ -92,7 +93,6 @@ export const ZESheetWithFormatter = () => {
     meta: [
       {
         field: "总销量",
-        // formatter: (v) => `${v}元`,
       },
     ],
   });
@@ -103,11 +103,85 @@ export const ZESheetWithFormatter = () => {
       logicform={lf}
       s2DataConfig={s2DataConfig}
       s2Options={s2Options}
+      showEditor
       onSave={(values) => {
         values.logicform && setLF(values.logicform);
         values.s2DataConfig && setS2DataConfig(values.s2DataConfig);
         values.s2Options && setS2Options(values.s2Options);
       }}
+    />
+  );
+};
+
+export const AdditionalRows = () => {
+  // 新行标签
+  const extraLabel = "销售指标";
+
+  const options: any = {
+    layoutHierarchy: (s2, node) => {
+      const { field, label } = node;
+      // console.log(field, label);
+      // 找到总计行头节点，并在下方push插入一个节点
+      if (field === "渠道" && label === "总计") {
+        const extraNode = new Node({
+          ...node,
+          ...node.config,
+          id: `${node.parent.id}&${extraLabel}`,
+          label: extraLabel,
+          value: extraLabel,
+          query: { ...node.query, [node.key]: extraLabel },
+        });
+
+        return {
+          push: [extraNode],
+          unshift: [],
+          delete: false,
+        };
+      }
+      return {};
+    },
+    layoutCoordinate: (s2, rowNode, colNode) => {
+      const { field, label } = rowNode || {};
+      // 找到插入的新节点，让他宽度等于行头宽度
+      if (label === extraLabel) {
+        rowNode.width = rowNode.hierarchy.width;
+      }
+    },
+    layoutDataPosition: (s2, getCellData) => {
+      const getCellMeta = (rowIndex?: number, colIndex?: number) => {
+        const viewMeta = getCellData(rowIndex, colIndex);
+        console.log("viewMeta", viewMeta);
+        const { rowId, valueField } = viewMeta;
+        // 劫持新行的数据返回
+        if (rowId === "root&销售指标") {
+          const result = 10;
+          return {
+            ...viewMeta,
+            fieldValue: result,
+            data: {
+              [valueField]: result,
+              // [EXTRA_FIELD]: valueField, // 这个字段如何获取？ $$extra$$
+              // [VALUE_FIELD]: result, // 这个字段如何获取？ $$value$$
+            },
+          };
+        }
+        return viewMeta;
+      };
+      return getCellMeta;
+    },
+  };
+
+  return (
+    <ZESheet
+      logicform={{
+        schema: "sales",
+        groupby: ["渠道"],
+        preds: [
+          { name: "总销量", operator: "$sum", pred: "销售量" },
+          { name: "毛利率", operator: "毛利率" },
+        ],
+      }}
+      s2Options={options}
     />
   );
 };
