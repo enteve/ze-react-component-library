@@ -134,7 +134,6 @@ const ZECard: React.FC<ZECardProps> = ({
   close,
   dashboardID,
   enableGroupByMenu,
-  customEntityRender = {},
 }) => {
   const {
     value: logicform,
@@ -238,61 +237,66 @@ const ZECard: React.FC<ZECardProps> = ({
   );
 
   let component: any;
+  // 自定义Content
   if (mainContent && data?.logicform) {
-    component = mainContent(data.logicform);
-  } else if (isSimpleQuery(logicform)) {
-    component = tableContent;
-  } else if (finalRepresentation === "value") {
-    component = <ValueDisplayer logicform={logicform} data={data} />;
-  } else {
-    if (data?.result?.length === 0) {
-      component = <Empty description="没有数据" />;
-    } else if (
-      finalRepresentation === "bar" ||
-      finalRepresentation === "pie" ||
-      finalRepresentation === "line" ||
-      finalRepresentation === "map"
-    ) {
-      let chartType = "column";
-      switch (finalRepresentation) {
-        case "pie":
-          chartType = "pie";
-          break;
+    component = mainContent(data.logicform, data);
+  }
 
-        case "line":
-          chartType = "line";
-          break;
-        case "map":
-          chartType = "map";
-          break;
-
-        default:
-          break;
-      }
-
-      // chartType有两种形式，column和bar。
-      if (
-        finalRepresentation === "bar" &&
-        (logicform.sort || horizontalBarChart)
+  // 如果没有自定义Content，则自动判断
+  if (!component) {
+    if (isSimpleQuery(logicform)) {
+      component = tableContent;
+    } else if (finalRepresentation === "value") {
+      component = <ValueDisplayer logicform={logicform} data={data} />;
+    } else {
+      if (data?.result?.length === 0) {
+        component = <Empty description="没有数据" />;
+      } else if (
+        finalRepresentation === "bar" ||
+        finalRepresentation === "pie" ||
+        finalRepresentation === "line" ||
+        finalRepresentation === "map"
       ) {
-        chartType = "bar";
-      }
+        let chartType = "column";
+        switch (finalRepresentation) {
+          case "pie":
+            chartType = "pie";
+            break;
 
-      component = (
-        <ZEChart
-          type={chartType}
-          logicform={logicform}
-          result={data}
-          onChangeLogicform={setLogicform}
-          onDbClick={onDbClick}
-          onItemSelect={enableGroupByMenu ? setSelectedItem : undefined}
-          {...chartProps}
-        />
-      );
-    } else if (finalRepresentation === "entity" && data.result?.length === 1) {
-      if (customEntityRender[data.schema._id]) {
-        component = customEntityRender[data.schema._id](data);
-      } else {
+          case "line":
+            chartType = "line";
+            break;
+          case "map":
+            chartType = "map";
+            break;
+
+          default:
+            break;
+        }
+
+        // chartType有两种形式，column和bar。
+        if (
+          finalRepresentation === "bar" &&
+          (logicform.sort || horizontalBarChart)
+        ) {
+          chartType = "bar";
+        }
+
+        component = (
+          <ZEChart
+            type={chartType}
+            logicform={logicform}
+            result={data}
+            onChangeLogicform={setLogicform}
+            onDbClick={onDbClick}
+            onItemSelect={enableGroupByMenu ? setSelectedItem : undefined}
+            {...chartProps}
+          />
+        );
+      } else if (
+        finalRepresentation === "entity" &&
+        data.result?.length === 1
+      ) {
         component = (
           <ZEDescription
             schema={data.schema}
@@ -300,9 +304,9 @@ const ZECard: React.FC<ZECardProps> = ({
             item={data.result[0]}
           />
         );
+      } else {
+        component = tableContent;
       }
-    } else {
-      component = tableContent;
     }
   }
 
