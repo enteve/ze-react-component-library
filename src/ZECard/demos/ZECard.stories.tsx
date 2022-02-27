@@ -92,9 +92,11 @@ export const Stats = () => (
       groupby: { _id: "店铺_地址", level: "省市" },
       preds: [{ name: "销售额", operator: "$sum", pred: "销售额" }],
     }}
-    chartProps={{ 
-      // height: 200 
-    }}
+    chartProps={
+      {
+        // height: 200
+      }
+    }
   />
 );
 
@@ -317,7 +319,7 @@ export const Closable = () => {
   );
 };
 
-export const RegisterEntForSchema = () => {
+export const CustomContent = () => {
   return (
     <ZECard
       title="女装礼包"
@@ -327,22 +329,28 @@ export const RegisterEntForSchema = () => {
         field: "名称",
         name: "女装礼包",
       }}
-      customEntityRender={{
-        product: (result: LogicformAPIResultType) => {
-          const entity = result.result[0];
-          return (
-            <Card
-              hoverable
-              style={{ width: 240 }}
-              cover={<img alt="example" src={entity.图片} />}
-            >
-              <Card.Meta
-                title={entity.名称}
-                description={`品类：${entity.品类}，价格: ${entity.价格}`}
-              />
-            </Card>
-          );
-        },
+      mainContent={(logicform, result) => {
+        try {
+          if (
+            logicform.schema === "product" &&
+            logicform.preds[0][0].operator === "$ent"
+          ) {
+            const entity = result.result[0];
+            return (
+              <Card
+                hoverable
+                style={{ width: 240 }}
+                cover={<img alt="example" src={entity.图片} />}
+              >
+                <Card.Meta
+                  title={entity.名称}
+                  description={`品类：${entity.品类}，价格: ${entity.价格}`}
+                />
+              </Card>
+            );
+          }
+        } catch (error) {}
+        return null;
       }}
     />
   );

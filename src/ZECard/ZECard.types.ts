@@ -10,7 +10,10 @@ export type ZECardProps = {
   representation?: string;
   warning?: string; // 显示在visualizer下方，一个warning
   extra?: React.ReactNode;
-  mainContent?: (logicform: LogicformType) => React.ReactNode; // 可以用来替换主要的返回的显示内容，做到高度自定义化
+  mainContent?: (
+    logicform: LogicformType,
+    result: LogicformAPIResultType
+  ) => React.ReactNode | null; // 可以用来替换主要的返回的显示内容，做到高度自定义化
   footer?: React.ReactNode | ((logicform: LogicformType) => React.ReactNode);
   compact?: boolean; // 是否排版紧凑一点
   size?: "default" | "small";
@@ -37,8 +40,4 @@ export type ZECardProps = {
   pinable?: boolean;
   close?: () => void;
   enableGroupByMenu?: boolean;
-
-  customEntityRender?: {
-    [schemaID: string]: (result: LogicformAPIResultType) => React.ReactNode;
-  }; // 对于Entity的Detail来说，可以不用ZEDescription，而用一个自定义的插件
 };
