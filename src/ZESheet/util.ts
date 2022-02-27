@@ -16,7 +16,6 @@ export const getDefaultS2Config = (
       rows: result.columnProperties
         .slice(0, logicform.groupby.length)
         .map((prop) => {
-          console.log(prop);
           if (prop.type === "object") {
             const nameProp = getNameProperty(prop.schema);
             return `${prop.name}.${nameProp.name}`;
