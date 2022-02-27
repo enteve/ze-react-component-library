@@ -216,7 +216,7 @@ const Table: React.FC<TableProps> = ({
   options,
   preds,
   search,
-  size = "small",
+  size,
   rowKey = "_id",
   customColumns = {},
   className,
