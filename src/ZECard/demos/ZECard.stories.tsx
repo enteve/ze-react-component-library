@@ -92,6 +92,9 @@ export const Stats = () => (
       groupby: { _id: "店铺_地址", level: "省市" },
       preds: [{ name: "销售额", operator: "$sum", pred: "销售额" }],
     }}
+    chartProps={{ 
+      // height: 200 
+    }}
   />
 );
 
@@ -115,6 +118,7 @@ export const StatsHorizontalBar = () => (
     representation="bar"
     chartProps={{
       targetPred: "指标", // 可以显示指标
+      height: 200, // 调整图的高度
     }}
   />
 );

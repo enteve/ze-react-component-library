@@ -3,19 +3,26 @@
  */
 import React, { memo } from "react";
 import ReactECharts from "echarts-for-react";
-import _ from "underscore";
 interface Props {
   option: any;
-  width: number;
+  width?: number;
+  height?: number;
   style?: React.CSSProperties;
   ref?: any;
   eventsDict?: Record<string, Function>;
 }
 
-const CHART_MAX_HEIGHT = 400;
+export const CHART_MAX_HEIGHT = 400;
 
 const EChart: React.FC<Props> = memo(
-  ({ option, width, style = {}, ref, eventsDict = {} }) => {
+  ({
+    option,
+    width,
+    height: _height = CHART_MAX_HEIGHT,
+    style = {},
+    ref,
+    eventsDict = {},
+  }) => {
     const defaultOption = {
       toolbox: {
         feature: {
@@ -23,10 +30,16 @@ const EChart: React.FC<Props> = memo(
         },
       },
     };
+    const height = _height < CHART_MAX_HEIGHT ? _height : CHART_MAX_HEIGHT;
+
     return (
       <ReactECharts
         ref={ref}
-        style={{ height: _.min([width / 1.25, CHART_MAX_HEIGHT]), ...style }}
+        style={{
+          width,
+          height,
+          ...style,
+        }}
         option={{ ...defaultOption, ...option }}
         notMerge={true}
         lazyUpdate={true}

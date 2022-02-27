@@ -247,6 +247,7 @@ const ZEChart: React.FC<ZEChartProps> = memo(
           })}
           eventsDict={chartEventDict}
           width={width}
+          height={height}
         />
       );
     }
@@ -267,11 +268,7 @@ const ZEChart: React.FC<ZEChartProps> = memo(
 
 const ZEChartWrapper: React.FC<Omit<ZEChartProps, "width">> = (props) => {
   return (
-    <SizeMe monitorHeight>
-      {({ size }) => (
-        <ZEChart width={size.width} height={size.height} {...props} />
-      )}
-    </SizeMe>
+    <SizeMe>{({ size }) => <ZEChart width={size.width} {...props} />}</SizeMe>
   );
 };
 
