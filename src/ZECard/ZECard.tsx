@@ -134,6 +134,7 @@ const ZECard: React.FC<ZECardProps> = ({
   close,
   dashboardID,
   enableGroupByMenu,
+  customEntityRender = {},
 }) => {
   const {
     value: logicform,
@@ -289,13 +290,17 @@ const ZECard: React.FC<ZECardProps> = ({
         />
       );
     } else if (finalRepresentation === "entity" && data.result?.length === 1) {
-      component = (
-        <ZEDescription
-          schema={data.schema}
-          columnProperties={data.columnProperties}
-          item={data.result[0]}
-        />
-      );
+      if (customEntityRender[data.schema._id]) {
+        component = customEntityRender[data.schema._id](data);
+      } else {
+        component = (
+          <ZEDescription
+            schema={data.schema}
+            columnProperties={data.columnProperties}
+            item={data.result[0]}
+          />
+        );
+      }
     } else {
       component = tableContent;
     }
