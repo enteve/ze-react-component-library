@@ -61,7 +61,7 @@ const ZESheet: React.FC<ZESheetProps> = ({
   const [innerS2DataConfig, setInnerS2DataConfig] =
     useState<ZESheetProps["s2DataConfig"]>(s2DataConfig);
   const [innerS2Options, setInnerS2Options] =
-    useState<Partial<ZESheetProps["s2Options"]>>(s2Options);
+    useState<ZESheetProps["s2Options"]>(s2Options);
   const [previewConfig, setPreviewConfig] =
     useState<Pick<ZESheetProps, "logicform" | "s2DataConfig" | "s2Options">>();
 
