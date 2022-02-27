@@ -8,7 +8,7 @@ import {
   getHierarchyCodeLength,
 } from "zeroetp-api-sdk";
 import * as echarts from "echarts";
-import EChart from "../EChart";
+import EChart, { CHART_MAX_HEIGHT } from "../EChart";
 import _ from "underscore";
 import { Result } from "antd";
 import { formatChartOptionGrid } from "../util";
@@ -28,11 +28,13 @@ const Map: React.FC<Props> = ({
   eventsDict = {},
   option: userOption = {},
   width,
-  height,
+  height: _height = CHART_MAX_HEIGHT,
 }) => {
   const [map, setMap] = useState<string | undefined>();
   const [chartOption, setOption] = useState<any>(userOption);
   const level = data?.logicform.groupby[0].level;
+  // 适配地图的高度
+  const height = _.min([width / 1.25, _height]);
 
   useRequest(
     () => {
@@ -109,7 +111,7 @@ const Map: React.FC<Props> = ({
   );
 
   useEffect(() => {
-    let option: any = {...userOption}
+    let option: any = { ...userOption };
     if (map && data?.result && data?.logicform) {
       const { logicform } = data;
       let dimension = 1;
@@ -163,7 +165,7 @@ const Map: React.FC<Props> = ({
         option.series[0].top = 0;
         option.series[0].bottom = 30;
       } else {
-        option.series[0].layoutSize = (width > height ? height : width) * 1.24;
+        option.series[0].layoutSize = height * 1.25;
         option.series[0].layoutCenter = ["50%", "50%"];
       }
     }
@@ -187,6 +189,7 @@ const Map: React.FC<Props> = ({
       option={formatChartOptionGrid(chartOption)}
       eventsDict={eventsDict}
       width={width}
+      height={height}
     />
   );
 };
