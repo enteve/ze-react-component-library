@@ -7,8 +7,8 @@ import "antd/dist/antd.css";
 
 // prepare server
 import prepareServerForStories from "../../../util/prepareServerForStories";
-import { LogicformType } from "zeroetp-api-sdk";
-import { message, Space } from "antd";
+import { LogicformAPIResultType, LogicformType } from "zeroetp-api-sdk";
+import { Card, message, Space } from "antd";
 prepareServerForStories();
 
 export default {
@@ -308,6 +308,37 @@ export const Closable = () => {
       enableGroupByMenu
       close={() => {
         message.info("close card");
+      }}
+    />
+  );
+};
+
+export const RegisterEntForSchema = () => {
+  return (
+    <ZECard
+      title="女装礼包"
+      logicform={{
+        schema: "product",
+        operator: "$ent",
+        field: "名称",
+        name: "女装礼包",
+      }}
+      customEntityRender={{
+        product: (result: LogicformAPIResultType) => {
+          const entity = result.result[0];
+          return (
+            <Card
+              hoverable
+              style={{ width: 240 }}
+              cover={<img alt="example" src={entity.图片} />}
+            >
+              <Card.Meta
+                title={entity.名称}
+                description={`品类：${entity.品类}，价格: ${entity.价格}`}
+              />
+            </Card>
+          );
+        },
       }}
     />
   );

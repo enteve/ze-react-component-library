@@ -37,4 +37,8 @@ export type ZECardProps = {
   pinable?: boolean;
   close?: () => void;
   enableGroupByMenu?: boolean;
+
+  customEntityRender?: {
+    [schemaID: string]: (result: LogicformAPIResultType) => React.ReactNode;
+  }; // 对于Entity的Detail来说，可以不用ZEDescription，而用一个自定义的插件
 };
