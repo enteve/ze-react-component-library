@@ -122,6 +122,7 @@ const ZECard: React.FC<ZECardProps> = ({
   exportToExcel,
   xlsx,
   showRecommender = false,
+  showRepresentationChanger = true,
   askMore,
   showMainContentOnly,
   tableProps = {},
@@ -346,8 +347,8 @@ const ZECard: React.FC<ZECardProps> = ({
             />
           </div>
         )}
-        {/* 有mainContent的话，没有RepresentationChanger,暂时只有带groupby的是支持RepresentationChanger的 */}
-        {!mainContent && logicform.groupby && (
+        {/* 暂时只有带groupby的是支持RepresentationChanger的 */}
+        {showRepresentationChanger && logicform.groupby && (
           <RepresentationChanger
             representationType={finalRepresentation}
             onChange={(v) => {
