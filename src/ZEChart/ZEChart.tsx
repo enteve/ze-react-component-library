@@ -253,6 +253,7 @@ const ZEChart: React.FC<ZEChartProps> = memo(
     }
     return (
       <div
+        className="ze-chart"
         data-testid="ZEChart"
         onClick={() => {
           if (type === "map") {
@@ -266,9 +267,17 @@ const ZEChart: React.FC<ZEChartProps> = memo(
   }
 );
 
-const ZEChartWrapper: React.FC<Omit<ZEChartProps, "width">> = (props) => {
+const ZEChartWrapper: React.FC<ZEChartProps> = (props) => {
   return (
-    <SizeMe>{({ size }) => <ZEChart width={size.width} {...props} />}</SizeMe>
+    <SizeMe monitorHeight>
+      {({ size: { width, height } }) => (
+        <ZEChart
+          {...props}
+          width={props.width || width}
+          height={props.height || height}
+        />
+      )}
+    </SizeMe>
   );
 };
 
