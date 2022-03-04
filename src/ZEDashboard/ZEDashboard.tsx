@@ -1,73 +1,90 @@
 import React from "react";
+import { Popconfirm } from "antd";
+import { SizeMe } from "react-sizeme";
+import GridLayout from "react-grid-layout";
+import { CloseOutlined } from "@ant-design/icons";
+import ZECard from "../ZECard";
 import type { ZEDashboardProps } from "./ZEDashboard.types";
-import { Card, Col, List, Row } from "antd";
-import ZEAsk from "../ZEAsk";
-import ZEChart from "../ZEChart";
-import ZELogicform from "../ZELogicform/ZELogicform";
+import "./ZEDashboard.less";
 
-const ZEDashboard: React.FC<ZEDashboardProps> = () => {
+const ZEDashboard: React.FC<ZEDashboardProps> = ({
+  data,
+  className = "",
+  editable = false,
+  cols = 12,
+  rowHeight = 100,
+  margin = [24, 24],
+  containerPadding = [0, 0],
+  resizeHandles = ['se', 'nw'],
+  resizeHandle,
+  onItemDelete,
+  onLayoutChange,
+  width,
+}) => {
+  const layout = data.map((d) => ({
+    x: 0,
+    y: 0,
+    w: 12,
+    h: 4,
+    minH: 2,
+    minW: 2,
+    ...d.layout,
+    i: d.id,
+  }));
+
   return (
-    <>
-      <Row gutter={10}>
-        <Col span={6}>
-          <Card title="本月销售额">
-            {ZEAsk("本月销售额") || 0}
-            <br />
-            周同比：{ZEAsk("本周销售额") / ZEAsk("上周销售额") - 1}
-          </Card>
-        </Col>
-        <Col span={6}>
-          <Card>s</Card>
-        </Col>
-        <Col span={6}>
-          <Card>s</Card>
-        </Col>
-        <Col span={6}>
-          <Card>s</Card>
-        </Col>
-      </Row>
-      <Row style={{ marginTop: 20 }}>
-        <Card title="图表" style={{ width: "100%" }}>
-          <Row>
-            <Col span={16}>
-              <ZEChart
-                type="column"
-                logicform={{
-                  query: {
-                    日期: {
-                      $gte: { $offset: { month: -12 } },
-                    },
-                  },
-                  schema: "productsale",
-                  groupby: "$month",
-                  preds: [{ name: "amount", operator: "$sum", pred: "销售额" }],
-                }}
-              />
-            </Col>
-            <Col span={8}>
-              <ZELogicform
-                logicform={{
-                  schema: "productsale",
-                  groupby: "渠道",
-                  preds: [{ name: "sum", operator: "$sum", pred: "销售额" }],
-                }}
-                dataKey="dataSource"
-                loadingKey="loading"
-              >
-                <List
-                  renderItem={(item: any) => (
-                    <List.Item>
-                      {item.渠道}:{item.sum}
-                    </List.Item>
-                  )}
-                />
-              </ZELogicform>
-            </Col>
-          </Row>
-        </Card>
-      </Row>
-    </>
+    <div
+      className={["ze-dashboard", className, editable ? "active" : ""].join(
+        " "
+      )}
+    >
+      <GridLayout
+        width={width}
+        rowHeight={rowHeight}
+        layout={layout}
+        isDraggable={editable}
+        isResizable={editable}
+        isBounded
+        cols={cols}
+        margin={margin}
+        containerPadding={containerPadding}
+        resizeHandles={resizeHandles}
+        resizeHandle={resizeHandle}
+        onLayoutChange={onLayoutChange}
+      >
+        {data.map((d) => (
+          <div key={d.id} className="ze-dashboard-item">
+            {editable && (
+              <div className="ze-dashboard-actions">
+                <Popconfirm
+                  okType="danger"
+                  title="是否确定删除?"
+                  cancelText="取消"
+                  okText="确定"
+                  onConfirm={() => {
+                    onItemDelete?.(d.id);
+                  }}
+                >
+                  <CloseOutlined />
+                </Popconfirm>
+              </div>
+            )}
+            <ZECard {...d.cardProps} />
+          </div>
+        ))}
+      </GridLayout>
+    </div>
   );
 };
 
-export default ZEDashboard;
+const ZEDashboardWrapper: React.FC<ZEDashboardProps> = (props) => {
+  return (
+    <SizeMe>
+      {({ size: { width, height } }) => (
+        <ZEDashboard {...props} width={props.width || width} />
+      )}
+    </SizeMe>
+  );
+};
+
+export default ZEDashboardWrapper;

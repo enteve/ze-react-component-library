@@ -34,7 +34,7 @@ const Map: React.FC<Props> = ({
   const [chartOption, setOption] = useState<any>(userOption);
   const level = data?.logicform.groupby[0].level;
   // 适配地图的高度
-  const height = _.min([width / 1.25, _height]);
+  const height = _.min([width / 1.25, _height, CHART_MAX_HEIGHT]);
 
   useRequest(
     () => {
@@ -170,7 +170,7 @@ const Map: React.FC<Props> = ({
       }
     }
     setOption(option);
-  }, [map]);
+  }, [map, height]);
 
   if (
     !logicform.groupby ||

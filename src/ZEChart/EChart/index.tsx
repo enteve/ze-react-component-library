@@ -30,7 +30,8 @@ const EChart: React.FC<Props> = memo(
         },
       },
     };
-    const height = _height < CHART_MAX_HEIGHT ? _height : CHART_MAX_HEIGHT;
+    const height =
+      _height > 0 && _height < CHART_MAX_HEIGHT ? _height : CHART_MAX_HEIGHT;
 
     return (
       <ReactECharts
