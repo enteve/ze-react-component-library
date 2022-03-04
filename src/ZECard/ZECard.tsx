@@ -14,7 +14,7 @@ import {
   Tooltip,
 } from "antd";
 import { withErrorBoundary } from "react-error-boundary";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import _ from "underscore";
 import {
   findPropByName,
@@ -189,6 +189,25 @@ const ZECard: React.FC<ZECardProps> = ({
   const [representation, setRepresentation] = useState<string>(repr);
   const [selectedItem, setSelectedItem] = useState<any>();
 
+  const finalRepresentation = useMemo(() => {
+    let finalRep = representation;
+    if (data?.result) {
+      const defaultRepresentation = getDefaultRepresentation(
+        logicform,
+        data,
+        pieThreshold
+      );
+      if (data.result instanceof Array) {
+        if (defaultRepresentation && defaultRepresentation !== "value") {
+          finalRep = representation || defaultRepresentation;
+        }
+      } else {
+        finalRep = "value";
+      }
+    }
+    return finalRep;
+  }, [data, representation]);
+
   const { onDbClick } = useDrillDownDbClick({
     logicform,
     onChangeLogicform: setLogicform,
@@ -203,21 +222,6 @@ const ZECard: React.FC<ZECardProps> = ({
       },
     };
   };
-
-  const defaultRepresentation = getDefaultRepresentation(
-    logicform,
-    data,
-    pieThreshold
-  );
-  let finalRepresentation = representation || defaultRepresentation;
-
-  if (data?.result instanceof Array) {
-    if (finalRepresentation === "value" && defaultRepresentation !== "value") {
-      finalRepresentation = defaultRepresentation;
-    }
-  } else {
-    finalRepresentation = "value";
-  }
 
   const tableContent = (
     <Table

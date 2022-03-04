@@ -118,6 +118,7 @@ export const StatsHorizontalBar = () => (
     }}
     horizontalBarChart
     representation="bar"
+    enableGroupByMenu
     chartProps={{
       targetPred: "指标", // 可以显示指标
       height: 200, // 调整图的高度
