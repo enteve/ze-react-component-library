@@ -12,10 +12,10 @@ const ZEDashboard: React.FC<ZEDashboardProps> = ({
   className = "",
   editable = false,
   cols = 12,
-  rowHeight = 100,
+  rowHeight = 92,
   margin = [24, 24],
   containerPadding = [0, 0],
-  resizeHandles = ['se', 'nw'],
+  resizeHandles = ["se", "nw"],
   resizeHandle,
   onItemDelete,
   onLayoutChange,
@@ -38,41 +38,43 @@ const ZEDashboard: React.FC<ZEDashboardProps> = ({
         " "
       )}
     >
-      <GridLayout
-        width={width}
-        rowHeight={rowHeight}
-        layout={layout}
-        isDraggable={editable}
-        isResizable={editable}
-        isBounded
-        cols={cols}
-        margin={margin}
-        containerPadding={containerPadding}
-        resizeHandles={resizeHandles}
-        resizeHandle={resizeHandle}
-        onLayoutChange={onLayoutChange}
-      >
-        {data.map((d) => (
-          <div key={d.id} className="ze-dashboard-item">
-            {editable && (
-              <div className="ze-dashboard-actions">
-                <Popconfirm
-                  okType="danger"
-                  title="是否确定删除?"
-                  cancelText="取消"
-                  okText="确定"
-                  onConfirm={() => {
-                    onItemDelete?.(d.id);
-                  }}
-                >
-                  <CloseOutlined />
-                </Popconfirm>
-              </div>
-            )}
-            <ZECard {...d.cardProps} />
-          </div>
-        ))}
-      </GridLayout>
+      {width !== undefined && (
+        <GridLayout
+          width={width}
+          rowHeight={rowHeight}
+          layout={layout}
+          isDraggable={editable}
+          isResizable={editable}
+          isBounded
+          cols={cols}
+          margin={margin}
+          containerPadding={containerPadding}
+          resizeHandles={resizeHandles}
+          resizeHandle={resizeHandle}
+          onLayoutChange={onLayoutChange}
+        >
+          {data.map((d) => (
+            <div key={d.id} className="ze-dashboard-item">
+              {editable && (
+                <div className="ze-dashboard-actions">
+                  <Popconfirm
+                    okType="danger"
+                    title="是否确定删除?"
+                    cancelText="取消"
+                    okText="确定"
+                    onConfirm={() => {
+                      onItemDelete?.(d.id);
+                    }}
+                  >
+                    <CloseOutlined />
+                  </Popconfirm>
+                </div>
+              )}
+              <ZECard {...d.cardProps} />
+            </div>
+          ))}
+        </GridLayout>
+      )}
     </div>
   );
 };
@@ -80,7 +82,7 @@ const ZEDashboard: React.FC<ZEDashboardProps> = ({
 const ZEDashboardWrapper: React.FC<ZEDashboardProps> = (props) => {
   return (
     <SizeMe>
-      {({ size: { width, height } }) => (
+      {({ size: { width } }) => (
         <ZEDashboard {...props} width={props.width || width} />
       )}
     </SizeMe>

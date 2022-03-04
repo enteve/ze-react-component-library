@@ -1,6 +1,10 @@
 // Generated with util/create-component.js
 import React, { useState } from "react";
 import { Space, Button } from "antd";
+import ZECard from "../../ZECard";
+import ZESearchBar from "../../ZESearchBar";
+import { useRequest } from "@umijs/hooks";
+import { requestAsk } from "../../request";
 import ZEDashboard, { ZEDashboardItem } from "../index";
 
 // prepare server
@@ -47,8 +51,11 @@ const initialData = [
 export const Basic = () => {
   const [data, setData] = useState<ZEDashboardItem[]>(initialData);
   const [mode, setMode] = useState<"add" | "edit">();
-
-  const onAdd = () => {};
+  const [question, setQuestion] = useState<string>();
+  const { data: answer, run: ask } = useRequest(
+    () => (question ? requestAsk(question, true) : Promise.resolve(null)),
+    { refreshDeps: [question] }
+  );
 
   return (
     <div>
@@ -59,12 +66,26 @@ export const Basic = () => {
           width: "100%",
         }}
       >
-        {mode === "edit" ? (
+        {mode ? (
           <>
             <Button
               type="primary"
+              disabled={mode === "add" && !answer?.logicform}
               onClick={() => {
                 // save
+                if (mode === "add" && answer?.logicform) {
+                  setData((oldData) => [
+                    {
+                      id: `item_${oldData.length}`,
+                      cardProps: {
+                        title: question,
+                        logicform: answer.logicform,
+                      },
+                    },
+                    ...oldData,
+                  ]);
+                  setQuestion(undefined);
+                }
                 setMode(undefined);
               }}
             >
@@ -72,7 +93,8 @@ export const Basic = () => {
             </Button>
             <Button
               onClick={() => {
-                setData([...initialData]);
+                mode === "edit" && setData([...initialData]);
+                mode === "add" && setQuestion(undefined);
                 setMode(undefined);
               }}
             >
@@ -81,7 +103,12 @@ export const Basic = () => {
           </>
         ) : (
           <>
-            <Button type="primary" onClick={onAdd}>
+            <Button
+              type="primary"
+              onClick={() => {
+                setMode("add");
+              }}
+            >
               新增
             </Button>
             <Button
@@ -94,27 +121,42 @@ export const Basic = () => {
           </>
         )}
       </Space>
-      <ZEDashboard
-        data={data}
-        editable={mode === "edit"}
-        onItemDelete={(id) => {
-          setData((oldData) => oldData.filter((d) => d.id !== id));
-        }}
-        onLayoutChange={(lay) => {
-          setData((oldData) => {
-            return oldData.map((d) => {
-              const l = lay.find((f) => f.i === d.id);
-              if (l) {
-                return {
-                  ...d,
-                  layout: l,
-                };
-              }
-              return d;
+      {mode === "add" ? (
+        <>
+          <ZESearchBar
+            ask={(ques) => {
+              setQuestion(ques);
+            }}
+          />
+          {answer?.logicform && (
+            <div style={{ marginTop: 24 }}>
+              <ZECard title={question} logicform={answer.logicform} />
+            </div>
+          )}
+        </>
+      ) : (
+        <ZEDashboard
+          data={data}
+          editable={mode === "edit"}
+          onItemDelete={(id) => {
+            setData((oldData) => oldData.filter((d) => d.id !== id));
+          }}
+          onLayoutChange={(lay) => {
+            setData((oldData) => {
+              return oldData.map((d) => {
+                const l = lay.find((f) => f.i === d.id);
+                if (l) {
+                  return {
+                    ...d,
+                    layout: l,
+                  };
+                }
+                return d;
+              });
             });
-          });
-        }}
-      />
+          }}
+        />
+      )}
     </div>
   );
 };
