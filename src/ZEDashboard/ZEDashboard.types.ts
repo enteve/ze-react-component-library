@@ -29,7 +29,7 @@ export type ZEDashboardProps = {
   editable?: boolean;
   // default 12
   cols?: number;
-  // default 100
+  // default 92
   rowHeight?: number;
   // default [24,24]
   margin?: [number, number];
