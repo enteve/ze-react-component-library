@@ -203,15 +203,10 @@ const ZECard: React.FC<ZECardProps> = ({
       // 而representation为line，如果直接按照下面的逻辑，finalRep就不对了，组件会报错
       // finalRep = representation || defaultRepresentation;
       // 所以要加以下逻辑
-      if (data.result instanceof Array) {
-        // 此时defaultRepresentation肯定不会是value
-        if (representation !== "value") {
-          finalRep = representation || defaultRepresentation;
-        } else {
-          finalRep = defaultRepresentation;
-        }
-      } else {
+      if (defaultRepresentation === "value") {
         finalRep = "value";
+      } else {
+        finalRep = representation || defaultRepresentation;
       }
     }
     return finalRep;
