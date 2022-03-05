@@ -16,7 +16,10 @@ export async function request(func: Promise<any>) {
   return null;
 }
 
-export async function requestAsk(question: string, logicform_only: boolean): Promise<AskAPIResultType> {
+export async function requestAsk(
+  question: string,
+  logicform_only?: boolean
+): Promise<AskAPIResultType> {
   const ret = await request(ask(question, logicform_only));
   return ret;
 }

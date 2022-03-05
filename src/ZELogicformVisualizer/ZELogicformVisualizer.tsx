@@ -1,6 +1,7 @@
 import React from "react";
 import { Badge, Button, Dropdown, Menu } from "antd";
 import { isRelativeDateForm, isSimpleQuery } from "zeroetp-api-sdk";
+import type { PredItemObjectType } from "zeroetp-api-sdk";
 import { DownOutlined } from "@ant-design/icons";
 import { unnormalizeQuery, basicValueDisplay } from "../util";
 import { ZELogicformVisualizerProps } from "./ZELogicformVisualizer.types";
@@ -26,7 +27,12 @@ const ZELogicformVisualizer: React.FC<ZELogicformVisualizerProps> = ({
   };
 
   // 有个逻辑，如果有preds且只有一个，且里面有query那么拿到外面去，这样可以绕过preds不显示的问题。
-  if (logicform.preds?.length === 1 && logicform.preds[0].query) {
+  if (
+    logicform.preds?.length === 1 &&
+    typeof logicform.preds[0] === "object" && // TODO：这里的pred表达形式很多，看看之后有没有更好的办法
+    !Array.isArray(logicform.preds[0]) && // TODO：这里的pred表达形式很多，看看之后有没有更好的办法
+    logicform.preds[0].query
+  ) {
     if (!logicform.query) logicform.query = {};
     logicform.query = { ...logicform.query, ...logicform.preds[0].query };
     delete logicform.preds[0].query;
@@ -241,17 +247,19 @@ const ZELogicformVisualizer: React.FC<ZELogicformVisualizerProps> = ({
     const preds = logicform.preds.map((p, index) => {
       // TODO: Traverse尚未支持
       if (Array.isArray(p)) {
-        p = p[0];
+        p = p[0] as PredItemObjectType;
       }
 
       return (
         <span key={index}>
-          {p.operator && (
+          {typeof p === "object" && p.operator && (
             <>
               <strong>{p.operator}</strong> {p.pred && `(${p.pred})`}
             </>
           )}
-          {!p.operator && <>{typeof p === "object" ? p.pred : p}</>}
+          {(typeof p !== "object" || !p.operator) && (
+            <>{typeof p === "object" ? p.pred : p}</>
+          )}
           {index < logicform.preds!.length - 1 && "，"}
         </span>
       );
