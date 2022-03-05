@@ -29,14 +29,14 @@ export const SimpleTable = () => (
 
 export const Value = () => (
   <ZECard
-    title="MTD销售额"
+    title="YTD销售额"
     logicform={{
       schema: "sales",
       operator: "$sum",
       pred: "销售额",
       name: "总销售额",
       query: {
-        日期: "MTD",
+        日期: "YTD",
       },
     }}
     showRecommender={true}
@@ -52,6 +52,26 @@ export const PercentageValue = () => (
       operator: "$mom",
       pred: "销售额",
       name: "总销售额",
+      query: {
+        日期: "YTD",
+      },
+    }}
+  />
+);
+
+export const ValueWithDrillDown = () => (
+  <ZECard
+    title="YTD销售额"
+    showMainContentOnly
+    logicform={{
+      schema: "sales",
+      operator: "$yoy",
+      name: "同比",
+      pred: {
+        pred: "销售额",
+        operator: "$sum",
+        name: "总销售额",
+      },
       query: {
         日期: "YTD",
       },
