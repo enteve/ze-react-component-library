@@ -1,8 +1,8 @@
-import { PropertyType } from "zeroetp-api-sdk";
+import { PropertyType, drilldownLogicform } from "zeroetp-api-sdk";
 import type { ZEChartProps } from "./ZEChart.types";
 import { useRef, useCallback } from "react";
 import moment, { Moment } from "moment";
-import { drilldownLogicform, formatWithProperty, getFormatter } from "../util";
+import { formatWithProperty, getFormatter } from "../util";
 
 export function useDrillDownDbClick(
   props: Pick<ZEChartProps, "logicform" | "onChangeLogicform"> & {

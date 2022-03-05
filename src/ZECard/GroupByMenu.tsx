@@ -5,9 +5,11 @@ import {
   LogicformAPIResultType,
   LogicformType,
   SchemaType,
+  drilldownLogicform,
+  PredItemType,
+  getDrillDownProp,
 } from "zeroetp-api-sdk";
 import { ZEChartProps } from "../ZEChart/ZEChart.types";
-import { drillDownPropForLogicform, drilldownLogicform } from "../util";
 
 // 处理地图相关的groupBy，比如：按 店铺_地址(省市) 分组
 const getGroupByPropertyByName = (name: string) => {
@@ -56,7 +58,7 @@ const getNewLogicform = ({
         name: logicform.pred,
         pred: logicform.pred,
         operator: logicform.operator,
-      },
+      } as PredItemType,
     ];
   }
   if (selectedItem) {
@@ -99,9 +101,7 @@ const GroupByMenu: FC<GroupByMenuProps> = ({
   }
 
   let drillDownMenus: React.ReactNode[] = [];
-  const props = result?.schema
-    ? drillDownPropForLogicform(result.schema)
-    : undefined;
+  const props = result?.schema ? getDrillDownProp(result.schema) : undefined;
 
   if (props && props.length > 0) {
     drillDownMenus = props.map((propertyName: string) => (

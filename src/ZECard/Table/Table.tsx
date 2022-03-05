@@ -18,6 +18,7 @@ import {
   getNameProperty,
   removeDataByID,
   updateDataByID,
+  drilldownLogicform,
 } from "zeroetp-api-sdk";
 import type { LogicformAPIResultType } from "zeroetp-api-sdk";
 import excelExporter from "./excelExporter";
@@ -29,7 +30,6 @@ import {
   valueEnumMapping,
   valueTypeMapping,
   basicValueDisplay,
-  drilldownLogicform,
   getFormatter,
 } from "../../util";
 

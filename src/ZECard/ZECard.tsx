@@ -50,6 +50,7 @@ const getDefaultRepresentation = (
   pieThreshold: number = 5
 ) => {
   if (!result) return null;
+  if (result.result == null) return null;
 
   if (result.returnType === "value" || typeof result.result !== "object")
     return "value";
@@ -197,13 +198,7 @@ const ZECard: React.FC<ZECardProps> = ({
         data,
         pieThreshold
       );
-      if (data.result instanceof Array) {
-        if (representation !== "value" && defaultRepresentation !== "value") {
-          finalRep = representation || defaultRepresentation;
-        }
-      } else {
-        finalRep = "value";
-      }
+      finalRep = representation || defaultRepresentation;
     }
     return finalRep;
   }, [data, representation]);
@@ -254,7 +249,7 @@ const ZECard: React.FC<ZECardProps> = ({
     } else if (finalRepresentation === "value") {
       component = <ValueDisplayer logicform={logicform} data={data} />;
     } else {
-      if (!data?.result || data?.result?.length === 0) {
+      if (data && (!data.result || data.result?.length === 0)) {
         component = <Empty description="没有数据" />;
       } else if (
         finalRepresentation === "bar" ||
