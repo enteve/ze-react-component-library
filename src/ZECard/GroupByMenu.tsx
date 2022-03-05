@@ -110,30 +110,29 @@ const GroupByMenu: FC<GroupByMenuProps> = ({
     groupByProperty = logicform.groupby?._id;
   }
 
-  let drillDownMenus: React.ReactNode[] = [];
   const props = result?.schema ? getDrillDownProp(result.schema) : undefined;
 
-  if (props && props.length > 0) {
-    drillDownMenus = props.map((propertyName: string) => (
-      <Menu.Item key={propertyName} disabled={propertyName === groupByProperty}>
-        按 <b className="text-primary-color">{propertyName}</b> 下钻
-      </Menu.Item>
-    ));
-
-    if (title) {
-      drillDownMenus = [
-        <Menu.Item key="-1" disabled className="groupby-menu-title-color">
-          {title}
-        </Menu.Item>,
-        <Menu.Divider />,
-        ...drillDownMenus,
-      ];
-    }
-  }
-
-  if (drillDownMenus.length === 0) {
-    return null;
-  }
+  const renderMenus = () => {
+    return (
+      <>
+        {title && (
+          <Menu.Item key="-1" disabled className="groupby-menu-title-color">
+            {title}
+          </Menu.Item>
+        )}
+        {props &&
+          props.length > 0 &&
+          props.map((propertyName: string) => (
+            <Menu.Item
+              key={propertyName}
+              disabled={propertyName === groupByProperty}
+            >
+              按 <b className="text-primary-color">{propertyName}</b> 下钻
+            </Menu.Item>
+          ))}
+      </>
+    );
+  };
 
   return (
     <Dropdown
@@ -154,7 +153,7 @@ const GroupByMenu: FC<GroupByMenuProps> = ({
           }}
           style={menuStyle}
         >
-          {drillDownMenus}
+          {renderMenus()}
         </Menu>
       }
     >
