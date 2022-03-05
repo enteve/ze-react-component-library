@@ -5,6 +5,7 @@ import ProTable, {
   EditableProTable,
   ProColumnType,
 } from "@ant-design/pro-table";
+import { SizeMe } from "react-sizeme";
 import { useRequest } from "@umijs/hooks";
 import ProProvider from "@ant-design/pro-provider";
 import { Tooltip, Result, Button, Popconfirm, Drawer } from "antd";
@@ -212,6 +213,7 @@ const mapColumnItem = (
 
 const Table: React.FC<TableProps> = ({
   logicform: _logicform,
+  height,
   setLogicform,
   options,
   preds,
@@ -392,6 +394,20 @@ const Table: React.FC<TableProps> = ({
     );
   }
 
+  let scrollY;
+  if (typeof height === "number") {
+    // 减去表头高
+    scrollY = height - 47;
+    if (options !== false) {
+      // 减去toolBar的高度
+      scrollY = scrollY - 48;
+    }
+    if (pagination !== false) {
+      // 减去分页的高度
+      scrollY = scrollY - 40;
+    }
+  }
+
   const tableProps: any = {
     cardProps: {
       bodyStyle: { padding: 0 },
@@ -404,7 +420,10 @@ const Table: React.FC<TableProps> = ({
     tableClassName: exportFileName,
     dataSource: result?.result || [],
     size,
-    scroll: scroll !== undefined ? scroll : { x },
+    scroll:
+      scroll !== undefined
+        ? { ...scroll, y: scroll.y || scrollY }
+        : { x, y: scrollY },
     options:
       options !== undefined
         ? options
@@ -590,7 +609,10 @@ const Table: React.FC<TableProps> = ({
   }
 
   return (
-    <div data-testid="ZETable" className={className}>
+    <div
+      data-testid="ZETable"
+      className={["ze-table", className].filter((f) => f).join(" ")}
+    >
       <ProProvider.Provider
         value={{
           ...values,
@@ -642,4 +664,16 @@ const Table: React.FC<TableProps> = ({
   );
 };
 
-export default Table;
+const TableWrapper: React.FC<TableProps> = (props) => {
+  if (props.height === "auto") {
+    return (
+      <SizeMe monitorHeight>
+        {({ size: { height } }) => <Table {...props} height={height} />}
+      </SizeMe>
+    );
+  }
+
+  return <Table {...props} />;
+};
+
+export default TableWrapper;

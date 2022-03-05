@@ -70,7 +70,7 @@ const ZEDashboard: React.FC<ZEDashboardProps> = ({
                   </Popconfirm>
                 </div>
               )}
-              <ZECard {...d.cardProps} />
+              <ZECard {...d.cardProps} tableProps={{ height: "auto" }} />
             </div>
           ))}
         </GridLayout>

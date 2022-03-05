@@ -22,6 +22,8 @@ export type TableProps = {
     logicform: LogicformType;
     merge: (mainData: any, refData: any) => any;
   }[]; // 补充的LF，用来填写一些其他的数据
+  // auto时自适应高度
+  height?: number | "auto";
   scroll?:
     | ({
         x?: string | number | true;
