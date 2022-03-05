@@ -198,7 +198,21 @@ const ZECard: React.FC<ZECardProps> = ({
         data,
         pieThreshold
       );
-      finalRep = representation || defaultRepresentation;
+      // 从value类型下钻到其它图表类型比如pie,然后点击切换图表类型为line,
+      // 这个时候representation为line，之后再点回退，此时defaultRepresentation为value，
+      // 而representation为line，如果直接按照下面的逻辑，finalRep就不对了，组件会报错
+      // finalRep = representation || defaultRepresentation;
+      // 所以要加以下逻辑
+      if (data.result instanceof Array) {
+        // 此时defaultRepresentation肯定不会是value
+        if (representation !== "value") {
+          finalRep = representation || defaultRepresentation;
+        } else {
+          finalRep = defaultRepresentation;
+        }
+      } else {
+        finalRep = "value";
+      }
     }
     return finalRep;
   }, [data, representation]);
