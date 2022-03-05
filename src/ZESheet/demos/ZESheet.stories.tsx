@@ -22,7 +22,7 @@ export const Basic = () => (
       preds: [
         { name: "总销量", operator: "$sum", pred: "销售量" },
         { name: "毛利率", operator: "毛利率" },
-        // { name: "转化率", operator: "转化率" },
+        { name: "转化率", operator: "转化率" },
       ],
     }}
   />
