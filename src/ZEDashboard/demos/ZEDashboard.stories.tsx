@@ -15,7 +15,16 @@ export default {
   title: "ZEDashboard",
 };
 
-const initialData = [
+const initialData: ZEDashboardItem[] = [
+  {
+    id: "card0",
+    cardProps: {
+      title: "所有产品",
+      logicform: {
+        schema: "product",
+      },
+    },
+  },
   {
     id: "card1",
     cardProps: {
@@ -30,7 +39,7 @@ const initialData = [
   {
     id: "card2",
     cardProps: {
-      title: "各省市销售额",
+      title: "各产品销售额",
       logicform: {
         schema: "sales",
         groupby: { _id: "产品_品类" },
