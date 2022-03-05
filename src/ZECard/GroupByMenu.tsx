@@ -10,6 +10,7 @@ import {
   getDrillDownProp,
 } from "zeroetp-api-sdk";
 import { ZEChartProps } from "../ZEChart/ZEChart.types";
+import "./GroupByMenu.less";
 
 // 处理地图相关的groupBy，比如：按 店铺_地址(省市) 分组
 const getGroupByPropertyByName = (name: string) => {
@@ -31,6 +32,8 @@ type GroupByMenuProps = Pick<
 > & {
   result: LogicformAPIResultType;
   selectedItem: any;
+  title?: string;
+  menuStyle?: React.CSSProperties;
 };
 
 const getNewLogicform = ({
@@ -87,6 +90,13 @@ const GroupByMenu: FC<GroupByMenuProps> = ({
   result,
   selectedItem,
   onChangeLogicform,
+  children = (
+    <Button>
+      深入分析 <DownOutlined />
+    </Button>
+  ),
+  title,
+  menuStyle,
 }) => {
   let groupByProperty;
   if (typeof logicform.groupby === "string") {
@@ -106,9 +116,19 @@ const GroupByMenu: FC<GroupByMenuProps> = ({
   if (props && props.length > 0) {
     drillDownMenus = props.map((propertyName: string) => (
       <Menu.Item key={propertyName} disabled={propertyName === groupByProperty}>
-        按照 <b className="text-primary-color">{propertyName}</b> 分组
+        按 <b className="text-primary-color">{propertyName}</b> 下钻
       </Menu.Item>
     ));
+
+    if (title) {
+      drillDownMenus = [
+        <Menu.Item key="-1" disabled className="groupby-menu-title-color">
+          {title}
+        </Menu.Item>,
+        <Menu.Divider />,
+        ...drillDownMenus,
+      ];
+    }
   }
 
   if (drillDownMenus.length === 0) {
@@ -117,6 +137,7 @@ const GroupByMenu: FC<GroupByMenuProps> = ({
 
   return (
     <Dropdown
+      trigger={["click"]}
       overlay={
         <Menu
           onClick={(menu) => {
@@ -131,14 +152,13 @@ const GroupByMenu: FC<GroupByMenuProps> = ({
               onChangeLogicform?.(newLF);
             }
           }}
+          style={menuStyle}
         >
           {drillDownMenus}
         </Menu>
       }
     >
-      <Button>
-        深入分析 <DownOutlined />
-      </Button>
+      {children}
     </Dropdown>
   );
 };
