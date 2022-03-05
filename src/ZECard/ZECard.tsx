@@ -191,14 +191,14 @@ const ZECard: React.FC<ZECardProps> = ({
 
   const finalRepresentation = useMemo(() => {
     let finalRep = representation;
-    if (data?.result) {
+    if (data) {
       const defaultRepresentation = getDefaultRepresentation(
         logicform,
         data,
         pieThreshold
       );
       if (data.result instanceof Array) {
-        if (defaultRepresentation && defaultRepresentation !== "value") {
+        if (representation !== "value" && defaultRepresentation !== "value") {
           finalRep = representation || defaultRepresentation;
         }
       } else {
