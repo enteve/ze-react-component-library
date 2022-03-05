@@ -254,7 +254,7 @@ const ZECard: React.FC<ZECardProps> = ({
     } else if (finalRepresentation === "value") {
       component = <ValueDisplayer logicform={logicform} data={data} />;
     } else {
-      if (data?.result?.length === 0) {
+      if (!data?.result || data?.result?.length === 0) {
         component = <Empty description="没有数据" />;
       } else if (
         finalRepresentation === "bar" ||
