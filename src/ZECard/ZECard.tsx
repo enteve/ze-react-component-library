@@ -247,7 +247,13 @@ const ZECard: React.FC<ZECardProps> = ({
     if (isSimpleQuery(logicform)) {
       component = tableContent;
     } else if (finalRepresentation === "value") {
-      component = <ValueDisplayer logicform={logicform} data={data} />;
+      component = (
+        <ValueDisplayer
+          logicform={logicform}
+          data={data}
+          onChangeLogicform={setLogicform}
+        />
+      );
     } else {
       if (data && (!data.result || data.result?.length === 0)) {
         component = <Empty description="没有数据" />;
