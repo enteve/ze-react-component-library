@@ -1,5 +1,6 @@
 /* ------------------------------- components ------------------------------ */
 export { default as ZEValue } from "./ZEValue";
+export { default as ZEValueDisplayer } from "./ZEValueDisplayer";
 export { default as ZETable } from "./ZETable";
 export type { ZETableProps } from "./ZETable/ZETable.types";
 export { default as ZECard } from "./ZECard";
