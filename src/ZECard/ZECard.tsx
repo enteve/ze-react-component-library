@@ -30,18 +30,18 @@ import {
   requestUnPinToDashboard,
 } from "../request";
 import ZEChart, { useDrillDownDbClick } from "../ZEChart";
-import ZEDescription from "../ZEDescription/ZEDescription";
-import ZELogicformVisualizer from "../ZELogicformVisualizer/ZELogicformVisualizer";
+import ZEDescription from "../ZEDescription";
+import ZELogicformVisualizer from "../ZELogicformVisualizer";
+import ZEValueDisplayer from "../ZEValueDisplayer";
 import Table from "./Table";
 import { ZECardProps } from "./ZECard.types";
 import { CloseOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
-import ValueDisplayer from "./ValueDisplayer";
 import RepresentationChanger from "./RepresentationChanger";
 import "./ZECard.less";
 import LogicFormTraveler from "./LogicFormTraveler";
 import { ErrorFallBack } from "../util";
 import PinHandler from "./PinHandler";
-import GroupByMenu from "./GroupByMenu";
+import GroupByMenu from "../components/GroupByMenu";
 const { Paragraph, Title } = Typography;
 
 const getDefaultRepresentation = (
@@ -257,7 +257,7 @@ const ZECard: React.FC<ZECardProps> = ({
       component = tableContent;
     } else if (finalRepresentation === "value") {
       component = (
-        <ValueDisplayer
+        <ZEValueDisplayer
           logicform={logicform}
           data={data}
           onChangeLogicform={setLogicform}
