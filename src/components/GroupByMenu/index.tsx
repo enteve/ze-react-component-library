@@ -9,8 +9,7 @@ import {
   PredItemType,
   getDrillDownProp,
 } from "zeroetp-api-sdk";
-import { ZEChartProps } from "../ZEChart/ZEChart.types";
-import "./GroupByMenu.less";
+import "./index.less";
 
 // 处理地图相关的groupBy，比如：按 店铺_地址(省市) 分组
 const getGroupByPropertyByName = (name: string) => {
@@ -26,10 +25,9 @@ const getGroupByPropertyByName = (name: string) => {
   };
 };
 
-type GroupByMenuProps = Pick<
-  ZEChartProps,
-  "logicform" | "onChangeLogicform"
-> & {
+type GroupByMenuProps = {
+  logicform: LogicformType;
+  onChangeLogicform?: (logicform: LogicformType) => void;
   result: LogicformAPIResultType;
   selectedItem: any;
   title?: string;
