@@ -89,7 +89,11 @@ const getDefaultRepresentation = (
     if (
       groupbyProp?.is_categorical &&
       Array.isArray(result.result) &&
-      result.result.length <= pieThreshold
+      result.result.length <= pieThreshold &&
+      result.result.every((i) => i >= 0) &&
+      result.logicform.groupby.length === 1 && // 只需允许有一个维度
+      result.columnProperties.length === 2 && // 只需允许有一个pred
+      !result.columnProperties[1].is_speedish // 不是百分比类型的，而是绝对值类型的
     ) {
       return "pie";
     }
