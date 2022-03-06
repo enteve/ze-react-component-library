@@ -38,12 +38,12 @@ const getNewLogicform = ({
   propertyName,
   logicform,
   selectedItem,
-  scheme,
+  schema,
   groupByProperty,
 }: {
   propertyName: string;
   logicform: LogicformType;
-  scheme: SchemaType;
+  schema: SchemaType;
   selectedItem?: any;
   groupByProperty?: string;
 }) => {
@@ -56,7 +56,7 @@ const getNewLogicform = ({
     newLogicForm.operator = undefined;
     newLogicForm.preds = [
       {
-        name: logicform.pred,
+        name: logicform.name || logicform.pred,
         pred: logicform.pred,
         operator: logicform.operator,
       } as PredItemType,
@@ -72,7 +72,7 @@ const getNewLogicform = ({
         [groupByProperty]: selectedItem._id,
       };
     }
-    const newLF = drilldownLogicform(logicform, scheme, selectedItem);
+    const newLF = drilldownLogicform(logicform, schema, selectedItem);
     if (newLF) {
       newLogicForm.query = {
         ...newLogicForm.query,
@@ -80,6 +80,7 @@ const getNewLogicform = ({
       };
     }
   }
+
   return newLogicForm;
 };
 
@@ -142,7 +143,7 @@ const GroupByMenu: FC<GroupByMenuProps> = ({
               selectedItem,
               propertyName: menu.key,
               logicform,
-              scheme: result.schema,
+              schema: result.schema,
               groupByProperty,
             });
             if (newLF) {
