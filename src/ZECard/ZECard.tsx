@@ -248,7 +248,7 @@ const ZECard: React.FC<ZECardProps> = ({
   let component: any;
   // 自定义Content
   if (mainContent && data?.logicform) {
-    component = mainContent(data.logicform, data);
+    component = mainContent(data.logicform, data, setLogicform);
   }
 
   // 如果没有自定义Content，则自动判断

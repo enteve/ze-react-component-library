@@ -12,7 +12,8 @@ export type ZECardProps = {
   extra?: React.ReactNode;
   mainContent?: (
     logicform: LogicformType,
-    result: LogicformAPIResultType
+    result: LogicformAPIResultType,
+    changeLogicform?: (logicform: LogicformType) => void
   ) => React.ReactNode | null; // 可以用来替换主要的返回的显示内容，做到高度自定义化
   footer?: React.ReactNode | ((logicform: LogicformType) => React.ReactNode);
   compact?: boolean; // 是否排版紧凑一点
