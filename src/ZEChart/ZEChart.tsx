@@ -203,6 +203,10 @@ const ZEChart: React.FC<ZEChartProps> = memo(
           option.series = [
             {
               type: "pie",
+              label: {
+                position: "inside",
+                formatter: (p: any) => `${p.percent}%`,
+              },
               ...selectProps,
             },
           ];
