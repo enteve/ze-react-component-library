@@ -215,7 +215,7 @@ const Table: React.FC<TableProps> = ({
   logicform: _logicform,
   height,
   setLogicform,
-  options,
+  options = false,
   preds,
   search,
   size,
