@@ -38,6 +38,5 @@ export type ZEDashboardProps = {
   // default ['se', 'nw']
   resizeHandles?: Array<"s" | "w" | "e" | "n" | "sw" | "nw" | "se" | "ne">;
   resizeHandle?: React.ReactElement;
-  onItemDelete?: (id: string) => void;
-  onLayoutChange?: (layout: Layout[]) => void;
+  onDataChange?: (data: ZEDashboardItem[]) => void;
 };
