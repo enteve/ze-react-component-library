@@ -424,11 +424,14 @@ const Table: React.FC<TableProps> = ({
       scroll !== undefined
         ? { ...scroll, y: scroll.y || scrollY }
         : { x, y: scrollY },
-    options: options || {
-      reload: reload || false,
-      setting: false,
-      density: false,
-    },
+    options:
+      options != undefined
+        ? options // 注意，这里options支持false，所以不能简写
+        : {
+            reload: reload || false,
+            setting: false,
+            density: false,
+          },
     pagination,
     toolBarRender: () => toolBarRender,
     onChange: onTableChange,
