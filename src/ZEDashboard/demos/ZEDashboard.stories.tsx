@@ -59,6 +59,7 @@ const initialData: ZEDashboardItem[] = [
 
 export const Basic = () => {
   const [data, setData] = useState<ZEDashboardItem[]>(initialData);
+  const [currentData, setCurrentData] = useState<ZEDashboardItem[]>();
   const [mode, setMode] = useState<"add" | "edit">();
   const [question, setQuestion] = useState<string>();
   const { data: answer, run: ask } = useRequest(
@@ -95,6 +96,10 @@ export const Basic = () => {
                   ]);
                   setQuestion(undefined);
                 }
+                if (mode === "edit" && currentData) {
+                  setData(currentData);
+                  setCurrentData(undefined);
+                }
                 setMode(undefined);
               }}
             >
@@ -102,7 +107,7 @@ export const Basic = () => {
             </Button>
             <Button
               onClick={() => {
-                mode === "edit" && setData([...initialData]);
+                mode === "edit" && setCurrentData(undefined);
                 mode === "add" && setQuestion(undefined);
                 setMode(undefined);
               }}
@@ -145,25 +150,9 @@ export const Basic = () => {
         </>
       ) : (
         <ZEDashboard
-          data={data}
+          data={currentData || data}
           editable={mode === "edit"}
-          onItemDelete={(id) => {
-            setData((oldData) => oldData.filter((d) => d.id !== id));
-          }}
-          onLayoutChange={(lay) => {
-            setData((oldData) => {
-              return oldData.map((d) => {
-                const l = lay.find((f) => f.i === d.id);
-                if (l) {
-                  return {
-                    ...d,
-                    layout: l,
-                  };
-                }
-                return d;
-              });
-            });
-          }}
+          onDataChange={setCurrentData}
         />
       )}
     </div>

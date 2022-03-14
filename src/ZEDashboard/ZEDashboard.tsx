@@ -4,7 +4,7 @@ import { SizeMe } from "react-sizeme";
 import GridLayout from "react-grid-layout";
 import { CloseOutlined } from "@ant-design/icons";
 import ZECard from "../ZECard";
-import type { ZEDashboardProps } from "./ZEDashboard.types";
+import type { ZEDashboardProps, ZEDashboardItem } from "./ZEDashboard.types";
 import "./ZEDashboard.less";
 
 const ZEDashboard: React.FC<ZEDashboardProps> = ({
@@ -17,8 +17,7 @@ const ZEDashboard: React.FC<ZEDashboardProps> = ({
   containerPadding = [0, 0],
   resizeHandles = ["se", "nw"],
   resizeHandle,
-  onItemDelete,
-  onLayoutChange,
+  onDataChange,
   width,
 }) => {
   const layout = data.map((d) => ({
@@ -31,6 +30,24 @@ const ZEDashboard: React.FC<ZEDashboardProps> = ({
     ...d.layout,
     i: d.id,
   }));
+
+  const onLayoutChange = (lay: Required<ZEDashboardItem>["layout"][]) => {
+    const newData = data.map((d) => {
+      const l = lay.find((f) => f.i === d.id);
+      if (l) {
+        return {
+          ...d,
+          layout: l,
+        };
+      }
+      return d;
+    });
+    onDataChange?.(newData);
+  };
+
+  const onItemDelete = (id: string) => {
+    onDataChange?.(data.filter((d) => d.id !== id));
+  };
 
   return (
     <div
@@ -63,7 +80,7 @@ const ZEDashboard: React.FC<ZEDashboardProps> = ({
                     cancelText="取消"
                     okText="确定"
                     onConfirm={() => {
-                      onItemDelete?.(d.id);
+                      onItemDelete(d.id);
                     }}
                   >
                     <CloseOutlined />
