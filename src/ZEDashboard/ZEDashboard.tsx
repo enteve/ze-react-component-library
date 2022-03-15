@@ -1,8 +1,6 @@
 import React from "react";
-import { Popconfirm } from "antd";
 import { SizeMe } from "react-sizeme";
 import GridLayout from "react-grid-layout";
-import { CloseOutlined } from "@ant-design/icons";
 import ZECard from "../ZECard";
 import type { ZEDashboardProps, ZEDashboardItem } from "./ZEDashboard.types";
 import "./ZEDashboard.less";
@@ -72,22 +70,11 @@ const ZEDashboard: React.FC<ZEDashboardProps> = ({
         >
           {data.map((d) => (
             <div key={d.id} className="ze-dashboard-item">
-              {editable && (
-                <div className="ze-dashboard-actions">
-                  <Popconfirm
-                    okType="danger"
-                    title="是否确定删除?"
-                    cancelText="取消"
-                    okText="确定"
-                    onConfirm={() => {
-                      onItemDelete(d.id);
-                    }}
-                  >
-                    <CloseOutlined />
-                  </Popconfirm>
-                </div>
-              )}
-              <ZECard {...d.cardProps} tableProps={{ height: "auto" }} />
+              <ZECard
+                {...d.cardProps}
+                tableProps={{ height: "auto" }}
+                close={editable ? () => onItemDelete(d.id) : undefined}
+              />
             </div>
           ))}
         </GridLayout>

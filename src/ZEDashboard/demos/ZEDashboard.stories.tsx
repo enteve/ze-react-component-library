@@ -59,7 +59,7 @@ const initialData: ZEDashboardItem[] = [
 
 export const Basic = () => {
   const [data, setData] = useState<ZEDashboardItem[]>(initialData);
-  const [currentData, setCurrentData] = useState<ZEDashboardItem[]>();
+  const [draftData, setDraftData] = useState<ZEDashboardItem[]>();
   const [mode, setMode] = useState<"add" | "edit">();
   const [question, setQuestion] = useState<string>();
   const { data: answer, run: ask } = useRequest(
@@ -96,9 +96,9 @@ export const Basic = () => {
                   ]);
                   setQuestion(undefined);
                 }
-                if (mode === "edit" && currentData) {
-                  setData(currentData);
-                  setCurrentData(undefined);
+                if (mode === "edit" && draftData) {
+                  setData(draftData);
+                  setDraftData(undefined);
                 }
                 setMode(undefined);
               }}
@@ -107,7 +107,7 @@ export const Basic = () => {
             </Button>
             <Button
               onClick={() => {
-                mode === "edit" && setCurrentData(undefined);
+                mode === "edit" && setDraftData(undefined);
                 mode === "add" && setQuestion(undefined);
                 setMode(undefined);
               }}
@@ -150,9 +150,9 @@ export const Basic = () => {
         </>
       ) : (
         <ZEDashboard
-          data={currentData || data}
+          data={draftData || data}
           editable={mode === "edit"}
-          onDataChange={setCurrentData}
+          onDataChange={(d) => (mode ? setDraftData(d) : setData(d))}
         />
       )}
     </div>

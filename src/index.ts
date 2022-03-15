@@ -15,6 +15,8 @@ export type {
 } from "./ZESchemaForm/ZESchemaForm.types";
 export { default as ZELogicform } from "./ZELogicform";
 export type { ZELogicformProps } from "./ZELogicform/ZELogicform.types";
+export { default as ZEDashboard } from "./ZEDashboard";
+export type { ZEDashboardProps, ZEDashboardItem } from "./ZEDashboard";
 export { default as ZELogicformVisualizer } from "./ZELogicformVisualizer";
 export type { ZELogicformVisualizerProps } from "./ZELogicformVisualizer/ZELogicformVisualizer.types";
 export { default as ZELogicformEditor } from "./ZELogicformEditor";
