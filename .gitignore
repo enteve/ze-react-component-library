@@ -2,5 +2,7 @@ node_modules/
 build/
 es/
 lib/
+dist/
+stats.html
 storybook-static/
 .DS_Store
