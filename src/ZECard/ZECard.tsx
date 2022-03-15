@@ -131,6 +131,7 @@ const ZECard: React.FC<ZECardProps> = ({
   askMore,
   showMainContentOnly,
   tableProps = {},
+  showVisualizer = true,
   visualizerProps = {},
   chartProps = {},
   compact = false,
@@ -436,20 +437,22 @@ const ZECard: React.FC<ZECardProps> = ({
         bodyStyle={bodyStyle}
         headStyle={headStyle}
       >
-        <ZELogicformVisualizer
-          {...visualizerProps}
-          logicform={
-            data?.logicform
-              ? { ...data.logicform, schemaName: data.schema.name }
-              : logicform
-          }
-          onQueryChange={(query) => {
-            setLogicform({
-              ...logicform,
-              query,
-            });
-          }}
-        />
+        {showVisualizer && (
+          <ZELogicformVisualizer
+            {...visualizerProps}
+            logicform={
+              data?.logicform
+                ? { ...data.logicform, schemaName: data.schema.name }
+                : logicform
+            }
+            onQueryChange={(query) => {
+              setLogicform({
+                ...logicform,
+                query,
+              });
+            }}
+          />
+        )}
         {warning?.length > 0 && (
           <div style={{ marginTop: compact ? 5 : 10 }}>
             <ExclamationCircleOutlined className="warningIcon" />

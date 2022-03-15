@@ -33,7 +33,10 @@ export type ZECardProps = {
     TableProps,
     "logicform" | "result" | "setLogicform" | "reload" | "onChange"
   >;
+  // Visualizer
+  showVisualizer?: boolean;
   visualizerProps?: Omit<ZELogicformVisualizerProps, "logicform">;
+
   chartProps?: Omit<ZEChartProps, "logicform" | "type">;
   horizontalBarChart?: boolean; //是不是用横向的barchart
 
