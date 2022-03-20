@@ -15,7 +15,7 @@ export default {
   title: "ZEDashboard",
 };
 
-const initialData: ZEDashboardItem[] = [
+const report: ZEDashboardItem[] = [
   {
     id: "card0",
     cardProps: {
@@ -23,6 +23,15 @@ const initialData: ZEDashboardItem[] = [
       logicform: {
         schema: "product",
       },
+    },
+    layout: {
+      h: 4,
+      i: "card0",
+      minH: 2,
+      minW: 2,
+      w: 6,
+      x: 0,
+      y: 0,
     },
   },
   {
@@ -35,7 +44,19 @@ const initialData: ZEDashboardItem[] = [
         preds: [{ name: "销售额", operator: "$sum", pred: "销售额" }],
       },
     },
+    layout: {
+      h: 4,
+      i: "card1",
+      minH: 2,
+      minW: 2,
+      w: 6,
+      x: 6,
+      y: 0,
+    },
   },
+];
+
+const initialData: ZEDashboardItem[] = [
   {
     id: "card2",
     cardProps: {
@@ -124,6 +145,31 @@ export const Basic = () => {
               }}
             >
               新增
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => {
+                // 计算report里面的报表y方向的最大位置
+                const reportMaxY = Math.max(
+                  ...report.map((d) => d.layout?.y || 0)
+                );
+                const newData = [
+                  ...report,
+                  ...data.map((d) => ({
+                    ...d,
+                    layout: {
+                      ...d.layout,
+                      y:
+                        d.layout?.y > reportMaxY
+                          ? d.layout.y
+                          : reportMaxY + 1,
+                    },
+                  })),
+                ];
+                setData(newData);
+              }}
+            >
+              新增报告
             </Button>
             <Button
               onClick={() => {
