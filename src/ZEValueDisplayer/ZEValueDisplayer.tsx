@@ -27,40 +27,40 @@ const ZEValueDisplayer: React.FC<ZEValueDisplayerProps> = ({
   trend,
   title,
 }) => {
-  const [yoyLF, setYoyLF] = useState<LogicformType>();
-  const [momLF, setMomLF] = useState<LogicformType>();
+  const [lyLF, setLyLF] = useState<LogicformType>(); // last year logicform，用来计算同比
+  const [lmLF, setLmLF] = useState<LogicformType>(); // last month logicform, 用来计算环比
 
   const [yoyData, setYoyData] = useState<LogicformAPIResultType>();
   const [momData, setMomData] = useState<LogicformAPIResultType>();
 
   useEffect(() => {
     if (data?.logicform) {
-      const yoyLF = getLogicformByTimeOffset(data?.logicform, {
+      const lyLF = getLogicformByTimeOffset(data?.logicform, {
         日期: { $offset: { year: -1 } },
       });
-      setYoyLF(yoyLF);
+      setLyLF(lyLF);
 
-      const momLF = getLogicformByTimeOffset(data?.logicform, {
+      const lmLF = getLogicformByTimeOffset(data?.logicform, {
         日期: { $offset: { month: -1 } },
       });
-      setMomLF(momLF);
+      setLmLF(lmLF);
     }
   }, [data]);
 
   useEffect(() => {
-    if (yoyLF && showYoyAndMom) {
-      requestLogicform(yoyLF).then(setYoyData);
+    if (lyLF && showYoyAndMom) {
+      requestLogicform(lyLF).then(setYoyData);
     } else {
       setYoyData(undefined);
     }
-  }, [yoyLF]);
+  }, [lyLF]);
   useEffect(() => {
-    if (momLF && showYoyAndMom) {
-      requestLogicform(momLF).then(setMomData);
+    if (lmLF && showYoyAndMom) {
+      requestLogicform(lmLF).then(setMomData);
     } else {
       setMomData(undefined);
     }
-  }, [momLF]);
+  }, [lmLF]);
 
   // 如果没有Children的话，采用默认的statistic来表现
   let defaultStatistics: React.ReactNode;
@@ -126,23 +126,32 @@ const ZEValueDisplayer: React.FC<ZEValueDisplayerProps> = ({
     md: 6,
   };
 
-  const calcPercentageResult = (thisPeriod: number, lastPeriod: number) => {
+  const calcPercentageResult = (
+    thisPeriodData: LogicformAPIResultType,
+    lastPeriodData: LogicformAPIResultType
+  ) => {
+    const thisPeriod = thisPeriodData.result;
+    const lastPeriod = lastPeriodData.result;
+
     if (lastPeriod === 0) {
       return "N/A";
+    }
+
+    const valueProp = thisPeriodData.columnProperties[0];
+    if (valueProp.type === "percentage" || valueProp.is_speedish) {
+      return thisPeriod - lastPeriod;
     }
     return thisPeriod / lastPeriod - 1;
   };
 
   let yoy;
   if (data && yoyData) {
-    yoy = calcPercentageResult(data.result, yoyData.result);
+    yoy = calcPercentageResult(data, yoyData);
   }
   let mom;
   if (data && momData) {
-    mom = calcPercentageResult(data.result, momData.result);
+    mom = calcPercentageResult(data, momData);
   }
-
-  console.log(momData?.logicform);
 
   return (
     <>
@@ -162,7 +171,7 @@ const ZEValueDisplayer: React.FC<ZEValueDisplayerProps> = ({
       </Row>
       {/* 下面是更多信息展示 */}
       <Row gutter={16} style={{ marginTop: 20 }}>
-        {yoyLF && yoyData && (
+        {lyLF && yoyData && (
           <>
             <Col {...moreColSpan}>
               <ZEValueDisplayer
@@ -203,7 +212,7 @@ const ZEValueDisplayer: React.FC<ZEValueDisplayerProps> = ({
             </Col>
           </>
         )}
-        {momLF && momData && (
+        {lmLF && momData && (
           <>
             <Col {...moreColSpan}>
               <ZEValueDisplayer
