@@ -137,6 +137,7 @@ const ZECard: React.FC<ZECardProps> = ({
   compact = false,
   horizontalBarChart = false,
   pieThreshold,
+  valueDisplayerProps = {},
   pinable,
   close,
   dashboardID,
@@ -263,9 +264,9 @@ const ZECard: React.FC<ZECardProps> = ({
     } else if (finalRepresentation === "value") {
       component = (
         <ZEValueDisplayer
-          logicform={logicform}
           data={data}
           onChangeLogicform={setLogicform}
+          {...valueDisplayerProps}
         />
       );
     } else {

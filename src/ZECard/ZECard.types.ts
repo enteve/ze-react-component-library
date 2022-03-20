@@ -2,6 +2,7 @@ import { LogicformAPIResultType, LogicformType } from "zeroetp-api-sdk";
 import { TableProps } from "./Table/Table.types";
 import { ZEChartProps } from "../ZEChart/ZEChart.types";
 import { ZELogicformVisualizerProps } from "../ZELogicformVisualizer/ZELogicformVisualizer.types";
+import { ZEValueDisplayerProps } from "../ZEValueDisplayer/ZEValueDisplayer";
 
 export type ZECardProps = {
   title?: string;
@@ -39,8 +40,10 @@ export type ZECardProps = {
 
   chartProps?: Omit<ZEChartProps, "logicform" | "type">;
   horizontalBarChart?: boolean; //是不是用横向的barchart
-
   pieThreshold?: number; // distincts数量小于多少自动用pie，默认为5
+
+  valueDisplayerProps?: Omit<ZEValueDisplayerProps, "data">;
+
   dashboardID?: string;
   pinable?: boolean;
   close?: () => void;
