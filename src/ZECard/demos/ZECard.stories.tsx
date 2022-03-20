@@ -29,18 +29,21 @@ export const SimpleTable = () => (
 
 export const Value = () => (
   <ZECard
-    title="YTD销售额"
+    title="MTD销售额"
     logicform={{
       schema: "sales",
       operator: "$sum",
       pred: "销售额",
       name: "总销售额",
       query: {
-        日期: "YTD",
+        日期: "MTD",
       },
     }}
     showRecommender={true}
     footer={<div>footer</div>}
+    valueDisplayerProps={{
+      showYoyAndMom: true,
+    }}
   />
 );
 
