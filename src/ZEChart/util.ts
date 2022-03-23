@@ -6,15 +6,14 @@ import { formatWithProperty, getFormatter } from "../util";
 
 export function useDrillDownDbClick(
   props: Pick<ZEChartProps, "logicform" | "onChangeLogicform"> & {
-    data: any;
     back: () => void;
   }
 ) {
   const clickRef = useRef<Moment>();
-  const { logicform, onChangeLogicform, data, back } = props;
+  const { logicform, onChangeLogicform, back } = props;
 
   const onDbClick = useCallback(
-    (item: any, triggerBack?: boolean) => {
+    (item: any, data: any, triggerBack?: boolean) => {
       const current = moment();
       if (
         !clickRef.current ||
@@ -32,6 +31,17 @@ export function useDrillDownDbClick(
       if (item) {
         // 下钻
         const drilledLF = drilldownLogicform(logicform, data.schema, item);
+        // N/A值处理成{ $exists: false }
+        const query = drilledLF?.query;
+        if (query) {
+          const _query = { ...query };
+          Object.keys(query).forEach((k) => {
+            if (query[k] === "N/A") {
+              _query[k] = { $exists: false };
+            }
+          });
+          drilledLF.query = _query;
+        }
         if (drilledLF) {
           onChangeLogicform(drilledLF);
         }
@@ -40,7 +50,7 @@ export function useDrillDownDbClick(
       }
       clickRef.current = current;
     },
-    [JSON.stringify({ data, logicform }), back, onChangeLogicform]
+    [JSON.stringify({ logicform }), back, onChangeLogicform]
   );
 
   return { onDbClick };
