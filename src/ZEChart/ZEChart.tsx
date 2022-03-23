@@ -53,7 +53,7 @@ const ZEChart: React.FC<ZEChartProps> = memo(
           params?.event?.stop("click");
           const { dataIndex } = params;
           const item = data?.result[dataIndex];
-          item && onDbClick?.(item);
+          item && onDbClick?.(item, data);
         },
         selectchanged: (params: any) => {
           const dataIndex = params?.selected?.[0]?.dataIndex?.[0];
@@ -74,7 +74,7 @@ const ZEChart: React.FC<ZEChartProps> = memo(
         const entityColumns = data.columnProperties
           .slice(0, data.logicform.groupby?.length)
           .filter((p) => p.type === "object");
-
+        const dimensions = data.columnProperties.map((col) => col.name);
         option.dataset = {
           source: data.result.map((i) => {
             const newI = { ...i };
@@ -86,9 +86,14 @@ const ZEChart: React.FC<ZEChartProps> = memo(
                 }
               }
             });
+            dimensions.forEach((d) => {
+              if (newI[d] === null) {
+                newI[d] = "N/A";
+              }
+            });
             return newI;
           }),
-          dimensions: data.columnProperties.map((col) => col.name),
+          dimensions,
         };
 
         measurementProp = data.columnProperties[data.logicform.groupby.length];
@@ -263,7 +268,7 @@ const ZEChart: React.FC<ZEChartProps> = memo(
         data-testid="ZEChart"
         onClick={() => {
           if (type === "map") {
-            onDbClick(null, true);
+            onDbClick(null, data, true);
           }
         }}
       >

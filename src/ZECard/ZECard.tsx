@@ -221,14 +221,13 @@ const ZECard: React.FC<ZECardProps> = ({
   const { onDbClick } = useDrillDownDbClick({
     logicform,
     onChangeLogicform: setLogicform,
-    data,
     back,
   });
 
   const onRow = (record) => {
     return {
       onClick: (e) => {
-        onDbClick(record);
+        onDbClick(record, data);
       },
     };
   };
