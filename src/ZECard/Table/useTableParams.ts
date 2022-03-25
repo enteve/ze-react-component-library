@@ -61,6 +61,11 @@ export function useTableParams({
               $gte: `${mappedV[0]} 00:00:00`,
               $lte: `${mappedV[1]} 23:59:59`,
             };
+          } else if (property.primal_type === "number") {
+            targetV = {
+              $gte: mappedV[0],
+              $lte: mappedV[1],
+            };
           } else if (property.primal_type === "string") {
             targetV = { $regex: escapeStringRegexp(mappedV[0]), $options: "i" };
           } else if (property.primal_type === "object") {

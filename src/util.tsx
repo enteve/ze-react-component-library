@@ -795,6 +795,10 @@ export const basicValueDisplay = (oldV: any, toValue?: boolean) => {
     return `${startDate} ~ ${endDate}`;
   }
 
+  if (typeof v.$lte === "number" || typeof v.$gte === "number") {
+    return [v.$gte, v.$lte];
+  }
+
   if (v.$in) {
     return v.$in;
   }
