@@ -36,7 +36,11 @@ import {
 import ZESchemaForm from "../../ZESchemaForm";
 
 import "./Table.less";
-import { getColumnDateProps, getColumnSearchProps } from "./FilterComponents";
+import {
+  getColumnDateProps,
+  getColumnSearchProps,
+  getColumnNumberProps,
+} from "./FilterComponents";
 import { canUseCrossTable, crossResult } from "./crossTableGen";
 import { transposeResult } from "./transposeGen";
 import { useTableParams } from "./useTableParams";
@@ -95,6 +99,11 @@ const mapColumnItem = (
         ...additionalProps,
         ...getColumnDateProps(property.name),
       };
+    } else if (property.primal_type === "number") {
+      additionalProps = {
+        ...additionalProps,
+        ...getColumnNumberProps(property.name),
+      };
     } else if (
       (property.primal_type === "string" ||
         property.primal_type === "object") &&
@@ -113,10 +122,11 @@ const mapColumnItem = (
     additionalProps.align = "right";
   }
 
-  // Sorter
-  if (showSorter && property.primal_type === "number") {
-    additionalProps.sorter = true;
-  }
+  // Sorter 
+  // 去掉数字的sorter，改成filter
+  // if (showSorter && property.primal_type === "number") {
+  //   additionalProps.sorter = true;
+  // }
 
   const valueEnum = valueEnumMapping(property);
   let sortOrder = logicform.sort?.[predItem];
