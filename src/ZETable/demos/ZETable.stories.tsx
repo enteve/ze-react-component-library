@@ -166,6 +166,19 @@ export const ClassName = () => (
   />
 );
 
+export const ChangeColumnOrder = () => {
+  return (
+    <ZETable
+      logicform={{
+        schema: "product",
+      }}
+      options={{ setting: true }}
+      exportToExcel
+      xlsx={XLSX}
+    />
+  );
+};
+
 export const TitleMap = () => (
   <ZETable
     logicform={{
