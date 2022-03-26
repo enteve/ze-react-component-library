@@ -1,5 +1,5 @@
 import React from "react";
-import { Input, Button, DatePicker } from "antd";
+import { Input, Button, DatePicker, Space, InputNumber } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { FilterDropdownProps } from "antd/lib/table/interface";
 import moment from "moment";
@@ -26,23 +26,23 @@ export const getColumnSearchProps = (propertyName: string) => ({
           style={{ width: 188, marginBottom: 8, display: "block" }}
         />
         <Button
-          type="primary"
-          onClick={() => confirm()}
-          icon={<SearchOutlined />}
           size="small"
           style={{ width: 90, marginRight: 8 }}
-        >
-          搜索
-        </Button>
-        <Button
-          size="small"
-          style={{ width: 90 }}
           onClick={() => {
             clearFilters && clearFilters();
             confirm();
           }}
         >
           重置
+        </Button>
+        <Button
+          type="primary"
+          onClick={() => confirm()}
+          icon={<SearchOutlined />}
+          size="small"
+          style={{ width: 90 }}
+        >
+          搜索
         </Button>
       </div>
     );
@@ -72,24 +72,78 @@ export const getColumnDateProps = (propertyName: string) => ({
           setSelectedKeys(v ? v.map((i) => i!.format("YYYY-MM-DD")) : [])
         }
       />
-      <div style={{ display: "block" }}>
+      <div>
         <Button
-          type="primary"
           size="small"
           style={{ width: 120, marginRight: 8 }}
-          onClick={() => confirm()}
-        >
-          选择
-        </Button>
-        <Button
-          size="small"
-          style={{ width: 120 }}
           onClick={() => {
             clearFilters && clearFilters();
             confirm();
           }}
         >
           重置
+        </Button>
+        <Button
+          type="primary"
+          size="small"
+          style={{ width: 120 }}
+          onClick={() => confirm()}
+        >
+          选择
+        </Button>
+      </div>
+    </div>
+  ),
+  filterIcon: (filtered: boolean) => (
+    <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
+  ),
+});
+
+// 数字筛选控件
+export const getColumnNumberProps = (propertyName: string) => ({
+  filterDropdown: ({
+    setSelectedKeys,
+    selectedKeys,
+    confirm,
+    clearFilters,
+  }: FilterDropdownProps) => (
+    <div style={{ padding: 8 }}>
+      <Space style={{ marginBottom: 8 }}>
+        <InputNumber
+          placeholder="最小值"
+          style={{ width: 120 }}
+          value={selectedKeys?.["0"]}
+          onChange={(v) => {
+            setSelectedKeys([v, selectedKeys?.["1"]]);
+          }}
+        />
+        <InputNumber
+          placeholder="最大值"
+          style={{ width: 120 }}
+          value={selectedKeys?.["1"]}
+          onChange={(v) => {
+            setSelectedKeys([selectedKeys?.["0"], v]);
+          }}
+        />
+      </Space>
+      <div>
+        <Button
+          size="small"
+          style={{ width: 120, marginRight: 8 }}
+          onClick={() => {
+            clearFilters && clearFilters();
+            confirm();
+          }}
+        >
+          重置
+        </Button>
+        <Button
+          type="primary"
+          size="small"
+          style={{ width: 120 }}
+          onClick={() => confirm()}
+        >
+          确定
         </Button>
       </div>
     </div>
