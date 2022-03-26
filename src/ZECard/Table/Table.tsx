@@ -2,8 +2,10 @@ import React, { useContext, useState, useRef } from "react";
 import _ from "underscore";
 import ProTable, {
   ActionType,
+  ColumnsState,
   EditableProTable,
   ProColumnType,
+  ProTableProps,
 } from "@ant-design/pro-table";
 import { SizeMe } from "react-sizeme";
 import { useRequest } from "@umijs/hooks";
@@ -264,6 +266,8 @@ const Table: React.FC<TableProps> = ({
   const defaultColWidth = scroll === null ? undefined : defaultColWidthOfProps;
   const values = useContext(ProProvider); // 用来自定义ValueType
   const [selectedRecord, setSelectedRecord] = useState<any>(undefined);
+  const [columnsState, setColumnsState] =
+    useState<Record<string, ColumnsState>>();
   const [creationFormVisible, setCreationFormVisible] =
     useState<boolean>(false);
   const tableRef = useRef<ActionType>();
@@ -289,6 +293,8 @@ const Table: React.FC<TableProps> = ({
       result = crossResult(result, horizontalColumns);
     }
   }
+
+  console.log(columnsState);
 
   // 判断要展示的properties
   let predsToShow: PredItemType[] = preds;
@@ -408,7 +414,7 @@ const Table: React.FC<TableProps> = ({
     }
   }
 
-  const tableProps: any = {
+  const tableProps: Partial<ProTableProps<any, any>> = {
     cardProps: {
       bodyStyle: { padding: 0 },
     },
@@ -435,6 +441,9 @@ const Table: React.FC<TableProps> = ({
     pagination,
     toolBarRender: () => toolBarRender,
     onChange: onTableChange,
+    columnsState: {
+      onChange: setColumnsState,
+    },
   };
 
   const onExpand = async (expanded, record) => {
