@@ -796,7 +796,13 @@ export const basicValueDisplay = (oldV: any, toValue?: boolean) => {
   }
 
   if (typeof v.$lte === "number" || typeof v.$gte === "number") {
-    return [v.$gte, v.$lte];
+    if (toValue) {
+      return [v.$gte, v.$lte];
+    }
+    if (typeof v.$lte === "number" && typeof v.$gte === "number") {
+      return `${v.$gte}~${v.$lte}`;
+    }
+    return v.$gte || v.$lte;
   }
 
   if (v.$in) {
