@@ -2,7 +2,6 @@ import moment from "moment";
 import { isRelativeDateForm, normaliseRelativeDateForm } from "zeroetp-api-sdk";
 
 export const logicformValueToColumnFilter = (oldV: any) => {
-  const dateReg = /^\d{4}-\d{2}-\d{2}[T\s]\d{2}:\d{2}:\d{2}(\.\d{3}Z)?$/;
   let v = oldV;
 
   if (v === undefined || typeof v !== "object") {
@@ -23,19 +22,21 @@ export const logicformValueToColumnFilter = (oldV: any) => {
     v = normaliseRelativeDateForm(v);
   }
 
+  if (typeof v.$lte === "number" || typeof v.$gte === "number") {
+    return [v.$gte, v.$lte];
+  }
+
   if (
     v.$lte &&
     v.$gte &&
-    (dateReg.test(v.$lte) || v.$lte instanceof Date || v.$lte instanceof moment)
+    ((typeof v.$lte === "string" && moment(v.$lte).isValid()) ||
+      v.$lte instanceof Date ||
+      v.$lte instanceof moment)
   ) {
     return [
       moment(v.$gte).format("YYYY-MM-DD"),
       moment(v.$lte).format("YYYY-MM-DD"),
     ];
-  }
-
-  if (typeof v.$lte === "number" || typeof v.$gte === "number") {
-    return [v.$gte, v.$lte];
   }
 
   if (v.$in) {
