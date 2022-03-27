@@ -398,6 +398,13 @@ const Table: React.FC<TableProps> = ({
       return col.children.reduce((acc, c) => acc + calcWidth(c), 0);
     }
 
+    // columnsState可以关闭某一列的显示
+    if (columnsState?.[col.dataIndex.join("_")]) {
+      if (!columnsState[col.dataIndex.join("_")].show) {
+        return 0;
+      }
+    }
+
     return "width" in col ? col.width : defaultColWidth;
   };
   const x = columns.reduce((acc, c) => acc + calcWidth(c), 0);
