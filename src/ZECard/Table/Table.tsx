@@ -5,7 +5,6 @@ import ProTable, {
   ColumnsState,
   EditableProTable,
   ProColumnType,
-  ProTableProps,
 } from "@ant-design/pro-table";
 import { SizeMe } from "react-sizeme";
 import { useRequest } from "@umijs/hooks";
@@ -33,7 +32,6 @@ import {
   customValueTypes,
   valueEnumMapping,
   valueTypeMapping,
-  basicValueDisplay,
   getFormatter,
 } from "../../util";
 
@@ -48,6 +46,7 @@ import {
 import { canUseCrossTable, crossResult } from "./crossTableGen";
 import { transposeResult } from "./transposeGen";
 import { useTableParams } from "./useTableParams";
+import { logicformValueToColumnFilter } from "./util";
 
 const mapColumnItem = (
   logicform: LogicformType,
@@ -146,7 +145,7 @@ const mapColumnItem = (
   }
   const filters: Record<string, any> = {};
   Object.keys(logicform?.query || {}).forEach((k) => {
-    filters[k] = basicValueDisplay(logicform?.query?.[k], true);
+    filters[k] = logicformValueToColumnFilter(logicform?.query?.[k]);
   });
   let filterKey = predItem;
   if (property?.primal_type === "object") {
