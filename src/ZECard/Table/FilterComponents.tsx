@@ -111,15 +111,16 @@ export const getColumnNumberProps = (propertyName: string) => ({
       <Space style={{ marginBottom: 8 }}>
         <InputNumber
           placeholder="最小值"
-          style={{ width: 120 }}
+          style={{ width: 112 }}
           value={selectedKeys?.["0"]}
           onChange={(v) => {
             setSelectedKeys([v, selectedKeys?.["1"]]);
           }}
         />
+        <div style={{ width: 8, textAlign: "center" }}>~</div>
         <InputNumber
           placeholder="最大值"
-          style={{ width: 120 }}
+          style={{ width: 112 }}
           value={selectedKeys?.["1"]}
           onChange={(v) => {
             setSelectedKeys([selectedKeys?.["0"], v]);
