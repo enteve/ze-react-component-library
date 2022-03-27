@@ -114,7 +114,7 @@ export const getColumnNumberProps = (propertyName: string) => ({
           style={{ width: 112 }}
           value={selectedKeys?.["0"]}
           onChange={(v) => {
-            setSelectedKeys([v, selectedKeys?.["1"]]);
+            setSelectedKeys([v === null ? undefined : v, selectedKeys?.["1"]]);
           }}
         />
         <div style={{ width: 8, textAlign: "center" }}>~</div>
@@ -123,7 +123,7 @@ export const getColumnNumberProps = (propertyName: string) => ({
           style={{ width: 112 }}
           value={selectedKeys?.["1"]}
           onChange={(v) => {
-            setSelectedKeys([selectedKeys?.["0"], v]);
+            setSelectedKeys([selectedKeys?.["0"], v === null ? undefined : v]);
           }}
         />
       </Space>
