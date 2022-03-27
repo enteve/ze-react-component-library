@@ -170,7 +170,7 @@ export const ChangeColumnOrder = () => {
   return (
     <ZETable
       logicform={{
-        schema: "product",
+        schema: "sales",
       }}
       options={{ setting: true }}
       exportToExcel

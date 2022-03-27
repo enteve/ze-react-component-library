@@ -8,10 +8,6 @@ export default (
 ) => {
   if (!XLSX) return message.error("需要传入XLSX库才能使用导出功能");
 
-  if (result.total && result.total > result.result.length) {
-    return message.error("这个要用全局导出做，还没做");
-  }
-
   if (filename.length === 0) {
     return message.error("导出的文件必须设定文件名");
   }

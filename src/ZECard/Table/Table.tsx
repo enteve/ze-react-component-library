@@ -10,7 +10,7 @@ import ProTable, {
 import { SizeMe } from "react-sizeme";
 import { useRequest } from "@umijs/hooks";
 import ProProvider from "@ant-design/pro-provider";
-import { Tooltip, Result, Button, Popconfirm, Drawer } from "antd";
+import { Tooltip, Result, Button, Popconfirm, Drawer, message } from "antd";
 import type { TablePaginationConfig } from "antd";
 import { DownloadOutlined, PlusOutlined } from "@ant-design/icons";
 import {
@@ -21,6 +21,8 @@ import {
   removeDataByID,
   updateDataByID,
   drilldownLogicform,
+  commonRequest,
+  findPropByName,
 } from "zeroetp-api-sdk";
 import type { LogicformAPIResultType } from "zeroetp-api-sdk";
 import excelExporter from "./excelExporter";
@@ -124,7 +126,7 @@ const mapColumnItem = (
     additionalProps.align = "right";
   }
 
-  // Sorter 
+  // Sorter
   // 去掉数字的sorter，改成filter
   // if (showSorter && property.primal_type === "number") {
   //   additionalProps.sorter = true;
@@ -276,8 +278,21 @@ const Table: React.FC<TableProps> = ({
   const defaultColWidth = scroll === null ? undefined : defaultColWidthOfProps;
   const values = useContext(ProProvider); // 用来自定义ValueType
   const [selectedRecord, setSelectedRecord] = useState<any>(undefined);
+
+  // Export相关字段
+  const columnsStatePersistentKey = `_columnsState_${logicform.schema}`;
+  let savedColumnsState: any = localStorage.getItem(columnsStatePersistentKey);
+  if (savedColumnsState) {
+    savedColumnsState = JSON.parse(
+      localStorage.getItem(columnsStatePersistentKey)
+    );
+    if (Object.keys(savedColumnsState).length === 0) {
+      savedColumnsState = undefined;
+    }
+  }
   const [columnsState, setColumnsState] =
-    useState<Record<string, ColumnsState>>();
+    useState<Record<string, ColumnsState>>(savedColumnsState);
+
   const [creationFormVisible, setCreationFormVisible] =
     useState<boolean>(false);
   const tableRef = useRef<ActionType>();
@@ -303,8 +318,6 @@ const Table: React.FC<TableProps> = ({
       result = crossResult(result, horizontalColumns);
     }
   }
-
-  console.log(columnsState);
 
   // 判断要展示的properties
   let predsToShow: PredItemType[] = preds;
@@ -404,7 +417,57 @@ const Table: React.FC<TableProps> = ({
         <Button
           type="text"
           icon={<DownloadOutlined />}
-          onClick={() => excelExporter(result, exportFileName, xlsx)}
+          onClick={() => {
+            if (result.total && result.total > result.result.length) {
+              const preds: string[] = [];
+
+              for (const property of result.schema.properties) {
+                if (columnsState) {
+                  if (columnsState[property.name]?.show) {
+                    if ("order" in columnsState[property.name]) {
+                      preds[columnsState[property.name].order] = property.name;
+                    } else {
+                      preds.push(property.name);
+                    }
+                  }
+                } else {
+                  preds.push(property.name);
+                }
+              }
+
+              // 如果是object类型，加一个property name列
+              const populatedPreds: string[] = [];
+              for (const propertyName of preds) {
+                populatedPreds.push(propertyName);
+                const property = findPropByName(result.schema, propertyName);
+                if (property.schema) {
+                  const nameProp = getNameProperty(property.schema);
+                  if (nameProp) {
+                    populatedPreds.push(`${property.name}_${nameProp.name}`);
+                  }
+                }
+              }
+
+              // 使用api导出
+              commonRequest("/dataexports", {
+                method: "POST",
+                data: {
+                  ...result.logicform,
+                  preds: populatedPreds,
+                  limit: -1,
+                },
+              })
+                .then(() =>
+                  message.info("导出申请已提交，请在个人中心里面下载")
+                )
+                .catch((e) => {
+                  message.error("导出申请发生错误，请稍后再试");
+                  console.log(e);
+                });
+            } else {
+              excelExporter(result, exportFileName, xlsx);
+            }
+          }}
         />
       </Tooltip>
     );
@@ -424,7 +487,7 @@ const Table: React.FC<TableProps> = ({
     }
   }
 
-  const tableProps: Partial<ProTableProps<any, any>> = {
+  const tableProps: any = {
     cardProps: {
       bodyStyle: { padding: 0 },
     },
@@ -453,6 +516,8 @@ const Table: React.FC<TableProps> = ({
     onChange: onTableChange,
     columnsState: {
       onChange: setColumnsState,
+      persistenceType: "localStorage",
+      persistenceKey: columnsStatePersistentKey,
     },
   };
 
