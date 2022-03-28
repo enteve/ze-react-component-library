@@ -72,7 +72,7 @@ const ZEDashboard: React.FC<ZEDashboardProps> = ({
             <div key={d.id} className="ze-dashboard-item">
               <ZECard
                 {...d.cardProps}
-                tableProps={{ height: "auto" }}
+                tableProps={{ height: "auto", ...d.cardProps?.tableProps }}
                 close={editable ? () => onItemDelete(d.id) : undefined}
               />
             </div>
