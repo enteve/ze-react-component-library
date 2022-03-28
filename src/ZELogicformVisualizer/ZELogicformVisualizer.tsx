@@ -347,14 +347,15 @@ const ZELogicformVisualizer: React.FC<ZELogicformVisualizerProps> = ({
         text: <span>公式： {preds}</span>,
       });
     } else {
-      badges.push({
-        color: "orange",
-        text: (
-          <span>
-            字段： <strong>{preds}</strong>
-          </span>
-        ),
-      });
+      // 20220328：字段显示不需要，太多了。
+      // badges.push({
+      //   color: "orange",
+      //   text: (
+      //     <span>
+      //       字段： <strong>{preds}</strong>
+      //     </span>
+      //   ),
+      // });
     }
   }
 
