@@ -486,7 +486,7 @@ const Table: React.FC<TableProps> = ({
     scrollY = height - 47;
     if (options !== false) {
       // 减去toolBar的高度
-      scrollY = scrollY - 48;
+      scrollY = scrollY - 32;
     }
     if (pagination !== false) {
       // 减去分页的高度
