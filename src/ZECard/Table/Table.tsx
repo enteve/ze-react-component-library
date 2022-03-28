@@ -444,6 +444,7 @@ const Table: React.FC<TableProps> = ({
               // 如果是object类型，加一个property name列
               const populatedPreds: string[] = [];
               for (const propertyName of preds) {
+                if (!propertyName) continue; // preds里面会有undefine的存在，因为show为false之后，order会跳跃
                 populatedPreds.push(propertyName);
                 const property = findPropByName(result.schema, propertyName);
                 if (property.schema) {
