@@ -97,22 +97,17 @@ const ZELogicformVisualizer: React.FC<ZELogicformVisualizerProps> = ({
   const filterColor = "green";
 
   // unnormalizeQuery
-  const logicform = {
-    ...initLogicform,
-    query: unnormalizeQuery(initLogicform.query || {}),
-  };
+  const logicform = JSON.parse(JSON.stringify(initLogicform));
+  logicform.query = unnormalizeQuery(logicform.query || {});
 
   // 有个逻辑，如果有preds且只有一个，且里面有query那么拿到外面去，这样可以绕过preds不显示的问题。
-  if (
-    logicform.preds?.length === 1 &&
-    typeof logicform.preds[0] === "object" && // TODO：这里的pred表达形式很多，看看之后有没有更好的办法
-    !Array.isArray(logicform.preds[0]) && // TODO：这里的pred表达形式很多，看看之后有没有更好的办法
-    logicform.preds[0].query
-  ) {
-    if (!logicform.query) logicform.query = {};
-    logicform.query = { ...logicform.query, ...logicform.preds[0].query };
-    delete logicform.preds[0].query;
-  }
+  try {
+    // 这里就假设是normed logicform，其他的格式今后将不会进来
+    if (logicform.preds?.length === 1 && logicform.preds[0][0].query) {
+      logicform.query = { ...logicform.query, ...logicform.preds[0][0].query };
+      delete logicform.preds[0][0].query;
+    }
+  } catch (error) {}
 
   if (!(display.schema === false)) {
     badges.push({

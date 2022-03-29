@@ -3,6 +3,7 @@ import React from "react";
 import * as xlsx from "xlsx";
 import ZECard from "../ZECard";
 import "antd/dist/antd.css";
+import StoryBookUseCaseDescription from "../../StoryBookUseCaseDescription";
 
 // prepare server
 import prepareServerForStories from "../../../util/prepareServerForStories";
@@ -347,6 +348,30 @@ export const Transpose = () => {
     </Space>
   );
 };
+
+export const queryInPredItem = () => (
+  <StoryBookUseCaseDescription info="predsItem里面有query，LFVisualizer会拿到外面">
+    <ZECard
+      logicform={{
+        preds: [
+          {
+            operator: "$yoy",
+            pred: "销售额",
+            name: "2021年销售额同比",
+            query: {
+              日期: {
+                year: 2021,
+              },
+            },
+          },
+        ],
+        schema: "sales",
+        groupby: "渠道",
+        schemaName: "销售",
+      }}
+    />
+  </StoryBookUseCaseDescription>
+);
 
 export const Closable = () => {
   return (
