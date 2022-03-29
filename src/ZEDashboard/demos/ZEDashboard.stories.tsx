@@ -1,12 +1,13 @@
 // Generated with util/create-component.js
 import React, { useState } from "react";
 import { Space, Button } from "antd";
-import xlsx from "xlsx";
 import ZECard from "../../ZECard";
 import ZESearchBar from "../../ZESearchBar";
 import { useRequest } from "@umijs/hooks";
 import { requestAsk } from "../../request";
 import ZEDashboard, { ZEDashboardItem } from "../index";
+
+const xlsx = require("xlsx");
 
 // prepare server
 import prepareServerForStories from "../../../util/prepareServerForStories";

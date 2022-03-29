@@ -33,5 +33,5 @@ export default (
   const wb = XLSX.utils.table_to_book(cloneNode, {
     display: true,
   });
-  XLSX.writeFile(wb, excelName, { compression: true });
+  XLSX.writeFileXLSX(wb, excelName, { compression: true });
 };

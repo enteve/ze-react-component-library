@@ -1,9 +1,10 @@
 // Generated with util/create-component.js
 import React from "react";
 import moment from "moment";
-import xlsx from "xlsx";
 import ZECard from "../ZECard";
 import "antd/dist/antd.css";
+
+const xlsx = require("xlsx");
 
 // prepare server
 import prepareServerForStories from "../../../util/prepareServerForStories";
@@ -116,10 +117,13 @@ export const Stats = () => (
       groupby: { _id: "店铺_地址", level: "省市" },
       preds: [{ name: "销售额", operator: "$sum", pred: "销售额" }],
     }}
+    exportToExcel
+    xlsx={xlsx}
     tableProps={{
-      xlsx: xlsx,
-      exportToExcel: "test",
-      scroll: { y: 120 }
+      scroll: { y: 120 },
+      options: {
+        setting: true,
+      },
     }}
     chartProps={
       {
