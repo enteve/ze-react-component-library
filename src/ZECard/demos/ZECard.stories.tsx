@@ -1,14 +1,12 @@
 // Generated with util/create-component.js
 import React from "react";
-import moment from "moment";
+import * as xlsx from "xlsx";
 import ZECard from "../ZECard";
 import "antd/dist/antd.css";
 
-const xlsx = require("xlsx");
-
 // prepare server
 import prepareServerForStories from "../../../util/prepareServerForStories";
-import { LogicformAPIResultType, LogicformType } from "zeroetp-api-sdk";
+import { LogicformType } from "zeroetp-api-sdk";
 import { Card, message, Space } from "antd";
 prepareServerForStories();
 

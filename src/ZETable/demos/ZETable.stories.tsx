@@ -1,7 +1,7 @@
 // Generated with util/create-component.js
 import React, { useState } from "react";
 import moment from "moment";
-import XLSX from "xlsx";
+import * as XLSX from "xlsx";
 import ZETable from "../ZETable";
 import { Button, Dropdown, Menu, Tag } from "antd";
 import "antd/dist/antd.css";
