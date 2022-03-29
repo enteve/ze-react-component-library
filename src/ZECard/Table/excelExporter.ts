@@ -1,8 +1,7 @@
 import { message } from "antd";
-import { LogicformAPIResultType } from "zeroetp-api-sdk";
 
 export default (
-  result: LogicformAPIResultType,
+  parentNode: HTMLDivElement,
   filename: string,
   XLSX?: any // 外部的XLSX库
 ) => {
@@ -13,13 +12,16 @@ export default (
   }
 
   let excelName = `${filename}.xlsx`;
-  const node = document
-    .getElementsByClassName(filename)[0]
-    ?.getElementsByTagName("table")[0];
-  if (!node) {
+  const nodes = parentNode.getElementsByTagName("table");
+  if (!nodes || nodes.length === 0) {
     return message.error("表格不存在");
   }
-  const cloneNode = node.cloneNode(true);
+  const cloneNode = nodes[0].cloneNode(true);
+  // header fixed的情况下，会有两个table
+  if (nodes.length === 2) {
+    const bodyNode = nodes[1].getElementsByTagName("tbody")[0].cloneNode(true);
+    cloneNode.appendChild(bodyNode);
+  }
 
   // 有时候ProTable会有一个hidden row，给删了。有时候没有
   if (
