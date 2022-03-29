@@ -71,6 +71,7 @@ const ZEDashboard: React.FC<ZEDashboardProps> = ({
           {data.map((d) => (
             <div key={d.id} className="ze-dashboard-item">
               <ZECard
+                key={JSON.stringify(d.cardProps.logicform)}
                 {...d.cardProps}
                 tableProps={{ height: "auto", ...d.cardProps?.tableProps }}
                 close={editable ? () => onItemDelete(d.id) : undefined}
