@@ -116,6 +116,11 @@ export const Stats = () => (
       groupby: { _id: "店铺_地址", level: "省市" },
       preds: [{ name: "销售额", operator: "$sum", pred: "销售额" }],
     }}
+    tableProps={{
+      xlsx: xlsx,
+      exportToExcel: "test",
+      scroll: { y: 120 }
+    }}
     chartProps={
       {
         // height: 200

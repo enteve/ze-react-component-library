@@ -253,6 +253,7 @@ const Table: React.FC<TableProps> = ({
   formatExpandResult,
   ...restProps
 }) => {
+  const rootDivRef = useRef<HTMLDivElement>();
   if (ret?.error)
     return (
       <Result
@@ -472,7 +473,8 @@ const Table: React.FC<TableProps> = ({
                   console.log(e);
                 });
             } else {
-              excelExporter(result, exportFileName, xlsx);
+              rootDivRef.current &&
+                excelExporter(rootDivRef.current, exportFileName, xlsx);
             }
           }}
         />
@@ -707,6 +709,7 @@ const Table: React.FC<TableProps> = ({
     <div
       data-testid="ZETable"
       className={["ze-table", className].filter((f) => f).join(" ")}
+      ref={rootDivRef}
     >
       <ProProvider.Provider
         value={{
