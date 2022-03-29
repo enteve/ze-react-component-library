@@ -280,7 +280,9 @@ const Table: React.FC<TableProps> = ({
   const [selectedRecord, setSelectedRecord] = useState<any>(undefined);
 
   // Export相关字段
-  const columnsStatePersistentKey = `_columnsState_${logicform.schema}`;
+  const columnsStatePersistentKey = `_columnsState_${JSON.stringify(
+    _logicform
+  )}`;
   let savedColumnsState: any = localStorage.getItem(columnsStatePersistentKey);
   if (savedColumnsState) {
     savedColumnsState = JSON.parse(
