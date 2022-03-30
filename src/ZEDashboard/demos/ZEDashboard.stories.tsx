@@ -32,6 +32,7 @@ const report: ZEDashboardItem[] = [
         xlsx,
         exportToExcel: true,
       },
+      close: () => {},
     },
     layout: {
       h: 4,
@@ -52,6 +53,7 @@ const report: ZEDashboardItem[] = [
         groupby: { _id: "店铺_地址", level: "省市" },
         preds: [{ name: "销售额", operator: "$sum", pred: "销售额" }],
       },
+      close: () => {},
     },
     layout: {
       h: 4,
@@ -83,6 +85,7 @@ const initialData: ZEDashboardItem[] = [
           },
         ],
       },
+      close: () => {},
     },
   },
 ];
