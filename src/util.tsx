@@ -8,12 +8,8 @@ import {
   findPropByName,
   getNameProperty,
   LogicformType,
-  normaliseGroupby,
-  isRelativeDateForm,
-  normaliseRelativeDateForm,
 } from "zeroetp-api-sdk";
 import type { FallbackProps } from "react-error-boundary";
-import moment from "moment";
 import numeral from "numeral";
 import { EditableProTable } from "@ant-design/pro-table";
 import {
@@ -735,6 +731,45 @@ export const unnormalizeQuery = (query: any) => {
   }
 
   return newQuery;
+};
+
+export const genYoyAndMomLogicform = (
+  normedLF: LogicformType,
+  op: "$yoy" | "$mom"
+): LogicformType => {
+  const retLF = JSON.parse(JSON.stringify(normedLF));
+
+  if (retLF.preds.length !== 1) throw new Error("LF的preds长度必须为1");
+  if (retLF.preds[0].length !== 1) throw new Error("LF的preds[0]长度必须为1");
+
+  const predItem = retLF.preds[0][0];
+  if (!predItem.operator) throw new Error("predItem必须要有operator");
+
+  const { name, query, pred, operator, ...others } = predItem;
+  if (!operator.startsWith("$")) {
+    // 自定义函数
+    retLF.preds[0][0] = {
+      operator: op,
+      name: `${name || operator}同比`,
+      query,
+      pred: {
+        name,
+        operator,
+        ...others,
+        pred,
+      },
+    };
+  } else if (operator === "$sum") {
+    retLF.preds[0][0] = {
+      operator: op,
+      name,
+      query,
+      pred,
+    };
+  } else {
+    throw new Error(`暂不支持的operator: ${operator}`);
+  }
+  return retLF;
 };
 
 export const ErrorFallBack: FC<FallbackProps> = ({ error }) => {

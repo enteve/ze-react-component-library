@@ -7,7 +7,7 @@ import {
   LogicformType,
 } from "zeroetp-api-sdk";
 import { ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
-import { getFormatter } from "../util";
+import { getFormatter, genYoyAndMomLogicform } from "../util";
 import GroupByMenu from "../components/GroupByMenu";
 import { requestLogicform } from "../request";
 
@@ -192,17 +192,7 @@ const ZEValueDisplayer: React.FC<ZEValueDisplayerProps> = ({
                       type: "percentage",
                     },
                   ],
-                  logicform: {
-                    ...yoyData.logicform,
-                    preds: [
-                      [
-                        {
-                          ...yoyData.logicform.preds[0][0],
-                          operator: "$yoy",
-                        },
-                      ],
-                    ],
-                  },
+                  logicform: genYoyAndMomLogicform(yoyData.logicform, "$yoy"),
                 }}
                 onChangeLogicform={onChangeLogicform}
                 showYoyAndMom={false}
@@ -233,17 +223,7 @@ const ZEValueDisplayer: React.FC<ZEValueDisplayerProps> = ({
                       type: "percentage",
                     },
                   ],
-                  logicform: {
-                    ...momData.logicform,
-                    preds: [
-                      [
-                        {
-                          ...momData.logicform.preds[0][0],
-                          operator: "$mom",
-                        },
-                      ],
-                    ],
-                  },
+                  logicform: genYoyAndMomLogicform(momData.logicform, "$mom"),
                 }}
                 onChangeLogicform={onChangeLogicform}
                 showYoyAndMom={false}
