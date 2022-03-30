@@ -274,6 +274,8 @@ export const customValueTypes = (schema: SchemaType): any => ({
       if (props.render) {
         return props.render(entity, props, ...rest);
       }
+      if (entity == null) return "N/A";
+
       const width = (props?.fieldProps?.width || 200) - 16;
       let text: string;
       let isSingleEntity = true;
