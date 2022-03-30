@@ -74,7 +74,17 @@ const ZEDashboard: React.FC<ZEDashboardProps> = ({
                 key={JSON.stringify(d.cardProps.logicform)}
                 {...d.cardProps}
                 tableProps={{ height: "auto", ...d.cardProps?.tableProps }}
-                close={editable ? () => onItemDelete(d.id) : undefined}
+                close={
+                  editable || d.cardProps?.close
+                    ? () => {
+                        if (d.cardProps?.close) {
+                          // close本身不需要处理删除操作
+                          d.cardProps.close();
+                        }
+                        onItemDelete(d.id);
+                      }
+                    : undefined
+                }
               />
             </div>
           ))}
