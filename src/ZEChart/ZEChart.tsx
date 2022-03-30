@@ -79,10 +79,11 @@ const ZEChart: React.FC<ZEChartProps> = memo(
           source: data.result.map((i) => {
             const newI = { ...i };
             entityColumns.forEach((colProp) => {
-              if (typeof i[colProp.name] === "object") {
+              const entity = i[colProp.name];
+              if (entity && typeof entity === "object") {
                 const nameProp = getNameProperty(colProp.schema);
                 if (nameProp) {
-                  newI[colProp.name] = i[colProp.name][nameProp.name];
+                  newI[colProp.name] = entity[nameProp.name];
                 }
               }
             });
