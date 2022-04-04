@@ -486,15 +486,29 @@ const Table: React.FC<TableProps> = ({
 
   let scrollY;
   if (typeof height === "number") {
+    // 不同size的表头高度、分页高度不一致
+    let thHeight = 47;
+    let pgHeight = 40;
+    switch (size) {
+      case "large":
+        thHeight = 55;
+        pgHeight = 48;
+        break;
+      case "small":
+        thHeight = 39;
+        break;
+      default:
+        break;
+    }
     // 减去表头高
-    scrollY = height - 47;
+    scrollY = height - thHeight;
     if (options !== false) {
       // 减去toolBar的高度
       scrollY = scrollY - 32;
     }
     if (pagination !== false) {
       // 减去分页的高度
-      scrollY = scrollY - 40;
+      scrollY = scrollY - pgHeight;
     }
   }
 
