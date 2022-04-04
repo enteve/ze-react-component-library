@@ -31,6 +31,9 @@ const report: ZEDashboardItem[] = [
         },
         xlsx,
         exportToExcel: true,
+        size: "small"
+        // size: "middle"
+        // size: "large"
       },
       close: () => {},
     },
