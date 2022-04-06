@@ -749,7 +749,7 @@ export const genYoyAndMomLogicform = (
   if (!predItem.operator) throw new Error("predItem必须要有operator");
 
   const { name, query, pred, operator, ...others } = predItem;
-  if (!operator.startsWith("$")) {
+  if (!operator.startsWith("$") || operator === "$count") {
     // 自定义函数
     retLF.preds[0][0] = {
       operator: op,
@@ -770,7 +770,7 @@ export const genYoyAndMomLogicform = (
       pred,
     };
   } else {
-    throw new Error(`暂不支持的operator: ${operator}`);
+    throw new Error(`genYoyAndMomLogicform暂不支持的operator: ${operator}`);
   }
   return retLF;
 };
