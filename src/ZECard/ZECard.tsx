@@ -111,6 +111,13 @@ const getDefaultRepresentation = (
   }
 };
 
+const CardCloseHandler: React.FC<Pick<ZECardProps, "close">> = ({ close }) =>
+  close ? (
+    <Tooltip title="关闭此卡片">
+      <Button icon={<CloseOutlined />} onClick={() => close()} />
+    </Tooltip>
+  ) : null;
+
 const ZECard: React.FC<ZECardProps> = ({
   logicform: initialLogicform,
   formatResult,
@@ -386,11 +393,7 @@ const ZECard: React.FC<ZECardProps> = ({
             onUnPin={requestUnPinToDashboard}
           />
         )}
-        {close && (
-          <Tooltip title="关闭此卡片">
-            <Button icon={<CloseOutlined />} onClick={() => close()} />
-          </Tooltip>
-        )}
+        <CardCloseHandler close={close} />
       </Space>
     );
   }
@@ -474,4 +477,16 @@ const ZECard: React.FC<ZECardProps> = ({
   );
 };
 
-export default withErrorBoundary(ZECard, { FallbackComponent: ErrorFallBack });
+const ZECardWrapper: React.FC<ZECardProps> = (props) => {
+  const ZECardWithErrorBoundary = withErrorBoundary(ZECard, {
+    fallbackRender: (errorProps) => (
+      <ErrorFallBack
+        {...errorProps}
+        cardProps={{ extra: <CardCloseHandler close={props.close} /> }}
+      />
+    ),
+  });
+  return <ZECardWithErrorBoundary {...props} />;
+};
+
+export default ZECardWrapper;

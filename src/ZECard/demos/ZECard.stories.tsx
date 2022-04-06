@@ -23,6 +23,10 @@ export const SimpleTable = () => (
     }}
     tableProps={{
       defaultColWidth: 150,
+      scroll: null,
+    }}
+    close={() => {
+      console.log("close");
     }}
   />
 );
