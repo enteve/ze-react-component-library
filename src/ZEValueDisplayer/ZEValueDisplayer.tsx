@@ -34,16 +34,21 @@ const ZEValueDisplayer: React.FC<ZEValueDisplayerProps> = ({
   const [momData, setMomData] = useState<LogicformAPIResultType>();
 
   useEffect(() => {
-    if (data?.logicform) {
-      const lyLF = getLogicformByTimeOffset(data?.logicform, {
-        日期: { $offset: { year: -1 } },
-      });
-      setLyLF(lyLF);
+    if (data?.schema && data.schema.type === "event" && data?.logicform) {
+      const timestampProp = data.schema.properties.find(
+        (p) => p.type === "timestamp"
+      );
+      if (data.logicform.query?.[timestampProp.name]) {
+        const lyLF = getLogicformByTimeOffset(data?.logicform, {
+          [timestampProp.name]: { $offset: { year: -1 } },
+        });
+        setLyLF(lyLF);
 
-      const lmLF = getLogicformByTimeOffset(data?.logicform, {
-        日期: { $offset: { month: -1 } },
-      });
-      setLmLF(lmLF);
+        const lmLF = getLogicformByTimeOffset(data?.logicform, {
+          [timestampProp.name]: { $offset: { month: -1 } },
+        });
+        setLmLF(lmLF);
+      }
     }
   }, [data]);
 
