@@ -531,7 +531,7 @@ const Table: React.FC<TableProps> = ({
     size,
     scroll:
       scroll !== undefined
-        ? { ...scroll, y: scroll.y || scrollY }
+        ? { ...scroll, y: scroll?.y || scrollY }
         : { x, y: scrollY },
     options:
       options != undefined

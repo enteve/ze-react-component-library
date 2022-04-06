@@ -24,6 +24,7 @@ import {
   AutoComplete,
   Image,
 } from "antd";
+import type { CardProps } from "antd";
 import { useRequest } from "@umijs/hooks";
 import { requestLogicform } from "./request";
 import "antd/lib/cascader/style/index";
@@ -774,9 +775,12 @@ export const genYoyAndMomLogicform = (
   return retLF;
 };
 
-export const ErrorFallBack: FC<FallbackProps> = ({ error }) => {
+export const ErrorFallBack: FC<FallbackProps & { cardProps?: CardProps }> = ({
+  error,
+  cardProps,
+}) => {
   return (
-    <Card>
+    <Card {...cardProps}>
       <Result status="error" title="程序出错了" subTitle="请联系管理员处理!">
         <div>
           <Paragraph>
