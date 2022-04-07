@@ -56,6 +56,11 @@ const getDefaultRepresentation = (
     return "value";
 
   if (logicform.groupby) {
+    // 如果有多个指标，暂时优先返回table
+    if (logicform.preds.length >= 2) {
+      return "table";
+    }
+
     // 如果是多维分组，直接用table
     if (Array.isArray(logicform.groupby) && logicform.groupby.length >= 2) {
       return "table";
@@ -90,7 +95,6 @@ const getDefaultRepresentation = (
       groupbyProp?.is_categorical &&
       Array.isArray(result.result) &&
       result.result.length <= pieThreshold &&
-      result.result.every((i) => i >= 0) &&
       result.logicform.groupby.length === 1 && // 只需允许有一个维度
       result.columnProperties.length === 2 && // 只需允许有一个pred
       !result.columnProperties[1].is_speedish // 不是百分比类型的，而是绝对值类型的
