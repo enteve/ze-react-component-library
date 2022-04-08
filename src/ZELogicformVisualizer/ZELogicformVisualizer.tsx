@@ -83,8 +83,7 @@ const basicValueDisplay = (oldV: any) => {
 };
 
 /**
- * @param param0
- * @returns
+ * 注意，ZELogicformVisualizer从2022年2月8日开始只接受norm后的logicform
  */
 const ZELogicformVisualizer: React.FC<ZELogicformVisualizerProps> = ({
   logicform: initLogicform,
