@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { SizeMe } from "react-sizeme";
 import GridLayout from "react-grid-layout";
 import ZECard from "../ZECard";
+import type { ZECardOnChangeParams } from "../ZECard/ZECard.types";
 import type { ZEDashboardProps, ZEDashboardItem } from "./ZEDashboard.types";
 import "./ZEDashboard.less";
 
@@ -17,7 +18,11 @@ const ZEDashboard: React.FC<ZEDashboardProps> = ({
   resizeHandle,
   onDataChange,
   width,
+  dashboardRef,
+  style,
 }) => {
+  const cardsStateRef = useRef<Record<string, ZECardOnChangeParams>>({});
+
   const layout = data.map((d) => ({
     x: 0,
     y: 0,
@@ -47,11 +52,18 @@ const ZEDashboard: React.FC<ZEDashboardProps> = ({
     onDataChange?.(data.filter((d) => d.id !== id));
   };
 
+  useEffect(() => {
+    if (dashboardRef) {
+      dashboardRef.current.getCardsState = () => cardsStateRef.current;
+    }
+  }, []);
+
   return (
     <div
       className={["ze-dashboard", className, editable ? "active" : ""].join(
         " "
       )}
+      style={style}
     >
       {width !== undefined && (
         <GridLayout
@@ -71,9 +83,11 @@ const ZEDashboard: React.FC<ZEDashboardProps> = ({
           {data.map((d) => (
             <div key={d.id} className="ze-dashboard-item">
               <ZECard
-                key={JSON.stringify(d.cardProps.logicform)}
                 {...d.cardProps}
                 tableProps={{ height: "auto", ...d.cardProps?.tableProps }}
+                onChange={(params) => {
+                  cardsStateRef.current[d.id] = params;
+                }}
                 close={
                   editable || d.cardProps?.close
                     ? () => {

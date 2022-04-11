@@ -4,6 +4,11 @@ import { ZEChartProps } from "../ZEChart/ZEChart.types";
 import { ZELogicformVisualizerProps } from "../ZELogicformVisualizer/ZELogicformVisualizer.types";
 import { ZEValueDisplayerProps } from "../ZEValueDisplayer/ZEValueDisplayer";
 
+export type ZECardOnChangeParams =  {
+  logicform: LogicformType;
+  representation?: string;
+};
+
 export type ZECardProps = {
   title?: string;
   logicform: LogicformType;
@@ -48,4 +53,5 @@ export type ZECardProps = {
   pinable?: boolean;
   close?: () => void;
   enableGroupByMenu?: boolean;
+  onChange?: (params: ZECardOnChangeParams) => void;
 };

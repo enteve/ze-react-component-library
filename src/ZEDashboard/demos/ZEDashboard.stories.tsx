@@ -1,11 +1,11 @@
 // Generated with util/create-component.js
-import React, { useState } from "react";
+import React, { useState, useRef, useMemo } from "react";
 import { Space, Button } from "antd";
 import ZECard from "../../ZECard";
 import ZESearchBar from "../../ZESearchBar";
 import { useRequest } from "@umijs/hooks";
 import { requestAsk } from "../../request";
-import ZEDashboard, { ZEDashboardItem } from "../index";
+import ZEDashboard, { ZEDashboardItem, ZEDashboardInstance } from "../index";
 
 const xlsx = require("xlsx");
 
@@ -31,7 +31,7 @@ const report: ZEDashboardItem[] = [
         },
         xlsx,
         exportToExcel: true,
-        size: "small"
+        size: "small",
         // size: "middle"
         // size: "large"
       },
@@ -96,12 +96,18 @@ const initialData: ZEDashboardItem[] = [
 export const Basic = () => {
   const [data, setData] = useState<ZEDashboardItem[]>(initialData);
   const [draftData, setDraftData] = useState<ZEDashboardItem[]>();
+  const dashboardRef = useRef<ZEDashboardInstance>({});
   const [mode, setMode] = useState<"add" | "edit">();
   const [question, setQuestion] = useState<string>();
   const { data: answer, run: ask } = useRequest(
     () => (question ? requestAsk(question, true) : Promise.resolve(null)),
     { refreshDeps: [question] }
   );
+
+  const mergeCardsStateToData = (arr: ZEDashboardItem[]) => {
+    const cardsState = dashboardRef.current.getCardsState?.() || {};
+    return arr.map((d) => ({ ...d, ...cardsState[d.id] }));
+  };
 
   return (
     <div>
@@ -133,7 +139,7 @@ export const Basic = () => {
                   setQuestion(undefined);
                 }
                 if (mode === "edit" && draftData) {
-                  setData(draftData);
+                  setData(mergeCardsStateToData(draftData));
                   setDraftData(undefined);
                 }
                 setMode(undefined);
@@ -193,26 +199,27 @@ export const Basic = () => {
           </>
         )}
       </Space>
-      {mode === "add" ? (
+
+      {mode === "add" && (
         <>
           <ZESearchBar
             ask={(ques) => {
               setQuestion(ques);
             }}
           />
-          {answer?.logicform && (
-            <div style={{ marginTop: 24 }}>
+          <div style={{ minHeight: 400, marginTop: 24 }}>
+            {answer?.logicform && (
               <ZECard title={question} logicform={answer.logicform} />
-            </div>
-          )}
+            )}
+          </div>
         </>
-      ) : (
-        <ZEDashboard
-          data={draftData || data}
-          editable={mode === "edit"}
-          onDataChange={(d) => (mode ? setDraftData(d) : setData(d))}
-        />
       )}
+      <ZEDashboard
+        style={mode === "add" ? { pointerEvents: "none", opacity: 0 } : {}}
+        data={draftData || data}
+        editable={mode === "edit"}
+        onDataChange={(d) => (mode === "edit" ? setDraftData(d) : setData(d))}
+      />
     </div>
   );
 };
