@@ -106,7 +106,10 @@ export const Basic = () => {
 
   const mergeCardsStateToData = (arr: ZEDashboardItem[]) => {
     const cardsState = dashboardRef.current.getCardsState?.() || {};
-    return arr.map((d) => ({ ...d, ...cardsState[d.id] }));
+    return arr.map((d) => ({
+      ...d,
+      cardProps: { ...d.cardProps, ...cardsState[d.id] },
+    }));
   };
 
   return (
