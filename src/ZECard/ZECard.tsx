@@ -108,6 +108,16 @@ const getDefaultRepresentation = (
     }
 
     return "bar";
+  } else if (!isSimpleQuery(logicform)) {
+    // 数值计算
+    // 20220411: 数值计算也改造成了array of objects格式
+    if (
+      Array.isArray(result.result) &&
+      result.result.length === 1 &&
+      result.columnProperties.length === 1
+    ) {
+      return "value";
+    }
   }
 
   if (logicform.operator === "$ent") {

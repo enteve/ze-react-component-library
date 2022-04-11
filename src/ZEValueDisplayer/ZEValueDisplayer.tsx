@@ -1,4 +1,4 @@
-import { Col, Row, Statistic } from "antd";
+import { Col, Result, Row, Statistic } from "antd";
 import React, { useState, useEffect } from "react";
 import numeral from "numeral";
 import {
@@ -27,6 +27,29 @@ const ZEValueDisplayer: React.FC<ZEValueDisplayerProps> = ({
   trend,
   title,
 }) => {
+  if (
+    data?.result &&
+    Array.isArray(data.result) &&
+    data.columnProperties.length !== 1
+  ) {
+    return (
+      <Result
+        status="error"
+        title="ValueDisplayer不允许多个数值"
+        subTitle="请检查您的代码!"
+      />
+    );
+  }
+
+  let result: any = data?.result;
+  if (
+    data?.result &&
+    data.columnProperties?.length > 0 &&
+    Array.isArray(data.result)
+  ) {
+    result = data.result[0][data.columnProperties[0].name];
+  }
+
   const [lyLF, setLyLF] = useState<LogicformType>(); // last year logicform，用来计算同比
   const [lmLF, setLmLF] = useState<LogicformType>(); // last month logicform, 用来计算环比
 
@@ -72,7 +95,7 @@ const ZEValueDisplayer: React.FC<ZEValueDisplayerProps> = ({
   if (!children) {
     let unit = "";
     let precision = 1;
-    let value = data && "result" in data ? data.result : "-";
+    let value = result == undefined ? "-" : result;
     let suffix = "";
 
     let prefix: React.ReactNode;
@@ -135,15 +158,29 @@ const ZEValueDisplayer: React.FC<ZEValueDisplayerProps> = ({
     thisPeriodData: LogicformAPIResultType,
     lastPeriodData: LogicformAPIResultType
   ) => {
-    const thisPeriod = thisPeriodData.result;
-    const lastPeriod = lastPeriodData.result;
+    let thisPeriod = thisPeriodData.result;
+    let lastPeriod = lastPeriodData.result;
+
+    // 新的result格式：
+    if (Array.isArray(thisPeriodData.result)) {
+      thisPeriod =
+        thisPeriodData.result[0][thisPeriodData.columnProperties[0].name];
+    }
+    if (Array.isArray(lastPeriodData.result)) {
+      lastPeriod =
+        lastPeriodData.result[0][lastPeriodData.columnProperties[0].name];
+    }
 
     if (lastPeriod === 0) {
       return "N/A";
     }
 
     const valueProp = thisPeriodData.columnProperties[0];
-    if (valueProp.type === "percentage" || valueProp.is_speedish) {
+    if (
+      valueProp.type === "percentage" ||
+      valueProp.is_speedish ||
+      valueProp.use_minus_on_mom
+    ) {
       return thisPeriod - lastPeriod;
     }
     return thisPeriod / lastPeriod - 1;
