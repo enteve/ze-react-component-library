@@ -1,4 +1,5 @@
-import type { ZECardProps } from "../ZECard/ZECard.types";
+import type { RefObject, HTMLAttributes } from "react";
+import type { ZECardProps, ZECardOnChangeParams } from "../ZECard/ZECard.types";
 
 type Layout = {
   i: string;
@@ -21,6 +22,10 @@ export type ZEDashboardItem = {
   cardProps: ZECardProps;
 };
 
+export type ZEDashboardInstance = {
+  getCardsState?: () => Record<string, ZECardOnChangeParams>;
+};
+
 export type ZEDashboardProps = {
   data: ZEDashboardItem[];
   width?: number;
@@ -39,4 +44,5 @@ export type ZEDashboardProps = {
   resizeHandles?: Array<"s" | "w" | "e" | "n" | "sw" | "nw" | "se" | "ne">;
   resizeHandle?: React.ReactElement;
   onDataChange?: (data: ZEDashboardItem[]) => void;
-};
+  dashboardRef?: RefObject<ZEDashboardInstance>;
+} & HTMLAttributes<HTMLDivElement>;

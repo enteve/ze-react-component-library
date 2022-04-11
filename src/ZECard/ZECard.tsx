@@ -13,8 +13,8 @@ import {
   Spin,
   Tooltip,
 } from "antd";
-import { withErrorBoundary } from "react-error-boundary";
-import React, { useState, useMemo } from "react";
+import { ErrorBoundary } from "react-error-boundary";
+import React, { useState, useMemo, useEffect } from "react";
 import _ from "underscore";
 import {
   findPropByName,
@@ -153,6 +153,7 @@ const ZECard: React.FC<ZECardProps> = ({
   close,
   dashboardID,
   enableGroupByMenu,
+  onChange,
 }) => {
   const {
     value: logicform,
@@ -435,6 +436,10 @@ const ZECard: React.FC<ZECardProps> = ({
 
   if (showMainContentOnly) return <Spin spinning={loading}>{component}</Spin>;
 
+  useEffect(() => {
+    onChange && onChange({ logicform, representation: finalRepresentation });
+  }, [logicform, finalRepresentation]);
+
   return (
     <Spin spinning={loading}>
       <Card
@@ -482,15 +487,18 @@ const ZECard: React.FC<ZECardProps> = ({
 };
 
 const ZECardWrapper: React.FC<ZECardProps> = (props) => {
-  const ZECardWithErrorBoundary = withErrorBoundary(ZECard, {
-    fallbackRender: (errorProps) => (
-      <ErrorFallBack
-        {...errorProps}
-        cardProps={{ extra: <CardCloseHandler close={props.close} /> }}
-      />
-    ),
-  });
-  return <ZECardWithErrorBoundary {...props} />;
+  return (
+    <ErrorBoundary
+      fallbackRender={(errorProps) => (
+        <ErrorFallBack
+          {...errorProps}
+          cardProps={{ extra: <CardCloseHandler close={props.close} /> }}
+        />
+      )}
+    >
+      <ZECard {...props} />
+    </ErrorBoundary>
+  );
 };
 
 export default ZECardWrapper;
