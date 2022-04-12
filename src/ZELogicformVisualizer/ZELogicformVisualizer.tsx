@@ -236,6 +236,18 @@ const ZELogicformVisualizer: React.FC<ZELogicformVisualizerProps> = ({
               </span>
             ),
           });
+        } else if (v.schema) {
+          // 嵌套的的搜索，暂时先只支持ent，之后其他嵌套想个好办法
+          if (v.preds?.[0]?.[0].operator === "$ent") {
+            badges.push({
+              color: filterColor,
+              text: (
+                <span>
+                  {k}：<strong>{v.preds[0][0].name}</strong>
+                </span>
+              ),
+            });
+          }
         }
       }
     });

@@ -108,3 +108,80 @@ export const FilterInPreds = () => {
 
   return <ZELogicformVisualizer logicform={logicform} />;
 };
+
+export const EntityInQuery = () => {
+  return (
+    <ZELogicformVisualizer
+      logicform={{
+        preds: [
+          [
+            {
+              pred: "应收电费",
+              operator: "$sum",
+              name: "总应收电费",
+            },
+          ],
+          [
+            {
+              operator: "$yoy",
+              pred: "应收电费",
+              name: "应收电费同比",
+            },
+          ],
+        ],
+        query: {
+          日期: {
+            $gte: "2020-12-31T16:00:00.000Z",
+            $lte: "2021-12-31T15:59:59.999Z",
+          },
+          用电类别: {
+            schema: "ec_cate",
+            preds: [
+              [
+                {
+                  operator: "$ent",
+                  field: "名称",
+                  name: "商业用电",
+                },
+              ],
+            ],
+            query: {},
+          },
+          区县公司: "昆山市供电公司",
+          地理位置: {
+            schema: "geo",
+            preds: [
+              [
+                {
+                  operator: "$ent",
+                  field: "name",
+                  name: "昆山市",
+                  code: "0864320583",
+                },
+              ],
+            ],
+            query: {},
+          },
+        },
+        schema: "sales",
+        groupby: [
+          {
+            _id: "区县公司",
+            name: "区县公司",
+          },
+          {
+            _id: "日期",
+            level: "month",
+            name: "日期(month)",
+          },
+        ],
+        schemaName: "销售表",
+        _role: "viewer",
+        sort: {
+          区县公司: 1,
+          "日期(month)": 1,
+        },
+      }}
+    />
+  );
+};
