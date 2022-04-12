@@ -165,6 +165,14 @@ export const Basic = () => {
             <Button
               type="primary"
               onClick={() => {
+                console.log(mergeCardsStateToData(data));
+              }}
+            >
+              保存
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => {
                 setMode("add");
               }}
             >
@@ -222,6 +230,7 @@ export const Basic = () => {
         data={draftData || data}
         editable={mode === "edit"}
         onDataChange={(d) => (mode === "edit" ? setDraftData(d) : setData(d))}
+        dashboardRef={dashboardRef}
       />
     </div>
   );
