@@ -1,5 +1,5 @@
 import type { RefObject, HTMLAttributes } from "react";
-import type { ZECardProps, ZECardOnChangeParams } from "../ZECard/ZECard.types";
+import type { ZECardProps } from "../ZECard/ZECard.types";
 
 type Layout = {
   i: string;
@@ -23,7 +23,7 @@ export type ZEDashboardItem = {
 };
 
 export type ZEDashboardInstance = {
-  getCardsState?: () => Record<string, ZECardOnChangeParams>;
+  getDashboardState?: () => ZEDashboardItem[];
 };
 
 export type ZEDashboardProps = {

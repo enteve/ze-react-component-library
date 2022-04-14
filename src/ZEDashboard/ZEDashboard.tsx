@@ -54,9 +54,15 @@ const ZEDashboard: React.FC<ZEDashboardProps> = ({
 
   useEffect(() => {
     if (dashboardRef) {
-      dashboardRef.current.getCardsState = () => cardsStateRef.current;
+      dashboardRef.current.getDashboardState = () => {
+        const cardsState = cardsStateRef.current;
+        return data.map((d) => ({
+          ...d,
+          cardProps: { ...d.cardProps, ...cardsState[d.id] },
+        }));
+      };
     }
-  }, []);
+  }, [data]);
 
   return (
     <div

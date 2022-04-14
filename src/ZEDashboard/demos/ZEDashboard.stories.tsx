@@ -104,14 +104,6 @@ export const Basic = () => {
     { refreshDeps: [question] }
   );
 
-  const mergeCardsStateToData = (arr: ZEDashboardItem[]) => {
-    const cardsState = dashboardRef.current.getCardsState?.() || {};
-    return arr.map((d) => ({
-      ...d,
-      cardProps: { ...d.cardProps, ...cardsState[d.id] },
-    }));
-  };
-
   return (
     <div>
       <Space
@@ -142,7 +134,7 @@ export const Basic = () => {
                   setQuestion(undefined);
                 }
                 if (mode === "edit" && draftData) {
-                  setData(mergeCardsStateToData(draftData));
+                  setData(draftData);
                   setDraftData(undefined);
                 }
                 setMode(undefined);
@@ -165,7 +157,7 @@ export const Basic = () => {
             <Button
               type="primary"
               onClick={() => {
-                console.log(mergeCardsStateToData(data));
+                console.log(dashboardRef.current.getDashboardState?.());
               }}
             >
               保存
