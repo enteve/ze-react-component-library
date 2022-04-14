@@ -58,6 +58,7 @@ const ZEDashboard: React.FC<ZEDashboardProps> = ({
       dashboardRef.current.getDashboardState = () => {
         const cardsState = cardsStateRef.current;
         return data.map((d) => ({
+          id: d.id,
           layout: _.pick(d.layout, ["i", "w", "h", "x", "y"]),
           cardProps: _.pick(
             {
