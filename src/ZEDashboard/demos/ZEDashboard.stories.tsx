@@ -6,8 +6,7 @@ import ZESearchBar from "../../ZESearchBar";
 import { useRequest } from "@umijs/hooks";
 import { requestAsk } from "../../request";
 import ZEDashboard, { ZEDashboardItem, ZEDashboardInstance } from "../index";
-
-const xlsx = require("xlsx");
+import * as xlsx from "xlsx";
 
 // prepare server
 import prepareServerForStories from "../../../util/prepareServerForStories";
@@ -74,6 +73,7 @@ const initialData: ZEDashboardItem[] = [
   {
     id: "card2",
     cardProps: {
+      xlsx,
       title: "各产品销售额",
       logicform: {
         schema: "sales",
