@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import { SizeMe } from "react-sizeme";
+import _ from "underscore";
 import GridLayout from "react-grid-layout";
 import ZECard from "../ZECard";
 import type { ZECardOnChangeParams } from "../ZECard/ZECard.types";
@@ -57,8 +58,14 @@ const ZEDashboard: React.FC<ZEDashboardProps> = ({
       dashboardRef.current.getDashboardState = () => {
         const cardsState = cardsStateRef.current;
         return data.map((d) => ({
-          ...d,
-          cardProps: { ...d.cardProps, ...cardsState[d.id] },
+          layout: _.pick(d.layout, ["i", "w", "h", "x", "y"]),
+          cardProps: _.pick(
+            {
+              ...d.cardProps,
+              ...cardsState[d.id],
+            },
+            ["title", "logicform", "representation"]
+          ),
         }));
       };
     }
