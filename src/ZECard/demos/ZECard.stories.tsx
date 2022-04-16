@@ -436,6 +436,14 @@ export const CustomContent = () => {
   );
 };
 
+export const ErrorDisplay = () => (
+  <ZECard
+    askError="无法理解此问题，请继续补充或重新提问"
+    close={() => {}}
+    askErrorHelperLink="#"
+  />
+);
+
 export const ErrorBoundaryExample = () => (
   <ZECard
     title="LFVisualizerAsFilter"

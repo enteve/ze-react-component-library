@@ -42,6 +42,7 @@ import LogicFormTraveler from "./LogicFormTraveler";
 import { ErrorFallBack } from "../util";
 import PinHandler from "./PinHandler";
 import GroupByMenu from "../components/GroupByMenu";
+import ErrorDisplayer from "./ErrorDisplayer";
 const { Paragraph, Title } = Typography;
 
 const getDefaultRepresentation = (
@@ -164,6 +165,8 @@ const ZECard: React.FC<ZECardProps> = ({
   dashboardID,
   enableGroupByMenu,
   onChange,
+  askError,
+  askErrorHelperLink,
 }) => {
   const {
     value: logicform,
@@ -183,11 +186,9 @@ const ZECard: React.FC<ZECardProps> = ({
     run: fetchData,
   } = useRequest<LogicformAPIResultType>(
     () => {
-      if (!logicform) {
-        throw new Error("no logicform");
+      if (logicform) {
+        return requestLogicform(logicFormWithSkipAndSort || logicform);
       }
-
-      return requestLogicform(logicFormWithSkipAndSort || logicform);
     },
     {
       refreshDeps: [logicform, logicFormWithSkipAndSort],
@@ -280,7 +281,15 @@ const ZECard: React.FC<ZECardProps> = ({
 
   // 如果没有自定义Content，则自动判断
   if (!component) {
-    if (isSimpleQuery(logicform)) {
+    if (askError) {
+      component = (
+        <ErrorDisplayer error={askError} helperLink={askErrorHelperLink} />
+      );
+    } else if (!logicform) {
+      component = (
+        <Result status="error" title="此Component需要传入logicform字段" />
+      );
+    } else if (isSimpleQuery(logicform)) {
       component = tableContent;
     } else if (finalRepresentation === "value") {
       component = (
@@ -389,7 +398,7 @@ const ZECard: React.FC<ZECardProps> = ({
           </div>
         )}
         {/* 暂时只有带groupby的是支持RepresentationChanger的 */}
-        {showRepresentationChanger && logicform.groupby && (
+        {showRepresentationChanger && logicform?.groupby && (
           <RepresentationChanger
             representationType={finalRepresentation}
             onChange={(v) => {
@@ -441,8 +450,6 @@ const ZECard: React.FC<ZECardProps> = ({
       </Typography>
     );
   }
-
-  if (!logicform) return <Result status="error" title="出现错误" />;
 
   if (showMainContentOnly) return <Spin spinning={loading}>{component}</Spin>;
 
