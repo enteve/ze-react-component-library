@@ -4,14 +4,14 @@ import { ZEChartProps } from "../ZEChart/ZEChart.types";
 import { ZELogicformVisualizerProps } from "../ZELogicformVisualizer/ZELogicformVisualizer.types";
 import { ZEValueDisplayerProps } from "../ZEValueDisplayer/ZEValueDisplayer";
 
-export type ZECardOnChangeParams =  {
+export type ZECardOnChangeParams = {
   logicform: LogicformType;
   representation?: string;
 };
 
 export type ZECardProps = {
   title?: string;
-  logicform: LogicformType;
+  logicform?: LogicformType;
   formatResult?: (data: any) => any;
   representation?: string;
   warning?: string; // 显示在visualizer下方，一个warning
@@ -54,4 +54,7 @@ export type ZECardProps = {
   close?: () => void;
   enableGroupByMenu?: boolean;
   onChange?: (params: ZECardOnChangeParams) => void;
+
+  askError?: string;
+  askErrorHelperLink?: string;
 };
