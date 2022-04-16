@@ -14,7 +14,7 @@ const ErrorDisplayer: FC<ErrorDisplayerProps> = ({ error, helperLink }) => {
         title={error}
         icon={
           <Image
-            src="https://iconfont.alicdn.com/s/4d014e63-9970-4a7e-aea4-b502fef227ba_origin.svg"
+            src="https://cdn.zeroetp.com/yiask/error.svg"
             preview={false}
           />
         }
