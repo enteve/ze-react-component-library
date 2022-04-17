@@ -43,6 +43,7 @@ import { ErrorFallBack } from "../util";
 import PinHandler from "./PinHandler";
 import GroupByMenu from "../components/GroupByMenu";
 import ErrorDisplayer from "./ErrorDisplayer";
+import ZESheet from "../ZESheet";
 const { Paragraph, Title } = Typography;
 
 const getDefaultRepresentation = (
@@ -167,6 +168,7 @@ const ZECard: React.FC<ZECardProps> = ({
   onChange,
   askError,
   askErrorHelperLink,
+  useSheet,
 }) => {
   const {
     value: logicform,
@@ -355,6 +357,8 @@ const ZECard: React.FC<ZECardProps> = ({
             item={data.result[0]}
           />
         );
+      } else if (data && useSheet) {
+        component = <ZESheet logicform={data.logicform} result={data} />;
       } else {
         component = tableContent;
       }

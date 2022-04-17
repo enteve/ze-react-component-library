@@ -257,14 +257,19 @@ const ZESheet: React.FC<ZESheetProps> = ({
   // 总计 & 小计
   if (dataCfg.data) {
     if (totalData) {
-      dataCfg.data = [...dataCfg.data, ...totalData.result];
+      if (Array.isArray(totalData.result)) {
+        // 注：这里写这个代码是为了兼容旧版本的SemanticDB。旧版本的total直接不要了
+        dataCfg.data = [...dataCfg.data, ...totalData.result];
+      }
     }
     if (subTotalData && data.logicform.groupby?.length > 1) {
-      s2Options.totals.row.subTotalsDimensions = data.logicform.groupby
-        .slice(0, data.logicform.groupby.length - 1)
-        .map((g) => g.name);
+      if (Array.isArray(subTotalData.result)) {
+        s2Options.totals.row.subTotalsDimensions = data.logicform.groupby
+          .slice(0, data.logicform.groupby.length - 1)
+          .map((g) => g.name);
 
-      dataCfg.data = [...dataCfg.data, ...subTotalData.result];
+        dataCfg.data = [...dataCfg.data, ...subTotalData.result];
+      }
     }
   }
 

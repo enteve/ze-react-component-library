@@ -57,4 +57,6 @@ export type ZECardProps = {
 
   askError?: string;
   askErrorHelperLink?: string;
+
+  useSheet?: boolean; // 临时字段，是否使用ZESheet替代ZETable
 };
