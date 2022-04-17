@@ -75,6 +75,7 @@ const initialData: ZEDashboardItem[] = [
     cardProps: {
       xlsx,
       title: "各产品销售额",
+      useSheet: true,
       logicform: {
         schema: "sales",
         groupby: { _id: "产品_品类" },
