@@ -138,6 +138,7 @@ const ZECard: React.FC<ZECardProps> = ({
   logicform: initialLogicform,
   formatResult,
   title,
+  titleRender,
   warning,
   mainContent,
   extra,
@@ -465,7 +466,7 @@ const ZECard: React.FC<ZECardProps> = ({
     <Spin spinning={loading}>
       <Card
         size={size}
-        title={title}
+        title={titleRender ? titleRender(title) : title}
         extra={extra}
         bodyStyle={bodyStyle}
         headStyle={headStyle}

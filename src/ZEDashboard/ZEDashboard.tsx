@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from "react";
 import { SizeMe } from "react-sizeme";
 import _ from "underscore";
 import GridLayout from "react-grid-layout";
+import { DragOutlined } from "@ant-design/icons";
 import ZECard from "../ZECard";
 import type { ZECardOnChangeParams } from "../ZECard/ZECard.types";
 import type { ZEDashboardProps, ZEDashboardItem } from "./ZEDashboard.types";
@@ -15,7 +16,7 @@ const ZEDashboard: React.FC<ZEDashboardProps> = ({
   rowHeight = 92,
   margin = [24, 24],
   containerPadding = [0, 0],
-  resizeHandles = ["se", "nw"],
+  resizeHandles = ["se", "nw", "s", "n", "e", "w", "sw", "ne"],
   resizeHandle,
   onDataChange,
   width,
@@ -92,12 +93,20 @@ const ZEDashboard: React.FC<ZEDashboardProps> = ({
           containerPadding={containerPadding}
           resizeHandles={resizeHandles}
           resizeHandle={resizeHandle}
+          draggableHandle=".ze-dashboard-draggable-handler"
           onLayoutChange={onLayoutChange}
         >
           {data.map((d) => (
             <div key={d.id} className="ze-dashboard-item">
               <ZECard
                 {...d.cardProps}
+                titleRender={(t) => (
+                  <div
+                    className={editable ? "ze-dashboard-draggable-handler" : ""}
+                  >
+                    {t}
+                  </div>
+                )}
                 tableProps={{ height: "auto", ...d.cardProps?.tableProps }}
                 onChange={(params) => {
                   cardsStateRef.current[d.id] = params;
