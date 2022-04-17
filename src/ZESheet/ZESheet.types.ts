@@ -16,4 +16,6 @@ export interface ZESheetProps {
     s2DataConfig?: Omit<S2DataConfig, "data">;
     s2Options?: Partial<S2Options>;
   }) => void;
+
+  showInterval?: boolean; // 是否显示柱状图标记
 }

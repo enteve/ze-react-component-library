@@ -8,7 +8,7 @@ import { requestLogicform } from "../request";
 import ZEJsonEditor from "../ZEJsonEditor";
 import { Result, Button, Tooltip, Space, Row, Col, Select } from "antd";
 import flatten from "flat";
-import { EAggregation, S2DataConfig } from "@antv/s2";
+import { S2DataConfig } from "@antv/s2";
 import { DownloadOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
 import "@antv/s2-react/dist/style.min.css";
 import { getDefaultS2Config } from "./util";
@@ -34,9 +34,11 @@ const ZESheet: React.FC<ZESheetProps> = ({
   showEditor = false,
   onSave,
   style = {},
+  showInterval = true,
 }) => {
   // 加上一点default的设置
-  const s2Options: ZESheetProps["s2Options"] = {
+  // 此处类型用any，不用ZESheetProps["s2Options"]，因为s2Options.totals.row里面的属性是readonly，很奇怪
+  const s2Options: any = {
     tooltip: {
       col: {
         showTooltip: false,
@@ -45,10 +47,11 @@ const ZESheet: React.FC<ZESheetProps> = ({
     totals: {
       row: {
         showGrandTotals: true,
-        calcTotals: {
-          aggregation: EAggregation.SUM,
-        },
+        showSubTotals: true,
       },
+    },
+    conditions: {
+      interval: [],
     },
     ...s2OptionsSrc,
   };
@@ -69,6 +72,11 @@ const ZESheet: React.FC<ZESheetProps> = ({
     useRequest<LogicformAPIResultType>(requestLogicform, {
       manual: true,
     });
+  const { data: subTotalData, run: requestSubTotalData } =
+    useRequest<LogicformAPIResultType>(requestLogicform, {
+      manual: true,
+    });
+
   const { data, loading } = useRequest<LogicformAPIResultType>(
     () => {
       if (result) {
@@ -88,16 +96,17 @@ const ZESheet: React.FC<ZESheetProps> = ({
       ],
       onSuccess: (res) => {
         // TotalData
-        const speedishPreds = res.logicform.preds.filter(
-          (_prop, index) =>
-            res.columnProperties[res.logicform.groupby.length + index]
-              .is_speedish
-        );
-        if (speedishPreds.length > 0) {
-          requestTotalData({
+        requestTotalData({
+          ...res.logicform,
+          groupby: undefined,
+          sort: undefined,
+        });
+
+        // SubTotalData
+        if (res.logicform.groupby.length > 1) {
+          requestSubTotalData({
             ...res.logicform,
-            groupby: undefined,
-            preds: speedishPreds,
+            groupby: res.logicform.groupby[0],
             sort: undefined,
           });
         }
@@ -115,29 +124,6 @@ const ZESheet: React.FC<ZESheetProps> = ({
   if (data?.result) {
     if (!Array.isArray(data.result)) {
       return <Result title="此组件仅支持数组" />;
-    }
-
-    // TotalData
-    // 对于不可加的totalData来说，预填一个null
-    dataCfg.totalData = [{}];
-    data.columnProperties
-      .slice(data.logicform.groupby.length)
-      .forEach((prop) => {
-        if (prop.is_speedish) {
-          dataCfg.totalData[0][prop.name] = null;
-        }
-      });
-    // 具体填数据的地方
-    if (totalData) {
-      if (typeof totalData.result === "object") {
-        dataCfg.totalData[0] = {
-          ...dataCfg.totalData[0],
-          ...totalData.result,
-        };
-      } else {
-        dataCfg.totalData[0][totalData.columnProperties[0].name] =
-          totalData.result;
-      }
     }
 
     const meta: Required<S2DataConfig>["meta"] = ["rows", "columns", "values"]
@@ -167,6 +153,22 @@ const ZESheet: React.FC<ZESheetProps> = ({
     dataCfg.data = data.result.map((v) => flatten(v));
     // meta
     dataCfg.meta = meta;
+
+    // interval
+    if (showInterval) {
+      s2Options.conditions = {
+        interval: data.columnProperties
+          .filter((p) => p.primal_type === "number")
+          .map((p) => ({
+            field: p.name,
+            mapping() {
+              return {
+                fill: "#80BFFF",
+              };
+            },
+          })),
+      };
+    }
   }
 
   const reset = () => {
@@ -199,7 +201,9 @@ const ZESheet: React.FC<ZESheetProps> = ({
     setIsEditing(false);
   };
 
-  const defaultOptions: any = { hierarchyType: "grid" };
+  const defaultOptions: any = {
+    hierarchyType: "grid",
+  };
 
   useEffect(() => {
     setInnerS2Options(s2Options);
@@ -247,6 +251,20 @@ const ZESheet: React.FC<ZESheetProps> = ({
           </Button>
         </Tooltip>
       );
+    }
+  }
+
+  // 总计 & 小计
+  if (dataCfg.data) {
+    if (totalData) {
+      dataCfg.data = [...dataCfg.data, ...totalData.result];
+    }
+    if (subTotalData && data.logicform.groupby?.length > 1) {
+      s2Options.totals.row.subTotalsDimensions = data.logicform.groupby
+        .slice(0, data.logicform.groupby.length - 1)
+        .map((g) => g.name);
+
+      dataCfg.data = [...dataCfg.data, ...subTotalData.result];
     }
   }
 
