@@ -11,6 +11,7 @@ export type ZECardOnChangeParams = {
 
 export type ZECardProps = {
   title?: string;
+  titleRender?: (title?: string) => React.ReactNode;
   logicform?: LogicformType;
   formatResult?: (data: any) => any;
   representation?: string;
