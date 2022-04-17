@@ -13,6 +13,7 @@ import { DownloadOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
 import "@antv/s2-react/dist/style.min.css";
 import { getDefaultS2Config } from "./util";
 import { HeaderCfgProps } from "@antv/s2-react/esm/components/header";
+import "./ZESheet.less";
 
 const s2FieldOptions: {
   label: React.ReactNode;
@@ -222,11 +223,13 @@ const ZESheet: React.FC<ZESheetProps> = ({
   if (isEditing) {
     sheetComponentHeader.extra = (
       <Space>
-        <Button onClick={handleCancel}>取消</Button>
-        <Button onClick={handlePreview}>
+        <Button size="small" onClick={handleCancel}>
+          取消
+        </Button>
+        <Button size="small" onClick={handlePreview}>
           <EyeOutlined /> 预览
         </Button>
-        <Button type="primary" onClick={handleSave}>
+        <Button size="small" type="primary" onClick={handleSave}>
           保存
         </Button>
       </Space>
@@ -242,6 +245,7 @@ const ZESheet: React.FC<ZESheetProps> = ({
         <Tooltip title="编辑">
           <Button
             type="link"
+            size="small"
             style={{ padding: 0 }}
             onClick={() => {
               setIsEditing(true);
@@ -273,10 +277,19 @@ const ZESheet: React.FC<ZESheetProps> = ({
     }
   }
 
+  const offsetHeight = isEditing ? 48 : 32;
+
   return (
-    <div className="ze-sheet" style={{ height: "100%", ...style }}>
+    <div
+      className={`ze-sheet ${isEditing ? "editing" : ""}`}
+      style={{ height: "100%", ...style }}
+    >
       <div
-        style={{ height: isEditing ? "calc(50% - 56px)" : "calc(100% - 56px)" }}
+        style={{
+          height: isEditing
+            ? `calc(50% - ${offsetHeight}px)`
+            : `calc(100% - ${offsetHeight}px)`,
+        }}
         ref={adaptiveRef}
       >
         <SheetComponent
@@ -295,7 +308,10 @@ const ZESheet: React.FC<ZESheetProps> = ({
       {isEditing && (
         <Row
           gutter={24}
-          style={{ height: "calc(50% + 56px)", paddingTop: 56 + 12 }}
+          style={{
+            height: `calc(50% + ${offsetHeight}px)`,
+            paddingTop: offsetHeight + 12,
+          }}
         >
           <Col span={12} style={{ display: "flex", flexDirection: "column" }}>
             <Space>
