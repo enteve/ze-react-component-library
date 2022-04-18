@@ -359,7 +359,9 @@ const ZECard: React.FC<ZECardProps> = ({
           />
         );
       } else if (data && useSheet) {
-        component = <ZESheet logicform={data.logicform} result={data} />;
+        component = (
+          <ZESheet logicform={data.logicform} result={data} xlsx={xlsx} />
+        );
       } else {
         component = tableContent;
       }

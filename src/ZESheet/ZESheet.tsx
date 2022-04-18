@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ZESheetProps } from "./ZESheet.types";
 import { SheetComponent } from "@antv/s2-react";
+import { SpreadSheet, copyData } from "@antv/s2";
 import { LogicformAPIResultType } from "zeroetp-api-sdk";
 import { useRequest } from "@umijs/hooks";
 import { findProperty, formatWithProperty } from "../util";
@@ -12,6 +13,7 @@ import { S2DataConfig } from "@antv/s2";
 import { DownloadOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
 import "@antv/s2-react/dist/style.min.css";
 import { getDefaultS2Config } from "./util";
+import excelExporter from "./excelExporter";
 import { HeaderCfgProps } from "@antv/s2-react/esm/components/header";
 import "./ZESheet.less";
 
@@ -32,6 +34,7 @@ const ZESheet: React.FC<ZESheetProps> = ({
   s2DataConfig,
   s2Options: s2OptionsSrc,
   showExport = true,
+  xlsx,
   showEditor = false,
   onSave,
   style = {},
@@ -60,6 +63,7 @@ const ZESheet: React.FC<ZESheetProps> = ({
     ...s2OptionsSrc,
   };
 
+  const s2Ref = useRef<SpreadSheet>();
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const adaptiveRef = useRef<HTMLDivElement>();
   const [s2Field, setS2Field] = useState<S2FieldType>("s2DataConfig");
@@ -237,28 +241,42 @@ const ZESheet: React.FC<ZESheetProps> = ({
         </Button>
       </Space>
     );
-  } else {
-    sheetComponentHeader.exportCfg = {
-      open: showExport,
-      icon: <DownloadOutlined />,
-    };
-
-    if (showEditor) {
-      sheetComponentHeader.extra = (
-        <Tooltip title="编辑">
-          <Button
-            type="link"
-            size="small"
-            style={{ padding: 0 }}
-            onClick={() => {
-              setIsEditing(true);
-            }}
-          >
-            <EditOutlined />
-          </Button>
-        </Tooltip>
-      );
-    }
+  } else if (showEditor || showExport) {
+    sheetComponentHeader.extra = (
+      <Space>
+        {showEditor && (
+          <Tooltip title="编辑">
+            <Button
+              type="link"
+              size="small"
+              style={{ padding: 0 }}
+              onClick={() => {
+                setIsEditing(true);
+              }}
+            >
+              <EditOutlined />
+            </Button>
+          </Tooltip>
+        )}
+        {showExport && (
+          <Tooltip title="导出Excel">
+            <Button
+              type="link"
+              size="small"
+              style={{ padding: 0 }}
+              onClick={() => {
+                if (s2Ref.current) {
+                  const formatText = copyData(s2Ref.current, "\t", true);
+                  excelExporter(formatText, "数据导出", xlsx);
+                }
+              }}
+            >
+              <DownloadOutlined />
+            </Button>
+          </Tooltip>
+        )}
+      </Space>
+    );
   }
 
   // 总计 & 小计
@@ -306,6 +324,7 @@ const ZESheet: React.FC<ZESheetProps> = ({
           options={previewConfig?.s2Options || s2Options || defaultOptions}
           sheetType={sheetType}
           header={sheetComponentHeader}
+          ref={s2Ref}
         />
       </div>
       {isEditing && (
