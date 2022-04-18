@@ -179,6 +179,7 @@ const ZEValueDisplayer: React.FC<ZEValueDisplayerProps> = ({
     if (
       valueProp.type === "percentage" ||
       valueProp.is_speedish ||
+      // @ts-ignore
       valueProp.use_minus_on_mom
     ) {
       return thisPeriod - lastPeriod;

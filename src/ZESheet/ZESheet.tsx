@@ -280,7 +280,7 @@ const ZESheet: React.FC<ZESheetProps> = ({
     }
   }
 
-  const offsetHeight = isEditing ? 48 : 32;
+  const offsetHeight = 0;
 
   return (
     <div
