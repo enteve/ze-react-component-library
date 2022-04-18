@@ -54,6 +54,9 @@ const ZESheet: React.FC<ZESheetProps> = ({
     conditions: {
       interval: [],
     },
+    interaction: {
+      enableCopy: true,
+    },
     ...s2OptionsSrc,
   };
 
