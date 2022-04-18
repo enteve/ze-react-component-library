@@ -204,7 +204,7 @@
     lodash "^4.17.21"
     resize-observer-polyfill "^1.5.0"
 
-"@antv/event-emitter@^0.1.1", "@antv/event-emitter@~0.1.2":
+"@antv/event-emitter@^0.1.1", "@antv/event-emitter@^0.1.3", "@antv/event-emitter@~0.1.2":
   version "0.1.3"
   resolved "https://registry.npmjs.org/@antv/event-emitter/-/event-emitter-0.1.3.tgz#3e06323b9dcd55a3241ddc7c5458cfabd2095164"
   integrity sha512-4ddpsiHN9Pd4UIlWuKVK1C4IiZIdbwQvy9i7DUSI3xNJ89FPUFt8lxDYj8GzzfdllV0NkJTRxnG+FvLk0llidg==
@@ -282,25 +282,27 @@
     "@antv/util" "^2.0.9"
     tslib "^2.0.3"
 
-"@antv/s2-react@^1.9.1":
-  version "1.9.1"
-  resolved "https://registry.npmjs.org/@antv/s2-react/-/s2-react-1.9.1.tgz#d32567d64f0a9175578440dacb3c18b0b900885b"
-  integrity sha512-sLCDNrjEa/ajYADZDVuY2WO1/Rtam2dNcBZeBV8Av6XNT1t/VXajzxmUcJUfZZmGzWzgJ2WycFJqB7oFcBWjzA==
+"@antv/s2-react@^1.13.0":
+  version "1.13.0"
+  resolved "https://registry.npmjs.org/@antv/s2-react/-/s2-react-1.13.0.tgz#ae23f349ab7d4fdbd98fc3618e9df4c33e9e18ab"
+  integrity sha512-8zjPIs/4NPp35mBCFLx1SIJwInrPjE/peo11FESDEsBDPy9lDscdJM892MA5IS9rDYxV7SuLH4zTheB22upZfA==
   dependencies:
-    ahooks "^3.1.5"
+    ahooks "^3.1.13"
     classnames "^2.3.1"
     lodash "^4.17.21"
     react-beautiful-dnd "^13.1.0"
 
-"@antv/s2@^1.9.1":
-  version "1.9.1"
-  resolved "https://registry.npmjs.org/@antv/s2/-/s2-1.9.1.tgz#69332d729e4d6bb524199882a9fe7cc992cfce99"
-  integrity sha512-TeNZ9D3QbXtqRpYxGFKtFmHOdS7jXFYmpJQZOe57bRGxFngYR2eahx1cGiuATfgbluknkGlF070LQIvZ/Scq2w==
+"@antv/s2@^1.14.0":
+  version "1.14.0"
+  resolved "https://registry.npmjs.org/@antv/s2/-/s2-1.14.0.tgz#914eb06bca0d32611e883ac281882d60071216ab"
+  integrity sha512-e5vxX/lSEE+zKrx82cq0Ohf3MkXSc66EyS2xGBhbKbpnjd4vGwozwnuDbdu7RrxlEzmZiS609Y/zLLQIoGu1qA==
   dependencies:
-    "@antv/event-emitter" "~0.1.2"
+    "@antv/event-emitter" "^0.1.3"
     "@antv/g-canvas" "^0.5.12"
     "@antv/g-gesture" "^1.0.1"
-    csstype "^3.0.9"
+    d3-interpolate "^1.3.2"
+    d3-timer "^1.0.9"
+    decimal.js "^10.3.1"
     lodash "^4.17.21"
 
 "@antv/util@^2.0.9", "@antv/util@~2.0.0":
@@ -4588,10 +4590,10 @@ ahooks-v3-count@^1.0.0:
   resolved "https://registry.npmjs.org/ahooks-v3-count/-/ahooks-v3-count-1.0.0.tgz#ddeb392e009ad6e748905b3cbf63a9fd8262ca80"
   integrity sha512-V7uUvAwnimu6eh/PED4mCDjE7tokeZQLKlxg9lCTMPhN+NjsSbtdacByVlR1oluXQzD3MOw55wylDmQo4+S9ZQ==
 
-ahooks@^3.1.5:
-  version "3.1.9"
-  resolved "https://registry.npmjs.org/ahooks/-/ahooks-3.1.9.tgz#7b04672c9fc2e26e551cb57bd46cfa043e680511"
-  integrity sha512-+ei+s0f+K2UKs6PGOUoJzMNKlj74qySO3lLd2xTJsvRUOoLhcLeFMledyJ2dRAvcFL8YFm+2T5Nidrlb8wl2tQ==
+ahooks@^3.1.13:
+  version "3.3.8"
+  resolved "https://registry.npmjs.org/ahooks/-/ahooks-3.3.8.tgz#57efcfd4749d35036adf6f0a8d43b1e8d49b014a"
+  integrity sha512-jMfUTiWfd6KgfFAdY06kXIqXNC0Ak7Yq7Xw8zJjjS/qKDbqoBYZALYTqwmfo9KM81tAHiTVytvwBTIAhbx0w6w==
   dependencies:
     "@types/js-cookie" "^2.x.x"
     ahooks-v3-count "^1.0.0"
@@ -6819,7 +6821,7 @@ csstype@^3.0.2:
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.0.8.tgz#d2266a792729fb227cd216fb572f43728e1ad340"
   integrity sha512-jXKhWqXPmlUeoQnF/EhTtTl4C9SnrxSH/jZUih3jmO6lBKr99rP3/+FmrMj4EFpOXzMtXHAZkd3x0E6h6Fgflw==
 
-csstype@^3.0.8, csstype@^3.0.9:
+csstype@^3.0.8:
   version "3.0.10"
   resolved "https://registry.npmjs.org/csstype/-/csstype-3.0.10.tgz#2ad3a7bed70f35b965707c092e5f30b327c290e5"
   integrity sha512-2u44ZG2OcNUO9HDp/Jl8C07x6pU/eTR3ncV91SiK3dhG9TWvRVsCoJw14Ckx5DgWkzGA3waZWO3d7pgqpUI/XA==
@@ -6907,6 +6909,11 @@ decimal.js@^10.2.1:
   version "10.2.1"
   resolved "https://registry.yarnpkg.com/decimal.js/-/decimal.js-10.2.1.tgz#238ae7b0f0c793d3e3cea410108b35a2c01426a3"
   integrity sha512-KaL7+6Fw6i5A2XSnsbhm/6B+NuEA7TZ4vqxnd5tXz9sbKtrN9Srj8ab4vKVdK8YAqZO9P1kg45Y6YLoduPf+kw==
+
+decimal.js@^10.3.1:
+  version "10.3.1"
+  resolved "https://registry.npmjs.org/decimal.js/-/decimal.js-10.3.1.tgz#d8c3a444a9c6774ba60ca6ad7261c3a94fd5e783"
+  integrity sha512-V0pfhfr8suzyPGOx3nmq4aHqabehUZn6Ch9kyFpV79TGDTWFmHqUqXdabR7QHqxzrYolF4+tVmJhUG4OURg5dQ==
 
 decode-uri-component@^0.2.0:
   version "0.2.0"
