@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import ZESheet from "../index";
 import "./index.less";
 import numeral from "numeral";
+import * as xlsx from "xlsx";
 
 // prepare server
 import prepareServerForStories from "../../../util/prepareServerForStories";
@@ -136,6 +137,7 @@ export const ZESheetEditor = () => {
       s2DataConfig={s2DataConfig}
       s2Options={s2Options}
       showEditor
+      xlsx={xlsx}
       onSave={(values) => {
         values.logicform && setLF(values.logicform);
         values.s2DataConfig && setS2DataConfig(values.s2DataConfig);

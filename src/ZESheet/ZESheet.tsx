@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { ZESheetProps } from "./ZESheet.types";
 import { SheetComponent } from "@antv/s2-react";
 import { SpreadSheet, copyData } from "@antv/s2";
-import { LogicformAPIResultType } from "zeroetp-api-sdk";
+import { LogicformAPIResultType, LogicformType } from "zeroetp-api-sdk";
 import { useRequest } from "@umijs/hooks";
 import { findProperty, formatWithProperty } from "../util";
 import { requestLogicform } from "../request";
@@ -76,14 +76,26 @@ const ZESheet: React.FC<ZESheetProps> = ({
   const [previewConfig, setPreviewConfig] =
     useState<Pick<ZESheetProps, "logicform" | "s2DataConfig" | "s2Options">>();
 
-  const { data: totalData, run: requestTotalData } =
-    useRequest<LogicformAPIResultType>(requestLogicform, {
-      manual: true,
-    });
-  const { data: subTotalData, run: requestSubTotalData } =
-    useRequest<LogicformAPIResultType>(requestLogicform, {
-      manual: true,
-    });
+  const { data: totalAndSubTotalData, run: requestTotalAndSubTotalData } =
+    useRequest<LogicformAPIResultType[]>(
+      (logicforms: LogicformType[]) =>
+        Promise.all(logicforms.map((lf) => requestLogicform(lf))),
+      {
+        manual: true,
+        formatResult: (res) => {
+          let result: any[] = [];
+
+          for (const resItem of res) {
+            // 这个是为了兼容老的SDM的result返回
+            if (Array.isArray(resItem.result)) {
+              result = [...result, ...resItem.result];
+            }
+          }
+
+          return result;
+        },
+      }
+    );
 
   const { data, loading } = useRequest<LogicformAPIResultType>(
     () => {
@@ -103,21 +115,19 @@ const ZESheet: React.FC<ZESheetProps> = ({
         result,
       ],
       onSuccess: (res) => {
-        // TotalData
-        requestTotalData({
-          ...res.logicform,
-          groupby: undefined,
-          sort: undefined,
-        });
-
-        // SubTotalData
-        if (res.logicform.groupby.length > 1) {
-          requestSubTotalData({
+        // Total & Subtotal
+        const logicforms: LogicformType[] = res.logicform.groupby.map(
+          (_groupbyItem, index) => ({
             ...res.logicform,
-            groupby: res.logicform.groupby[0],
+            groupby:
+              index === 0 ? undefined : res.logicform.groupby.slice(0, index),
+            preds: res.logicform.preds.filter((p) => p[0].operator),
             sort: undefined,
-          });
-        }
+            limit: undefined,
+            skip: undefined,
+          })
+        );
+        requestTotalAndSubTotalData(logicforms);
       },
     }
   );
@@ -177,6 +187,11 @@ const ZESheet: React.FC<ZESheetProps> = ({
           })),
       };
     }
+
+    // Total & Subtotal
+    s2Options.totals.row.subTotalsDimensions = data.logicform.groupby
+      .slice(0, data.logicform.groupby.length - 1)
+      .map((g) => g.name);
   }
 
   const reset = () => {
@@ -280,22 +295,8 @@ const ZESheet: React.FC<ZESheetProps> = ({
   }
 
   // 总计 & 小计
-  if (dataCfg.data) {
-    if (totalData) {
-      if (Array.isArray(totalData.result)) {
-        // 注：这里写这个代码是为了兼容旧版本的SemanticDB。旧版本的total直接不要了
-        dataCfg.data = [...dataCfg.data, ...totalData.result];
-      }
-    }
-    if (subTotalData && data.logicform.groupby?.length > 1) {
-      if (Array.isArray(subTotalData.result)) {
-        s2Options.totals.row.subTotalsDimensions = data.logicform.groupby
-          .slice(0, data.logicform.groupby.length - 1)
-          .map((g) => g.name);
-
-        dataCfg.data = [...dataCfg.data, ...subTotalData.result];
-      }
-    }
+  if (dataCfg.data && totalAndSubTotalData) {
+    dataCfg.data = [...totalAndSubTotalData, ...dataCfg.data];
   }
 
   const offsetHeight = 0;
