@@ -27,6 +27,16 @@ const s2FieldOptions: {
 
 type S2FieldType = typeof s2FieldOptions[number]["value"];
 
+// Tableau的颜色配置，先留在这里
+// const colors = [
+//   "#e49243",
+//   "#6a9e58",
+//   "#d1605e",
+//   "#e7c960",
+//   "#5779a3",
+//   "#a87c9f",
+// ];
+
 const ZESheet: React.FC<ZESheetProps> = ({
   logicform,
   result,
@@ -177,7 +187,7 @@ const ZESheet: React.FC<ZESheetProps> = ({
       s2Options.conditions = {
         interval: data.columnProperties
           .filter((p) => p.primal_type === "number")
-          .map((p) => ({
+          .map((p, index) => ({
             field: p.name,
             mapping() {
               return {
