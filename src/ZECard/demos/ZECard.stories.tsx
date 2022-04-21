@@ -48,6 +48,7 @@ export const Value = () => (
     valueDisplayerProps={{
       showYoyAndMom: true,
     }}
+    useSheet
   />
 );
 
@@ -57,6 +58,23 @@ export const PercentageValue = () => (
     logicform={{
       schema: "sales",
       operator: "折扣率",
+      query: {
+        日期: "YTD",
+      },
+    }}
+    valueDisplayerProps={{
+      showYoyAndMom: true,
+    }}
+  />
+);
+
+export const YoyValue = () => (
+  <ZECard
+    title="YTD折扣率Yoy"
+    logicform={{
+      schema: "sales",
+      operator: "$yoy",
+      pred: { operator: "折扣率" },
       query: {
         日期: "YTD",
       },

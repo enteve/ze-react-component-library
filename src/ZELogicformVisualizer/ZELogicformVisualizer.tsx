@@ -99,6 +99,24 @@ const ZELogicformVisualizer: React.FC<ZELogicformVisualizerProps> = ({
   const logicform = JSON.parse(JSON.stringify(initLogicform));
   logicform.query = unnormalizeQuery(logicform.query || {});
 
+  // helper function
+  const stringifyPredItem = (predItem: any) => {
+    if (typeof predItem === "string") {
+      return predItem;
+    }
+
+    if (typeof predItem === "object" && predItem.operator) {
+      return (
+        <>
+          <strong>{predItem.operator}</strong>
+          {predItem.pred && <>({stringifyPredItem(predItem.pred)})</>}
+        </>
+      );
+    }
+
+    throw new Error(`unexpected pred item: ${JSON.stringify(predItem)}`);
+  };
+
   // 有个逻辑，如果有preds且只有一个，且里面有query那么拿到外面去，这样可以绕过preds不显示的问题。
   try {
     // 这里就假设是normed logicform，其他的格式今后将不会进来
@@ -316,12 +334,7 @@ const ZELogicformVisualizer: React.FC<ZELogicformVisualizerProps> = ({
     } else {
       badges.push({
         color: "orange",
-        text: (
-          <span>
-            公式： <strong>{logicform.operator}</strong>{" "}
-            {logicform.pred && `(${logicform.pred})`}
-          </span>
-        ),
+        text: <span>公式： {stringifyPredItem(logicform)}</span>,
       });
     }
   }
@@ -334,11 +347,7 @@ const ZELogicformVisualizer: React.FC<ZELogicformVisualizerProps> = ({
 
       return (
         <span key={index}>
-          {typeof p === "object" && p.operator && (
-            <>
-              <strong>{p.operator}</strong> {p.pred && `(${p.pred})`}
-            </>
-          )}
+          {typeof p === "object" && p.operator && stringifyPredItem(p)}
           {(typeof p !== "object" || !p.operator) && (
             <>{typeof p === "object" ? p.pred : p}</>
           )}

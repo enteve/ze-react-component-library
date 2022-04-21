@@ -7,7 +7,11 @@ import {
   LogicformType,
 } from "zeroetp-api-sdk";
 import { ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
-import { getFormatter, genYoyAndMomLogicform } from "../util";
+import {
+  getFormatter,
+  genYoyAndMomLogicform,
+  formatWithProperty,
+} from "../util";
 import GroupByMenu from "../components/GroupByMenu";
 import { requestLogicform } from "../request";
 
@@ -40,6 +44,8 @@ const ZEValueDisplayer: React.FC<ZEValueDisplayerProps> = ({
       />
     );
   }
+
+  console.log(data);
 
   let result: any = data?.result;
   if (
@@ -94,8 +100,7 @@ const ZEValueDisplayer: React.FC<ZEValueDisplayerProps> = ({
   let defaultStatistics: React.ReactNode;
   if (!children) {
     let unit = "";
-    let precision = 1;
-    let value = result == undefined ? "-" : result;
+    let value = result;
     let suffix = "";
 
     let prefix: React.ReactNode;
@@ -104,22 +109,14 @@ const ZEValueDisplayer: React.FC<ZEValueDisplayerProps> = ({
     if (data?.columnProperties?.length > 0) {
       const [firstColProp] = data.columnProperties;
 
-      if (firstColProp.type === "percentage") {
-        // 如果是百分比类型的呢
-        unit = "%";
-        value = value * 100;
-      } else if (firstColProp.unit) {
-        unit = firstColProp.unit;
-      }
+      value = formatWithProperty(firstColProp, value);
 
-      // precision
-      if (firstColProp.type === "int") {
-        precision = 0;
+      if (firstColProp.unit) {
+        unit = firstColProp.unit;
       }
 
       let formatter = getFormatter(firstColProp, value);
       if (formatter) {
-        value = numeral(value).format(formatter.formatter);
         suffix = `${formatter.prefix}${unit}${formatter.postfix}`;
       }
     }
@@ -140,7 +137,6 @@ const ZEValueDisplayer: React.FC<ZEValueDisplayerProps> = ({
       <Statistic
         value={value}
         suffix={suffix}
-        precision={precision}
         title={title}
         prefix={prefix}
         valueStyle={valueStyle}
@@ -188,12 +184,20 @@ const ZEValueDisplayer: React.FC<ZEValueDisplayerProps> = ({
   };
 
   let yoy;
+  let yoyLF; // 这是真实的yoyLF，preds是$yoy的那种。
   if (data && yoyData) {
     yoy = calcPercentageResult(data, yoyData);
+    try {
+      yoyLF = genYoyAndMomLogicform(data.logicform, "$yoy");
+    } catch (error) {}
   }
   let mom;
+  let momLF; // 这是真实的momLF，preds是$mom的那种
   if (data && momData) {
     mom = calcPercentageResult(data, momData);
+    try {
+      momLF = genYoyAndMomLogicform(data.logicform, "$mom");
+    } catch (error) {}
   }
 
   return (
@@ -214,7 +218,7 @@ const ZEValueDisplayer: React.FC<ZEValueDisplayerProps> = ({
       </Row>
       {/* 下面是更多信息展示 */}
       <Row gutter={16} style={{ marginTop: 20 }}>
-        {lyLF && yoyData && (
+        {lyLF && yoyData && yoyLF && (
           <>
             <Col {...moreColSpan}>
               <ZEValueDisplayer
@@ -235,7 +239,7 @@ const ZEValueDisplayer: React.FC<ZEValueDisplayerProps> = ({
                       type: "percentage",
                     },
                   ],
-                  logicform: genYoyAndMomLogicform(yoyData.logicform, "$yoy"),
+                  logicform: yoyLF,
                 }}
                 onChangeLogicform={onChangeLogicform}
                 showYoyAndMom={false}
@@ -245,7 +249,7 @@ const ZEValueDisplayer: React.FC<ZEValueDisplayerProps> = ({
             </Col>
           </>
         )}
-        {lmLF && momData && (
+        {lmLF && momData && momLF && (
           <>
             <Col {...moreColSpan}>
               <ZEValueDisplayer
@@ -266,7 +270,7 @@ const ZEValueDisplayer: React.FC<ZEValueDisplayerProps> = ({
                       type: "percentage",
                     },
                   ],
-                  logicform: genYoyAndMomLogicform(momData.logicform, "$mom"),
+                  logicform: momLF,
                 }}
                 onChangeLogicform={onChangeLogicform}
                 showYoyAndMom={false}
