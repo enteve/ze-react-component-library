@@ -14,7 +14,7 @@ export type ZESchemaFormColumnType = ProFormColumnsType<
   ExtendValueTypes
 >;
 export type ZESchemaFormProps = Omit<FormSchema<any>, "columns"> & {
-  schemaID: string;
+  schemaID?: string;
   schema?: SchemaType;
   columns?: ZESchemaFormColumnType[];
   isKeyPressSubmit?: ProFormProps["isKeyPressSubmit"];

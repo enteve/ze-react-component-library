@@ -27,6 +27,9 @@ const ZESchemaForm: React.FC<ZESchemaFormProps> = ({
   propertyConfig,
   ...props
 }) => {
+  if (!schemaID && !_schema)
+    throw new Error("必须提供schemaID或schema二者其一");
+
   const values = useContext(ProProvider); // 用来自定义ValueType
   const { data } = _schema
     ? { data: { schema: _schema } }
