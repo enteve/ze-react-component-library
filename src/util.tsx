@@ -516,7 +516,7 @@ const renderObjectFormItem = (schema, props: any) => {
       });
     },
     {
-      formatResult: (res) => res.result,
+      formatResult: (res) => (res ? res.result : []),
       initialData: [],
       refreshDeps: [search],
     }

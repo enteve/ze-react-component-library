@@ -9,6 +9,7 @@ import StoryBookUseCaseDescription from "../../StoryBookUseCaseDescription";
 // prepare server
 import prepareServerForStories from "../../../util/prepareServerForStories";
 import { ZESchemaFormColumnType } from "../ZESchemaForm.types";
+import { SchemaType } from "zeroetp-api-sdk";
 prepareServerForStories();
 
 export default {
@@ -192,3 +193,176 @@ export const PropertyWithEditableTable = () => (
     />
   </StoryBookUseCaseDescription>
 );
+
+export const SchemaOfSchema = () => {
+  const schemaOfSchema: SchemaType = {
+    _id: "_schema",
+    name: "schema",
+    type: "entity",
+    properties: [
+      {
+        name: "ID",
+        type: "string",
+        primal_type: "string",
+        constraints: { required: true },
+        description: "数据库中表的名字",
+      },
+      {
+        name: "name",
+        type: "string",
+        primal_type: "string",
+        constraints: { required: true },
+        description: "对外显示的Schema名称",
+      },
+      {
+        name: "syno",
+        type: "string",
+        primal_type: "string",
+        isArray: true,
+        description:
+          "同义词数组。输入一个同义词后按回车确定，接下去输入下一个同义词",
+      },
+      {
+        name: "type",
+        type: "string",
+        primal_type: "string",
+        constraints: { required: true, enum: ["entity", "event"] },
+      },
+      {
+        name: "description",
+        type: "string",
+        primal_type: "string",
+      },
+      {
+        name: "properties",
+        type: "object",
+        ref: "_property",
+        primal_type: "object",
+        constraints: { required: true },
+        schema: {
+          _id: "_property",
+          name: "property",
+          type: "entity",
+          properties: [
+            {
+              name: "name",
+              type: "string",
+              primal_type: "string",
+              constraints: { required: true },
+            },
+            {
+              name: "syno",
+              type: "string",
+              primal_type: "string",
+              isArray: true,
+              description:
+                "同义词数组。输入一个同义词后按回车确定，接下去输入下一个同义词",
+            },
+            {
+              name: "type",
+              type: "string",
+              primal_type: "string",
+              constraints: { required: true },
+            },
+            {
+              name: "ref",
+              type: "string",
+              description: "当type为object时，指定schema的_id",
+              primal_type: "string",
+            },
+            {
+              name: "is_name",
+              type: "boolean",
+              primal_type: "boolean",
+            },
+            {
+              name: "isArray",
+              type: "boolean",
+              primal_type: "boolean",
+            },
+            {
+              name: "is_categorical",
+              type: "boolean",
+              primal_type: "boolean",
+            },
+            {
+              name: "is_required",
+              type: "boolean",
+              primal_type: "boolean",
+            },
+            {
+              name: "enum",
+              type: "string",
+              primal_type: "string",
+            },
+          ],
+        },
+      },
+    ],
+  };
+
+  return (
+    <StoryBookUseCaseDescription info="Schema的Schema">
+      <ZESchemaForm
+        schema={schemaOfSchema}
+        onFinish={onFinish}
+        columns={[
+          {
+            valueType: "group",
+            columns: [
+              {
+                title: "ID",
+                dataIndex: "ID",
+                width: "lg",
+              },
+              {
+                title: "类型",
+                dataIndex: "type",
+                width: "lg",
+              },
+            ],
+          },
+          {
+            valueType: "group",
+            columns: [
+              {
+                title: "名称",
+                dataIndex: "name",
+                width: "lg",
+              },
+              {
+                title: "同义词",
+                dataIndex: "syno",
+                width: "lg",
+              },
+            ],
+          },
+          {
+            title: "描述",
+            dataIndex: "description",
+          },
+          {
+            title: "properties",
+            dataIndex: "properties",
+            valueType: "table",
+            fieldProps: { placeholder: "新增Property" },
+            // columns: [
+            //   {
+            //     title: "name",
+            //     dataIndex: "name",
+            //   },
+            //   {
+            //     title: "type",
+            //     dataIndex: "type",
+            //   },
+            //   {
+            //     title: "操作",
+            //     valueType: "option",
+            //   },
+            // ],
+          },
+        ]}
+      />
+    </StoryBookUseCaseDescription>
+  );
+};
