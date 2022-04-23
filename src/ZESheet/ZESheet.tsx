@@ -48,7 +48,7 @@ const ZESheet: React.FC<ZESheetProps> = ({
   showEditor = false,
   onSave,
   style = {},
-  showInterval = true,
+  showInterval = false,
 }) => {
   // 加上一点default的设置
   // 此处类型用any，不用ZESheetProps["s2Options"]，因为s2Options.totals.row里面的属性是readonly，很奇怪
@@ -251,7 +251,9 @@ const ZESheet: React.FC<ZESheetProps> = ({
   }, [JSON.stringify({ logicform })]);
 
   // 配置一下Editor
-  const sheetComponentHeader: HeaderCfgProps = {};
+  const sheetComponentHeader: HeaderCfgProps = {
+    switcherCfg: { open: true },
+  };
   if (isEditing) {
     sheetComponentHeader.extra = (
       <Space>
@@ -307,6 +309,15 @@ const ZESheet: React.FC<ZESheetProps> = ({
   // 总计 & 小计
   if (dataCfg.data && totalAndSubTotalData) {
     dataCfg.data = [...totalAndSubTotalData, ...dataCfg.data];
+  }
+
+  // valueInCols配置
+  if (dataCfg?.fields) {
+    if (dataCfg.fields.rows || dataCfg.fields.rows.length === 0) {
+      dataCfg.fields.valueInCols = false;
+    } else {
+      dataCfg.fields.valueInCols = true;
+    }
   }
 
   const offsetHeight = 0;

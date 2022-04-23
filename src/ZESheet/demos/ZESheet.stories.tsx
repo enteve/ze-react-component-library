@@ -76,6 +76,7 @@ export const Complex = () => (
 
 export const Custom = () => (
   <ZESheet
+    xlsx={xlsx}
     logicform={{
       schema: "sales",
       groupby: ["店铺", "$year"],
@@ -93,7 +94,7 @@ export const Custom = () => (
         {
           field: "总销量",
           name: "销售量",
-          formatter: (v) => `${v}个`,
+          formatter: (v) => (v === null ? "-" : `${v}个`),
         },
         {
           field: "折扣率",
