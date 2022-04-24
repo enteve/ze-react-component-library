@@ -1,6 +1,6 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { ZESheetProps } from "./ZESheet.types";
-import { SheetComponent } from "@antv/s2-react";
+import { SheetComponent, Switcher } from "@antv/s2-react";
 import { SpreadSheet, copyData } from "@antv/s2";
 import { LogicformAPIResultType, LogicformType } from "zeroetp-api-sdk";
 import { useRequest } from "@umijs/hooks";
@@ -30,12 +30,13 @@ const ZESheet: React.FC<ZESheetProps> = ({
   logicform,
   result,
   sheetType,
-  s2DataConfig,
+  s2DataConfig: s2DataConfigSrc,
   s2Options: s2OptionsSrc,
   showExport = true,
   xlsx,
   style = {},
   showInterval = false,
+  showSwitcher = true,
 }) => {
   // 加上一点default的设置
   // 此处类型用any，不用ZESheetProps["s2Options"]，因为s2Options.totals.row里面的属性是readonly，很奇怪
@@ -57,6 +58,9 @@ const ZESheet: React.FC<ZESheetProps> = ({
 
   const s2Ref = useRef<SpreadSheet>();
   const adaptiveRef = useRef<HTMLDivElement>();
+
+  const [s2DataConfig, setS2DataConfig] =
+    useState<Omit<S2DataConfig, "data">>(s2DataConfigSrc);
 
   const { data: totalAndSubTotalData, run: requestTotalAndSubTotalData } =
     useRequest<LogicformAPIResultType[]>(
@@ -177,13 +181,9 @@ const ZESheet: React.FC<ZESheetProps> = ({
     hierarchyType: "grid",
   };
 
-  // 配置一下Editor
+  // 配置Header
   const sheetComponentHeader: HeaderCfgProps = {
-    switcherCfg: { open: true },
-  };
-
-  if (showExport) {
-    sheetComponentHeader.extra = (
+    extra: (
       <Space>
         {showExport && (
           <Tooltip title="导出Excel">
@@ -202,9 +202,36 @@ const ZESheet: React.FC<ZESheetProps> = ({
             </Button>
           </Tooltip>
         )}
+        {showSwitcher && (
+          <Switcher
+            rows={{
+              items: (dataCfg?.fields?.rows || []).map((r) => ({ id: r })),
+            }}
+            columns={{
+              items: (dataCfg?.fields?.columns || []).map((r) => ({ id: r })),
+            }}
+            values={{
+              // selectable: true, // 这个啊，如果把这个更新到data config里面去了。那么状态的同步也很麻烦。除非把selectable也给同步了
+              items: (dataCfg?.fields?.values || []).map((r) => ({ id: r })),
+            }}
+            onSubmit={(result) => {
+              setS2DataConfig({
+                ...dataCfg,
+                fields: {
+                  ...dataCfg.fields,
+                  rows: result.rows.items.map((i) => i.id),
+                  columns: result.columns.items.map((i) => i.id),
+                  values: result.values.items
+                    .filter((i) => i.checked !== false)
+                    .map((i) => i.id),
+                },
+              });
+            }}
+          />
+        )}
       </Space>
-    );
-  }
+    ),
+  };
 
   // 总计 & 小计
   if (dataCfg.data && totalAndSubTotalData) {

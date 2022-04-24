@@ -18,4 +18,5 @@ export interface ZESheetProps {
 
   style?: React.CSSProperties;
   showInterval?: boolean; // 是否显示柱状图标记
+  showSwitcher?: boolean; // 行列转化控件
 }
