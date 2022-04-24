@@ -17,6 +17,7 @@ export default {
 
 export const Basic = () => (
   <ZESheet
+    xlsx={xlsx}
     logicform={{
       schema: "sales",
       groupby: ["渠道"],
