@@ -3,10 +3,16 @@ import { TableProps } from "./Table/Table.types";
 import { ZEChartProps } from "../ZEChart/ZEChart.types";
 import { ZELogicformVisualizerProps } from "../ZELogicformVisualizer/ZELogicformVisualizer.types";
 import { ZEValueDisplayerProps } from "../ZEValueDisplayer/ZEValueDisplayer";
+import { Fields } from "@antv/s2";
 
 export type ZECardOnChangeParams = {
   logicform: LogicformType;
   representation?: string;
+  sheet?: {
+    s2dataCfg?: {
+      fields?: Fields;
+    };
+  };
 };
 
 export type ZECardProps = {
