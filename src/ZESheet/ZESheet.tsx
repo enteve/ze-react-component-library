@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { ZESheetProps } from "./ZESheet.types";
 import { SheetComponent, Switcher } from "@antv/s2-react";
-import { SpreadSheet, copyData } from "@antv/s2";
+import { SpreadSheet, copyData, S2Options } from "@antv/s2";
 import { LogicformAPIResultType, LogicformType } from "zeroetp-api-sdk";
 import { useRequest } from "@umijs/hooks";
 import { findProperty, formatWithProperty } from "../util";
@@ -11,7 +11,7 @@ import flatten from "flat";
 import { S2DataConfig } from "@antv/s2";
 import { DownloadOutlined } from "@ant-design/icons";
 import "@antv/s2-react/dist/style.min.css";
-import { getDefaultS2Config } from "./util";
+import { getDefaultS2Config, renderTooltipContent } from "./util";
 import excelExporter from "./excelExporter";
 import { HeaderCfgProps } from "@antv/s2-react/esm/components/header";
 import "./ZESheet.less";
@@ -177,8 +177,11 @@ const ZESheet: React.FC<ZESheetProps> = ({
       .map((g) => g.name);
   }
 
-  const defaultOptions: any = {
+  const defaultOptions: Partial<S2Options> = {
     hierarchyType: "grid",
+    tooltip: {
+      content: renderTooltipContent as any,
+    },
   };
 
   // 配置Header
@@ -265,7 +268,7 @@ const ZESheet: React.FC<ZESheetProps> = ({
             getContainer: () => adaptiveRef.current,
           }}
           dataCfg={dataCfg}
-          options={s2Options || defaultOptions}
+          options={{ ...defaultOptions, ...s2Options }}
           sheetType={sheetType}
           header={sheetComponentHeader}
           ref={s2Ref}
