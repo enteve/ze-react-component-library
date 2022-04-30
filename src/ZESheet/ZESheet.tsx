@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { ZESheetProps } from "./ZESheet.types";
 import { SheetComponent, Switcher } from "@antv/s2-react";
 import { SpreadSheet, copyData, S2Options } from "@antv/s2";
@@ -37,6 +37,7 @@ const ZESheet: React.FC<ZESheetProps> = ({
   style = {},
   showInterval = false,
   showSwitcher = true,
+  onChange,
 }) => {
   // 加上一点default的设置
   // 此处类型用any，不用ZESheetProps["s2Options"]，因为s2Options.totals.row里面的属性是readonly，很奇怪
@@ -251,6 +252,10 @@ const ZESheet: React.FC<ZESheetProps> = ({
   }
 
   const offsetHeight = 0;
+
+  useEffect(() => {
+    onChange?.(dataCfg);
+  }, [JSON.stringify(dataCfg)]);
 
   return (
     <div className={`ze-sheet`} style={{ height: "100%", ...style }}>

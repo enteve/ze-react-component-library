@@ -1,5 +1,6 @@
 import { LogicformAPIResultType, LogicformType } from "zeroetp-api-sdk";
 import { TableProps } from "./Table/Table.types";
+import { ZESheetProps } from "../ZESheet/ZESheet.types";
 import { ZEChartProps } from "../ZEChart/ZEChart.types";
 import { ZELogicformVisualizerProps } from "../ZELogicformVisualizer/ZELogicformVisualizer.types";
 import { ZEValueDisplayerProps } from "../ZEValueDisplayer/ZEValueDisplayer";
@@ -8,8 +9,8 @@ import { Fields } from "@antv/s2";
 export type ZECardOnChangeParams = {
   logicform: LogicformType;
   representation?: string;
-  sheet?: {
-    s2dataCfg?: {
+  sheetProps?: {
+    s2DataConfig?: {
       fields?: Fields;
     };
   };
@@ -46,6 +47,7 @@ export type ZECardProps = {
     TableProps,
     "logicform" | "result" | "setLogicform" | "reload" | "onChange"
   >;
+  sheetProps?: Omit<ZESheetProps, "logicform" | "result" | "onChange">;
   // Visualizer
   showVisualizer?: boolean;
   visualizerProps?: Omit<ZELogicformVisualizerProps, "logicform">;
