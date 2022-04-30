@@ -12,6 +12,9 @@ export interface ZESheetProps {
   s2DataConfig?: Omit<S2DataConfig, "data">;
   s2Options?: Partial<S2Options>;
 
+  // functions
+  onChange?: (s2DataConfig?: Omit<S2DataConfig, "data">) => void;
+
   // Export
   showExport?: boolean;
   xlsx?: any; // 外链的xlsx库。因为是可选的库，所以用外链的形式去做

@@ -66,7 +66,7 @@ const ZEDashboard: React.FC<ZEDashboardProps> = ({
               ...d.cardProps,
               ...cardsState[d.id],
             },
-            ["title", "logicform", "representation"]
+            ["title", "logicform", "representation", "sheetProps"]
           ),
         }));
       };

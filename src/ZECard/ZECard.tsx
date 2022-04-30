@@ -155,6 +155,7 @@ const ZECard: React.FC<ZECardProps> = ({
   askMore,
   showMainContentOnly,
   tableProps = {},
+  sheetProps = {},
   showVisualizer = true,
   visualizerProps = {},
   chartProps = {},
@@ -360,7 +361,19 @@ const ZECard: React.FC<ZECardProps> = ({
         );
       } else if (data && useSheet) {
         component = (
-          <ZESheet logicform={data.logicform} result={data} xlsx={xlsx} />
+          <ZESheet
+            {...sheetProps}
+            logicform={data.logicform}
+            result={data}
+            xlsx={xlsx}
+            onChange={(v) => {
+              onChange?.({
+                logicform,
+                representation: finalRepresentation,
+                sheetProps: { s2DataConfig: { fields: v?.fields } },
+              });
+            }}
+          />
         );
       } else {
         component = tableContent;
@@ -461,7 +474,15 @@ const ZECard: React.FC<ZECardProps> = ({
   if (showMainContentOnly) return <Spin spinning={loading}>{component}</Spin>;
 
   useEffect(() => {
-    onChange && onChange({ logicform, representation: finalRepresentation });
+    const sheetFields = sheetProps?.s2DataConfig?.fields;
+    onChange &&
+      onChange({
+        logicform,
+        representation: finalRepresentation,
+        sheetProps: sheetFields
+          ? { s2DataConfig: { fields: sheetFields } }
+          : undefined,
+      });
   }, [logicform, finalRepresentation]);
 
   return (
