@@ -373,6 +373,9 @@ const ZECard: React.FC<ZECardProps> = ({
                 sheetProps: { s2DataConfig: { fields: v?.fields } },
               });
             }}
+            onRow={(record) => {
+              onDbClick(record, data);
+            }}
           />
         );
       } else {
