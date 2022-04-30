@@ -38,6 +38,7 @@ const ZESheet: React.FC<ZESheetProps> = ({
   showInterval = false,
   showSwitcher = true,
   onChange,
+  onRow,
 }) => {
   // 加上一点default的设置
   // 此处类型用any，不用ZESheetProps["s2Options"]，因为s2Options.totals.row里面的属性是readonly，很奇怪
@@ -277,6 +278,16 @@ const ZESheet: React.FC<ZESheetProps> = ({
           sheetType={sheetType}
           header={sheetComponentHeader}
           ref={s2Ref}
+          onRowCellClick={({ target: rowCell }) => {
+            const meta = rowCell.getMeta();
+            if (meta.isTotals) {
+              return;
+            }
+            onRow?.({ _id: meta.value, ...meta.query });
+          }}
+          onDataCellClick={({ target: dataCell }) => {
+            onRow?.(dataCell.getMeta().data);
+          }}
         />
       </div>
     </div>

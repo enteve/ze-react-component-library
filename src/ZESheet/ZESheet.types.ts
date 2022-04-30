@@ -14,6 +14,7 @@ export interface ZESheetProps {
 
   // functions
   onChange?: (s2DataConfig?: Omit<S2DataConfig, "data">) => void;
+  onRow?: (record: any) => void;
 
   // Export
   showExport?: boolean;

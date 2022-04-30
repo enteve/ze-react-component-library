@@ -91,6 +91,11 @@ export const renderTooltipContent = (
     const {
       data: { summaries },
     } = options;
+
+    if (!summaries) {
+      return null;
+    }
+    
     const count = summaries
       .map((d) => d.selectedData.length)
       .reduce((p, c) => p + c, 0);
