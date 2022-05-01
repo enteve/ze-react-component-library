@@ -55,6 +55,7 @@ export type ZECardProps = {
   chartProps?: Omit<ZEChartProps, "logicform" | "type">;
   horizontalBarChart?: boolean; //是不是用横向的barchart
   pieThreshold?: number; // distincts数量小于多少自动用pie，默认为5
+  isOtherPredsSupplementary?: boolean; // 是不是其他的preds是帮助性的preds。帮助性的preds不计入pred count中
 
   valueDisplayerProps?: Omit<ZEValueDisplayerProps, "data">;
 
