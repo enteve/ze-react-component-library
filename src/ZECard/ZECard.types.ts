@@ -1,4 +1,8 @@
-import { LogicformAPIResultType, LogicformType } from "zeroetp-api-sdk";
+import {
+  LogicformAPIResultType,
+  LogicformType,
+  RepresentationType,
+} from "zeroetp-api-sdk";
 import { TableProps } from "./Table/Table.types";
 import { ZESheetProps } from "../ZESheet/ZESheet.types";
 import { ZEChartProps } from "../ZEChart/ZEChart.types";
@@ -21,7 +25,7 @@ export type ZECardProps = {
   titleRender?: (title?: string) => React.ReactNode;
   logicform?: LogicformType;
   formatResult?: (data: any) => any;
-  representation?: string;
+  representation?: RepresentationType;
   warning?: string; // 显示在visualizer下方，一个warning
   extra?: React.ReactNode;
   mainContent?: (

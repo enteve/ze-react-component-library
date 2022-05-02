@@ -22,6 +22,7 @@ import {
   LogicformAPIResultType,
   LogicformType,
   PropertyType,
+  RepresentationType,
 } from "zeroetp-api-sdk";
 import {
   requestLogicform,
@@ -51,16 +52,15 @@ const getDefaultRepresentation = (
   result?: LogicformAPIResultType,
   pieThreshold: number = 5,
   isOtherPredsSupplementary: boolean = false // 这个配置，指的是是不是其他的preds是帮助性的preds。帮助性的preds不计入pred count中
-) => {
+): RepresentationType => {
   if (!result) return null;
   if (result.result == null) return null;
 
   if (result.returnType === "value" || typeof result.result !== "object")
     return "value";
 
-  const predsCount = isOtherPredsSupplementary ? 1 : logicform.preds.length;
-
   if (logicform.groupby) {
+    const predsCount = isOtherPredsSupplementary ? 1 : logicform.preds?.length;
     // 如果有多个指标，优先返回table
     if (predsCount >= 2) {
       return "table";
@@ -128,6 +128,8 @@ const getDefaultRepresentation = (
   if (logicform.operator === "$ent") {
     return "entity";
   }
+
+  return "table";
 };
 
 const CardCloseHandler: React.FC<Pick<ZECardProps, "close">> = ({ close }) =>

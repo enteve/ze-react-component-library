@@ -115,7 +115,7 @@
     "typescript": "^4.3.2",
     "underscore": "^1.13.1",
     "xlsx": "^0.18.5",
-    "zeroetp-api-sdk": "^1.1.56"
+    "zeroetp-api-sdk": "^1.1.59"
   },
   "dependencies": {
     "deepmerge": "^4.2.2",
