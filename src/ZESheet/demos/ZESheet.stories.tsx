@@ -183,6 +183,21 @@ export const AdditionalRows = () => {
   );
 };
 
+export const RowColumnSwitcher = () => (
+  <ZESheet
+    logicform={{
+      query: { 日期: { $offset: { quarter: -1 } } },
+      preds: [
+        { pred: "销售量", operator: "$sum", name: "总销售量" },
+        { pred: "销售额", operator: "$sum", name: "总销售额" },
+        { operator: "$yoy", pred: "销售额", name: "销售额同比" },
+      ],
+      schema: "sales",
+      groupby: ["产品_品类", "$month"],
+    }}
+  />
+);
+
 export const TMP = () => {
   const [lf, setLF] = useState<LogicformType>({
     schema: "ddi_sales",
