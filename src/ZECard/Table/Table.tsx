@@ -544,12 +544,16 @@ const Table: React.FC<TableProps> = ({
     pagination,
     toolBarRender: () => toolBarRender,
     onChange: onTableChange,
-    columnsState: {
-      onChange: setColumnsState,
-      persistenceType: "localStorage",
-      persistenceKey: columnsStatePersistentKey,
-    },
   };
+
+  // 20220504, 这个先关了。不然太多了。以后想想怎么搞比较好
+  // if (isSimpleQuery(logicform) && tableProps.options?.setting) {
+  //   tableProps.columnsState = {
+  //     onChange: setColumnsState,
+  //     persistenceType: "localStorage",
+  //     persistenceKey: columnsStatePersistentKey,
+  //   };
+  // }
 
   const onExpand = async (expanded, record) => {
     if (!expanded) {

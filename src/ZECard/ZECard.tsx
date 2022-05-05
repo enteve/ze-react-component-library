@@ -177,6 +177,8 @@ const ZECard: React.FC<ZECardProps> = ({
   askError,
   askErrorHelperLink,
   useSheet,
+  allowDrillDown = true,
+  preprocessDrilldownLogicform,
 }) => {
   const {
     value: logicform,
@@ -254,7 +256,12 @@ const ZECard: React.FC<ZECardProps> = ({
 
   const { onDbClick } = useDrillDownDbClick({
     logicform,
-    onChangeLogicform: setLogicform,
+    onChangeLogicform: (logicform) => {
+      if (allowDrillDown) {
+        preprocessDrilldownLogicform?.(logicform);
+        setLogicform(logicform);
+      }
+    },
     back,
   });
 

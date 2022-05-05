@@ -4,4 +4,5 @@ import type { ZECardProps } from "../ZECard/ZECard.types";
 
 export type ZETableProps = {
   logicform: LogicformType;
+  allowDrillDown?: boolean;
 } & ZECardProps["tableProps"];

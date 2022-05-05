@@ -173,7 +173,10 @@ const ZEChart: React.FC<ZEChartProps> = memo(
             option.label.show = true;
             option.label.position = "right";
 
-            if (targetPred && option.dataset?.dimensions) {
+            if (
+              targetPred &&
+              option.dataset?.dimensions?.find((d) => d === targetPred)
+            ) {
               // 加上target series
               option.series[0].barGap = "-100%";
               option.series[0].z = 3;

@@ -73,4 +73,7 @@ export type ZECardProps = {
   askErrorHelperLink?: string;
 
   useSheet?: boolean; // 临时字段，是否使用ZESheet替代ZETable
+
+  allowDrillDown?: boolean;
+  preprocessDrilldownLogicform?: (logicform: LogicformType) => void; // 在某些前端逻辑下，需要再对自动生成的drilldown lf做一下处理。此函数会修改input logicform
 };
