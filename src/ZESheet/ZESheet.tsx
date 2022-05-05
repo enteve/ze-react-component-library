@@ -64,27 +64,6 @@ const ZESheet: React.FC<ZESheetProps> = ({
   const [s2DataConfig, setS2DataConfig] =
     useState<Omit<S2DataConfig, "data">>(s2DataConfigSrc);
 
-  const { data: totalAndSubTotalData, run: requestTotalAndSubTotalData } =
-    useRequest<LogicformAPIResultType[]>(
-      (logicforms: LogicformType[]) =>
-        Promise.all(logicforms.map((lf) => requestLogicform(lf))),
-      {
-        manual: true,
-        formatResult: (res) => {
-          let result: any[] = [];
-
-          for (const resItem of res) {
-            // 这个是为了兼容老的SDM的result返回
-            if (Array.isArray(resItem.result)) {
-              result = [...result, ...resItem.result];
-            }
-          }
-
-          return result;
-        },
-      }
-    );
-
   const { data, loading } = useRequest<LogicformAPIResultType>(
     () => {
       if (result) {
@@ -99,21 +78,6 @@ const ZESheet: React.FC<ZESheetProps> = ({
     },
     {
       refreshDeps: [JSON.stringify(logicform), result],
-      onSuccess: (res) => {
-        // Total & Subtotal
-        const logicforms: LogicformType[] = res.logicform.groupby.map(
-          (_groupbyItem, index) => ({
-            ...res.logicform,
-            groupby:
-              index === 0 ? undefined : res.logicform.groupby.slice(0, index),
-            preds: res.logicform.preds.filter((p) => p[0].operator),
-            sort: undefined,
-            limit: undefined,
-            skip: undefined,
-          })
-        );
-        requestTotalAndSubTotalData(logicforms);
-      },
     }
   );
 
@@ -123,6 +87,76 @@ const ZESheet: React.FC<ZESheetProps> = ({
     ...getDefaultS2Config(data),
     ...s2DataConfig,
   };
+
+  const { data: totalAndSubTotalData } = useRequest<LogicformAPIResultType[]>(
+    () => {
+      if (!data) {
+        return Promise.resolve(null);
+      }
+
+      const fieldNameToGroupByItem = (fieldName) => {
+        let _id = fieldName;
+        let level = undefined;
+
+        if (_id.indexOf("(") > 0 && _id.endsWith(")")) {
+          [_id, level] = _id.split(/[\(\)]/);
+        }
+
+        return { _id, level };
+      };
+
+      // Total & Subtotal
+      let logicforms: LogicformType[] = [];
+      if (dataCfg?.fields?.rows?.length > 0) {
+        if (!dataCfg?.fields?.columns || dataCfg.fields.columns.length === 0) {
+          logicforms = dataCfg.fields.rows.map((_groupbyItem, index) => ({
+            ...data.logicform,
+            groupby:
+              index === 0
+                ? undefined
+                : dataCfg.fields.rows
+                    .slice(0, index)
+                    .map(fieldNameToGroupByItem),
+            preds: data.logicform.preds.filter((p) => p[0].operator),
+            sort: undefined,
+            limit: undefined,
+            skip: undefined,
+          }));
+        } else {
+          // 一部分在rows一部分在cols
+          logicforms = [
+            {
+              ...data.logicform,
+              groupby: dataCfg.fields.columns.map(fieldNameToGroupByItem),
+              preds: data.logicform.preds.filter((p) => p[0].operator),
+              sort: undefined,
+              limit: undefined,
+              skip: undefined,
+            },
+          ];
+        }
+      }
+
+      console.log(logicforms);
+
+      return Promise.all(logicforms.map((lf) => requestLogicform(lf)));
+    },
+    {
+      formatResult: (res) => {
+        let result: any[] = [];
+
+        for (const resItem of res) {
+          // 这个是为了兼容老的SDM的result返回
+          if (Array.isArray(resItem.result)) {
+            result = [...result, ...resItem.result];
+          }
+        }
+
+        return result;
+      },
+      refreshDeps: [data, JSON.stringify(dataCfg?.fields)],
+    }
+  );
 
   if (data?.result) {
     if (!Array.isArray(data.result)) {
