@@ -172,103 +172,111 @@ const ZELogicformVisualizer: React.FC<ZELogicformVisualizerProps> = ({
       query = { ...query, ...logicform.having };
     }
 
-    Object.entries(query).forEach(([k, v]: [string, any]) => {
-      if (!(k in filters)) {
-        // 如果在filters里面，那么由👇的代码来管
-        if (
-          typeof v === "boolean" ||
-          typeof v !== "object" ||
-          (v.$lte && v.$gte) ||
-          isRelativeDateForm(v)
-        ) {
-          // 基本属性
-          badges.push({
-            color: filterColor,
-            text: (
-              <span>
-                {k}：<strong>{basicValueDisplay(v)}</strong>
-              </span>
-            ),
-          });
-        } else if ("$ne" in v) {
-          badges.push({
-            color: filterColor,
-            text: (
-              <span>
-                {k} 不等于 <strong>{basicValueDisplay(v.$ne)}</strong>
-              </span>
-            ),
-          });
-        } else if ("$gt" in v) {
-          badges.push({
-            color: filterColor,
-            text: (
-              <span>
-                {k} 大于 <strong>{basicValueDisplay(v.$gt)}</strong>
-              </span>
-            ),
-          });
-        } else if ("$lt" in v) {
-          badges.push({
-            color: filterColor,
-            text: (
-              <span>
-                {k} 小于 <strong>{basicValueDisplay(v.$lt)}</strong>
-              </span>
-            ),
-          });
-        } else if ("$gte" in v) {
-          badges.push({
-            color: filterColor,
-            text: (
-              <span>
-                {k} 大于等于 <strong>{basicValueDisplay(v.$gte)}</strong>
-              </span>
-            ),
-          });
-        } else if ("$lte" in v) {
-          badges.push({
-            color: filterColor,
-            text: (
-              <span>
-                {k} 小于等于 <strong>{basicValueDisplay(v.$lte)}</strong>
-              </span>
-            ),
-          });
-        } else if ("$in" in v) {
-          badges.push({
-            color: filterColor,
-            text: (
-              <span>
-                {k} 等于 <strong>{v.$in.join(",")}</strong>
-              </span>
-            ),
-          });
-        } else if (v.operator === "$ent" && !v.level) {
-          // TODO: 20201103：level的显示不应该在query里面。但是现在在query里面。
-          badges.push({
-            color: filterColor,
-            text: (
-              <span>
-                {k}：<strong>{v.name}</strong>
-              </span>
-            ),
-          });
-        } else if (v.schema) {
-          // 嵌套的的搜索，暂时先只支持ent，之后其他嵌套想个好办法
-          if (v.preds?.[0]?.[0].operator === "$ent") {
+    const addQuery = (query, prefix = "") => {
+      Object.entries(query).forEach(([k, v]: [string, any]) => {
+        if (!(k in filters)) {
+          // 如果在filters里面，那么由另外的代码来管
+          if (prefix.length > 0) {
+            k = `${prefix}_${k}`;
+          }
+          if (
+            typeof v === "boolean" ||
+            typeof v !== "object" ||
+            (v.$lte && v.$gte) ||
+            isRelativeDateForm(v)
+          ) {
+            // 基本属性
             badges.push({
               color: filterColor,
               text: (
                 <span>
-                  {k}：<strong>{v.preds[0][0].name}</strong>
+                  {k}：<strong>{basicValueDisplay(v)}</strong>
                 </span>
               ),
             });
+          } else if ("$ne" in v) {
+            badges.push({
+              color: filterColor,
+              text: (
+                <span>
+                  {k} 不等于 <strong>{basicValueDisplay(v.$ne)}</strong>
+                </span>
+              ),
+            });
+          } else if ("$gt" in v) {
+            badges.push({
+              color: filterColor,
+              text: (
+                <span>
+                  {k} 大于 <strong>{basicValueDisplay(v.$gt)}</strong>
+                </span>
+              ),
+            });
+          } else if ("$lt" in v) {
+            badges.push({
+              color: filterColor,
+              text: (
+                <span>
+                  {k} 小于 <strong>{basicValueDisplay(v.$lt)}</strong>
+                </span>
+              ),
+            });
+          } else if ("$gte" in v) {
+            badges.push({
+              color: filterColor,
+              text: (
+                <span>
+                  {k} 大于等于 <strong>{basicValueDisplay(v.$gte)}</strong>
+                </span>
+              ),
+            });
+          } else if ("$lte" in v) {
+            badges.push({
+              color: filterColor,
+              text: (
+                <span>
+                  {k} 小于等于 <strong>{basicValueDisplay(v.$lte)}</strong>
+                </span>
+              ),
+            });
+          } else if ("$in" in v) {
+            badges.push({
+              color: filterColor,
+              text: (
+                <span>
+                  {k} 等于 <strong>{v.$in.join(",")}</strong>
+                </span>
+              ),
+            });
+          } else if (v.operator === "$ent" && !v.level) {
+            // TODO: 20201103：level的显示不应该在query里面。但是现在在query里面。
+            badges.push({
+              color: filterColor,
+              text: (
+                <span>
+                  {k}：<strong>{v.name}</strong>
+                </span>
+              ),
+            });
+          } else if (v.schema) {
+            // 嵌套的的搜索，暂时先只支持ent，之后其他嵌套想个好办法
+            if (v.preds?.[0]?.[0].operator === "$ent") {
+              badges.push({
+                color: filterColor,
+                text: (
+                  <span>
+                    {k}：<strong>{v.preds[0][0].name}</strong>
+                  </span>
+                ),
+              });
+            } else if (v.query) {
+              addQuery(v.query, k);
+            }
           }
         }
-      }
-    });
+      });
+    };
+    addQuery(query);
 
     Object.entries(filters).forEach(([k, v]) => {
       if (v.show === false) return;

@@ -185,3 +185,28 @@ export const EntityInQuery = () => {
     />
   );
 };
+
+export const SchemaInQuery = () => {
+  return (
+    <ZELogicformVisualizer
+      logicform={{
+        query: {
+          日期: {
+            $gte: "2022-03-31T16:00:00.000Z",
+            $lte: "2022-04-30T15:59:59.999Z",
+          },
+          产品: {
+            schema: "product",
+            query: { 编号: { $exists: true }, 品类: "女装", 子品类: "羊绒衫" },
+            preds: [[{ pred: "_id", name: "_id" }]],
+          },
+        },
+        preds: [
+          [{ pred: "销售量", operator: "$sum", name: "总销售量" }],
+          [{ operator: "$mom", pred: "销售量", name: "销售量环比" }],
+        ],
+        schema: "sales",
+      }}
+    />
+  );
+};
