@@ -68,6 +68,18 @@ const ZEChart: React.FC<ZEChartProps> = memo(
       // 第一个数值的prop。目前每张图都只采用第一个measurements。以后都要显示的。
       let measurementProp: PropertyType;
 
+      const labelFormatter = (item: any) => {
+        // 这个label formatter有时会返回整个axis，很奇怪。不过这个时候没有data
+        if (!item.data) {
+          return;
+        }
+
+        return formatWithProperty(
+          measurementProp,
+          item.data[measurementProp.name]
+        );
+      };
+
       if (data?.result && data?.logicform) {
         // result to dataset:
         // 要对entity进行一个改写
@@ -128,6 +140,7 @@ const ZEChart: React.FC<ZEChartProps> = memo(
           option.series = [
             {
               type: "bar",
+              avoidLabelOverlap: true,
               ...selectProps,
             },
           ];
@@ -157,20 +170,10 @@ const ZEChart: React.FC<ZEChartProps> = memo(
           }
 
           // label format
-          if (!option.label) option.label = { show: false }; // 这个备着
-          option.label.formatter = (item: any) => {
-            // 这个label formatter有时会返回整个axis，很奇怪。不过这个时候没有data
-            if (!item.data) {
-              return;
-            }
-
-            return formatWithProperty(
-              measurementProp,
-              item.data[measurementProp.name]
-            );
-          };
+          if (!option.label) option.label = { show: true };
+          option.label.formatter = labelFormatter;
           if (type === "bar") {
-            option.label.show = true;
+            // option.label.show = true;
             option.label.position = "right";
 
             if (
@@ -202,6 +205,8 @@ const ZEChart: React.FC<ZEChartProps> = memo(
             // inverse要去掉
             option.yAxis.inverse = false;
 
+            option.label.position = "top";
+
             // x,y轴和bar的倒一倒
             const xAxis = option.xAxis;
             option.xAxis = option.yAxis;
@@ -214,19 +219,43 @@ const ZEChart: React.FC<ZEChartProps> = memo(
               type: "pie",
               label: {
                 position: "inside",
-                formatter: (p: any) => `${p.percent}%`,
+                show: true,
+                formatter: (p: any) => `${p.name}\n${p.percent}%`,
+              },
+              radius: ["50%", "95%"],
+              itemStyle: {
+                borderRadius: 10,
+                borderColor: "#fff",
+                borderWidth: 2,
+              },
+              emphasis: {
+                label: {
+                  show: true,
+                  // fontSize: "40",
+                  fontWeight: "bold",
+                },
+              },
+              labelLine: {
+                show: false,
               },
               ...selectProps,
             },
           ];
+
+          console.log(option);
         } else if (type === "line") {
           option = merge(option, getLineOption());
           option.series = [
             {
               type: "line",
+              avoidLabelOverlap: true,
               ...selectProps,
             },
           ];
+          option.label = {
+            show: true,
+            formatter: labelFormatter,
+          };
         }
         return option;
       }

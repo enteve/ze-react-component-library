@@ -2,7 +2,10 @@ export default () => {
   return {
     legend: {
       type: "scroll",
-      top: 0,
+      orient: "vertical",
+      right: 10,
+      top: 20,
+      bottom: 20,
       padding: [0, 50],
     },
     tooltip: {
