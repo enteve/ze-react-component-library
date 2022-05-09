@@ -16,54 +16,59 @@ export const Pie = () => (
   <ZEChart
     type="pie"
     logicform={{
-      schema: "productsale",
-      groupby: "经销商",
+      schema: "sales",
+      groupby: "产品_品类",
       preds: [{ name: "amount", operator: "$sum", pred: "销售额" }],
     }}
   />
 );
 
-export const Bar = () => {
-  const [logicform, setLogicform] = useState<LogicformType>({
-    schema: "productsale",
-    groupby: "经销商",
-    preds: [
-      { name: "流水数量", operator: "$count" },
-      { name: "订单数量", operator: "$uniq", pred: "订单编号" },
-    ],
-  });
+export const Bar = () => (
+  <ZEChart
+    type="bar"
+    logicform={{
+      schema: "sales",
+      groupby: "产品_品类",
+      preds: [
+        { name: "流水数量", operator: "$count" },
+        { name: "amount", operator: "$sum", pred: "销售额" },
+      ],
+    }}
+  />
+);
 
-  return (
-    <ZEChart
-      type="bar"
-      logicform={logicform}
-      onChangeLogicform={setLogicform}
-      option={{
-        legend: {
-          type: "scroll",
-          bottom: 0,
-          padding: [0, 50],
-        },
-      }}
-    />
-  );
-};
+export const Column = () => (
+  <ZEChart
+    type="column"
+    logicform={{
+      schema: "sales",
+      groupby: "产品_品类",
+      query: { 日期: { $offset: { year: 0 } } },
+      preds: [
+        { name: "流水数量", operator: "$count" },
+        { name: "销售额", operator: "$sum", pred: "销售额" },
+        { name: "销售额同比", operator: "$yoy", pred: "销售额" },
+      ],
+    }}
+  />
+);
 
-export const Column = () => {
-  const [logicform, setLogicform] = useState<LogicformType>({
-    schema: "productsale",
-    groupby: "商品_分类",
-    preds: [{ name: "amount", operator: "$sum", pred: "销售额" }],
-  });
-
-  return (
-    <ZEChart
-      type="column"
-      logicform={logicform}
-      onChangeLogicform={setLogicform}
-    />
-  );
-};
+export const ColumnWithSupplemanryPreds = () => (
+  <ZEChart
+    type="column"
+    logicform={{
+      schema: "sales",
+      groupby: "产品_品类",
+      query: { 日期: { $offset: { year: 0 } } },
+      preds: [
+        { name: "流水数量", operator: "$count" },
+        { name: "销售额", operator: "$sum", pred: "销售额" },
+        { name: "销售额同比", operator: "$yoy", pred: "销售额" },
+      ],
+    }}
+    isOtherPredsSupplementary
+  />
+);
 
 export const Line = () => (
   <ZEChart

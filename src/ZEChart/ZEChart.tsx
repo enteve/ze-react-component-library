@@ -33,6 +33,7 @@ const ZEChart: React.FC<ZEChartProps> = memo(
     onItemSelect,
     option: inputOption = {},
     targetPred,
+    isOtherPredsSupplementary = false,
   }) => {
     const { data } = useRequest<LogicformAPIResultType>(
       () => {
@@ -211,6 +212,21 @@ const ZEChart: React.FC<ZEChartProps> = memo(
             const xAxis = option.xAxis;
             option.xAxis = option.yAxis;
             option.yAxis = xAxis;
+
+            // 加入其他preds
+            if (!isOtherPredsSupplementary) {
+              for (
+                let index = 1;
+                index < data.logicform.preds.length;
+                index++
+              ) {
+                const predItem = data.logicform.preds[index];
+                option.series.push({
+                  type: "bar",
+                  ...selectProps,
+                });
+              }
+            }
           }
         } else if (type === "pie") {
           option = merge(option, getPieOption());
@@ -241,8 +257,6 @@ const ZEChart: React.FC<ZEChartProps> = memo(
               ...selectProps,
             },
           ];
-
-          console.log(option);
         } else if (type === "line") {
           option = merge(option, getLineOption());
           option.series = [
@@ -264,12 +278,15 @@ const ZEChart: React.FC<ZEChartProps> = memo(
     // 设定正确的chart
     let chartDom: React.ReactNode;
     if (["bar", "column", "pie", "line"].includes(type)) {
-      chartDom = chartDom = (
+      const finalOption = formatChartOptionGrid({
+        ...merge(chartOption, inputOption),
+        visualMap: false,
+      });
+      console.log("finalOption", finalOption);
+
+      chartDom = (
         <EChart
-          option={formatChartOptionGrid({
-            ...merge(chartOption, inputOption),
-            visualMap: false,
-          })}
+          option={finalOption}
           eventsDict={chartEventDict}
           width={width}
           height={height}
