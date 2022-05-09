@@ -43,11 +43,12 @@ export const Column = () => (
     logicform={{
       schema: "sales",
       groupby: "产品_品类",
-      query: { 日期: { $offset: { year: 0 } } },
+      query: { 日期: { $offset: { year: 0, month: -1 } } },
       preds: [
-        { name: "流水数量", operator: "$count" },
-        { name: "销售额", operator: "$sum", pred: "销售额" },
+        { name: "总销售额", operator: "$sum", pred: "销售额" },
+        { name: "销售额2", operator: "$sum", pred: "销售额" },
         { name: "销售额同比", operator: "$yoy", pred: "销售额" },
+        { name: "销售额环比", operator: "$mom", pred: "销售额" },
       ],
     }}
   />
