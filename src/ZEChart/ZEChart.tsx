@@ -255,7 +255,6 @@ const ZEChart: React.FC<ZEChartProps> = memo(
             } else {
               option.legend = { selectedMode: "single", show: false };
             }
-            console.log("option");
           }
         } else if (type === "pie") {
           option = merge(option, getPieOption());
@@ -311,7 +310,6 @@ const ZEChart: React.FC<ZEChartProps> = memo(
         ...merge(chartOption, inputOption),
         visualMap: false,
       });
-      console.log("finalOption", finalOption);
 
       chartDom = (
         <EChart

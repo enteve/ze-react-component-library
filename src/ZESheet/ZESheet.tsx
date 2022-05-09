@@ -95,7 +95,7 @@ const ZESheet: React.FC<ZESheetProps> = ({
   const { data: totalAndSubTotalData } = useRequest<LogicformAPIResultType[]>(
     () => {
       if (!data) {
-        return Promise.resolve(null);
+        return Promise.resolve([]);
       }
 
       const fieldNameToGroupByItem = (fieldName) => {
@@ -141,7 +141,7 @@ const ZESheet: React.FC<ZESheetProps> = ({
         }
       }
 
-      console.log(logicforms);
+      // console.log(logicforms);
 
       return Promise.all(logicforms.map((lf) => requestLogicform(lf)));
     },
@@ -287,14 +287,14 @@ const ZESheet: React.FC<ZESheetProps> = ({
       const objectProps = data.columnProperties.filter(
         (prop) => prop.primal_type === "object"
       );
-      dataCfg.data = data.result.map((v) => {
+      dataCfg.data = dataCfg.data.map((v) => {
         const flatted = flatten(v);
 
         // 这里还要设置一下object类型的数据
         objectProps.forEach((prop) => {
           if (prop.schema) {
             const nameProp = getNameProperty(prop.schema);
-            if (nameProp) {
+            if (nameProp && flatted[`${prop.name}.${nameProp.name}`]) {
               flatted[prop.name] = flatted[`${prop.name}.${nameProp.name}`];
             }
           }

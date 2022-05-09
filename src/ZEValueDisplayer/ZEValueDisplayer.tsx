@@ -45,8 +45,6 @@ const ZEValueDisplayer: React.FC<ZEValueDisplayerProps> = ({
     );
   }
 
-  console.log(data);
-
   let result: any = data?.result;
   if (
     data?.result &&
