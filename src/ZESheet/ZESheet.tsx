@@ -2,7 +2,11 @@ import React, { useRef, useState, useEffect } from "react";
 import { ZESheetProps } from "./ZESheet.types";
 import { SheetComponent, Switcher } from "@antv/s2-react";
 import { SpreadSheet, copyData, S2Options } from "@antv/s2";
-import { LogicformAPIResultType, LogicformType } from "zeroetp-api-sdk";
+import {
+  getNameProperty,
+  LogicformAPIResultType,
+  LogicformType,
+} from "zeroetp-api-sdk";
 import { useRequest } from "@umijs/hooks";
 import { findProperty, formatWithProperty } from "../util";
 import { requestLogicform } from "../request";
@@ -170,6 +174,7 @@ const ZESheet: React.FC<ZESheetProps> = ({
           { ...data.schema, properties: data.columnProperties },
           d
         );
+
         const metaOfProps = dataCfg.meta?.find((f) => f.field === d);
         const defaultFormatter = (v) => {
           return formatWithProperty(property, v);
@@ -185,11 +190,10 @@ const ZESheet: React.FC<ZESheetProps> = ({
           formatter: defaultFormatter,
         };
       });
-
-    // flatten result
-    dataCfg.data = data.result.map((v) => flatten(v));
     // meta
     dataCfg.meta = meta;
+
+    dataCfg.data = data.result;
 
     // interval
     if (showInterval) {
@@ -273,8 +277,31 @@ const ZESheet: React.FC<ZESheetProps> = ({
   };
 
   // 总计 & 小计
-  if (dataCfg.data && totalAndSubTotalData) {
-    dataCfg.data = [...totalAndSubTotalData, ...dataCfg.data];
+  if (dataCfg.data) {
+    if (totalAndSubTotalData) {
+      dataCfg.data = [...totalAndSubTotalData, ...dataCfg.data];
+    }
+
+    if (data?.result) {
+      // flatten result
+      const objectProps = data.columnProperties.filter(
+        (prop) => prop.primal_type === "object"
+      );
+      dataCfg.data = data.result.map((v) => {
+        const flatted = flatten(v);
+
+        // 这里还要设置一下object类型的数据
+        objectProps.forEach((prop) => {
+          if (prop.schema) {
+            const nameProp = getNameProperty(prop.schema);
+            if (nameProp) {
+              flatted[prop.name] = flatted[`${prop.name}.${nameProp.name}`];
+            }
+          }
+        });
+        return flatted;
+      });
+    }
   }
 
   // valueInCols配置

@@ -24,14 +24,7 @@ export const getDefaultS2Config = (
     fields: {
       rows: result.columnProperties
         .slice(0, logicform.groupby.length)
-        .map((prop) => {
-          if (prop.type === "object") {
-            const nameProp = getNameProperty(prop.schema);
-            return `${prop.name}.${nameProp.name}`;
-          }
-
-          return prop.name;
-        }),
+        .map((prop) => prop.name),
       values: result.columnProperties
         .slice(logicform.groupby.length)
         .map((prop) => prop.name),
@@ -95,7 +88,7 @@ export const renderTooltipContent = (
     if (!summaries) {
       return null;
     }
-    
+
     const count = summaries
       .map((d) => d.selectedData.length)
       .reduce((p, c) => p + c, 0);
