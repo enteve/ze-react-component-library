@@ -69,16 +69,13 @@ const ZEChart: React.FC<ZEChartProps> = memo(
       // 第一个数值的prop。目前每张图都只采用第一个measurements。以后都要显示的。
       let measurementProp: PropertyType;
 
-      const labelFormatter = (item: any) => {
+      const labelFormatter = (property) => (item: any) => {
         // 这个label formatter有时会返回整个axis，很奇怪。不过这个时候没有data
         if (!item.data) {
           return;
         }
 
-        return formatWithProperty(
-          measurementProp,
-          item.data[measurementProp.name]
-        );
+        return formatWithProperty(property, item.data[property.name]);
       };
 
       if (data?.result && data?.logicform) {
@@ -172,7 +169,7 @@ const ZEChart: React.FC<ZEChartProps> = memo(
 
           // label format
           if (!option.label) option.label = { show: true };
-          option.label.formatter = labelFormatter;
+          option.label.formatter = labelFormatter(measurementProp);
           if (type === "bar") {
             // option.label.show = true;
             option.label.position = "right";
@@ -211,22 +208,54 @@ const ZEChart: React.FC<ZEChartProps> = memo(
             // x,y轴和bar的倒一倒
             const xAxis = option.xAxis;
             option.xAxis = option.yAxis;
-            option.yAxis = xAxis;
+            option.yAxis = [xAxis];
 
             // 加入其他preds
-            if (!isOtherPredsSupplementary) {
-              for (
-                let index = 1;
-                index < data.logicform.preds.length;
-                index++
+            for (
+              let index = 1 + data.logicform.groupby.length;
+              index < data.columnProperties.length;
+              index++
+            ) {
+              const columnProperty = data.columnProperties[index];
+              let type: string = "bar";
+              let yAxisIndex: number = 0;
+              if (
+                columnProperty.type === "percentage" &&
+                measurementProp.type !== columnProperty.type // 量纲不同，引入第二轴
               ) {
-                const predItem = data.logicform.preds[index];
-                option.series.push({
-                  type: "bar",
-                  ...selectProps,
-                });
+                type = "line";
+                yAxisIndex = 1;
+                option.yAxis.push(
+                  JSON.parse(
+                    JSON.stringify({
+                      ...xAxis,
+                      splitLine: {
+                        show: false,
+                      },
+                    })
+                  )
+                );
+                option.yAxis[1].axisLabel.formatter = (v) =>
+                  formatWithProperty(columnProperty, v);
               }
+
+              option.series.push({
+                type,
+                yAxisIndex,
+                label: {
+                  formatter: labelFormatter(columnProperty),
+                },
+                ...selectProps,
+              });
             }
+
+            // legend
+            if (!isOtherPredsSupplementary) {
+              option.legend = {};
+            } else {
+              option.legend = { selectedMode: "single", show: false };
+            }
+            console.log("option");
           }
         } else if (type === "pie") {
           option = merge(option, getPieOption());
@@ -268,7 +297,7 @@ const ZEChart: React.FC<ZEChartProps> = memo(
           ];
           option.label = {
             show: true,
-            formatter: labelFormatter,
+            formatter: labelFormatter(measurementProp),
           };
         }
         return option;

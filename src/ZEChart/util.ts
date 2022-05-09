@@ -65,16 +65,17 @@ export function chartTooltipFormatter(
     return res;
   }
   const data: any[] = params instanceof Array ? params : [params];
+
   data.slice(0, 1).forEach((d) => {
     let itemTip = d.name ? `${d.name} <br />` : "";
-    properties.forEach((property) => {
+    properties.forEach((property, index) => {
       let unit: any = property.unit;
       const formatter = getFormatter(property, d?.data?.[property.name]);
       if (formatter) {
         unit = `${formatter.prefix}${unit}${formatter.postfix}`;
       }
 
-      itemTip = `${itemTip}${d?.marker}${property.name}
+      itemTip = `${itemTip}${(data[index] || d)?.marker}${property.name}
       ${
         unit ? `(${unit})` : ""
       } <span style="float:right;margin-left:20px;font-size:14px;color:#666;font-weight:900">${formatWithProperty(
