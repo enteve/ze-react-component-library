@@ -11,10 +11,17 @@ function excelExporter(
     return message.error("导出的文件必须设定文件名");
   }
   const excelName = `${filename}.xlsx`;
-  const arr = text
-    .split("\r\n")
-    .map((d) => d.split("\t").map((s) => s.slice(1, -1)));
-  const worksheet = XLSX.utils.aoa_to_sheet([...arr]);
+  const arr = text.split("\r\n").map((d) =>
+    d.split("\t").map((s) => {
+      const v = s.slice(1, -1);
+      const n = Number(v);
+      if (isNaN(n)) {
+        return v;
+      }
+      return { v: n, t: "n", z: Math.abs(n) < 1 ? "0.00%" : "0,00" };
+    })
+  );
+  const worksheet = XLSX.utils.aoa_to_sheet(arr);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet);
   XLSX.writeFileXLSX(workbook, excelName, { compression: true });
