@@ -32,6 +32,7 @@ export const Basic = () => (
 
 export const MultiGroupByAndPreds = () => (
   <ZESheet
+    xlsx={xlsx}
     logicform={{
       schema: "sales",
       groupby: ["店铺", "$year"],
@@ -45,6 +46,7 @@ export const MultiGroupByAndPreds = () => (
 
 export const MultiGroupByAndPreds2 = () => (
   <ZESheet
+    xlsx={xlsx}
     logicform={{
       query: { 日期: { $offset: { quarter: -1 } } },
       preds: [
@@ -61,6 +63,7 @@ export const MultiGroupByAndPreds2 = () => (
 
 export const Complex = () => (
   <ZESheet
+    xlsx={xlsx}
     logicform={{
       query: { 日期: { $offset: { quarter: -1 } } },
       preds: [
@@ -170,6 +173,7 @@ export const AdditionalRows = () => {
 
   return (
     <ZESheet
+      xlsx={xlsx}
       logicform={{
         schema: "sales",
         groupby: ["渠道"],
@@ -185,6 +189,7 @@ export const AdditionalRows = () => {
 
 export const RowColumnSwitcher = () => (
   <ZESheet
+    xlsx={xlsx}
     logicform={{
       query: { 日期: { $offset: { quarter: -1 } } },
       preds: [
@@ -263,6 +268,7 @@ export const TMP = () => {
 
   return (
     <ZESheet
+      xlsx={xlsx}
       logicform={lf}
       s2DataConfig={s2DataConfig}
       s2Options={s2Options}
