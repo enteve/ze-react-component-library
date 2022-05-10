@@ -236,7 +236,7 @@ const ZESheet: React.FC<ZESheetProps> = ({
               style={{ padding: 0 }}
               onClick={() => {
                 if (s2Ref.current) {
-                  const formatText = copyData(s2Ref.current, "\t", true);
+                  const formatText = copyData(s2Ref.current, "\t");
                   excelExporter(formatText, "数据导出", xlsx);
                 }
               }}
