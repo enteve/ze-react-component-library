@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import type { ProFormColumnsType } from "@ant-design/pro-form";
-import { message, Typography } from "antd";
+import { message, Typography, Tag } from "antd";
 import ProProvider from "@ant-design/pro-provider";
 import { BetaSchemaForm } from "@ant-design/pro-form";
 import { request as requestAPI } from "../request";
@@ -107,6 +107,29 @@ const ZESchemaForm: React.FC<ZESchemaFormProps> = ({
 
     const colFieldProps: any = col?.fieldProps || {};
 
+    const tagFieldProps = p.isArray
+      ? {
+          mode: "tags",
+          tagRender: (tagProps) => {
+            const { label, closable, onClose } = tagProps;
+            return (
+              <Tag
+                color="blue"
+                onMouseDown={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                }}
+                closable={closable}
+                onClose={onClose}
+                style={{ marginRight: 3 }}
+              >
+                {label}
+              </Tag>
+            );
+          },
+        }
+      : {};
+
     const column: ProFormColumnsType<any, ExtendValueTypes> = {
       title: p.name,
       dataIndex: p.name,
@@ -115,7 +138,11 @@ const ZESchemaForm: React.FC<ZESchemaFormProps> = ({
       formItemProps: { ...formItemProps, ...col?.formItemProps },
       fieldProps:
         valueType === "text"
-          ? { options: valueOptions, ...colFieldProps }
+          ? {
+              options: valueOptions,
+              ...colFieldProps,
+              ...tagFieldProps,
+            }
           : colFieldProps,
       readonly,
       render,

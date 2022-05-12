@@ -1,4 +1,4 @@
-import React, { useState, FC } from "react";
+import React, { useState, FC, Fragment } from "react";
 import {
   PropertyType,
   SchemaType,
@@ -23,6 +23,8 @@ import {
   Result,
   AutoComplete,
   Image,
+  Switch,
+  Space,
 } from "antd";
 import type { CardProps } from "antd";
 import { useRequest } from "@umijs/hooks";
@@ -369,6 +371,13 @@ export const customValueTypes = (schema: SchemaType): any => ({
       }
       return <div>{v ? "是" : "否"}</div>;
     },
+    renderFormItem: (text, props, form) => {
+      if (props.renderFormItem) {
+        return props.renderFormItem(text, props, form);
+      }
+      const { value, ...fieldProps } = props?.fieldProps || {};
+      return <Switch {...fieldProps} checked={value} />;
+    },
   },
   table: {
     renderFormItem: (_text, props, form) => {
@@ -455,11 +464,30 @@ export const customValueTypes = (schema: SchemaType): any => ({
       if (props.render) {
         return props.render(v, props, ...rest);
       }
+      if (props?.fieldProps?.tagRender && v instanceof Array) {
+        return (
+          <Space size="small">
+            {v.map((d) => (
+              <Fragment key={d}>
+                {props?.fieldProps?.tagRender({ label: d, closable: false })}
+              </Fragment>
+            ))}
+          </Space>
+        );
+      }
       return v;
     },
     renderFormItem: (text, props, form) => {
       if (props.renderFormItem) {
         return props.renderFormItem(text, props, form);
+      }
+      if (props?.fieldProps?.mode) {
+        return (
+          <Select
+            placeholder={props.placeholder || "请输入"}
+            {...props?.fieldProps}
+          />
+        );
       }
       return (
         <AutoComplete
