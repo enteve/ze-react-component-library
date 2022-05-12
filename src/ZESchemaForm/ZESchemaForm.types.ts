@@ -9,14 +9,11 @@ export type ExtendValueTypes =
   | "table";
 
 // Generated with util/create-component.js
-export type ZESchemaFormColumnType = ProFormColumnsType<
-  ProFormColumnsType,
-  ExtendValueTypes
->;
-export type ZESchemaFormProps = Omit<FormSchema<any>, "columns"> & {
+export type ZESchemaFormColumnType = ProFormColumnsType<any, ExtendValueTypes>;
+
+export type ZESchemaFormProps = Partial<FormSchema<any, ExtendValueTypes>> & {
   schemaID?: string;
   schema?: SchemaType;
-  columns?: ZESchemaFormColumnType[];
   isKeyPressSubmit?: ProFormProps["isKeyPressSubmit"];
   propertyConfig?: {
     [key: string]: {
