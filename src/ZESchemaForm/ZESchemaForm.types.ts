@@ -24,4 +24,5 @@ export type ZESchemaFormProps = Omit<FormSchema<any>, "columns"> & {
       valueType?: string;
     };
   };
+  saveWhenFinish?: boolean; // 是否要直接把数据存入服务器
 };
