@@ -1,10 +1,20 @@
 import React, { useState } from "react";
-import { AutoComplete, Input, Modal, Space, Spin } from "antd";
+import {
+  AutoComplete,
+  Col,
+  Input,
+  Modal,
+  Row,
+  Space,
+  Spin,
+  Typography,
+} from "antd";
 import { useRequest } from "@umijs/hooks";
 import {
   SearchOutlined,
   AudioOutlined,
   MobileOutlined,
+  RightCircleOutlined,
 } from "@ant-design/icons";
 import type { LogicformType } from "zeroetp-api-sdk";
 import VoiceRecorder from "./VoiceRecorder";
@@ -12,21 +22,27 @@ import {
   requestSuggest,
   requestPollingMicrophoneText,
   requestAsk,
+  requestHot,
 } from "../request";
 import "./index.less";
 
 const { Search } = Input;
 
-export type ZESearchBarAnswerType = {
-  question: string;
-  logicform: LogicformType;
-};
+const { Title, Link } = Typography;
+
+export type ZESearchBarAnswerType =
+  | {
+      question: string;
+      logicform: LogicformType;
+    }
+  | { error: string };
 
 export type ZESearchBarProps = {
-  onAsk?: ({ question, logicform }: ZESearchBarAnswerType) => void;
+  showHot?: boolean;
+  onAsk?: (answer: ZESearchBarAnswerType) => void;
 };
 
-const ZESearchBar: React.FC<ZESearchBarProps> = ({ onAsk }) => {
+const ZESearchBar: React.FC<ZESearchBarProps> = ({ showHot = true, onAsk }) => {
   const [voiceModalVisible, setVoiceModalVisible] = useState<boolean>(false);
   const [microphoneMode, setMicrophoneMode] = useState<boolean>(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -39,7 +55,9 @@ const ZESearchBar: React.FC<ZESearchBarProps> = ({ onAsk }) => {
     manual: true,
     debounceInterval: 100,
     onSuccess: (result) => {
-      setSuggestions(result);
+      if (Array.isArray(result)) {
+        setSuggestions(result);
+      }
     },
   });
   const { run: pollMicrophoneText, cancel: cancelPollMicrophoneText } =
@@ -66,10 +84,23 @@ const ZESearchBar: React.FC<ZESearchBarProps> = ({ onAsk }) => {
       onSuccess: (result) => {
         if (result.logicform) {
           onAsk?.({ question: askString, logicform: result.logicform });
+        } else if (result.error) {
+          onAsk?.({ error: result.error });
+        } else {
+          console.error("unexpected ask result: ", result);
         }
       },
     }
   );
+
+  const { data: hot } = useRequest(() => requestHot(), {
+    initialData: [],
+    formatResult: (res) =>
+      (res?.hot || "")
+        .split("\n")
+        .map((h: string) => h.trim())
+        .filter((h: string) => h.length > 0),
+  });
 
   const onFocus = () => {
     // Show History
@@ -82,7 +113,11 @@ const ZESearchBar: React.FC<ZESearchBarProps> = ({ onAsk }) => {
         const saved = localStorage.getItem("histories");
         if (saved) {
           const histories = JSON.parse(saved);
-          setSuggestions(histories);
+          if (!Array.isArray(histories)) {
+            localStorage.removeItem("histories");
+          } else {
+            setSuggestions(histories);
+          }
         }
       } catch (e) {
         // eslint-disable-next-line no-console
@@ -162,6 +197,20 @@ const ZESearchBar: React.FC<ZESearchBarProps> = ({ onAsk }) => {
           }}
         />
       </AutoComplete>
+      {showHot && hot.length > 0 && (
+        <div style={{ marginTop: 15 }}>
+          <Title level={4}>系统热搜</Title>
+          <Row gutter={16}>
+            {hot.map((i: string) => (
+              <Col key={i} span={12}>
+                <Link onClick={() => setAskString(i)}>
+                  <RightCircleOutlined /> {i}
+                </Link>
+              </Col>
+            ))}
+          </Row>
+        </div>
+      )}
       <Modal
         title="录音中，请开始讲话"
         visible={voiceModalVisible}

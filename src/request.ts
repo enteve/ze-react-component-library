@@ -98,6 +98,11 @@ export async function requestPollingMicrophoneText() {
   return ret;
 }
 
+export async function requestHot() {
+  const ret = await request(commonRequest(`/hot`));
+  return ret;
+}
+
 export async function getRoles() {
   const ret = await request(commonRequest("/roles"));
   return ret;
