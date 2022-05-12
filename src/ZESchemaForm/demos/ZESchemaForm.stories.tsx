@@ -33,6 +33,12 @@ export const AutoFormWithSchema = () => (
   </StoryBookUseCaseDescription>
 );
 
+export const TagsAndBoolean = () => (
+  <StoryBookUseCaseDescription info="属性里面有tag类型的（string array）和">
+    <ZESchemaForm schemaID="report" onFinish={onFinish} />
+  </StoryBookUseCaseDescription>
+);
+
 export const FormCompose = () => {
   /**
    * Width的设置
