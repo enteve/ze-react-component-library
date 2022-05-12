@@ -198,8 +198,12 @@ export const Basic = () => {
         <>
           <ZESearchBar onAsk={setAnswer} />
           <div style={{ minHeight: 400, marginTop: 24 }}>
-            {answer?.logicform && (
-              <ZECard title={answer.question} logicform={answer.logicform} />
+            {answer && (
+              <ZECard
+                title={answer.question}
+                logicform={answer.logicform}
+                askError={answer.error}
+              />
             )}
           </div>
         </>

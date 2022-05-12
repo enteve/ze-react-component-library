@@ -3,6 +3,7 @@ import {
   AutoComplete,
   Col,
   Input,
+  List,
   Modal,
   Row,
   Space,
@@ -25,17 +26,17 @@ import {
   requestHot,
 } from "../request";
 import "./index.less";
+import ZELogicformVisualizerList from "../ZELogicformVisualizerList";
 
 const { Search } = Input;
 
 const { Title, Link } = Typography;
 
-export type ZESearchBarAnswerType =
-  | {
-      question: string;
-      logicform: LogicformType;
-    }
-  | { error: string };
+export type ZESearchBarAnswerType = {
+  question: string;
+  logicform?: LogicformType;
+  error?: string;
+};
 
 export type ZESearchBarProps = {
   showHot?: boolean;
@@ -47,6 +48,9 @@ const ZESearchBar: React.FC<ZESearchBarProps> = ({ showHot = true, onAsk }) => {
   const [microphoneMode, setMicrophoneMode] = useState<boolean>(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [askString, setAskString] = useState<string>("");
+  const [logicformsToChoose, setLogicformsToChoose] = useState<LogicformType[]>(
+    []
+  );
   const {
     run: getSuggestions,
     cancel: cancelGetSuggestions,
@@ -82,10 +86,10 @@ const ZESearchBar: React.FC<ZESearchBarProps> = ({ showHot = true, onAsk }) => {
     {
       manual: true,
       onSuccess: (result) => {
-        if (result.logicform) {
-          onAsk?.({ question: askString, logicform: result.logicform });
-        } else if (result.error) {
-          onAsk?.({ error: result.error });
+        if (result.logicforms) {
+          setLogicformsToChoose(result.logicforms);
+        } else if (result?.logicform || result?.error) {
+          onAsk?.({ question: askString, ...result });
         } else {
           console.error("unexpected ask result: ", result);
         }
@@ -197,18 +201,34 @@ const ZESearchBar: React.FC<ZESearchBarProps> = ({ showHot = true, onAsk }) => {
           }}
         />
       </AutoComplete>
-      {showHot && hot.length > 0 && (
+      {logicformsToChoose?.length === 0 && showHot && hot.length > 0 && (
         <div style={{ marginTop: 15 }}>
           <Title level={4}>系统热搜</Title>
           <Row gutter={16}>
             {hot.map((i: string) => (
               <Col key={i} span={12}>
-                <Link onClick={() => setAskString(i)}>
+                <Link
+                  onClick={() => {
+                    setAskString(i);
+                    ask(i);
+                  }}
+                >
                   <RightCircleOutlined /> {i}
                 </Link>
               </Col>
             ))}
           </Row>
+        </div>
+      )}
+      {logicformsToChoose?.length > 0 && (
+        <div style={{ marginTop: 10 }}>
+          <ZELogicformVisualizerList
+            logicforms={logicformsToChoose}
+            onClick={(logicform) => {
+              setLogicformsToChoose([]);
+              onAsk?.({ question: askString, logicform });
+            }}
+          />
         </div>
       )}
       <Modal
