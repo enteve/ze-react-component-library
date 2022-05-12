@@ -200,6 +200,8 @@ const ZECard: React.FC<ZECardProps> = ({
     () => {
       if (logicform) {
         return requestLogicform(logicFormWithSkipAndSort || logicform);
+      } else {
+        return new Promise((resolve) => resolve(null));
       }
     },
     {

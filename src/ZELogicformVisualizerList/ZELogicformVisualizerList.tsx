@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Switch, List } from "antd";
+import { Button, Switch, List, Alert } from "antd";
 import { ZELogicformVisualizerListProps } from "./ZELogicformVisualizerList.types";
 import ZELogicformVisualizer from "../ZELogicformVisualizer";
 import { LogicformType } from "zeroetp-api-sdk";
@@ -16,6 +16,11 @@ const ZELogicformVisualizerList: React.FC<ZELogicformVisualizerListProps> = ({
 
   return (
     <>
+      <Alert
+        showIcon
+        message={"您的问题有多种解释，请从下方选择一项符合您要求的"}
+        type="warning"
+      />
       <div
         style={{
           paddingTop: 10,
