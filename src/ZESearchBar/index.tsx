@@ -1,22 +1,32 @@
 import React, { useState } from "react";
-import { AutoComplete, Input, Modal, Space } from "antd";
+import { AutoComplete, Input, Modal, Space, Spin } from "antd";
 import { useRequest } from "@umijs/hooks";
 import {
   SearchOutlined,
   AudioOutlined,
   MobileOutlined,
 } from "@ant-design/icons";
+import type { LogicformType } from "zeroetp-api-sdk";
 import VoiceRecorder from "./VoiceRecorder";
-import { requestSuggest, requestPollingMicrophoneText } from "../request";
+import {
+  requestSuggest,
+  requestPollingMicrophoneText,
+  requestAsk,
+} from "../request";
 import "./index.less";
 
 const { Search } = Input;
 
-export type ZESearchBarProps = {
-  ask?: (question: string) => void;
+export type ZESearchBarAnswerType = {
+  question: string;
+  logicform: LogicformType;
 };
 
-const ZESearchBar: React.FC<ZESearchBarProps> = ({ ask }) => {
+export type ZESearchBarProps = {
+  onAsk?: ({ question, logicform }: ZESearchBarAnswerType) => void;
+};
+
+const ZESearchBar: React.FC<ZESearchBarProps> = ({ onAsk }) => {
   const [voiceModalVisible, setVoiceModalVisible] = useState<boolean>(false);
   const [microphoneMode, setMicrophoneMode] = useState<boolean>(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -41,10 +51,25 @@ const ZESearchBar: React.FC<ZESearchBarProps> = ({ ask }) => {
       onSuccess: (result) => {
         if (result) {
           setAskString(result);
-          if (ask) ask(result);
+
+          if (result.trim().length > 0) {
+            ask(result);
+          }
         }
       },
     });
+
+  const { run: ask, loading } = useRequest(
+    (question: string) => requestAsk(question, true),
+    {
+      manual: true,
+      onSuccess: (result) => {
+        if (result.logicform) {
+          onAsk?.({ question: askString, logicform: result.logicform });
+        }
+      },
+    }
+  );
 
   const onFocus = () => {
     // Show History
@@ -71,6 +96,7 @@ const ZESearchBar: React.FC<ZESearchBarProps> = ({ ask }) => {
       <AutoComplete
         backfill
         value={askString}
+        disabled={loading}
         onFocus={onFocus}
         options={suggestions.map((s) => ({ value: s }))}
         style={{ width: "100%" }}
@@ -89,7 +115,7 @@ const ZESearchBar: React.FC<ZESearchBarProps> = ({ ask }) => {
           placeholder="输入问题，获得Insights！"
           enterButton="问一下"
           size="large"
-          prefix={<SearchOutlined />}
+          prefix={loading ? <Spin /> : <SearchOutlined />}
           suffix={
             <Space>
               <AudioOutlined
@@ -112,7 +138,7 @@ const ZESearchBar: React.FC<ZESearchBarProps> = ({ ask }) => {
             </Space>
           }
           onSearch={(value) => {
-            if (ask) {
+            if (value.trim().length > 0) {
               ask(value);
               setSuggestions([]);
               if (isGettingSuggestions) cancelGetSuggestions();
@@ -147,9 +173,9 @@ const ZESearchBar: React.FC<ZESearchBarProps> = ({ ask }) => {
       >
         <VoiceRecorder
           ask={(text) => {
-            if (text) {
+            if (text?.length > 0) {
               setAskString(text);
-              if (ask) ask(text);
+              ask(text);
             }
             setVoiceModalVisible(false);
           }}

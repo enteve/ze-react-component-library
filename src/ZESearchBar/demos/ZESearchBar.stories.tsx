@@ -1,5 +1,5 @@
-import React from "react";
-import ZESearchBar from "../index";
+import React, { useState } from "react";
+import ZESearchBar, { ZESearchBarAnswerType } from "../index";
 // prepare server
 import prepareServerForStories from "../../../util/prepareServerForStories";
 prepareServerForStories();
@@ -9,11 +9,11 @@ export default {
 };
 
 export const ZESearchBarDemo = () => {
+  const [answer, setAnswer] = useState<ZESearchBarAnswerType>();
   return (
-    <ZESearchBar
-      ask={(query: string) => {
-        console.log(query);
-      }}
-    />
+    <>
+      <ZESearchBar onAsk={setAnswer} />
+      {answer && <pre>{JSON.stringify(answer, null, 2)}</pre>}
+    </>
   );
 };
