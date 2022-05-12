@@ -1,8 +1,9 @@
 import React, { useContext } from "react";
 import type { ProFormColumnsType } from "@ant-design/pro-form";
-import { Typography } from "antd";
+import { message, Typography } from "antd";
 import ProProvider from "@ant-design/pro-provider";
 import { BetaSchemaForm } from "@ant-design/pro-form";
+import { request as requestAPI } from "../request";
 import type {
   ZESchemaFormProps,
   ExtendValueTypes,
@@ -10,7 +11,13 @@ import type {
 } from "./ZESchemaForm.types";
 import { useRequest } from "@umijs/hooks";
 import { request } from "../request";
-import { getSchemaByID, SchemaAPIResultType } from "zeroetp-api-sdk";
+import {
+  getSchemaByID,
+  SchemaAPIResultType,
+  createData,
+  updateDataByID,
+  getIDProperty,
+} from "zeroetp-api-sdk";
 import {
   valueTypeMapping,
   valueEnumMapping,
@@ -25,6 +32,7 @@ const ZESchemaForm: React.FC<ZESchemaFormProps> = ({
   schema: _schema,
   columns: _columns,
   propertyConfig,
+  saveWhenFinish = false,
   ...props
 }) => {
   if (!schemaID && !_schema)
@@ -186,6 +194,20 @@ const ZESchemaForm: React.FC<ZESchemaFormProps> = ({
             values[key] = simplifyValue(values[key]);
           }
           props.onFinish?.(values);
+
+          if (saveWhenFinish) {
+            if ("_id" in values) {
+              // 要确认这个schema是有IDProp的
+              const idProperty = getIDProperty(schema);
+              if (idProperty) {
+                await requestAPI(updateDataByID(schema, values._id, values));
+              } else {
+                message.error("暂不支持修改没有ID属性的数据");
+              }
+            } else {
+              await requestAPI(createData(schema, values));
+            }
+          }
           return true;
         }}
       />
