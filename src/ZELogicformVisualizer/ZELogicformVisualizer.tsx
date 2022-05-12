@@ -89,11 +89,18 @@ const ZELogicformVisualizer: React.FC<ZELogicformVisualizerProps> = ({
   logicform: initLogicform,
   badgeColor,
   display = {},
+  compact = false,
   filters = {},
   onQueryChange,
 }) => {
   const badges: { color: string; text: React.ReactNode }[] = [];
   const filterColor = "green";
+
+  if (compact) {
+    display.groupby = false;
+    display.preds = false;
+    display.sort = false;
+  }
 
   // unnormalizeQuery
   const logicform = JSON.parse(JSON.stringify(initLogicform));

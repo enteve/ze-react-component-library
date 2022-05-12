@@ -248,6 +248,7 @@ const ZESheet: React.FC<ZESheetProps> = ({
         )}
         {showSwitcher && (
           <Switcher
+            popover={{ placement: "leftTop" }}
             rows={{
               items: (dataCfg?.fields?.rows || []).map((r) => ({ id: r })),
             }}

@@ -40,6 +40,22 @@ export const VisualizerDisplay = () => (
   />
 );
 
+export const CompactMode = () => (
+  <ZELogicformVisualizer
+    compact
+    logicform={{
+      schema: "productsale",
+      groupby: "渠道",
+      preds: [{ name: "sum", operator: "$sum", pred: "销售额" }],
+      query: {
+        a: "b",
+        日期: { $gte: "2022-03-01 00:00:00", $lte: "2022-03-01 23:59:59" },
+        c: { $gte: 2, $lte: 3 },
+      },
+    }}
+  />
+);
+
 // 展示如何无中生有显示filter
 export const VisualizerWithFilter = () => {
   const [logicform, setLogicform] = useState<LogicformType>({
