@@ -1,10 +1,8 @@
 // Generated with util/create-component.js
-import React, { useState, useRef, useMemo } from "react";
+import React, { useState, useRef } from "react";
 import { Space, Button } from "antd";
 import ZECard from "../../ZECard";
-import ZESearchBar from "../../ZESearchBar";
-import { useRequest } from "@umijs/hooks";
-import { requestAsk } from "../../request";
+import ZESearchBar, { ZESearchBarAnswerType } from "../../ZESearchBar";
 import ZEDashboard, { ZEDashboardItem, ZEDashboardInstance } from "../index";
 import * as xlsx from "xlsx";
 
@@ -97,11 +95,7 @@ export const Basic = () => {
   const [draftData, setDraftData] = useState<ZEDashboardItem[]>();
   const dashboardRef = useRef<ZEDashboardInstance>({});
   const [mode, setMode] = useState<"add" | "edit">();
-  const [question, setQuestion] = useState<string>();
-  const { data: answer, run: ask } = useRequest(
-    () => (question ? requestAsk(question, true) : Promise.resolve(null)),
-    { refreshDeps: [question] }
-  );
+  const [answer, setAnswer] = useState<ZESearchBarAnswerType>();
 
   return (
     <div>
@@ -124,13 +118,12 @@ export const Basic = () => {
                     {
                       id: `item_${oldData.length}`,
                       cardProps: {
-                        title: question,
+                        title: answer.question,
                         logicform: answer.logicform,
                       },
                     },
                     ...oldData,
                   ]);
-                  setQuestion(undefined);
                 }
                 if (mode === "edit" && draftData) {
                   setData(draftData);
@@ -144,7 +137,6 @@ export const Basic = () => {
             <Button
               onClick={() => {
                 mode === "edit" && setDraftData(undefined);
-                mode === "add" && setQuestion(undefined);
                 setMode(undefined);
               }}
             >
@@ -204,14 +196,10 @@ export const Basic = () => {
 
       {mode === "add" && (
         <>
-          <ZESearchBar
-            ask={(ques) => {
-              setQuestion(ques);
-            }}
-          />
+          <ZESearchBar onAsk={setAnswer} />
           <div style={{ minHeight: 400, marginTop: 24 }}>
             {answer?.logicform && (
-              <ZECard title={question} logicform={answer.logicform} />
+              <ZECard title={answer.question} logicform={answer.logicform} />
             )}
           </div>
         </>
