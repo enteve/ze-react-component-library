@@ -156,9 +156,9 @@ const ZESchemaForm: React.FC<ZESchemaFormProps> = ({
       }}
     >
       <BetaSchemaForm<any, ExtendValueTypes>
+        layoutType="Form"
         {...props}
         columns={columns}
-        layoutType="Form"
         onFinish={async (values) => {
           // 在这里进行一个转换，object变回为_id的形式
           const simplifyValue = (item) => {
@@ -185,8 +185,8 @@ const ZESchemaForm: React.FC<ZESchemaFormProps> = ({
           for (const key of Object.keys(values)) {
             values[key] = simplifyValue(values[key]);
           }
-
-          return props.onFinish?.(values);
+          props.onFinish?.(values);
+          return true;
         }}
       />
     </ProProvider.Provider>
