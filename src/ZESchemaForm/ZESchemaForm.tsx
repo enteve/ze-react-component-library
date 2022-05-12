@@ -32,7 +32,8 @@ const ZESchemaForm: React.FC<ZESchemaFormProps> = ({
   schema: _schema,
   columns: _columns,
   propertyConfig,
-  saveWhenFinish = false,
+  saveOnFinish = false,
+  initialValues,
   ...props
 }) => {
   if (!schemaID && !_schema)
@@ -192,9 +193,15 @@ const ZESchemaForm: React.FC<ZESchemaFormProps> = ({
     >
       <BetaSchemaForm<any, ExtendValueTypes>
         layoutType="Form"
+        initialValues={initialValues}
         {...props}
         columns={columns}
-        onFinish={async (values) => {
+        onFinish={async (v) => {
+          // 因为BetaSchemaForm的initialValues只会设置那些在columns里面的，所以在这里把initialValues和vmerge起来
+          const values = {
+            ...initialValues,
+            ...v,
+          };
           // 在这里进行一个转换，object变回为_id的形式
           const simplifyValue = (item) => {
             if (Array.isArray(item)) {
@@ -220,9 +227,8 @@ const ZESchemaForm: React.FC<ZESchemaFormProps> = ({
           for (const key of Object.keys(values)) {
             values[key] = simplifyValue(values[key]);
           }
-          props.onFinish?.(values);
 
-          if (saveWhenFinish) {
+          if (saveOnFinish) {
             if ("_id" in values) {
               // 要确认这个schema是有IDProp的
               const idProperty = getIDProperty(schema);
@@ -234,6 +240,10 @@ const ZESchemaForm: React.FC<ZESchemaFormProps> = ({
             } else {
               await requestAPI(createData(schema, values));
             }
+          }
+
+          if (props.onFinish) {
+            return props.onFinish?.(values);
           }
           return true;
         }}

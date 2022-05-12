@@ -21,5 +21,5 @@ export type ZESchemaFormProps = Partial<FormSchema<any, ExtendValueTypes>> & {
       valueType?: string;
     };
   };
-  saveWhenFinish?: boolean; // 是否要直接把数据存入服务器
+  saveOnFinish?: boolean; // 是否要直接把数据存入服务器
 };

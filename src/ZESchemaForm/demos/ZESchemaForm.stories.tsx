@@ -207,6 +207,22 @@ export const PropertyWithEditableTable = () => (
   </StoryBookUseCaseDescription>
 );
 
+export const SaveWhenFinishCreation = () => (
+  <StoryBookUseCaseDescription info="直接在内部调用create api">
+    <ZESchemaForm
+      schemaID="report"
+      onFinish={async (v) => {
+        console.log(v);
+        return true;
+      }}
+      columns={[{ dataIndex: "名称" }]}
+      initialValues={{
+        发布: true,
+      }}
+    />
+  </StoryBookUseCaseDescription>
+);
+
 export const SchemaOfSchema = () => {
   const schemaOfSchema: SchemaType = {
     _id: "_schema",
