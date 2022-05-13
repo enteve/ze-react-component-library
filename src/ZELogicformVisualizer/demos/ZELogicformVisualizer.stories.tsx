@@ -42,7 +42,7 @@ export const VisualizerDisplay = () => (
 
 export const CompactMode = () => (
   <ZELogicformVisualizer
-    compact
+    mode="compact"
     logicform={{
       schema: "productsale",
       groupby: "渠道",

@@ -49,7 +49,7 @@ const ZELogicformVisualizerList: React.FC<ZELogicformVisualizerListProps> = ({
               </Button>,
             ]}
           >
-            <ZELogicformVisualizer logicform={logicform} />
+            <ZELogicformVisualizer logicform={logicform} mode="verbose" />
           </List.Item>
         )}
         bordered
