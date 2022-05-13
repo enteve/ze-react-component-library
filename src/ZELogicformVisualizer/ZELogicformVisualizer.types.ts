@@ -13,7 +13,9 @@ export interface ZELogicformVisualizerProps {
 
   // 表达要不要显示某一些的部分。默认都是true。可以把schema和preds关掉
   display?: LogicformVisualizerDisplayProp;
-  compact?: boolean; // 除了自定义的display之外，是不是要隐藏掉分组、公式、排序、limit
+
+  /* compact: 不显示分组、公式、排序。 normal: 不显示排序。verbose: 都显示 */
+  mode?: "compact" | "normal" | "verbose";
 
   // feat: 支持筛选控件
   filters?: {

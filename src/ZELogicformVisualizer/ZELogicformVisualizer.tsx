@@ -89,16 +89,18 @@ const ZELogicformVisualizer: React.FC<ZELogicformVisualizerProps> = ({
   logicform: initLogicform,
   badgeColor,
   display = {},
-  compact = false,
+  mode = "normal",
   filters = {},
   onQueryChange,
 }) => {
   const badges: { color: string; text: React.ReactNode }[] = [];
   const filterColor = "green";
 
-  if (compact) {
+  if (mode === "compact") {
     display.groupby = false;
     display.preds = false;
+    display.sort = false;
+  } else if (mode === "normal") {
     display.sort = false;
   }
 

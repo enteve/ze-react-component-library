@@ -515,6 +515,7 @@ const ZECard: React.FC<ZECardProps> = ({
       >
         {showVisualizer && data && (
           <ZELogicformVisualizer
+            mode="compact"
             {...visualizerProps}
             logicform={{ ...data.logicform, schemaName: data.schema.name }}
             onQueryChange={(query) => {
