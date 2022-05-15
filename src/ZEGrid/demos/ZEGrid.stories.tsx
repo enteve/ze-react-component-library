@@ -1,6 +1,6 @@
 // Generated with util/create-component.js
 import React from "react";
-import ZEGrid from "./ZEGrid";
+import ZEGrid from "../ZEGrid";
 import * as xlsx from "xlsx";
 
 export default {

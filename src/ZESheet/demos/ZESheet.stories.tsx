@@ -4,6 +4,8 @@ import ZESheet from "../index";
 import "./index.less";
 import numeral from "numeral";
 import * as xlsx from "xlsx";
+import moment from "moment";
+import { DatePicker, Space, Radio } from "antd";
 
 // prepare server
 import prepareServerForStories from "../../../util/prepareServerForStories";
@@ -202,6 +204,95 @@ export const RowColumnSwitcher = () => (
     }}
   />
 );
+
+export const retailPNL = () => {
+  type RelativeDateType = {
+    year?: number;
+    quarter?: number;
+    month?: number;
+  };
+
+  const [date, setDate] = useState<RelativeDateType>({
+    year: moment().year(),
+    month: moment().month() + 1,
+  });
+  const [dateGrand, setDateGrand] = useState<"month" | "year" | "quarter">(
+    "month"
+  );
+
+  const queryDate: RelativeDateType = { year: date.year };
+  switch (dateGrand) {
+    case "quarter":
+      queryDate.quarter = moment()
+        .month(date.month - 1)
+        .startOf("quarter")
+        .quarter();
+      break;
+    case "month":
+      queryDate.month = date.month;
+      break;
+    default:
+      break;
+  }
+
+  const logicform: LogicformType = {
+    schema: "sales",
+    groupby: "产品_品类",
+    query: { 日期: queryDate },
+    preds: [
+      { pred: "销售额", operator: "$sum", name: "销售收入" },
+      { operator: "COGS", name: "产品成本" },
+      { operator: "毛利", name: "毛利" },
+      { operator: "毛利率", name: "毛利率" },
+    ],
+  };
+
+  // controls
+  const controls = (
+    <Space>
+      <DatePicker
+        defaultValue={moment()
+          .year(date.year)
+          .month(date.month - 1)}
+        picker={dateGrand}
+        onChange={(d) => {
+          setDate({
+            year: d.year(),
+            month: d.month() + 1,
+          });
+        }}
+      />
+      <Radio.Group
+        onChange={(e) => {
+          setDateGrand(e.target.value);
+        }}
+        defaultValue={dateGrand}
+      >
+        <Radio.Button value="month">月</Radio.Button>
+        <Radio.Button value="quarter">季</Radio.Button>
+        <Radio.Button value="year">年</Radio.Button>
+      </Radio.Group>
+    </Space>
+  );
+
+  return (
+    <>
+      {controls}
+      <ZESheet
+        xlsx={xlsx}
+        logicform={logicform}
+        s2DataConfig={{
+          fields: {
+            rows: [],
+            columns: ["产品_品类"],
+            values: ["销售收入", "产品成本", "毛利", "毛利率"],
+            valueInCols: false,
+          },
+        }}
+      />
+    </>
+  );
+};
 
 export const TMP = () => {
   const [lf, setLF] = useState<LogicformType>({
