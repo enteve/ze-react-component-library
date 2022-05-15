@@ -16,7 +16,11 @@ export type {
 export { default as ZELogicform } from "./ZELogicform";
 export type { ZELogicformProps } from "./ZELogicform/ZELogicform.types";
 export { default as ZEDashboard } from "./ZEDashboard";
-export type { ZEDashboardProps, ZEDashboardItem, ZEDashboardInstance } from "./ZEDashboard";
+export type {
+  ZEDashboardProps,
+  ZEDashboardItem,
+  ZEDashboardInstance,
+} from "./ZEDashboard";
 export { default as ZELogicformVisualizer } from "./ZELogicformVisualizer";
 export type { ZELogicformVisualizerProps } from "./ZELogicformVisualizer/ZELogicformVisualizer.types";
 export { default as ZELogicformEditor } from "./ZELogicformEditor";
@@ -26,6 +30,8 @@ export { default as ZESearchBar } from "./ZESearchBar";
 export { default as ZEAuthEditor } from "./ZEAuthEditor";
 export { default as ZEJsonEditor } from "./ZEJsonEditor";
 export type { ZEJsonEditorProps } from "./ZEJsonEditor";
+export { default as ZEGrid } from "./ZEGrid";
+export type { ZEGridProps, ZEGridItem } from "./ZEGrid/ZEGrid.types";
 
 /* ---------------------------------- utils --------------------------------- */
 export { default as ZEUtil } from "./ZEUtil";
