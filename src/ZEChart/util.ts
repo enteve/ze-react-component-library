@@ -93,6 +93,12 @@ export function formatChartOptionGrid(options: any) {
     return options;
   }
 
+  const needTopSpace =
+    options?.legend &&
+    !("bottom" in options.legend) &&
+    !("left" in options.legend) &&
+    !("right" in options.legend);
+
   const needBottomSpace =
     (options?.legend && "bottom" in options.legend) ||
     options?.visualMap?.orient === "horizontal";
@@ -103,7 +109,7 @@ export function formatChartOptionGrid(options: any) {
     ...options,
     grid: {
       containLabel: true,
-      top: 12,
+      top: needTopSpace ? 35 : 12,
       bottom: needBottomSpace ? 35 : 0,
       left: 0,
       right: needRightSapce ? 50 : 0,

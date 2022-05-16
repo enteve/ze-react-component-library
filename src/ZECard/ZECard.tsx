@@ -532,7 +532,12 @@ const ZECard: React.FC<ZECardProps> = ({
             <span style={{ marginLeft: 5, color: "#525252" }}>{warning}</span>
           </div>
         )}
-        <div className="ze-card-main-content">{component}</div>
+        <div
+          className="ze-card-main-content"
+          style={{ marginTop: compact ? 5 : 10 }}
+        >
+          {component}
+        </div>
         {(footer || recommendComponent) && (
           <>
             <Divider style={{ margin: compact ? 5 : 10 }} />
