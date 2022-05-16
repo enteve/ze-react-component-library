@@ -27,6 +27,8 @@ export { default as ZELogicformEditor } from "./ZELogicformEditor";
 export type { ZELogicformEditorProps } from "./ZELogicformEditor/ZELogicformEditor.types";
 export type { ZESearchBarProps } from "./ZESearchBar";
 export { default as ZESearchBar } from "./ZESearchBar";
+export type { ZESheetProps } from "./ZESheet/ZESheet.types";
+export { default as ZESheet } from "./ZESheet";
 export { default as ZEAuthEditor } from "./ZEAuthEditor";
 export { default as ZEJsonEditor } from "./ZEJsonEditor";
 export type { ZEJsonEditorProps } from "./ZEJsonEditor";

@@ -1,6 +1,6 @@
 {
   "name": "ze-react-component-library",
-  "version": "1.1.99",
+  "version": "1.1.100",
   "main": "lib/index.js",
   "module": "es/index.js",
   "files": [
