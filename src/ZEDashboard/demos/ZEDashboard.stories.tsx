@@ -148,7 +148,7 @@ export const Basic = () => {
             <Button
               type="primary"
               onClick={() => {
-                console.log(dashboardRef.current.getDashboardState?.());
+                console.log(dashboardRef.current.getDashboardState?.(data));
               }}
             >
               保存

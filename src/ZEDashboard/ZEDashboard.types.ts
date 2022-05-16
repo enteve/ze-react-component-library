@@ -23,7 +23,7 @@ export type ZEDashboardItem = {
 };
 
 export type ZEDashboardInstance = {
-  getDashboardState?: () => Partial<ZEDashboardItem>[];
+  getDashboardState?: (data: ZEDashboardItem[]) => Partial<ZEDashboardItem>[];
 };
 
 export type ZEDashboardProps = {

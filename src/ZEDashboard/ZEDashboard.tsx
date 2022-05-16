@@ -2,7 +2,6 @@ import React, { useRef, useEffect } from "react";
 import { SizeMe } from "react-sizeme";
 import _ from "underscore";
 import GridLayout from "react-grid-layout";
-import { DragOutlined } from "@ant-design/icons";
 import ZECard from "../ZECard";
 import type { ZECardOnChangeParams } from "../ZECard/ZECard.types";
 import type { ZEDashboardProps, ZEDashboardItem } from "./ZEDashboard.types";
@@ -56,9 +55,9 @@ const ZEDashboard: React.FC<ZEDashboardProps> = ({
 
   useEffect(() => {
     if (dashboardRef) {
-      dashboardRef.current.getDashboardState = () => {
+      dashboardRef.current.getDashboardState = (_data:ZEDashboardProps["data"]) => {
         const cardsState = cardsStateRef.current;
-        return data.map((d) => ({
+        return _data.map((d) => ({
           id: d.id,
           layout: _.pick(d.layout, ["i", "w", "h", "x", "y"]),
           cardProps: _.pick(
@@ -71,7 +70,7 @@ const ZEDashboard: React.FC<ZEDashboardProps> = ({
         }));
       };
     }
-  }, [data]);
+  }, []);
 
   return (
     <div
