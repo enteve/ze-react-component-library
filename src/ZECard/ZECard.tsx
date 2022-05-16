@@ -316,6 +316,7 @@ const ZECard: React.FC<ZECardProps> = ({
         <ZEValueDisplayer
           data={data}
           onChangeLogicform={setLogicform}
+          title={data?.columnProperties[0].name}
           {...valueDisplayerProps}
         />
       );
