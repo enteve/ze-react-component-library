@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AutoComplete,
   Col,
@@ -41,13 +41,20 @@ export type ZESearchBarAnswerType = {
 export type ZESearchBarProps = {
   showHot?: boolean;
   onAsk?: (answer: ZESearchBarAnswerType) => void;
+
+  /* 一开始就默认填在搜索栏的 */
+  initialValue?: string;
 };
 
-const ZESearchBar: React.FC<ZESearchBarProps> = ({ showHot = true, onAsk }) => {
+const ZESearchBar: React.FC<ZESearchBarProps> = ({
+  showHot = true,
+  onAsk,
+  initialValue,
+}) => {
   const [voiceModalVisible, setVoiceModalVisible] = useState<boolean>(false);
   const [microphoneMode, setMicrophoneMode] = useState<boolean>(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [askString, setAskString] = useState<string>("");
+  const [askString, setAskString] = useState<string>(initialValue || "");
   const [logicformsToChoose, setLogicformsToChoose] = useState<LogicformType[]>(
     []
   );
@@ -96,6 +103,11 @@ const ZESearchBar: React.FC<ZESearchBarProps> = ({ showHot = true, onAsk }) => {
       },
     }
   );
+  useEffect(() => {
+    if (initialValue?.trim().length > 0) {
+      ask(initialValue);
+    }
+  }, [initialValue]);
 
   const { data: hot } = useRequest(() => requestHot(), {
     initialData: [],
