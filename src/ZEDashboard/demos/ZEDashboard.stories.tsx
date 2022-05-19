@@ -35,9 +35,9 @@ const report: ZEDashboardItem[] = [
       close: () => {},
     },
     layout: {
-      h: 4,
+      h: 8,
       i: "card0",
-      minH: 2,
+      minH: 4,
       minW: 2,
       w: 6,
       x: 0,
@@ -56,9 +56,9 @@ const report: ZEDashboardItem[] = [
       close: () => {},
     },
     layout: {
-      h: 4,
+      h: 8,
       i: "card1",
-      minH: 2,
+      minH: 4,
       minW: 2,
       w: 6,
       x: 6,

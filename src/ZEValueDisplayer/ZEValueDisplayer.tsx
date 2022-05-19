@@ -31,6 +31,8 @@ const ZEValueDisplayer: React.FC<ZEValueDisplayerProps> = ({
   trend,
   title,
 }) => {
+  if (!data) return <div />;
+
   if (
     data?.result &&
     Array.isArray(data.result) &&
