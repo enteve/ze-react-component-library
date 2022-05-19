@@ -29,7 +29,9 @@ export const crossResult = (
   horizontalColumns?: string[],
   parent?: any
 ): LogicformAPIResultType => {
-  const { result, columnProperties } = ret;
+  const { result, columnProperties, logicform } = JSON.parse(
+    JSON.stringify(ret)
+  );
 
   const idProp0 = columnProperties[0];
   const idProp1 = columnProperties[1];
@@ -92,12 +94,13 @@ export const crossResult = (
 
     const idKey = getIDKey(idProp1, item);
     newData[hitIndex][idKey] = item[measurementName];
-
-    // 更新logicform
-    if (ret.logicform?.groupby?.length > 1) {
-      ret.logicform.groupby = [ret.logicform.groupby[0]];
-    }
   });
+
+  // 更新logicform
+  let newLogicform = logicform;
+  if (logicform?.groupby?.length > 1) {
+    newLogicform.groupby = [logicform.groupby[0]];
+  }
 
   return {
     ...ret,
