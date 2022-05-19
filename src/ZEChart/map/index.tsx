@@ -93,7 +93,7 @@ const Map: React.FC<Props> = ({
             }
 
             if (mapID === "world") {
-              return fetch(`${config.API_URL}/map/${mapID}.json`);
+              return fetch(`${config.API_URL}/map/world.geo.json`);
             }
             return fetch(`${config.API_URL}/map/china/${mapID}.json`);
           }
@@ -161,7 +161,9 @@ const Map: React.FC<Props> = ({
           },
           map,
           label: {
-            show: logicform?.groupby[0]?.level !== "省市",
+            show:
+              logicform?.groupby[0]?.level !== "省市" &&
+              logicform?.groupby[0]?.level !== "国家",
           },
         },
       ];
@@ -185,13 +187,15 @@ const Map: React.FC<Props> = ({
   )
     return <Result status="info" title="此数据不支持地图类型" />;
 
-  if (["省市", "城市", "区县"].indexOf(level) < 0) {
+  if (["国家", "省市", "城市", "区县"].indexOf(level) < 0) {
     return <Result status="info" title="暂不支持的地图类型" />;
   }
 
+  const finalOption = formatChartOptionGrid(chartOption);
+
   return (
     <EChart
-      option={formatChartOptionGrid(chartOption)}
+      option={finalOption}
       eventsDict={eventsDict}
       width={width}
       height={height}
