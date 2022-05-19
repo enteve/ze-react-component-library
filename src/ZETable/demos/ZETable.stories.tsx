@@ -19,7 +19,7 @@ export default {
 
 export const Basic = () => {
   const [schema, setSchema] = useState<string>("product");
-  const schemas = ["product", "store", "geo", "sales", "visit"];
+  const schemas = ["product", "store", "geo", "sales", "visit", "dashboard"];
 
   const menu = (
     <Menu onClick={(e) => setSchema(e.key)}>
