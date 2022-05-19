@@ -86,7 +86,6 @@ const ZEChart: React.FC<ZEChartProps> = memo(
         // 其实就是改造成交叉表
         if (canUseCrossTable(data.logicform)) {
           dataForChart = crossResult(data);
-          console.log(dataForChart);
         }
 
         // result to dataset:
@@ -349,7 +348,7 @@ const ZEChart: React.FC<ZEChartProps> = memo(
         visualMap: false,
       });
 
-      console.log(finalOption);
+      // console.log(finalOption);
 
       chartDom = (
         <EChart
