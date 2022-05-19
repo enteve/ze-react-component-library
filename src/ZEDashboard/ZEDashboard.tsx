@@ -12,7 +12,7 @@ const ZEDashboard: React.FC<ZEDashboardProps> = ({
   className = "",
   editable = false,
   cols = 12,
-  rowHeight = 100,
+  rowHeight = 50,
   margin = [24, 24],
   containerPadding = [0, 0],
   resizeHandles = ["se", "nw", "s", "n", "e", "w", "sw", "ne"],
@@ -28,8 +28,8 @@ const ZEDashboard: React.FC<ZEDashboardProps> = ({
     x: 0,
     y: 0,
     w: 12,
-    h: 4,
-    minH: 2,
+    h: 8,
+    minH: 4,
     minW: 2,
     ...d.layout,
     i: d.id,
@@ -55,7 +55,9 @@ const ZEDashboard: React.FC<ZEDashboardProps> = ({
 
   useEffect(() => {
     if (dashboardRef) {
-      dashboardRef.current.getDashboardState = (_data:ZEDashboardProps["data"]) => {
+      dashboardRef.current.getDashboardState = (
+        _data: ZEDashboardProps["data"]
+      ) => {
         const cardsState = cardsStateRef.current;
         return _data.map((d) => ({
           id: d.id,
