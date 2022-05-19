@@ -92,6 +92,11 @@ export const crossResult = (
 
     const idKey = getIDKey(idProp1, item);
     newData[hitIndex][idKey] = item[measurementName];
+
+    // 更新logicform
+    if (ret.logicform?.groupby?.length > 1) {
+      ret.logicform.groupby = [ret.logicform.groupby[0]];
+    }
   });
 
   return {

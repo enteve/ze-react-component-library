@@ -49,7 +49,9 @@ const Map: React.FC<Props> = ({
         ) {
           const level = logicform.groupby[0].level;
           let mapID;
-          if (level === "省市") {
+          if (level === "国家") {
+            mapID = "world";
+          } else if (level === "省市") {
             mapID = "100000";
           } else if (level === "城市") {
             const startCodeLength = getHierarchyCodeLength(
@@ -90,6 +92,9 @@ const Map: React.FC<Props> = ({
               mapID = mapID.substring(mapID.length - 6);
             }
 
+            if (mapID === "world") {
+              return fetch(`${config.API_URL}/map/${mapID}.json`);
+            }
             return fetch(`${config.API_URL}/map/china/${mapID}.json`);
           }
         }

@@ -112,7 +112,7 @@ export function formatChartOptionGrid(options: any) {
       top: needTopSpace ? 35 : 12,
       bottom: needBottomSpace ? 35 : 0,
       left: 0,
-      right: needRightSapce ? 50 : 0,
+      right: 30,
     },
   };
 }

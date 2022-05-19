@@ -21,6 +21,7 @@ import getBarOption from "./EChart/options/bar";
 import { chartTooltipFormatter, formatChartOptionGrid } from "./util";
 import { formatWithProperty, getFormatter } from "../util";
 import { Result } from "antd";
+import { canUseCrossTable, crossResult } from "../crossTableGen";
 
 const ZEChart: React.FC<ZEChartProps> = memo(
   ({
@@ -79,14 +80,27 @@ const ZEChart: React.FC<ZEChartProps> = memo(
       };
 
       if (data?.result && data?.logicform) {
+        let dataForChart = data;
+        // 20220519
+        // 二维分组 + 单行数据。改造result和columnProperties，目的是为了把第二个维度拆成多个legend
+        // 其实就是改造成交叉表
+        if (canUseCrossTable(data.logicform)) {
+          dataForChart = crossResult(data);
+          console.log(dataForChart);
+        }
+
         // result to dataset:
         // 要对entity进行一个改写
-        const entityColumns = data.columnProperties
-          .slice(0, data.logicform.groupby?.length)
+        const entityColumns = dataForChart.columnProperties
+          .slice(0, dataForChart.logicform.groupby?.length)
           .filter((p) => p.type === "object");
-        const dimensions = data.columnProperties.map((col) => col.name);
+
+        // 设定dimensions
+        const dimensions = dataForChart.columnProperties.map((col) => col.name);
+
+        // 设定dataset
         option.dataset = {
-          source: data.result.map((i) => {
+          source: dataForChart.result.map((i) => {
             const newI = { ...i };
             entityColumns.forEach((colProp) => {
               const entity = i[colProp.name];
@@ -107,7 +121,8 @@ const ZEChart: React.FC<ZEChartProps> = memo(
           dimensions,
         };
 
-        measurementProp = data.columnProperties[data.logicform.groupby.length];
+        measurementProp =
+          dataForChart.columnProperties[dataForChart.logicform.groupby.length];
 
         // tooltip
         option.tooltip = {
@@ -115,7 +130,9 @@ const ZEChart: React.FC<ZEChartProps> = memo(
           formatter: (params) => {
             return chartTooltipFormatter(
               params,
-              data.columnProperties.slice(data.logicform.groupby.length)
+              dataForChart.columnProperties.slice(
+                dataForChart.logicform.groupby.length
+              )
             );
           },
         };
@@ -212,11 +229,11 @@ const ZEChart: React.FC<ZEChartProps> = memo(
 
             // 加入其他preds
             for (
-              let index = 1 + data.logicform.groupby.length;
-              index < data.columnProperties.length;
+              let index = 1 + dataForChart.logicform.groupby.length;
+              index < dataForChart.columnProperties.length;
               index++
             ) {
-              const columnProperty = data.columnProperties[index];
+              const columnProperty = dataForChart.columnProperties[index];
               let type: string = "bar";
               let yAxisIndex: number = 0;
               if (
@@ -287,21 +304,42 @@ const ZEChart: React.FC<ZEChartProps> = memo(
           ];
         } else if (type === "line") {
           option = merge(option, getLineOption());
-          option.series = [
-            {
+
+          const numberOfSeries = option.dataset.dimensions.length - 1;
+          option.series = [];
+          for (let i = 0; i < numberOfSeries; i++) {
+            option.series.push({
               type: "line",
               avoidLabelOverlap: true,
               ...selectProps,
-            },
-          ];
+            });
+          }
           option.label = {
             show: true,
             formatter: labelFormatter(measurementProp),
           };
+
+          if (numberOfSeries > 1) {
+            option.legend = {};
+          }
         }
         return option;
       }
     }, [JSON.stringify({ data, type })]);
+
+    const notSupportedResult = (
+      <Result
+        status="info"
+        title="此类数据暂不支持可视化形式展现，请以表格形式查看"
+        subTitle="请联系开发团队以获取支持"
+      />
+    );
+    if (data?.logicform.groupby?.length > 2) return notSupportedResult;
+    if (
+      data?.logicform.groupby?.length === 2 &&
+      data?.logicform.preds.length >= 2
+    )
+      return notSupportedResult;
 
     // 设定正确的chart
     let chartDom: React.ReactNode;
@@ -310,6 +348,8 @@ const ZEChart: React.FC<ZEChartProps> = memo(
         ...merge(chartOption, inputOption),
         visualMap: false,
       });
+
+      console.log(finalOption);
 
       chartDom = (
         <EChart
