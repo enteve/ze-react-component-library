@@ -44,7 +44,7 @@ import {
   getColumnSearchProps,
   getColumnNumberProps,
 } from "./FilterComponents";
-import { canUseCrossTable, crossResult } from "./crossTableGen";
+import { canUseCrossTable, crossResult } from "../../crossTableGen";
 import { transposeResult } from "./transposeGen";
 import { useTableParams } from "./useTableParams";
 import { logicformValueToColumnFilter } from "./util";

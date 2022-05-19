@@ -99,3 +99,25 @@ export const Map = () => {
     />
   );
 };
+
+export const TwoDimensionLine = () => (
+  <ZEChart
+    type="line"
+    logicform={{
+      schema: "sales",
+      groupby: ["$year", "产品_品类"],
+      preds: [{ name: "销售额", operator: "$sum", pred: "销售额" }],
+    }}
+  />
+);
+
+export const TwoDimensionColumn = () => (
+  <ZEChart
+    type="column"
+    logicform={{
+      schema: "sales",
+      groupby: ["$year", "产品_品类"],
+      preds: [{ name: "销售额", operator: "$sum", pred: "销售额" }],
+    }}
+  />
+);
