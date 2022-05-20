@@ -437,11 +437,7 @@ const Table: React.FC<TableProps> = ({
           type="text"
           icon={<DownloadOutlined />}
           onClick={() => {
-            if (
-              isSimpleQuery(result.logicform) &&
-              result.total &&
-              result.total > result.result.length // 这里要记住一点，因为有转置的feature，所以转置之后length也不对了。所以以后如果要支持groupby的远程下载的话，这里也要注意
-            ) {
+            if (isSimpleQuery(result.logicform)) {
               const preds: string[] = [];
 
               for (const property of result.schema.properties) {
