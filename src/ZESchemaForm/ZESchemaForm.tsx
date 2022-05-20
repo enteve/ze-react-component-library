@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import type { ProFormColumnsType } from "@ant-design/pro-form";
-import { message, Typography, Tag } from "antd";
+import { message, Typography } from "antd";
 import ProProvider from "@ant-design/pro-provider";
 import { BetaSchemaForm } from "@ant-design/pro-form";
 import { request as requestAPI } from "../request";
@@ -18,12 +18,7 @@ import {
   updateDataByID,
   getIDProperty,
 } from "zeroetp-api-sdk";
-import {
-  valueTypeMapping,
-  valueEnumMapping,
-  customValueTypes,
-  findProperty,
-} from "../util";
+import { customValueTypes, findProperty, getColumnPublicProps } from "../util";
 
 const { Text } = Typography;
 
@@ -48,13 +43,13 @@ const ZESchemaForm: React.FC<ZESchemaFormProps> = ({
 
   const { schema } = data;
   // 通过properties来生成columns
-  let columns: ProFormColumnsType<any, ExtendValueTypes>[];
+  let columns: ZESchemaFormColumnType[];
 
   // 给下面生成columns用的
   const propsForProperty = (
     p,
     col?: ZESchemaFormColumnType
-  ): ProFormColumnsType<any, ExtendValueTypes> => {
+  ): ZESchemaFormColumnType => {
     const formItemProps = {
       rules: [],
       initialValue: col?.initialValue || p.default,
@@ -66,20 +61,11 @@ const ZESchemaForm: React.FC<ZESchemaFormProps> = ({
       });
     }
 
-    // valueType
-    let valueType;
-    if (
-      propertyConfig &&
-      propertyConfig[p.name] &&
-      "valueType" in propertyConfig[p.name]
-    ) {
-      valueType = propertyConfig[p.name].valueType;
-    } else {
-      valueType = valueTypeMapping(p);
-    }
-    if (col?.valueType) {
-      valueType = col.valueType;
-    }
+    const { valueType, valueEnum, fieldProps } = getColumnPublicProps(
+      p,
+      col,
+      propertyConfig
+    );
 
     // readonly
     let readonly = "udf" in p || p.name.indexOf(".") > 0; // 第二个判断条件是前端predChain
@@ -98,53 +84,13 @@ const ZESchemaForm: React.FC<ZESchemaFormProps> = ({
       render = () => <Text disabled>自动计算</Text>;
     }
 
-    const valueEnum = valueEnumMapping(p);
-    const valueOptions = valueEnum
-      ? Object.keys(valueEnum).map((k) => ({
-          label: valueEnum[k]?.text || k,
-          value: k,
-        }))
-      : undefined;
-
-    const colFieldProps: any = col?.fieldProps || {};
-
-    const tagFieldProps = p.isArray
-      ? {
-          mode: "tags",
-          tagRender: (tagProps) => {
-            const { label, closable, onClose } = tagProps;
-            return (
-              <Tag
-                color="blue"
-                onMouseDown={(event) => {
-                  event.preventDefault();
-                  event.stopPropagation();
-                }}
-                closable={closable}
-                onClose={onClose}
-                style={{ marginRight: 3 }}
-              >
-                {label}
-              </Tag>
-            );
-          },
-        }
-      : {};
-
-    const column: ProFormColumnsType<any, ExtendValueTypes> = {
+    const column: ZESchemaFormColumnType = {
       title: p.name,
       dataIndex: p.name,
       valueType,
-      valueEnum: valueType === "text" ? undefined : valueEnum,
+      valueEnum,
       formItemProps: { ...formItemProps, ...col?.formItemProps },
-      fieldProps:
-        valueType === "text"
-          ? {
-              options: valueOptions,
-              ...colFieldProps,
-              ...tagFieldProps,
-            }
-          : colFieldProps,
+      fieldProps,
       readonly,
       render,
       tooltip: p.description,

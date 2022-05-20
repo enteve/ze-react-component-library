@@ -31,9 +31,8 @@ import type { TableProps, PredItemType } from "./Table.types";
 
 import {
   customValueTypes,
-  valueEnumMapping,
-  valueTypeMapping,
   getFormatter,
+  getColumnPublicProps,
 } from "../../util";
 
 import ZESchemaForm from "../../ZESchemaForm";
@@ -131,8 +130,7 @@ const mapColumnItem = (
   // if (showSorter && property.primal_type === "number") {
   //   additionalProps.sorter = true;
   // }
-
-  const valueEnum = valueEnumMapping(property);
+  const { valueEnum, valueType, fieldProps } = getColumnPublicProps(property);
   let sortOrder = logicform.sort?.[predItem];
   switch (sortOrder) {
     case 1:
@@ -171,10 +169,11 @@ const mapColumnItem = (
       (property.primal_type === "string" &&
         !property.constraints.enum &&
         !exporting), // 前端默认的ellipsis逻辑
-    valueType: valueTypeMapping(property),
+    valueType,
     filters: valueEnum !== undefined,
     onFilter: false,
     valueEnum,
+    fieldProps,
     ...additionalProps,
     width,
   };

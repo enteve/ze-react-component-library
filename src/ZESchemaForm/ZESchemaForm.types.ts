@@ -2,6 +2,7 @@ import { ProFormColumnsType, ProFormProps } from "@ant-design/pro-form";
 import { SchemaType } from "zeroetp-api-sdk";
 import { FormSchema } from "@ant-design/pro-form/lib/components/SchemaForm";
 export type ExtendValueTypes =
+  | "string"
   | "percentage"
   | "object"
   | "boolean"

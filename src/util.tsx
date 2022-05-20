@@ -25,6 +25,7 @@ import {
   Image,
   Switch,
   Space,
+  Tag,
 } from "antd";
 import type { CardProps } from "antd";
 import { useRequest } from "@umijs/hooks";
@@ -97,6 +98,8 @@ export const valueTypeMapping = (property: PropertyType) => {
       return "textarea";
     case "file":
       return "file";
+    case "tag":
+      return "string";
     default:
       break;
   }
@@ -132,9 +135,9 @@ export const valueTypeMapping = (property: PropertyType) => {
 
         return "radio";
       }
-      return "text";
+      return "string";
     default:
-      return "text";
+      return "string";
   }
 };
 
@@ -458,11 +461,13 @@ export const customValueTypes = (schema: SchemaType): any => ({
     },
   },
   // 用户自定义的render具有最高优先级
-  // 通常用户自定义render的时候，会不传valueType，此时valueType默认为text，就会走下面的逻辑
-  text: {
+  string: {
     render: (v, props, ...rest) => {
       if (props.render) {
         return props.render(v, props, ...rest);
+      }
+      if (props?.fieldProps?.delimiter && v instanceof Array) {
+        return v.join(props?.fieldProps?.delimiter);
       }
       if (props?.fieldProps?.tagRender && v instanceof Array) {
         return (
@@ -819,4 +824,75 @@ export const ErrorFallBack: FC<FallbackProps & { cardProps?: CardProps }> = ({
       </Result>
     </Card>
   );
+};
+
+export const getColumnPublicProps = (
+  p: any,
+  col?: any,
+  propertyConfig?: any
+) => {
+  // valueType
+  let valueType: any = "string";
+  if (
+    propertyConfig &&
+    propertyConfig[p.name] &&
+    "valueType" in propertyConfig[p.name]
+  ) {
+    valueType = propertyConfig[p.name].valueType;
+  } else {
+    valueType = valueTypeMapping(p);
+  }
+  if (col?.valueType) {
+    valueType = col.valueType;
+  }
+  const valueEnum = valueEnumMapping(p);
+  const valueOptions = valueEnum
+    ? Object.keys(valueEnum).map((k) => ({
+        label: valueEnum[k]?.text || k,
+        value: k,
+      }))
+    : undefined;
+
+  const colFieldProps: any = col?.fieldProps || {};
+  let extraFieldProps: any = {};
+
+  if (p.type === "tag") {
+    extraFieldProps = {
+      mode: "tags",
+      tagRender: (tagProps) => {
+        const { label, closable, onClose } = tagProps;
+        return (
+          <Tag
+            color="blue"
+            onMouseDown={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+            }}
+            closable={closable}
+            onClose={onClose}
+            style={{ marginRight: 3 }}
+          >
+            {label}
+          </Tag>
+        );
+      },
+    };
+  } else if (p.isArray) {
+    extraFieldProps = { delimiter: p.ui?.delimiter || " " };
+  }
+
+  const fieldProps =
+    valueType === "string"
+      ? {
+          options: valueOptions,
+          ...colFieldProps,
+          ...extraFieldProps,
+        }
+      : colFieldProps;
+
+  return {
+    valueType,
+    valueEnum: valueType === "string" ? undefined : valueEnum,
+    fieldProps,
+  };
 };
