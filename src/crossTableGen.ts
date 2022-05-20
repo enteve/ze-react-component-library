@@ -104,6 +104,7 @@ export const crossResult = (
 
   return {
     ...ret,
+    logicform: newLogicform,
     columnProperties: newColumnProperties,
     result: newData,
   };

@@ -268,6 +268,9 @@ const ZEChart: React.FC<ZEChartProps> = memo(
             // legend
             if (!isOtherPredsSupplementary) {
               option.legend = {};
+              option.label = {
+                show: false,
+              };
             } else {
               option.legend = { selectedMode: "single", show: false };
             }
@@ -313,13 +316,14 @@ const ZEChart: React.FC<ZEChartProps> = memo(
               ...selectProps,
             });
           }
-          option.label = {
-            show: true,
-            formatter: labelFormatter(measurementProp),
-          };
 
           if (numberOfSeries > 1) {
             option.legend = {};
+          } else {
+            option.label = {
+              show: true,
+              formatter: labelFormatter(measurementProp),
+            };
           }
         }
         return option;
