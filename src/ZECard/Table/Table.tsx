@@ -312,7 +312,6 @@ const Table: React.FC<TableProps> = ({
 
   const [creationFormVisible, setCreationFormVisible] =
     useState<boolean>(false);
-  const tableRef = useRef<ActionType>();
   const [rowChildrenMap, setRowChildrenMap] = useState<Record<string, any[]>>(
     {}
   );
@@ -532,7 +531,6 @@ const Table: React.FC<TableProps> = ({
       bodyStyle: { padding: 0 },
     },
     ...restProps,
-    actionRef: tableRef,
     columns,
     rowKey,
     search: search === undefined ? false : search,
@@ -636,7 +634,7 @@ const Table: React.FC<TableProps> = ({
   const deleteRecord = (record: any) => {
     if (logicform.schema) {
       requestAPI(removeDataByID(logicform.schema, record._id)).then(() => {
-        tableRef.current.reload();
+        reload?.();
       });
     }
   };
@@ -706,11 +704,13 @@ const Table: React.FC<TableProps> = ({
           // TODO: 目前只接受非chain的query
           requestAPI(
             createData(logicform.schema, { ...logicform.query, ...record })
-          ).then(() => tableRef.current.reload());
+          ).then(() => {
+            reload?.();
+          });
         } else {
-          requestAPI(updateDataByID(logicform.schema, id, record)).then(() =>
-            tableRef.current.reload()
-          );
+          requestAPI(updateDataByID(logicform.schema, id, record)).then(() => {
+            reload?.();
+          });
         }
       },
       onDelete: (_id, record) => deleteRecord(record),
@@ -823,7 +823,7 @@ const Table: React.FC<TableProps> = ({
                   );
                 }
                 setCreationFormVisible(false);
-                tableRef.current.reload();
+                reload?.()
               }}
             />
           </Drawer>
