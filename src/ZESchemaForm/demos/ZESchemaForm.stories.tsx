@@ -36,9 +36,18 @@ export const AutoFormWithSchema = () => (
 export const TagsAndBoolean = () => (
   <StoryBookUseCaseDescription info="属性里面有tag类型的（string array）和">
     <ZESchemaForm
-      schemaID="report"
+      schemaID="dashboard"
       layout="horizontal"
-      labelCol={{ span: 2 }}
+      labelAlign="left"
+      columns={[
+        { dataIndex: "标签" },
+        {
+          dataIndex: "发布",
+          title: "发布",
+          // valueType: "boolean",
+          // readonly: true,
+        },
+      ]}
       onFinish={onFinish}
       // initialValues={{ 标签: ["a", "b", "c"], 发布: true }}
       // propertyConfig={{ 标签: { readonly: true }, 发布: { readonly: true } }}
