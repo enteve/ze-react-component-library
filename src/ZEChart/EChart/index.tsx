@@ -10,6 +10,7 @@ interface Props {
   style?: React.CSSProperties;
   ref?: any;
   eventsDict?: Record<string, Function>;
+  additionalToolboxFeature?: Record<string, any>;
 }
 
 export const CHART_MAX_HEIGHT = 400;
@@ -22,11 +23,16 @@ const EChart: React.FC<Props> = memo(
     style = {},
     ref,
     eventsDict = {},
+    additionalToolboxFeature = {},
   }) => {
     const defaultOption = {
       toolbox: {
+        show: true,
         feature: {
-          saveAsImage: {},
+          ...additionalToolboxFeature,
+          saveAsImage: {
+            title: "下载图片",
+          },
         },
       },
     };

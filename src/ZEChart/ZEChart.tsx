@@ -1,5 +1,5 @@
 // Generated with util/create-component.js
-import React, { useMemo, memo } from "react";
+import React, { useMemo, memo, useState } from "react";
 import _ from "underscore";
 import merge from "deepmerge";
 import { ZEChartProps } from "./ZEChart.types";
@@ -20,8 +20,11 @@ import getLineOption from "./EChart/options/line";
 import getBarOption from "./EChart/options/bar";
 import { chartTooltipFormatter, formatChartOptionGrid } from "./util";
 import { formatWithProperty, getFormatter } from "../util";
-import { Result } from "antd";
+import { Result, Input, Button, message, Space } from "antd";
 import { canUseCrossTable, crossResult } from "../crossTableGen";
+
+const { TextArea } = Input;
+const editorWidth = 300;
 
 const ZEChart: React.FC<ZEChartProps> = memo(
   ({
@@ -48,6 +51,24 @@ const ZEChart: React.FC<ZEChartProps> = memo(
         refreshDeps: [logicform, result],
       }
     );
+    /* 直接对最终options修改 */
+    const [editMode, setEditMode] = useState<boolean>(false);
+    const [editingOption, setEditingOption] = useState<string>();
+    const [userChangedOption, setUserChangedOption] = useState<any>(); // 最终用户的option，会完全覆盖默认的配置
+    const toggleEditMode = () => {
+      setEditMode(!editMode);
+      setEditingOption(undefined);
+    };
+    const additionalToolboxFeature = {
+      myEditor: {
+        show: true,
+        icon: "path://M541.866667,238.933333l243.2,243.2L413.866667,853.333333H170.666667v-243.2l371.2-371.2z,m0,59.733334L213.333333,631.466667V810.666667h179.2l328.533334-328.533334L541.866667,298.666667z,m72.533333-128L853.333333,413.866667l-29.866666,29.866666-243.2-243.2,34.133333-29.866666z",
+        onclick: function () {
+          toggleEditMode();
+        },
+        title: "编辑图表",
+      },
+    };
 
     const chartEventDict: Record<string, Function> = useMemo(() => {
       return {
@@ -346,11 +367,16 @@ const ZEChart: React.FC<ZEChartProps> = memo(
 
     // 设定正确的chart
     let chartDom: React.ReactNode;
+    let finalOption: any;
     if (["bar", "column", "pie", "line"].includes(type)) {
-      const finalOption = formatChartOptionGrid({
-        ...merge(chartOption, inputOption),
-        visualMap: false,
-      });
+      if (userChangedOption) {
+        finalOption = userChangedOption;
+      } else {
+        finalOption = formatChartOptionGrid({
+          ...merge(chartOption, inputOption),
+          visualMap: false,
+        });
+      }
 
       // console.log(finalOption);
 
@@ -358,19 +384,26 @@ const ZEChart: React.FC<ZEChartProps> = memo(
         <EChart
           option={finalOption}
           eventsDict={chartEventDict}
-          width={width}
+          width={editMode ? width - editorWidth : width}
           height={height}
+          additionalToolboxFeature={additionalToolboxFeature}
         />
       );
     } else if (type === "map") {
+      if (userChangedOption) {
+        finalOption = userChangedOption;
+      } else {
+        finalOption = merge(chartOption, inputOption);
+      }
       chartDom = (
         <Map
           logicform={logicform}
           data={data}
-          width={width}
+          width={editMode ? width - editorWidth : width}
           height={height}
           eventsDict={chartEventDict}
-          option={merge(chartOption, inputOption)}
+          option={finalOption}
+          // additionalToolboxFeature={additionalToolboxFeature}
         />
       );
     } else {
@@ -382,17 +415,77 @@ const ZEChart: React.FC<ZEChartProps> = memo(
         />
       );
     }
+
+    // Editor
+    const editComponent = (
+      <div>
+        <Space style={{ float: "right" }}>
+          <Button
+            onClick={() => {
+              setUserChangedOption(undefined);
+              setEditingOption(undefined);
+            }}
+          >
+            重置
+          </Button>
+          <Button
+            type="primary"
+            style={{ float: "right" }}
+            onClick={() => {
+              if (editingOption) {
+                try {
+                  let option: any;
+                  eval(editingOption);
+                  console.log(option);
+                  setUserChangedOption(option);
+                } catch (error) {
+                  console.log(error);
+                  message.error("非法的格式，请检查配置");
+                }
+              }
+            }}
+          >
+            保存
+          </Button>
+        </Space>
+
+        <TextArea
+          style={{ marginTop: 10 }}
+          rows={15}
+          value={
+            editingOption || `option = ${JSON.stringify(finalOption, null, 2)}`
+          }
+          onChange={(e) => setEditingOption(e.target.value)}
+        />
+        <div style={{ fontSize: 10, color: "grey" }}>
+          注：可复制参数，去
+          <a
+            href="https://echarts.apache.org/examples/zh/editor.html?c=pie-simple"
+            target="_blank"
+          >
+            echarts编辑器进行编辑
+          </a>
+        </div>
+      </div>
+    );
+
     return (
       <div
         className="ze-chart"
         data-testid="ZEChart"
-        onClick={() => {
-          if (type === "map") {
-            onDbClick(null, data, true);
-          }
-        }}
+        style={{ display: "flex", flexDirection: "row" }}
       >
-        {chartDom}
+        <div
+          onClick={() => {
+            if (type === "map") {
+              onDbClick(null, data, true);
+            }
+          }}
+          style={{ flexGrow: 1 }}
+        >
+          {chartDom}
+        </div>
+        {editMode && editComponent}
       </div>
     );
   }

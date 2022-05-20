@@ -17,6 +17,7 @@ interface Props {
   logicform: LogicformType;
   data: LogicformAPIResultType;
   eventsDict?: Record<string, Function>;
+  additionalToolboxFeature?: Record<string, any>;
   option?: any; // echarts的option，覆盖默认option
   width: number;
   height: number;
@@ -26,6 +27,7 @@ const Map: React.FC<Props> = ({
   logicform,
   data,
   eventsDict = {},
+  additionalToolboxFeature = {},
   option: userOption = {},
   width,
   height: _height = CHART_MAX_HEIGHT,
@@ -197,6 +199,7 @@ const Map: React.FC<Props> = ({
     <EChart
       option={finalOption}
       eventsDict={eventsDict}
+      additionalToolboxFeature={additionalToolboxFeature}
       width={width}
       height={height}
     />
