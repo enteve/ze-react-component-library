@@ -368,7 +368,11 @@ const ZECard: React.FC<ZECardProps> = ({
             item={data.result[0]}
           />
         );
-      } else if (data && useSheet) {
+      } else if (
+        data &&
+        useSheet &&
+        data.columnProperties.find((p) => p.primal_type === "number") // 这个条件是说没value的不要进来，例如$distinct
+      ) {
         component = (
           <ZESheet
             {...sheetProps}

@@ -436,7 +436,6 @@ const ZEChart: React.FC<ZEChartProps> = memo(
                 try {
                   let option: any;
                   eval(editingOption);
-                  console.log(option);
                   setUserChangedOption(option);
                 } catch (error) {
                   console.log(error);

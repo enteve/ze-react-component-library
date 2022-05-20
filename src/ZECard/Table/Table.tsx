@@ -20,7 +20,11 @@ import {
   Space,
 } from "antd";
 import type { TablePaginationConfig } from "antd";
-import { DownloadOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  DownloadOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import {
   LogicformType,
   normaliseGroupby,
@@ -32,6 +36,7 @@ import {
   commonRequest,
   findPropByName,
   isSimpleQuery,
+  removeData,
 } from "zeroetp-api-sdk";
 import type { LogicformAPIResultType } from "zeroetp-api-sdk";
 import excelExporter from "./excelExporter";
@@ -637,7 +642,7 @@ const Table: React.FC<TableProps> = ({
   };
   if (creationMode === "form") {
     toolBarRender.push(
-      <Tooltip title="添加数据">
+      <Tooltip title="添加数据" key="add">
         <Button
           type="text"
           icon={<PlusOutlined />}
@@ -646,6 +651,19 @@ const Table: React.FC<TableProps> = ({
             setCreationFormVisible(true);
           }}
         />
+      </Tooltip>
+    );
+    toolBarRender.push(
+      <Tooltip title="删除数据" key="remove">
+        <Popconfirm
+          title="删除操作不可撤销。是否确定删除？"
+          onConfirm={async () => {
+            await requestAPI(removeData(logicform.schema, logicform.query));
+            tableRef.current.reload();
+          }}
+        >
+          <Button type="text" icon={<DeleteOutlined />} />
+        </Popconfirm>
       </Tooltip>
     );
 
@@ -734,8 +752,6 @@ const Table: React.FC<TableProps> = ({
       delete col.sorter;
     });
   }
-
-  console.log(columns);
 
   return (
     <div
