@@ -50,8 +50,7 @@ const { Paragraph, Title } = Typography;
 const getDefaultRepresentation = (
   logicform: LogicformType,
   result?: LogicformAPIResultType,
-  pieThreshold: number = 5,
-  isOtherPredsSupplementary: boolean = false // 这个配置，指的是是不是其他的preds是帮助性的preds。帮助性的preds不计入pred count中
+  pieThreshold: number = 5
 ): RepresentationType => {
   if (!result) return null;
   if (result.result == null) return null;
@@ -60,12 +59,6 @@ const getDefaultRepresentation = (
     return "value";
 
   if (logicform.groupby) {
-    const predsCount = isOtherPredsSupplementary ? 1 : logicform.preds?.length;
-    // 如果有多个指标，优先返回table
-    if (predsCount >= 2) {
-      return "table";
-    }
-
     // 如果是多维分组，直接用table
     if (Array.isArray(logicform.groupby) && logicform.groupby.length >= 2) {
       return "table";
@@ -239,8 +232,7 @@ const ZECard: React.FC<ZECardProps> = ({
       const defaultRepresentation = getDefaultRepresentation(
         logicform,
         data,
-        pieThreshold,
-        isOtherPredsSupplementary
+        pieThreshold
       );
       // 从value类型下钻到其它图表类型比如pie,然后点击切换图表类型为line,
       // 这个时候representation为line，之后再点回退，此时defaultRepresentation为value，
