@@ -1,5 +1,6 @@
 import React, { useContext, useState, useRef } from "react";
 import _ from "underscore";
+import { FormInstance } from "@ant-design/pro-form";
 import ProTable, {
   ActionType,
   ColumnsState,
@@ -9,7 +10,15 @@ import ProTable, {
 import { SizeMe } from "react-sizeme";
 import { useRequest } from "@umijs/hooks";
 import ProProvider from "@ant-design/pro-provider";
-import { Tooltip, Result, Button, Popconfirm, Drawer, message } from "antd";
+import {
+  Tooltip,
+  Result,
+  Button,
+  Popconfirm,
+  Drawer,
+  message,
+  Space,
+} from "antd";
 import type { TablePaginationConfig } from "antd";
 import { DownloadOutlined, PlusOutlined } from "@ant-design/icons";
 import {
@@ -254,6 +263,7 @@ const Table: React.FC<TableProps> = ({
   ...restProps
 }) => {
   const rootDivRef = useRef<HTMLDivElement>();
+  const formRef = useRef<FormInstance>();
   if (ret?.error)
     return (
       <Result
@@ -729,6 +739,8 @@ const Table: React.FC<TableProps> = ({
     });
   }
 
+  console.log(columns);
+
   return (
     <div
       data-testid="ZETable"
@@ -759,14 +771,37 @@ const Table: React.FC<TableProps> = ({
           <Drawer
             destroyOnClose
             visible={creationFormVisible}
-            maskClosable={false} // 防止误触
+            // maskClosable={false} // 防止误触
             width={500}
             onClose={() => setCreationFormVisible(false)}
+            footer={
+              <div style={{ display: "flex", flexDirection: "row-reverse" }}>
+                <Space>
+                  <Button
+                    onClick={() => {
+                      formRef.current?.resetFields();
+                    }}
+                  >
+                    重置
+                  </Button>
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      formRef.current?.submit();
+                    }}
+                  >
+                    提交
+                  </Button>
+                </Space>
+              </div>
+            }
           >
             <ZESchemaForm
+              formRef={formRef}
               schemaID={logicform.schema}
               columns={creationColumns}
               initialValues={selectedRecord}
+              submitter={false}
               onFinish={async (values) => {
                 if (!selectedRecord) {
                   await requestAPI(createData(logicform.schema, values));
