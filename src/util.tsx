@@ -128,8 +128,9 @@ export const valueTypeMapping = (property: PropertyType) => {
     case "number":
       return "number";
     case "string":
-      if (property.constraints?.enum) {
-        if (property.constraints?.enum.length >= 10) {
+      const distincts = property.constraints?.enum || property.stats?.distincts;
+      if (distincts) {
+        if (distincts.length >= 10) {
           return "select";
         }
 
@@ -833,6 +834,7 @@ export const getColumnPublicProps = (
 ) => {
   // valueType
   let valueType: any = "string";
+
   if (
     propertyConfig &&
     propertyConfig[p.name] &&
