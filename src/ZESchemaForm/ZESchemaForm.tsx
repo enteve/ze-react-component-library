@@ -150,6 +150,11 @@ const ZESchemaForm: React.FC<ZESchemaFormProps> = ({
           };
           // 在这里进行一个转换，object变回为_id的形式
           const simplifyValue = (item) => {
+            // item空值时
+            if(!item){
+              return item;
+            }
+
             if (Array.isArray(item)) {
               return item.map((i) => simplifyValue(i));
             }
