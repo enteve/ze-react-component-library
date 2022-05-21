@@ -359,6 +359,9 @@ export const customValueTypes = (schema: SchemaType): any => ({
         getPropNameFromProFieldKey(findProFieldKey(props));
 
       const property = findPropByName(schema, propName);
+      if (property.isArray) {
+        return <Text disabled>开发中</Text>; //not yet prepared
+      }
 
       // Object有两种表现模式，带Hierarchy的和不带Hierarchy的
       if (property.schema.hierarchy) {

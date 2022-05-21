@@ -2,7 +2,6 @@ import React, { useContext, useState, useRef } from "react";
 import _ from "underscore";
 import { FormInstance } from "@ant-design/pro-form";
 import ProTable, {
-  ActionType,
   ColumnsState,
   EditableProTable,
   ProColumnType,
@@ -293,6 +292,7 @@ const Table: React.FC<TableProps> = ({
   const defaultColWidth = scroll === null ? undefined : defaultColWidthOfProps;
   const values = useContext(ProProvider); // 用来自定义ValueType
   const [selectedRecord, setSelectedRecord] = useState<any>(undefined);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   // Export相关字段
   const columnsStatePersistentKey = `_columnsState_${JSON.stringify(
@@ -530,6 +530,7 @@ const Table: React.FC<TableProps> = ({
     cardProps: {
       bodyStyle: { padding: 0 },
     },
+    loading: isSubmitting,
     ...restProps,
     columns,
     rowKey,
@@ -633,8 +634,10 @@ const Table: React.FC<TableProps> = ({
   // Creation
   const deleteRecord = (record: any) => {
     if (logicform.schema) {
+      setIsSubmitting(true);
       requestAPI(removeDataByID(logicform.schema, record._id)).then(() => {
         reload?.();
+        setIsSubmitting(false);
       });
     }
   };
@@ -657,7 +660,6 @@ const Table: React.FC<TableProps> = ({
           title="删除操作不可撤销。是否确定删除？"
           onConfirm={async () => {
             await requestAPI(removeData(logicform.schema, logicform.query));
-            tableRef.current.reload();
           }}
         >
           <Button type="text" icon={<DeleteOutlined />} />
@@ -699,6 +701,7 @@ const Table: React.FC<TableProps> = ({
   } else if (creationMode === "list") {
     tableProps.editable = {
       onSave: (id, record: any, _origin, newLine: boolean) => {
+        setIsSubmitting(true);
         if (newLine) {
           // 用logicform.query里面的数据来设置默认的一些属性
           // TODO: 目前只接受非chain的query
@@ -706,10 +709,12 @@ const Table: React.FC<TableProps> = ({
             createData(logicform.schema, { ...logicform.query, ...record })
           ).then(() => {
             reload?.();
+            setIsSubmitting(false);
           });
         } else {
           requestAPI(updateDataByID(logicform.schema, id, record)).then(() => {
             reload?.();
+            setIsSubmitting(false);
           });
         }
       },
@@ -797,6 +802,7 @@ const Table: React.FC<TableProps> = ({
                     重置
                   </Button>
                   <Button
+                    loading={isSubmitting}
                     type="primary"
                     onClick={() => {
                       formRef.current?.submit();
@@ -815,6 +821,7 @@ const Table: React.FC<TableProps> = ({
               initialValues={selectedRecord}
               submitter={false}
               onFinish={async (values) => {
+                setIsSubmitting(true);
                 if (!selectedRecord) {
                   await requestAPI(createData(logicform.schema, values));
                 } else {
@@ -823,7 +830,8 @@ const Table: React.FC<TableProps> = ({
                   );
                 }
                 setCreationFormVisible(false);
-                reload?.()
+                setIsSubmitting(false);
+                reload?.();
               }}
             />
           </Drawer>
