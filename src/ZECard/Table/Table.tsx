@@ -55,6 +55,7 @@ import {
   getColumnDateProps,
   getColumnSearchProps,
   getColumnNumberProps,
+  getColumnEnumFilterProps,
 } from "./FilterComponents";
 import { canUseCrossTable, crossResult } from "../../crossTableGen";
 import { transposeResult } from "./transposeGen";
@@ -106,6 +107,8 @@ const mapColumnItem = (
     };
   }
 
+  const { valueEnum, valueType, fieldProps } = getColumnPublicProps(property);
+
   let additionalProps: any = {};
 
   // Filters
@@ -130,6 +133,11 @@ const mapColumnItem = (
         ...additionalProps,
         ...getColumnSearchProps(property.name),
       };
+    } else if(valueEnum !== undefined){
+      additionalProps = {
+        ...additionalProps,
+        ...getColumnEnumFilterProps(property.name)
+      };
     }
   }
 
@@ -143,7 +151,6 @@ const mapColumnItem = (
   // if (showSorter && property.primal_type === "number") {
   //   additionalProps.sorter = true;
   // }
-  const { valueEnum, valueType, fieldProps } = getColumnPublicProps(property);
   let sortOrder = logicform.sort?.[predItem];
   switch (sortOrder) {
     case 1:

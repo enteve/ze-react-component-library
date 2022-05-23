@@ -50,6 +50,10 @@ export const logicformValueToColumnFilter = (oldV: any) => {
   if (typeof v === "object" && "$regex" in v) {
     return v["$regex"];
   }
+  const nullValue = JSON.stringify({ $exists: false });
+  if (typeof v === "object" && JSON.stringify(v) === nullValue) {
+    return [nullValue];
+  }
 
   return "";
 };
