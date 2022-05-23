@@ -261,6 +261,7 @@ const Table: React.FC<TableProps> = ({
   refLFs = [],
   creationMode,
   creationColumns,
+  canRemoveData = false,
   defaultColWidth: defaultColWidthOfProps = 200,
   horizontalColumns,
   transpose,
@@ -662,18 +663,21 @@ const Table: React.FC<TableProps> = ({
         />
       </Tooltip>
     );
-    toolBarRender.push(
-      <Tooltip title="删除数据" key="remove">
-        <Popconfirm
-          title="删除操作不可撤销。是否确定删除？"
-          onConfirm={async () => {
-            await requestAPI(removeData(logicform.schema, logicform.query));
-          }}
-        >
-          <Button type="text" icon={<DeleteOutlined />} />
-        </Popconfirm>
-      </Tooltip>
-    );
+
+    if (canRemoveData) {
+      toolBarRender.push(
+        <Tooltip title="删除数据" key="remove">
+          <Popconfirm
+            title="删除操作不可撤销。是否确定删除？"
+            onConfirm={async () => {
+              await requestAPI(removeData(logicform.schema, logicform.query));
+            }}
+          >
+            <Button type="text" icon={<DeleteOutlined />} />
+          </Popconfirm>
+        </Tooltip>
+      );
+    }
 
     // Create的话，添加【操作】column
     // 20220523: 目前，event不允许删除和修改。以后仔细定义一下
