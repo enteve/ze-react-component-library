@@ -133,10 +133,10 @@ const mapColumnItem = (
         ...additionalProps,
         ...getColumnSearchProps(property.name),
       };
-    } else if(valueEnum !== undefined){
+    } else if (valueEnum !== undefined) {
       additionalProps = {
         ...additionalProps,
-        ...getColumnEnumFilterProps(property.name)
+        ...getColumnEnumFilterProps(property.name),
       };
     }
   }
@@ -676,36 +676,39 @@ const Table: React.FC<TableProps> = ({
     );
 
     // Create的话，添加【操作】column
-    columns.push({
-      title: "操作",
-      width: 150,
-      key: "_operation",
-      valueType: "option",
-      render: (_dom, record: any) => [
-        // 修改
-        <a
-          key="edit"
-          onClick={() => {
-            setSelectedRecord(record);
-            setCreationFormVisible(true);
-          }}
-        >
-          修改
-        </a>,
-        // 删除
-        <Popconfirm
-          title="确定删除？删除后将不可恢复。"
-          key="delete"
-          onConfirm={() => {
-            deleteRecord(record);
-          }}
-          okText="确定"
-          cancelText="取消"
-        >
-          <a>删除</a>
-        </Popconfirm>,
-      ],
-    });
+    // 20220523: 目前，event不允许删除和修改。以后仔细定义一下
+    if (result?.schema.type === "entity") {
+      columns.push({
+        title: "操作",
+        width: 150,
+        key: "_operation",
+        valueType: "option",
+        render: (_dom, record: any) => [
+          // 修改
+          <a
+            key="edit"
+            onClick={() => {
+              setSelectedRecord(record);
+              setCreationFormVisible(true);
+            }}
+          >
+            修改
+          </a>,
+          // 删除
+          <Popconfirm
+            title="确定删除？删除后将不可恢复。"
+            key="delete"
+            onConfirm={() => {
+              deleteRecord(record);
+            }}
+            okText="确定"
+            cancelText="取消"
+          >
+            <a>删除</a>
+          </Popconfirm>,
+        ],
+      });
+    }
   } else if (creationMode === "list") {
     tableProps.editable = {
       onSave: (id, record: any, _origin, newLine: boolean) => {
