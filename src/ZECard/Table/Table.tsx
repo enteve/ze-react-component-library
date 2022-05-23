@@ -133,10 +133,10 @@ const mapColumnItem = (
         ...additionalProps,
         ...getColumnSearchProps(property.name),
       };
-    } else if(valueEnum !== undefined){
+    } else if (valueEnum !== undefined && Object.keys(valueEnum).length > 0) {
       additionalProps = {
         ...additionalProps,
-        ...getColumnEnumFilterProps(property.name)
+        ...getColumnEnumFilterProps(property.name),
       };
     }
   }

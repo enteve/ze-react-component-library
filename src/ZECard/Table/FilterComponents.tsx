@@ -219,7 +219,7 @@ export const getColumnEnumFilterProps = (propertyName: string) => ({
     clearFilters,
     filters,
   }: FilterDropdownProps) => {
-    const enums: any[] = [...filters];
+    const enums: any[] = filters instanceof Array ? filters : [];
     const nullValueSelected = isNullValue(selectedKeys);
 
     return (
