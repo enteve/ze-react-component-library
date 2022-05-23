@@ -41,6 +41,7 @@ export const Basic = () => {
         logicform={{
           schema,
         }}
+        options={{ reload: true }}
       />
     </StoryBookUseCaseDescription>
   );
