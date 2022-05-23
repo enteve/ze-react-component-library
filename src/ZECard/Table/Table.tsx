@@ -671,6 +671,7 @@ const Table: React.FC<TableProps> = ({
             title="删除操作不可撤销。是否确定删除？"
             onConfirm={async () => {
               await requestAPI(removeData(logicform.schema, logicform.query));
+              reload?.();
             }}
           >
             <Button type="text" icon={<DeleteOutlined />} />
