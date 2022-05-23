@@ -543,12 +543,13 @@ const Table: React.FC<TableProps> = ({
         ? { ...scroll, y: scroll?.y || scrollY }
         : { x, y: scrollY },
     options:
-      options != undefined
-        ? options // 注意，这里options支持false，所以不能简写
+      options === false
+        ? false
         : {
-            reload: reload || false,
             setting: false,
             density: false,
+            ...options,
+            reload: options.reload ? reload : false,
           },
     pagination,
     toolBarRender: () => toolBarRender,

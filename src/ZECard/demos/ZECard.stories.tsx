@@ -24,6 +24,9 @@ export const SimpleTable = () => (
     tableProps={{
       defaultColWidth: 150,
       scroll: null,
+      options: {
+        reload: true,
+      }
     }}
     close={() => {
       console.log("close");
