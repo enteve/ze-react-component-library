@@ -54,7 +54,17 @@ export function useTableParams({
             return i;
           });
 
-          if (property.primal_type === "string" && property.is_categorical) {
+          const nullQuery = { $exists: false };
+
+          if (
+            mappedV.length === 1 &&
+            mappedV[0] === JSON.stringify(nullQuery)
+          ) {
+            targetV = nullQuery;
+          } else if (
+            property.primal_type === "string" &&
+            property.is_categorical
+          ) {
             targetV = { $in: mappedV };
           } else if (property.primal_type === "date") {
             targetV = {
