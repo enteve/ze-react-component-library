@@ -116,12 +116,12 @@ const mapColumnItem = (
     if (property.primal_type === "date") {
       additionalProps = {
         ...additionalProps,
-        ...getColumnDateProps(property.name),
+        ...getColumnDateProps(property),
       };
     } else if (property.primal_type === "number") {
       additionalProps = {
         ...additionalProps,
-        ...getColumnNumberProps(property.name),
+        ...getColumnNumberProps(property),
       };
     } else if (
       (property.primal_type === "string" ||
@@ -131,12 +131,12 @@ const mapColumnItem = (
     ) {
       additionalProps = {
         ...additionalProps,
-        ...getColumnSearchProps(property.name),
+        ...getColumnSearchProps(property),
       };
     } else if (valueEnum !== undefined && Object.keys(valueEnum).length > 0) {
       additionalProps = {
         ...additionalProps,
-        ...getColumnEnumFilterProps(property.name),
+        ...getColumnEnumFilterProps(property),
       };
     }
   }
