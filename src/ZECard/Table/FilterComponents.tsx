@@ -3,6 +3,7 @@ import { Input, Button, DatePicker, Space, InputNumber, Checkbox } from "antd";
 import { SearchOutlined, FilterFilled } from "@ant-design/icons";
 import { FilterDropdownProps } from "antd/lib/table/interface";
 import moment from "moment";
+import { PropertyType } from "zeroetp-api-sdk";
 
 const { RangePicker } = DatePicker;
 const nullValue = JSON.stringify({ $exists: false });
@@ -32,7 +33,7 @@ const NullValueHandler = ({
 };
 
 // Search控件
-export const getColumnSearchProps = (propertyName: string) => ({
+export const getColumnSearchProps = (property: PropertyType) => ({
   filterDropdown: ({
     setSelectedKeys,
     selectedKeys,
@@ -43,7 +44,7 @@ export const getColumnSearchProps = (propertyName: string) => ({
     return (
       <div style={{ padding: 8 }}>
         <Input
-          placeholder={`搜索 ${propertyName}`}
+          placeholder={`搜索 ${property.name}`}
           value={nullValueSelected ? undefined : selectedKeys[0]}
           disabled={nullValueSelected}
           onChange={(e) =>
@@ -52,10 +53,12 @@ export const getColumnSearchProps = (propertyName: string) => ({
           onPressEnter={() => confirm()}
           style={{ width: 188, marginBottom: 8, display: "block" }}
         />
-        <NullValueHandler
-          selectedKeys={selectedKeys}
-          setSelectedKeys={setSelectedKeys}
-        />
+        {!property.constraints?.required && (
+          <NullValueHandler
+            selectedKeys={selectedKeys}
+            setSelectedKeys={setSelectedKeys}
+          />
+        )}
         <Button
           size="small"
           style={{ width: 90, marginRight: 8 }}
@@ -84,7 +87,7 @@ export const getColumnSearchProps = (propertyName: string) => ({
 });
 
 // 日期筛选控件
-export const getColumnDateProps = (propertyName: string) => ({
+export const getColumnDateProps = (property: PropertyType) => ({
   filterDropdown: ({
     setSelectedKeys,
     selectedKeys,
@@ -107,10 +110,12 @@ export const getColumnDateProps = (propertyName: string) => ({
             setSelectedKeys(v ? v.map((i) => i!.format("YYYY-MM-DD")) : [])
           }
         />
-        <NullValueHandler
-          selectedKeys={selectedKeys}
-          setSelectedKeys={setSelectedKeys}
-        />
+        {!property.constraints?.required && (
+          <NullValueHandler
+            selectedKeys={selectedKeys}
+            setSelectedKeys={setSelectedKeys}
+          />
+        )}
         <div>
           <Button
             size="small"
@@ -140,7 +145,7 @@ export const getColumnDateProps = (propertyName: string) => ({
 });
 
 // 数字筛选控件
-export const getColumnNumberProps = (propertyName: string) => ({
+export const getColumnNumberProps = (property: PropertyType) => ({
   filterDropdown: ({
     setSelectedKeys,
     selectedKeys,
@@ -178,10 +183,12 @@ export const getColumnNumberProps = (propertyName: string) => ({
             }}
           />
         </Space>
-        <NullValueHandler
-          selectedKeys={selectedKeys}
-          setSelectedKeys={setSelectedKeys}
-        />
+        {!property.constraints?.required && (
+          <NullValueHandler
+            selectedKeys={selectedKeys}
+            setSelectedKeys={setSelectedKeys}
+          />
+        )}
         <div>
           <Button
             size="small"
@@ -211,7 +218,7 @@ export const getColumnNumberProps = (propertyName: string) => ({
 });
 
 // 枚举筛选控件
-export const getColumnEnumFilterProps = (propertyName: string) => ({
+export const getColumnEnumFilterProps = (property: PropertyType) => ({
   filterDropdown: ({
     setSelectedKeys,
     selectedKeys,
@@ -241,10 +248,12 @@ export const getColumnEnumFilterProps = (propertyName: string) => ({
             </Checkbox>
           </div>
         ))}
-        <NullValueHandler
-          selectedKeys={selectedKeys}
-          setSelectedKeys={setSelectedKeys}
-        />
+        {!property.constraints?.required && (
+          <NullValueHandler
+            selectedKeys={selectedKeys}
+            setSelectedKeys={setSelectedKeys}
+          />
+        )}
         <Button
           size="small"
           style={{ width: 90, marginRight: 8 }}
@@ -269,5 +278,5 @@ export const getColumnEnumFilterProps = (propertyName: string) => ({
   },
   filterIcon: (filtered: boolean) => (
     <FilterFilled style={{ color: filtered ? "#1890ff" : undefined }} />
-  )
+  ),
 });
