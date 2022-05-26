@@ -45,7 +45,7 @@ export type ZECardProps = {
   showRepresentationChanger?: boolean;
   // Recommender相关
   showRecommender?: boolean; // 是不是要显示更多推荐的相关数值
-  askMore?: (question: string) => void;
+  askMore?: (question: string, logicform: LogicformType) => void;
 
   tableProps?: Omit<
     TableProps,
