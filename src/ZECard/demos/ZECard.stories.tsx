@@ -26,7 +26,7 @@ export const SimpleTable = () => (
       scroll: null,
       options: {
         reload: true,
-      }
+      },
     }}
     close={() => {
       console.log("close");

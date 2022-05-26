@@ -473,7 +473,7 @@ const ZECard: React.FC<ZECardProps> = ({
                     type="link"
                     style={{ padding: 0 }}
                     onClick={() => {
-                      askMore?.(r.question);
+                      askMore?.(r.question, r.logicform);
                     }}
                   >
                     {r.question}
