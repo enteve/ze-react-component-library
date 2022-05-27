@@ -18,6 +18,7 @@ import React, { useState, useMemo, useEffect } from "react";
 import _ from "underscore";
 import {
   findPropByName,
+  getNameProperty,
   isSimpleQuery,
   LogicformAPIResultType,
   LogicformType,
@@ -45,6 +46,7 @@ import PinHandler from "./PinHandler";
 import GroupByMenu from "../components/GroupByMenu";
 import ErrorDisplayer from "./ErrorDisplayer";
 import ZESheet from "../ZESheet";
+import UrlList from "./UrlList";
 const { Paragraph, Title } = Typography;
 
 const getDefaultRepresentation = (
@@ -361,13 +363,37 @@ const ZECard: React.FC<ZECardProps> = ({
         finalRepresentation === "entity" &&
         data.result?.length === 1
       ) {
-        component = (
-          <ZEDescription
-            schema={data.schema}
-            columnProperties={data.columnProperties}
-            item={data.result[0]}
-          />
-        );
+        const entity = data.result[0];
+
+        // feat: modality
+        if (
+          data.schema?.modality?.detail?.type === "url" &&
+          data.schema?.modality?.detail?.config?.property &&
+          entity[data.schema.modality.detail.config.property]?.length > 0
+        ) {
+          const url = entity[data.schema.modality.detail.config.property];
+          if (data.schema.modality.detail.config.inline) {
+            component = (
+              <iframe src={url} style={{ width: "100%", height: "100%" }} />
+            );
+          } else {
+            const nameProp = getNameProperty(data.schema);
+
+            component = (
+              <UrlList
+                data={[{ url, title: nameProp ? entity[nameProp.name] : "" }]}
+              />
+            );
+          }
+        } else {
+          component = (
+            <ZEDescription
+              schema={data.schema}
+              columnProperties={data.columnProperties}
+              item={entity}
+            />
+          );
+        }
       } else if (
         data &&
         useSheet &&

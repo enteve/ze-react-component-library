@@ -478,6 +478,18 @@ export const CustomContent = () => {
   );
 };
 
+export const ModalityUrl = () => (
+  <ZECard
+    title="url跳转"
+    logicform={{
+      schema: "store",
+      operator: "$ent",
+      field: "名称",
+      name: "黑河市黑河市市辖区店",
+    }}
+  />
+);
+
 export const ErrorDisplay = () => (
   <ZECard
     askError="无法理解此问题，请继续补充或重新提问"
