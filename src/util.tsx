@@ -16,6 +16,7 @@ import {
   Select,
   InputNumber,
   Radio,
+  Input,
   Cascader,
   Spin,
   Typography,
@@ -26,6 +27,7 @@ import {
   Switch,
   Space,
   Tag,
+  SelectProps,
 } from "antd";
 import type { CardProps } from "antd";
 import { useRequest } from "@umijs/hooks";
@@ -99,7 +101,9 @@ export const valueTypeMapping = (property: PropertyType) => {
     case "file":
       return "file";
     case "tag":
-      return "string";
+      return "tag";
+    case "url":
+      return "url";
     default:
       break;
   }
@@ -223,6 +227,26 @@ const getPropNameFromProFieldKey = (key: string) => {
   return key.split("-").slice(2).join("-");
 };
 
+const tagRender = (
+  tagProps: Partial<Parameters<SelectProps["tagRender"]>[0]>
+) => {
+  const { label, closable, onClose } = tagProps;
+  return (
+    <Tag
+      color="blue"
+      onMouseDown={(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+      }}
+      closable={closable}
+      onClose={onClose}
+      style={{ marginRight: 3 }}
+    >
+      {label}
+    </Tag>
+  );
+};
+
 // config里面目前有table的defaultColWidth.用于计算object的ellipsis。
 // TODO：上述解决方案很不行。如果有更好的解决方案就好了。
 export const customValueTypes = (schema: SchemaType): any => ({
@@ -315,6 +339,7 @@ export const customValueTypes = (schema: SchemaType): any => ({
             style={{
               margin: 0,
               width,
+              maxWidth: "100%",
               flexGrow: 1,
               flexShrink: 0,
             }}
@@ -470,15 +495,34 @@ export const customValueTypes = (schema: SchemaType): any => ({
       if (props.render) {
         return props.render(v, props, ...rest);
       }
-      if (props?.fieldProps?.delimiter && v instanceof Array) {
-        return v.join(props?.fieldProps?.delimiter);
+      if (v instanceof Array) {
+        return v.join(props?.fieldProps?.delimiter || " ");
       }
-      if (props?.fieldProps?.tagRender && v instanceof Array) {
+      return v;
+    },
+    renderFormItem: (text, props, form) => {
+      if (props.renderFormItem) {
+        return props.renderFormItem(text, props, form);
+      }
+      return (
+        <AutoComplete
+          placeholder={props.placeholder || "请输入"}
+          {...props?.fieldProps}
+        />
+      );
+    },
+  },
+  tag: {
+    render: (v, props, ...rest) => {
+      if (props.render) {
+        return props.render(v, props, ...rest);
+      }
+      if (v instanceof Array) {
         return (
           <Space size="small">
             {v.map((d) => (
               <Fragment key={d}>
-                {props?.fieldProps?.tagRender({ label: d, closable: false })}
+                {tagRender({ label: d, closable: false })}
               </Fragment>
             ))}
           </Space>
@@ -490,17 +534,11 @@ export const customValueTypes = (schema: SchemaType): any => ({
       if (props.renderFormItem) {
         return props.renderFormItem(text, props, form);
       }
-      if (props?.fieldProps?.mode) {
-        return (
-          <Select
-            placeholder={props.placeholder || "请输入"}
-            {...props?.fieldProps}
-          />
-        );
-      }
       return (
-        <AutoComplete
+        <Select
           placeholder={props.placeholder || "请输入"}
+          mode="tags"
+          tagRender={tagRender}
           {...props?.fieldProps}
         />
       );
@@ -524,6 +562,24 @@ export const customValueTypes = (schema: SchemaType): any => ({
         return props.renderFormItem(text, props, form);
       }
       return <ImageUpload {...props?.fieldProps} />;
+    },
+  },
+  url: {
+    render: (v, props, ...rest) => {
+      if (props.render) {
+        return props.render(v, props, ...rest);
+      }
+      return (
+        <a href={v} target="_blank">
+          {v}
+        </a>
+      );
+    },
+    renderFormItem: (text, props, form) => {
+      if (props.renderFormItem) {
+        return props.renderFormItem(text, props, form);
+      }
+      return <Input {...props?.fieldProps} />;
     },
   },
 });
@@ -859,45 +915,18 @@ export const getColumnPublicProps = (
     : undefined;
 
   const colFieldProps: any = col?.fieldProps || {};
-  let extraFieldProps: any = {};
-
-  if (p.type === "tag") {
-    extraFieldProps = {
-      mode: "tags",
-      tagRender: (tagProps) => {
-        const { label, closable, onClose } = tagProps;
-        return (
-          <Tag
-            color="blue"
-            onMouseDown={(event) => {
-              event.preventDefault();
-              event.stopPropagation();
-            }}
-            closable={closable}
-            onClose={onClose}
-            style={{ marginRight: 3 }}
-          >
-            {label}
-          </Tag>
-        );
-      },
-    };
-  } else if (p.isArray) {
-    extraFieldProps = { delimiter: p.ui?.delimiter || " " };
-  }
-
   const fieldProps =
     valueType === "string"
       ? {
           options: valueOptions,
+          delimiter: p.ui?.delimiter,
           ...colFieldProps,
-          ...extraFieldProps,
         }
       : colFieldProps;
 
   return {
     valueType,
-    valueEnum: valueType === "string" ? undefined : valueEnum,
+    valueEnum,
     fieldProps,
   };
 };
