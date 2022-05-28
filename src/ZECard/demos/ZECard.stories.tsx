@@ -34,6 +34,162 @@ export const SimpleTable = () => (
   />
 );
 
+export const TableWithTag = () => {
+  return (
+    <ZECard
+      logicform={{
+        schema: "dashboard",
+      }}
+      tableProps={{
+        // @ts-ignore
+        result: {
+          result: [
+            {
+              _id: "test",
+              名称: "test",
+              简称: ["test1", "test2"],
+              标签: ["a", "b"],
+            },
+          ],
+          schema: {
+            _id: "dashboard",
+            name: "数据看板",
+            syno: ["数据看板", "仪表盘", "dashboard"],
+            type: "entity",
+            editable: false,
+            properties: [
+              {
+                name: "名称",
+                type: "ID",
+                is_name: true,
+                constraints: { required: true, unique: true },
+                stats: {},
+                primal_type: "string",
+                is_comparable: false,
+              },
+              {
+                name: "简称",
+                type: "string",
+                is_name: true,
+                isArray: true,
+                stats: {},
+                constraints: {},
+                primal_type: "string",
+                is_comparable: false,
+              },
+              {
+                name: "标签",
+                type: "tag",
+                is_categorical: true,
+                isArray: true,
+                stats: {},
+                constraints: {},
+                primal_type: "string",
+                is_comparable: false,
+              },
+              {
+                name: "uid",
+                description: "website的用户id",
+                is_supplemantary: true,
+                type: "string",
+                ui: { show_in_detail_only: true },
+                udf: { function: "(self) => self._user_id", dependencies: [] },
+                stats: {},
+                constraints: {},
+                primal_type: "string",
+                is_comparable: false,
+              },
+              {
+                name: "data",
+                description: "JSON化的ZEDashboard数据",
+                is_supplemantary: true,
+                type: "string",
+                ui: { show_in_detail_only: true },
+                stats: {},
+                constraints: {},
+                primal_type: "string",
+                is_comparable: false,
+              },
+            ],
+          },
+          columnProperties: [
+            {
+              name: "名称",
+              type: "ID",
+              is_name: true,
+              constraints: { required: true, unique: true },
+              stats: {},
+              primal_type: "string",
+              is_comparable: false,
+            },
+            {
+              name: "简称",
+              type: "string",
+              is_name: true,
+              isArray: true,
+              stats: {},
+              constraints: {},
+              primal_type: "string",
+              is_comparable: false,
+              // ui: {
+              //   delimiter: '/'
+              // },
+            },
+            {
+              name: "标签",
+              type: "tag",
+              is_categorical: true,
+              isArray: true,
+              stats: {},
+              constraints: {},
+              primal_type: "string",
+              is_comparable: false,
+            },
+            {
+              name: "uid",
+              description: "website的用户id",
+              is_supplemantary: true,
+              type: "string",
+              ui: { show_in_detail_only: true },
+              udf: { function: "(self) => self._user_id", dependencies: [] },
+              stats: {},
+              constraints: {},
+              primal_type: "string",
+              is_comparable: false,
+            },
+            {
+              name: "data",
+              description: "JSON化的ZEDashboard数据",
+              is_supplemantary: true,
+              type: "string",
+              ui: { show_in_detail_only: true },
+              stats: {},
+              constraints: {},
+              primal_type: "string",
+              is_comparable: false,
+            },
+          ],
+          logicform: {
+            schema: "dashboard",
+            query: {},
+            _role: "admin",
+            _user_id: "62909bc94a875acf93f98b56",
+            preds: [
+              [{ pred: "名称", name: "名称" }],
+              [{ pred: "简称", name: "简称" }],
+              [{ pred: "标签", name: "标签" }],
+              [{ pred: "uid", name: "uid" }],
+              [{ pred: "data", name: "data" }],
+            ],
+            limit: 20,
+          },
+          total: 0,
+        },
+      }}
+    />
+  );
+};
+
 export const Value = () => (
   <ZECard
     title="MTD销售额"

@@ -3,6 +3,8 @@ import { SchemaType } from "zeroetp-api-sdk";
 import { FormSchema } from "@ant-design/pro-form/lib/components/SchemaForm";
 export type ExtendValueTypes =
   | "string"
+  | "url"
+  | "tag"
   | "percentage"
   | "object"
   | "boolean"
