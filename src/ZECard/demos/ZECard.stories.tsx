@@ -27,6 +27,7 @@ export const SimpleTable = () => (
       options: {
         reload: true,
       },
+      exportToExcel: true,
     }}
     close={() => {
       console.log("close");
