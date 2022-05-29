@@ -67,7 +67,6 @@ const mapColumnItem = (
   predItem: string,
   customColumn: ProColumnType,
   properties: any[],
-  exporting: boolean, // 是否需要导出，导出的话，ellipse不要了
   showUnit: boolean,
   showSorter: boolean,
   defaultColWidth?: number
@@ -186,9 +185,7 @@ const mapColumnItem = (
     dataIndex: property.name.split("."),
     ellipsis:
       property.ui?.ellipsis ||
-      (property.primal_type === "string" &&
-        !property.constraints.enum &&
-        !exporting), // 前端默认的ellipsis逻辑
+      (property.primal_type === "string" && !property.constraints.enum), // 前端默认的ellipsis逻辑
     valueType,
     filters: valueEnum !== undefined,
     onFilter: false,
@@ -365,7 +362,6 @@ const Table: React.FC<TableProps> = ({
                   pred,
                   customColumns[pred],
                   properties,
-                  exportToExcel != undefined,
                   showUnit,
                   showSorter,
                   defaultColWidth
@@ -379,7 +375,6 @@ const Table: React.FC<TableProps> = ({
             predItem,
             customColumns[predItem],
             properties,
-            exportToExcel != undefined,
             showUnit,
             showSorter,
             defaultColWidth
