@@ -97,7 +97,7 @@ const getDefaultRepresentation = (
       result.result.length <= pieThreshold &&
       result.logicform.groupby.length === 1 && // 只需允许有一个维度
       result.columnProperties.length === 2 && // 只需允许有一个pred
-      !result.columnProperties[1].is_speedish // 不是百分比类型的，而是绝对值类型的
+      result.columnProperties[1].is_additive // 不是百分比类型的，而是绝对值类型的
     ) {
       return "pie";
     }
