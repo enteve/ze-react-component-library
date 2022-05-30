@@ -172,12 +172,7 @@ const ZEValueDisplayer: React.FC<ZEValueDisplayerProps> = ({
     }
 
     const valueProp = thisPeriodData.columnProperties[0];
-    if (
-      valueProp.type === "percentage" ||
-      valueProp.is_speedish ||
-      // @ts-ignore
-      valueProp.use_minus_on_mom
-    ) {
+    if (valueProp.use_minus_on_mom) {
       return thisPeriod - lastPeriod;
     }
     return thisPeriod / lastPeriod - 1;
