@@ -23,6 +23,8 @@ export type {
 } from "./ZEDashboard";
 export { default as ZELogicformVisualizer } from "./ZELogicformVisualizer";
 export type { ZELogicformVisualizerProps } from "./ZELogicformVisualizer/ZELogicformVisualizer.types";
+export { default as ZEDescription } from "./ZEDescription";
+export type { ZEDescriptionProps } from "./ZEDescription/ZEDescription.types";
 export { default as ZELogicformEditor } from "./ZELogicformEditor";
 export type { ZELogicformEditorProps } from "./ZELogicformEditor/ZELogicformEditor.types";
 export type { ZESearchBarProps } from "./ZESearchBar";
