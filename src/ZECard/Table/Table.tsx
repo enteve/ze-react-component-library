@@ -269,6 +269,7 @@ const Table: React.FC<TableProps> = ({
   result: ret,
   reload,
   formatExpandResult,
+  entityTooltipCardProps,
   ...restProps
 }) => {
   const rootDivRef = useRef<HTMLDivElement>();
@@ -779,10 +780,13 @@ const Table: React.FC<TableProps> = ({
         value={{
           ...values,
           valueTypeMap: result
-            ? customValueTypes({
-                ...result.schema,
-                properties: result.columnProperties,
-              })
+            ? customValueTypes(
+                {
+                  ...result.schema,
+                  properties: result.columnProperties,
+                },
+                entityTooltipCardProps
+              )
             : {},
         }}
       >

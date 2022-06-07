@@ -176,6 +176,7 @@ export const ChangeColumnOrder = () => {
       options={{ setting: true }}
       exportToExcel
       xlsx={XLSX}
+      entityTooltipCardProps={{ width: 400, extra: <span>关闭</span> }}
     />
   );
 };

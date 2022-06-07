@@ -1,6 +1,7 @@
 // Generated with util/create-component.js
 import type { ProColumnType, ProTableProps } from "@ant-design/pro-table";
 import type { ParamsType } from "@ant-design/pro-provider";
+import type { ReactNode } from "react";
 import type { LogicformType, LogicformAPIResultType } from "zeroetp-api-sdk";
 import type { ZESchemaFormColumnType } from "../../ZESchemaForm/ZESchemaForm.types";
 
@@ -53,6 +54,11 @@ export type TableProps = {
     logicformWithSkipAndSort?: LogicformType
   ) => void;
   reload?: (...args) => void;
+  entityTooltipCardProps?: {
+    width?: number;
+    height?: number;
+    extra?: ReactNode;
+  };
 } & Omit<
   ProTableProps<ProColumnType, ParamsType>,
   "columns" | "request" | "pagination" | "toolBarRender" | "scroll"

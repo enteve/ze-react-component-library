@@ -1,5 +1,5 @@
 import { S2Options, S2DataConfig } from "@antv/s2";
-import React from "react";
+import React, { ReactNode } from "react";
 import { LogicformAPIResultType, LogicformType } from "zeroetp-api-sdk";
 
 export interface ZESheetProps {
@@ -11,6 +11,11 @@ export interface ZESheetProps {
   sheetType?: "pivot" | "table" | "gridAnalysis";
   s2DataConfig?: Omit<S2DataConfig, "data">;
   s2Options?: Partial<S2Options>;
+  entityTooltipCardProps?: {
+    width?: number;
+    height?: number;
+    extra?: ReactNode;
+  };
 
   // functions
   onChange?: (s2DataConfig?: Omit<S2DataConfig, "data">) => void;

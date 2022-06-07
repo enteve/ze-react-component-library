@@ -1,5 +1,10 @@
-import { LogicformAPIResultType, getNameProperty } from "zeroetp-api-sdk";
-import React from "react";
+import {
+  LogicformAPIResultType,
+  findPropByName,
+  getNameProperty,
+  SchemaType,
+} from "zeroetp-api-sdk";
+import React, { ReactNode } from "react";
 import {
   S2CellType,
   TooltipShowOptions,
@@ -8,6 +13,8 @@ import {
   RowCell,
 } from "@antv/s2";
 import type { CSSProperties } from "react";
+import { renderEntityTooltipContent } from "../util";
+import ZECard from "../ZECard";
 import { ZESheetProps } from "./ZESheet.types";
 
 export const getDefaultS2Config = (
@@ -54,10 +61,14 @@ const renderTooltipItemList = (
 
 export const renderTooltipContent = (
   cell: S2CellType,
-  options: TooltipShowOptions
-) => {
-  // console.log(cell, options);
-
+  options: TooltipShowOptions,
+  schema: SchemaType,
+  entityTooltipCardProps?: {
+    width?: number;
+    height?: number;
+    extra?: ReactNode;
+  }
+): any => {
   const nameStyle: CSSProperties = {
     color: "rgba(0,0,0,0.5)",
     margin: "0 0 8px 0",
@@ -80,6 +91,29 @@ export const renderTooltipContent = (
   }
 
   if (cell instanceof RowCell || cell instanceof ColCell || cell === null) {
+    const meta = cell.getMeta();
+    const field = cell ? meta.field : undefined;
+    const property = field ? findPropByName(schema, field) : undefined;
+    if (property?.primal_type === "object" && !meta.isTotals) {
+      const nameProp = getNameProperty(property.schema);
+      const height = entityTooltipCardProps.height || 200;
+      // 宽度最小200
+      const width =
+        entityTooltipCardProps.width && entityTooltipCardProps.width > 200
+          ? entityTooltipCardProps.width
+          : 200;
+      return renderEntityTooltipContent({
+        value: meta.value,
+        property,
+        nameProperty: nameProp,
+        entityTooltipCardProps: {
+          width,
+          height,
+          extra: entityTooltipCardProps?.extra,
+        },
+      });
+    }
+
     const title = cell === null ? null : cell.getActualText();
     const {
       data: { summaries },

@@ -5,7 +5,7 @@ import "./index.less";
 import numeral from "numeral";
 import * as xlsx from "xlsx";
 import moment from "moment";
-import { DatePicker, Space, Radio } from "antd";
+import { DatePicker, Space, Radio, Button } from "antd";
 
 // prepare server
 import prepareServerForStories from "../../../util/prepareServerForStories";
@@ -76,6 +76,11 @@ export const Complex = () => (
       schema: "sales",
       groupby: ["产品_品类", "产品"],
       schemaName: "销售",
+    }}
+    entityTooltipCardProps={{
+      width: 400,
+      height: 400,
+      extra: <Button>关闭</Button>,
     }}
   />
 );

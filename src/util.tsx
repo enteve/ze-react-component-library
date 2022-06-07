@@ -1,4 +1,4 @@
-import React, { useState, FC, Fragment } from "react";
+import React, { useState, FC, Fragment, ReactNode } from "react";
 import {
   PropertyType,
   SchemaType,
@@ -12,6 +12,7 @@ import {
 import type { FallbackProps } from "react-error-boundary";
 import numeral from "numeral";
 import { EditableProTable } from "@ant-design/pro-table";
+import ZECard from "./ZECard";
 import {
   Select,
   InputNumber,
@@ -28,6 +29,8 @@ import {
   Space,
   Tag,
   SelectProps,
+  Popover,
+  Empty,
 } from "antd";
 import type { CardProps } from "antd";
 import { useRequest } from "@umijs/hooks";
@@ -247,9 +250,55 @@ const tagRender = (
   );
 };
 
+export const renderEntityTooltipContent = ({
+  value,
+  property,
+  nameProperty,
+  entityTooltipCardProps,
+}: {
+  value: string;
+  property: PropertyType;
+  nameProperty: any;
+  entityTooltipCardProps?: {
+    width?: number;
+    height?: number;
+    extra?: ReactNode;
+  };
+}) => {
+  if (!property) {
+    return <Empty />;
+  }
+
+  return (
+    <ZECard
+      extra={entityTooltipCardProps?.extra}
+      bodyStyle={{
+        height: entityTooltipCardProps?.height || 200,
+        width: entityTooltipCardProps?.width || 200,
+        overflow: "auto",
+      }}
+      showVisualizer={false}
+      title={value}
+      logicform={{
+        schema: property.ref,
+        operator: "$ent",
+        field: nameProperty.name,
+        name: value,
+      }}
+    />
+  );
+};
+
 // config里面目前有table的defaultColWidth.用于计算object的ellipsis。
 // TODO：上述解决方案很不行。如果有更好的解决方案就好了。
-export const customValueTypes = (schema: SchemaType): any => ({
+export const customValueTypes = (
+  schema: SchemaType,
+  entityTooltipCardProps?: {
+    width?: number;
+    height?: number;
+    extra?: ReactNode;
+  }
+): any => ({
   percentage: {
     render: (number: number, props, ...rest) => {
       if (props.render) {
@@ -344,7 +393,22 @@ export const customValueTypes = (schema: SchemaType): any => ({
               flexShrink: 0,
             }}
           >
-            {text}
+            <Popover
+              trigger="click"
+              content={
+                <div style={{ margin: "-12px -16px" }}>
+                  {renderEntityTooltipContent({
+                    value: text,
+                    property,
+                    nameProperty,
+                    entityTooltipCardProps,
+                  })}
+                </div>
+              }
+              placement="bottom"
+            >
+              <a>{text}</a>
+            </Popover>
           </Paragraph>
         </div>
       );

@@ -34,6 +34,7 @@ const ZESheet: React.FC<ZESheetProps> = ({
   logicform,
   result,
   sheetType,
+  entityTooltipCardProps,
   s2DataConfig: s2DataConfigSrc,
   s2Options: s2OptionsSrc,
   showExport = true,
@@ -220,7 +221,8 @@ const ZESheet: React.FC<ZESheetProps> = ({
   const defaultOptions: Partial<S2Options> = {
     hierarchyType: "grid",
     tooltip: {
-      content: renderTooltipContent as any,
+      content: (cell, options) =>
+        renderTooltipContent(cell, options, data?.schema, entityTooltipCardProps),
     },
   };
 
