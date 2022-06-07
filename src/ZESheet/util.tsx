@@ -96,10 +96,10 @@ export const renderTooltipContent = (
     const property = field ? findPropByName(schema, field) : undefined;
     if (property?.primal_type === "object" && !meta.isTotals) {
       const nameProp = getNameProperty(property.schema);
-      const height = entityTooltipCardProps.height || 200;
+      const height = entityTooltipCardProps?.height || 200;
       // 宽度最小200
       const width =
-        entityTooltipCardProps.width && entityTooltipCardProps.width > 200
+        entityTooltipCardProps?.width && entityTooltipCardProps.width > 200
           ? entityTooltipCardProps.width
           : 200;
       return renderEntityTooltipContent({
