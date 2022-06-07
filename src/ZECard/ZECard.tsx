@@ -47,6 +47,7 @@ import GroupByMenu from "../components/GroupByMenu";
 import ErrorDisplayer from "./ErrorDisplayer";
 import ZESheet from "../ZESheet";
 import UrlList from "./UrlList";
+import HierarchyList from "../components/Modality/List/HierarchyList";
 const { Paragraph, Title } = Typography;
 
 const getDefaultRepresentation = (
@@ -304,7 +305,12 @@ const ZECard: React.FC<ZECardProps> = ({
         <Result status="error" title="此Component需要传入logicform字段" />
       );
     } else if (isSimpleQuery(logicform)) {
-      component = tableContent;
+      // feat modality
+      if (data?.schema?.modality?.list?.type === "HierarchyList") {
+        component = <HierarchyList data={data} />;
+      } else {
+        component = tableContent;
+      }
     } else if (finalRepresentation === "value") {
       component = (
         <ZEValueDisplayer
