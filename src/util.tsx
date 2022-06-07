@@ -279,6 +279,7 @@ export const renderEntityTooltipContent = ({
       }}
       showVisualizer={false}
       title={value}
+      key={value}
       logicform={{
         schema: property.ref,
         operator: "$ent",
