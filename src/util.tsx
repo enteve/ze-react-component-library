@@ -358,7 +358,7 @@ export const customValueTypes = (
       if (entity == null) return "N/A";
 
       const width = (props?.fieldProps?.width || 200) - 16;
-      let text: string;
+      let text: string | string[];
       let isSingleEntity = true;
       let property: PropertyType;
       let nameProperty: PropertyType;
@@ -374,7 +374,7 @@ export const customValueTypes = (
           text = entity[nameProperty.name];
         } else {
           isSingleEntity = false;
-          text = entity.map((i) => i[nameProperty.name]).join(",");
+          text = entity.map((i) => i[nameProperty.name]);
         }
       }
 
@@ -384,7 +384,7 @@ export const customValueTypes = (
             ellipsis={{
               rows: props?.fieldProps?.ellipsis?.row || 1,
               expandable: false,
-              tooltip: text,
+              tooltip: text instanceof Array ? text.join(",") : text,
             }}
             style={{
               margin: 0,
@@ -394,22 +394,49 @@ export const customValueTypes = (
               flexShrink: 0,
             }}
           >
-            <Popover
-              trigger="click"
-              content={
-                <div style={{ margin: "-12px -16px" }}>
-                  {renderEntityTooltipContent({
-                    value: text,
-                    property,
-                    nameProperty,
-                    entityTooltipCardProps,
-                  })}
-                </div>
-              }
-              placement="bottom"
-            >
-              <a>{text}</a>
-            </Popover>
+            {text instanceof Array ? (
+              <>
+                {text.map((t, i) => (
+                  <Popover
+                    trigger="click"
+                    key={t}
+                    content={
+                      <div style={{ margin: "-12px -16px" }}>
+                        {renderEntityTooltipContent({
+                          value: t,
+                          property,
+                          nameProperty,
+                          entityTooltipCardProps,
+                        })}
+                      </div>
+                    }
+                    placement="bottom"
+                  >
+                    <a>
+                      {t}
+                      {i === text.length - 1 ? "" : ","}
+                    </a>
+                  </Popover>
+                ))}
+              </>
+            ) : (
+              <Popover
+                trigger="click"
+                content={
+                  <div style={{ margin: "-12px -16px" }}>
+                    {renderEntityTooltipContent({
+                      value: text,
+                      property,
+                      nameProperty,
+                      entityTooltipCardProps,
+                    })}
+                  </div>
+                }
+                placement="bottom"
+              >
+                <a>{text}</a>
+              </Popover>
+            )}
           </Paragraph>
         </div>
       );
