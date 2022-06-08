@@ -418,16 +418,8 @@ const ZEChart: React.FC<ZEChartProps> = memo(
 
     // Editor
     const editComponent = (
-      <div>
-        <Space style={{ float: "right" }}>
-          <Button
-            onClick={() => {
-              setUserChangedOption(undefined);
-              setEditingOption(undefined);
-            }}
-          >
-            重置
-          </Button>
+      <div style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
+        <Space style={{ flexDirection: "row-reverse" }}>
           <Button
             type="primary"
             style={{ float: "right" }}
@@ -446,10 +438,18 @@ const ZEChart: React.FC<ZEChartProps> = memo(
           >
             保存
           </Button>
+          <Button
+            onClick={() => {
+              setUserChangedOption(undefined);
+              setEditingOption(undefined);
+            }}
+          >
+            重置
+          </Button>
         </Space>
 
         <TextArea
-          style={{ marginTop: 10 }}
+          style={{ marginTop: 10, flex: 1, minHeight: 0 }}
           rows={15}
           value={
             editingOption || `option = ${JSON.stringify(finalOption, null, 2)}`
@@ -472,7 +472,7 @@ const ZEChart: React.FC<ZEChartProps> = memo(
       <div
         className="ze-chart"
         data-testid="ZEChart"
-        style={{ display: "flex", flexDirection: "row" }}
+        style={{ display: "flex" }}
       >
         <div
           onClick={() => {
@@ -480,7 +480,6 @@ const ZEChart: React.FC<ZEChartProps> = memo(
               onDbClick(null, data, true);
             }
           }}
-          style={{ flexGrow: 1 }}
         >
           {chartDom}
         </div>
