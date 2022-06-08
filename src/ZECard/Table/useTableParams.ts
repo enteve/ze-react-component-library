@@ -77,13 +77,12 @@ export function useTableParams({
               $lte: mappedV[1],
             };
           } else if (property.primal_type === "string") {
-            targetV = { $regex: escapeStringRegexp(mappedV[0]), $options: "i" };
+            targetV = { $contains: mappedV[0] };
           } else if (property.primal_type === "object") {
             // TODO: 有多个NameProperty咋办
             // 搜索entity
             targetV = {
-              $regex: escapeStringRegexp(mappedV[0]),
-              $options: "i",
+              $contains: mappedV[0],
             };
           } else if (property.primal_type === "boolean") {
             if (v.length === 1) {

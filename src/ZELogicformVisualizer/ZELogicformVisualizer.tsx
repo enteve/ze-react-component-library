@@ -71,6 +71,10 @@ const basicValueDisplay = (oldV: any) => {
     return v.$in;
   }
 
+  if (v.$contains) {
+    return `包含 ${v.$contains}`;
+  }
+
   if (typeof v === "object" && v.operator === "$ent") {
     return v.name;
   }
