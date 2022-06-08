@@ -17,7 +17,6 @@ import { DownloadOutlined } from "@ant-design/icons";
 import "@antv/s2-react/dist/style.min.css";
 import { getDefaultS2Config, renderTooltipContent } from "./util";
 import excelExporter from "./excelExporter";
-import { HeaderCfgProps } from "@antv/s2-react/esm/components/header";
 import "./ZESheet.less";
 
 // Tableau的颜色配置，先留在这里
@@ -222,12 +221,17 @@ const ZESheet: React.FC<ZESheetProps> = ({
     hierarchyType: "grid",
     tooltip: {
       content: (cell, options) =>
-        renderTooltipContent(cell, options, data?.schema, entityTooltipCardProps),
+        renderTooltipContent(
+          cell,
+          options,
+          data?.schema,
+          entityTooltipCardProps
+        ),
     },
   };
 
   // 配置Header
-  const sheetComponentHeader: HeaderCfgProps = {
+  const sheetComponentHeader: any = {
     extra: (
       <Space>
         {showExport && (
@@ -312,8 +316,16 @@ const ZESheet: React.FC<ZESheetProps> = ({
   if (dataCfg?.fields) {
     if (!dataCfg.fields.rows || dataCfg.fields.rows.length === 0) {
       dataCfg.fields.valueInCols = false;
+
+      // 暂时不显示total
+      s2Options.totals.row.showGrandTotals = false;
+      s2Options.totals.row.showSubTotals = false;
     } else {
       dataCfg.fields.valueInCols = true;
+
+      // 显示回来total。 如果上面的【暂时不显示total】
+      s2Options.totals.row.showGrandTotals = true;
+      s2Options.totals.row.showSubTotals = true;
     }
   }
 
