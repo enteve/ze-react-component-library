@@ -22,12 +22,23 @@ export const Basic = () => (
     xlsx={xlsx}
     logicform={{
       schema: "sales",
-      groupby: ["渠道"],
+      groupby: "产品_品类",
+      query: { 日期: { year: 2021 } },
       preds: [
-        { name: "总销量", operator: "$sum", pred: "销售量" },
-        { name: "毛利率", operator: "毛利率" },
-        { name: "转化率", operator: "转化率" },
+        { pred: "销售额", operator: "$sum", name: "销售收入" },
+        { operator: "COGS", name: "产品成本" },
+        { operator: "毛利", name: "毛利" },
+        { operator: "毛利率", name: "毛利率" },
       ],
+    }}
+    showSwitcher={false}
+    s2DataConfig={{
+      fields: {
+        rows: [],
+        columns: ["产品_品类"],
+        values: ["销售收入", "产品成本", "毛利", "毛利率"],
+        valueInCols: false,
+      },
     }}
   />
 );
