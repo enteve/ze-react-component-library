@@ -43,6 +43,10 @@ export const logicformValueToColumnFilter = (oldV: any) => {
     return v.$in;
   }
 
+  if (v.$contains) {
+    return v.$contains;
+  }
+
   if (typeof v === "object" && v.operator === "$ent") {
     return v.name;
   }

@@ -688,8 +688,7 @@ const renderObjectFormItem = (schema, props: any) => {
       const query = { ...props?.fieldProps?.query };
       if (search) {
         query[nameProperty.name] = {
-          $regex: escapeStringRegexp(search),
-          $options: "i",
+          $contains: search,
         };
         limit = 100;
       }

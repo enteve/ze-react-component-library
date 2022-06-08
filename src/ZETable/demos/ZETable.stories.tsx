@@ -242,7 +242,7 @@ export const FiltersWithLFQuery = () => (
   <ZETable
     logicform={{
       schema: "product",
-      query: { 名称: { $regex: "500" } },
+      query: { 名称: { $contains: "500" } },
       limit: -1,
     }}
     options={false}
