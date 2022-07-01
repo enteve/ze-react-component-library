@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { Button, Spin, Drawer, Space, message, Popconfirm, Radio } from "antd";
 import {
   getSchemas,
@@ -153,7 +153,10 @@ const ZESchemaEditor: React.FC = () => {
           return [
             <Radio.Group
               key="type"
-              options={types.map((d) => ({ label: d, value: d }))}
+              options={types.map((d) => ({
+                label: d === "entity" ? "实体" : "事件",
+                value: d,
+              }))}
               onChange={(e) => {
                 setType(e.target.value);
               }}
