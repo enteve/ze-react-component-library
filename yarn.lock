@@ -16011,6 +16011,11 @@ webpack@4:
     watchpack "^1.7.4"
     webpack-sources "^1.4.1"
 
+weixin-js-sdk@^1.6.0:
+  version "1.6.0"
+  resolved "https://tech-npm.tezign.com/weixin-js-sdk/-/weixin-js-sdk-1.6.0.tgz#ff50484d8118ce1208f11248cf4a1c0831577514"
+  integrity sha1-/1BITYEYzhII8RJIz0ocCDFXdRQ=
+
 whatwg-encoding@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/whatwg-encoding/-/whatwg-encoding-1.0.5.tgz#5abacf777c32166a51d085d6b4f3e7d27113ddb0"

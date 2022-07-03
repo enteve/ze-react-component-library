@@ -7,3 +7,43 @@
 .text-secondary-color {
   color: @text-color-secondary;
 }
+
+.ze-search-bar-mobile-input-bar-wrapper {
+  background: #f6f6f6;
+  position: fixed;
+  width: 100%;
+  left: 0;
+  bottom: 0;
+  z-index: 1001;
+}
+
+.ze-search-bar-record-loading-wrapper {
+  .ze-search-bar-record-loading-icon {
+    position: relative;
+    width: max-content;
+    margin: 0 auto;
+    .anticon-audio {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-50%);
+    }
+  }
+}
+
+.ze-search-bar-mobile-recording-mask {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.45);
+  .ze-search-bar-record-loading-wrapper {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+  }
+}

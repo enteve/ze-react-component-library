@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, HTMLAttributes } from "react";
 import {
   AutoComplete,
   Col,
   Input,
-  List,
   Modal,
   Row,
   Space,
@@ -18,7 +17,7 @@ import {
   RightCircleOutlined,
 } from "@ant-design/icons";
 import type { LogicformType } from "zeroetp-api-sdk";
-import VoiceRecorder from "./VoiceRecorder";
+import VoiceRecorder, { RecordLoading } from "./VoiceRecorder";
 import {
   requestSuggest,
   requestPollingMicrophoneText,
@@ -27,6 +26,7 @@ import {
 } from "../request";
 import "./index.less";
 import ZELogicformVisualizerList from "../ZELogicformVisualizerList";
+import MobileInputBar from "./MobileInputBar";
 
 const { Search } = Input;
 
@@ -41,16 +41,20 @@ export type ZESearchBarAnswerType = {
 export type ZESearchBarProps = {
   showHot?: boolean;
   onAsk?: (answer: ZESearchBarAnswerType) => void;
-
+  isMobile?: boolean;
   /* 一开始就默认填在搜索栏的 */
   initialValue?: string;
-};
+} & HTMLAttributes<HTMLDivElement>;
 
 const ZESearchBar: React.FC<ZESearchBarProps> = ({
   showHot = true,
   onAsk,
   initialValue,
+  isMobile,
+  className = "",
+  style,
 }) => {
+  const [isRecording, setIsRecording] = useState<boolean>(false);
   const [voiceModalVisible, setVoiceModalVisible] = useState<boolean>(false);
   const [microphoneMode, setMicrophoneMode] = useState<boolean>(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -143,76 +147,85 @@ const ZESearchBar: React.FC<ZESearchBarProps> = ({
   };
 
   return (
-    <>
-      <AutoComplete
-        backfill
-        value={askString}
-        disabled={loading}
-        onFocus={onFocus}
-        options={suggestions.map((s) => ({ value: s }))}
-        style={{ width: "100%" }}
-        onSearch={(text) => {
-          getSuggestions(text);
-          setSuggestions([]);
-          setAskString(text);
-        }}
-        onChange={(text) => {
-          // 选择option和输入都会触发。
-          setSuggestions([]);
-          setAskString(text);
-        }}
-      >
-        <Search
-          placeholder="输入问题，获得Insights！"
-          enterButton="问一下"
-          size="large"
-          prefix={loading ? <Spin /> : <SearchOutlined />}
-          suffix={
-            <Space>
-              <AudioOutlined
-                onClick={() => setVoiceModalVisible(true)}
-                className="text-primary-color"
-              />
-              <MobileOutlined
-                onClick={() => {
-                  if (microphoneMode === false) {
-                    pollMicrophoneText();
-                  } else {
-                    cancelPollMicrophoneText();
-                  }
-                  setMicrophoneMode(!microphoneMode);
-                }}
-                className={
-                  microphoneMode ? "text-primary-color" : "text-secondary-color"
-                }
-              />
-            </Space>
-          }
-          onSearch={(value) => {
-            if (value.trim().length > 0) {
-              ask(value);
-              setSuggestions([]);
-              if (isGettingSuggestions) cancelGetSuggestions();
-
-              // History
-              try {
-                const savedHist = localStorage.getItem("histories");
-                let histories = [];
-                if (savedHist) {
-                  histories = JSON.parse(savedHist);
-                }
-                histories = histories.filter((h: string) => h !== value);
-                histories.splice(0, 0, value);
-                histories = histories.slice(0, 5);
-                localStorage.setItem("histories", JSON.stringify(histories));
-              } catch (e) {
-                // eslint-disable-next-line no-console
-                console.error(e);
-              }
-            }
+    <div
+      className={`ze-search-bar ${
+        isMobile ? "ze-search-bar-mobile" : ""
+      } ${className}`}
+      style={style}
+    >
+      {!isMobile && (
+        <AutoComplete
+          backfill
+          value={askString}
+          disabled={loading}
+          onFocus={onFocus}
+          options={suggestions.map((s) => ({ value: s }))}
+          style={{ width: "100%" }}
+          onSearch={(text) => {
+            getSuggestions(text);
+            setSuggestions([]);
+            setAskString(text);
           }}
-        />
-      </AutoComplete>
+          onChange={(text) => {
+            // 选择option和输入都会触发。
+            setSuggestions([]);
+            setAskString(text);
+          }}
+        >
+          <Search
+            placeholder="输入问题，获得Insights！"
+            enterButton="问一下"
+            size="large"
+            prefix={loading ? <Spin /> : <SearchOutlined />}
+            suffix={
+              <Space>
+                <AudioOutlined
+                  onClick={() => setVoiceModalVisible(true)}
+                  className="text-primary-color"
+                />
+                <MobileOutlined
+                  onClick={() => {
+                    if (microphoneMode === false) {
+                      pollMicrophoneText();
+                    } else {
+                      cancelPollMicrophoneText();
+                    }
+                    setMicrophoneMode(!microphoneMode);
+                  }}
+                  className={
+                    microphoneMode
+                      ? "text-primary-color"
+                      : "text-secondary-color"
+                  }
+                />
+              </Space>
+            }
+            onSearch={(value) => {
+              if (value.trim().length > 0) {
+                ask(value);
+                setSuggestions([]);
+                if (isGettingSuggestions) cancelGetSuggestions();
+
+                // History
+                try {
+                  const savedHist = localStorage.getItem("histories");
+                  let histories = [];
+                  if (savedHist) {
+                    histories = JSON.parse(savedHist);
+                  }
+                  histories = histories.filter((h: string) => h !== value);
+                  histories.splice(0, 0, value);
+                  histories = histories.slice(0, 5);
+                  localStorage.setItem("histories", JSON.stringify(histories));
+                } catch (e) {
+                  // eslint-disable-next-line no-console
+                  console.error(e);
+                }
+              }
+            }}
+          />
+        </AutoComplete>
+      )}
       {logicformsToChoose?.length === 0 && showHot && hot.length > 0 && (
         <div style={{ marginTop: 15 }}>
           <Title level={4}>系统热搜</Title>
@@ -243,6 +256,25 @@ const ZESearchBar: React.FC<ZESearchBarProps> = ({
           />
         </div>
       )}
+      {isMobile && (
+        <div className="ze-search-bar-mobile-input-bar-wrapper">
+          <MobileInputBar
+            onTouchStart={() => setIsRecording(true)}
+            onTouchEnd={() => setIsRecording(false)}
+            onSubmit={(text) => {
+              if (text?.length > 0) {
+                setAskString(text);
+                ask(text);
+              }
+            }}
+          />
+        </div>
+      )}
+      {isRecording && (
+        <div className="ze-search-bar-mobile-recording-mask">
+          <RecordLoading color="white">松开结束</RecordLoading>
+        </div>
+      )}
       <Modal
         title="录音中，请开始讲话"
         visible={voiceModalVisible}
@@ -262,7 +294,7 @@ const ZESearchBar: React.FC<ZESearchBarProps> = ({
           }}
         />
       </Modal>
-    </>
+    </div>
   );
 };
 

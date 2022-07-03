@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, FC, HTMLAttributes } from "react";
 import { Button, message } from "antd";
 import Recorder from "js-audio-recorder";
 import { requestSuggestByVoice } from "../request";
@@ -8,6 +8,58 @@ import { AudioOutlined, LoadingOutlined } from "@ant-design/icons";
 interface VoiceRecorderProps {
   ask: (text?: string) => void;
 }
+
+type LiteralUnion<T extends U, U> = T | (U & {});
+
+const defaultColor = "primary" as const;
+
+export const RecordLoading: FC<
+  {
+    color?: LiteralUnion<typeof defaultColor, string>;
+  } & HTMLAttributes<HTMLDivElement>
+> = ({ color = defaultColor, children, style, className = "" }) => {
+  const isPrimary = color === defaultColor;
+  const props = {
+    color: isPrimary ? undefined : color,
+    className: isPrimary ? "text-primary-color" : undefined,
+  };
+
+  return (
+    <div
+      style={style}
+      className={`ze-search-bar-record-loading-wrapper ${className}`}
+    >
+      <div className="ze-search-bar-record-loading-icon">
+        <AudioOutlined
+          style={{
+            fontSize: 50,
+            color: props.color,
+          }}
+          className={props.className}
+        />
+        <LoadingOutlined
+          className={props.className}
+          style={{
+            fontSize: 100,
+            color: props.color,
+          }}
+          spin
+        />
+      </div>
+      <div
+        style={{
+          fontSize: 18,
+          marginTop: 12,
+          color: props.color,
+          textAlign: "center",
+        }}
+        className={props.className}
+      >
+        {children}
+      </div>
+    </div>
+  );
+};
 
 const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ ask }) => {
   const [translating, setTranslating] = useState<boolean>(false);
@@ -52,30 +104,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ ask }) => {
         textAlign: "center",
       }}
     >
-      <div
-        style={{
-          marginTop: 30,
-        }}
-      >
-        <AudioOutlined
-          style={{
-            fontSize: 50,
-          }}
-          className="text-primary-color"
-        />
-        <LoadingOutlined
-          className="text-primary-color"
-          style={{
-            fontSize: 100,
-            position: "fixed",
-            top: "50%",
-            left: "50%",
-            marginTop: "-60px",
-            marginLeft: "-50px",
-          }}
-          spin
-        />
-      </div>
+      <RecordLoading />
       <Button
         onClick={() => translateRecord()}
         loading={translating}

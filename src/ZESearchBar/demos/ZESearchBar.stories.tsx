@@ -18,6 +18,16 @@ export const ZESearchBarDemo = () => {
   );
 };
 
+export const ZESearchBarMobile = () => {
+  const [answer, setAnswer] = useState<ZESearchBarAnswerType>();
+  return (
+    <>
+      <ZESearchBar onAsk={setAnswer} isMobile />
+      {answer && <pre>{JSON.stringify(answer, null, 2)}</pre>}
+    </>
+  );
+};
+
 export const InitialValue = () => {
   const [answer, setAnswer] = useState<ZESearchBarAnswerType>();
   return (
