@@ -273,8 +273,8 @@ export const renderEntityTooltipContent = ({
     <ZECard
       extra={entityTooltipCardProps?.extra}
       bodyStyle={{
-        height: entityTooltipCardProps?.height || 200,
-        width: entityTooltipCardProps?.width || 200,
+        height: entityTooltipCardProps?.height || 400,
+        width: entityTooltipCardProps?.width || 500,
         overflow: "auto",
       }}
       showVisualizer={false}

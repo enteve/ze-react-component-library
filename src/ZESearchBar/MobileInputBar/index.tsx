@@ -24,7 +24,7 @@ const recorder: Recorder = new Recorder({
 });
 
 const InputBar: React.FC<InputBarProps> = ({
-  placeholder = "点击输入问题",
+  placeholder = "输入问题，获得Insights！",
   onSubmit,
   onTouchStart,
   onTouchEnd,
