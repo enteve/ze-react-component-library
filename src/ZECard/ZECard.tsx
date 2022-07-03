@@ -61,7 +61,7 @@ const getDefaultRepresentation = (
   if (result.returnType === "value" || typeof result.result !== "object")
     return "value";
 
-  if (logicform.groupby) {
+  if (logicform.groupby && logicform.preds && logicform.preds.length > 0) {
     // 如果是多维分组，直接用table
     if (Array.isArray(logicform.groupby) && logicform.groupby.length >= 2) {
       return "table";

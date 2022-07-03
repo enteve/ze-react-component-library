@@ -635,6 +635,16 @@ export const CustomContent = () => {
   );
 };
 
+export const Distincts = () => (
+  <ZECard
+    title="distincts1"
+    logicform={{
+      schema: 'sales',
+      groupby: '产品',
+    }}
+  />
+);
+
 export const ModalityUrl = () => (
   <ZECard
     title="url跳转"
