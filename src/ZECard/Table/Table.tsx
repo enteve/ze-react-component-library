@@ -470,7 +470,7 @@ const Table: React.FC<TableProps> = ({
                 const property = findPropByName(result.schema, propertyName);
                 if (property.schema) {
                   const nameProp = getNameProperty(property.schema);
-                  if (nameProp) {
+                  if (nameProp && nameProp.type !== 'ID') { // 如果ID和is_name为同一个，那么没必要加
                     populatedPreds.push(`${property.name}_${nameProp.name}`);
                   }
                 }
