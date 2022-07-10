@@ -473,6 +473,13 @@ const ZECard: React.FC<ZECardProps> = ({
               setRepresentation(v);
               setSelectedItem(undefined);
             }}
+            isRepresentationDisabled={(v) => {
+              // TODO: 图表是否可用需要根据logicform判断
+              if (v === "kpi") {
+                return true;
+              }
+              return false;
+            }}
           />
         )}
         {pinable && (
