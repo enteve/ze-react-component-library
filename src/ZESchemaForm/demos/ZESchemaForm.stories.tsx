@@ -254,7 +254,7 @@ export const SchemaOfSchema = () => {
       },
       {
         name: "syno",
-        type: "string",
+        type: "tag",
         primal_type: "string",
         isArray: true,
         description:
@@ -276,6 +276,7 @@ export const SchemaOfSchema = () => {
         type: "object",
         ref: "_property",
         primal_type: "object",
+        isArray: true,
         constraints: { required: true },
         schema: {
           _id: "_property",
@@ -290,7 +291,7 @@ export const SchemaOfSchema = () => {
             },
             {
               name: "syno",
-              type: "string",
+              type: "tag",
               primal_type: "string",
               isArray: true,
               description:
@@ -300,7 +301,7 @@ export const SchemaOfSchema = () => {
               name: "type",
               type: "string",
               primal_type: "string",
-              constraints: { required: true },
+              constraints: { required: true  },
             },
             {
               name: "ref",
@@ -309,8 +310,14 @@ export const SchemaOfSchema = () => {
               primal_type: "string",
             },
             {
+              name: "is_required",
+              type: "boolean",
+              primal_type: "boolean",
+            },
+            {
               name: "is_name",
               type: "boolean",
+              description:'是否可以通过直呼其名搜索到',
               primal_type: "boolean",
             },
             {
@@ -324,15 +331,23 @@ export const SchemaOfSchema = () => {
               primal_type: "boolean",
             },
             {
-              name: "is_required",
-              type: "boolean",
-              primal_type: "boolean",
-            },
-            {
               name: "enum",
               type: "string",
               primal_type: "string",
+              description:'可取值的范围，英文逗号分隔'
             },
+            {
+              name: "is_comparable",
+              type: "boolean",
+              primal_type: "boolean",
+              description:'是否可以比较，仅需在类型为string的时候设置。同时必须有order属性'
+            },
+            // UDF的配置有点难，感觉只能通过json editor配置
+            // {
+            //   name: "udf",
+            //   type: "object",
+            //   primal_type: "object",
+            // },
           ],
         },
       },
@@ -384,20 +399,48 @@ export const SchemaOfSchema = () => {
             dataIndex: "properties",
             valueType: "table",
             fieldProps: { placeholder: "新增Property" },
-            // columns: [
-            //   {
-            //     title: "name",
-            //     dataIndex: "name",
-            //   },
-            //   {
-            //     title: "type",
-            //     dataIndex: "type",
-            //   },
-            //   {
-            //     title: "操作",
-            //     valueType: "option",
-            //   },
-            // ],
+            columns: [
+              {
+                title: "名称",
+                dataIndex: "properties.name",
+              },
+              {
+                title: "同义词",
+                dataIndex: "properties.syno",
+              },
+              {
+                title: "类型",
+                dataIndex: "properties.type",
+              },
+              {
+                title: "ref",
+                dataIndex: "properties.ref",
+              },
+              {
+                title: "是否数组？",
+                dataIndex: "properties.isArray",
+              },
+              {
+                title: "是否称呼？",
+                dataIndex: "properties.is_name",
+              },
+              {
+                title: "是否分类？",
+                dataIndex: "properties.is_categorical",
+              },
+              {
+                title: "是否必须？",
+                dataIndex: "properties.is_required",
+              },
+              {
+                title: "枚举",
+                dataIndex: "properties.enum",
+              },
+              {
+                title: "操作",
+                valueType: "option",
+              },
+            ],
           },
         ]}
       />
