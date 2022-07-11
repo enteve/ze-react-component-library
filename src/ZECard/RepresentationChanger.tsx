@@ -23,7 +23,7 @@ const graphics = [
     key: "kpi",
     title: "Kpi指标",
     icon: KpiSvg,
-    tip: "",
+    tip: "kpi",
     type: "basic",
   },
   {
@@ -144,45 +144,50 @@ const RepresentationChanger: React.FC<Props> = ({
           <div className="ze-graphics-drop-down-right">
             {graphics
               .filter((d) => (type === "all" ? true : d.type === type))
-              .map((d) => (
-                <div
-                  key={d.key}
-                  className="ze-graphics-drop-down-right-item-wrapper"
-                >
-                  <Tooltip
-                    placement="bottom"
-                    {...(d.tip
-                      ? { title: d.tip }
-                      : { visible: false, title: "" })}
+              .map((d) => {
+                const disabled = isRepresentationDisabled?.(d.key);
+                return (
+                  <div
+                    key={d.key}
+                    className={`ze-graphics-drop-down-right-item-wrapper ${
+                      disabled
+                        ? "ze-graphics-drop-down-right-item-disabled"
+                        : ""
+                    } ${
+                      d.key === value
+                        ? "ze-graphics-drop-down-right-item-active"
+                        : ""
+                    }`}
                   >
-                    <div
-                      onClick={() => {
-                        setValue(d.key);
-                        onChange?.(d.key);
-                        setVisible(false);
-                      }}
-                      className={`ze-graphics-drop-down-right-item ${
-                        d.key === value
-                          ? "ze-graphics-drop-down-right-item-active"
-                          : ""
-                      } ${
-                        isRepresentationDisabled?.(d.key)
-                          ? "ze-graphics-drop-down-right-item-disabled"
-                          : ""
-                      }`}
+                    <Tooltip
+                      placement="bottom"
+                      {...(d.tip
+                        ? { title: d.tip }
+                        : { visible: false, title: "" })}
                     >
-                      <img
-                        src={d.icon}
-                        alt={d.key}
-                        className="ze-graphics-drop-down-right-item-img"
-                      />
-                    </div>
-                  </Tooltip>
-                  <span className="ze-graphics-drop-down-right-item-title">
-                    {d.title}
-                  </span>
-                </div>
-              ))}
+                      <div
+                        onClick={() => {
+                          if (!disabled) {
+                            setValue(d.key);
+                            onChange?.(d.key);
+                            setVisible(false);
+                          }
+                        }}
+                        className={`ze-graphics-drop-down-right-item`}
+                      >
+                        <img
+                          src={d.icon}
+                          alt={d.key}
+                          className="ze-graphics-drop-down-right-item-img"
+                        />
+                      </div>
+                    </Tooltip>
+                    <span className="ze-graphics-drop-down-right-item-title">
+                      {d.title}
+                    </span>
+                  </div>
+                );
+              })}
           </div>
         </div>
       }
