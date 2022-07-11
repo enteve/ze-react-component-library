@@ -151,11 +151,6 @@ const getSchema = (json?: Record<string, any>) => {
         description:
           "仅对event类型的Schema起作用。在问答MTD、QTD之类的术语的时候，“今天”这个概念是不是用数据库里数据的最后一天（而不是当前日期）",
       },
-      use_view: {
-        type: "boolean",
-        description:
-          "优化选项，是不是要生成一张物化视图来加速问答。设置为true之后，会在数据库中增加一个_id+'_view'的表",
-      },
       properties: {
         type: "array",
         items: propertySchema,
@@ -217,7 +212,6 @@ export const schemaTemplate = {
   description: "",
   editable: false,
   use_db_date_as_mtd: false,
-  use_view: false,
   properties: [propertyTemplate],
 };
 
