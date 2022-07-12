@@ -16364,10 +16364,10 @@ yocto-queue@^0.1.0:
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
 
-zeroetp-api-sdk@^1.1.67:
-  version "1.1.67"
-  resolved "https://registry.npmjs.org/zeroetp-api-sdk/-/zeroetp-api-sdk-1.1.67.tgz#c24c9ed89e7278480f25083a0da6a87eb35c3756"
-  integrity sha512-wmH6SM7s4n79LcZP4S7DAH5nfvBMwMt0Js/mgfvP7CbjIpEpWgcI5dB8PUXckMRKCvGyaRpByn3U2k5SioGJyw==
+zeroetp-api-sdk@^1.1.70:
+  version "1.1.70"
+  resolved "https://registry.npmjs.org/zeroetp-api-sdk/-/zeroetp-api-sdk-1.1.70.tgz#9cf43ab7a54ac7aa5e4864fd89f2c8fdf4bb9b51"
+  integrity sha512-wJs82T/G60llzcTaJdmiPv6/hvRjEDjcsWnXos5jvC57QPntMlWUwo5ptjMkkiNB7Fw4yCln4wgFmkHXpwTT5A==
   dependencies:
     moment "^2.29.1"
     umi-request "^1.3.5"

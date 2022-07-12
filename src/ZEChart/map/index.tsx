@@ -128,7 +128,7 @@ const Map: React.FC<Props> = ({
 
       // VisualMap，确定一下min和max
       const values = data.result.map(
-        (i) => i[logicform.preds[dimension - 1][0].name]
+        (i) => i[logicform.preds[dimension - 1].name]
       );
       const max = _.max(values);
       let min = _.min(values);
