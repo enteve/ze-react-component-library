@@ -929,13 +929,13 @@ export const genYoyAndMomLogicform = (
   if (retLF.preds.length !== 1) throw new Error("LF的preds长度必须为1");
   if (retLF.preds[0].length !== 1) throw new Error("LF的preds[0]长度必须为1");
 
-  const predItem = retLF.preds[0][0];
+  const predItem = retLF.preds[0];
   if (!predItem.operator) throw new Error("predItem必须要有operator");
 
   const { name, query, pred, operator, ...others } = predItem;
   if (!operator.startsWith("$") || operator === "$count") {
     // 自定义函数
-    retLF.preds[0][0] = {
+    retLF.preds[0] = {
       operator: op,
       name: `${name || operator}同比`,
       query,
@@ -947,7 +947,7 @@ export const genYoyAndMomLogicform = (
       },
     };
   } else if (operator === "$sum") {
-    retLF.preds[0][0] = {
+    retLF.preds[0] = {
       operator: op,
       name,
       query,

@@ -6,6 +6,7 @@ import {
   getNameProperty,
   LogicformAPIResultType,
   LogicformType,
+  PredItemObjectType,
 } from "zeroetp-api-sdk";
 import { useRequest } from "@umijs/hooks";
 import { findProperty, formatWithProperty } from "../util";
@@ -121,7 +122,7 @@ const ZESheet: React.FC<ZESheetProps> = ({
                 : dataCfg.fields.rows
                     .slice(0, index)
                     .map(fieldNameToGroupByItem),
-            preds: data.logicform.preds.filter((p) => p[0].operator),
+            preds: data.logicform.preds.filter((p:PredItemObjectType) => p.operator),
             sort: undefined,
             limit: undefined,
             skip: undefined,
@@ -132,7 +133,7 @@ const ZESheet: React.FC<ZESheetProps> = ({
             {
               ...data.logicform,
               groupby: dataCfg.fields.columns.map(fieldNameToGroupByItem),
-              preds: data.logicform.preds.filter((p) => p[0].operator),
+              preds: data.logicform.preds.filter((p:PredItemObjectType) => p.operator),
               sort: undefined,
               limit: undefined,
               skip: undefined,

@@ -131,7 +131,7 @@
 //             ...res.logicform,
 //             groupby:
 //               index === 0 ? undefined : res.logicform.groupby.slice(0, index),
-//             preds: res.logicform.preds.filter((p) => p[0].operator),
+//             preds: res.logicform.preds.filter((p) => p.operator),
 //             sort: undefined,
 //             limit: undefined,
 //             skip: undefined,
