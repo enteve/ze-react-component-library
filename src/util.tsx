@@ -135,8 +135,8 @@ export const valueTypeMapping = (property: PropertyType) => {
     case "number":
       return "number";
     case "string":
-      const distincts = property.constraints?.enum || property.stats?.distincts;
-      if (distincts) {
+      const distincts = property.constraints?.enum;
+      if (distincts && distincts?.length > 0) {
         if (distincts.length >= 10) {
           return "select";
         }
