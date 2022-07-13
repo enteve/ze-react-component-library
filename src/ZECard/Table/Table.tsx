@@ -677,8 +677,7 @@ const Table: React.FC<TableProps> = ({
     }
 
     // Create的话，添加【操作】column
-    // 20220523: 目前，event不允许删除和修改。以后仔细定义一下
-    if (result?.schema.type === "entity") {
+    if (result?.schema.properties.find(p=>p.type === 'ID')) {
       columns.push({
         title: "操作",
         width: 150,
