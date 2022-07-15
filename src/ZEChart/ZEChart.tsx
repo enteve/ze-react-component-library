@@ -4,7 +4,9 @@ import _ from "underscore";
 import merge from "deepmerge";
 import { ZEChartProps } from "./ZEChart.types";
 import Map from "./map";
-
+import TsEditor from "./TsEditor";
+import { obj2str } from "obj2str";
+import _numeral from "numeral";
 import "./ZEChart.less";
 import { useRequest } from "@umijs/hooks";
 import {
@@ -85,7 +87,10 @@ const ZEChart: React.FC<ZEChartProps> = memo(
         },
       };
     }, [JSON.stringify({ data })]);
-
+    // 为编辑器提供的全局变量
+    let dataForChart = data;
+    const numeral = _numeral;
+    ////////////////////////
     const chartOption = useMemo(() => {
       let option: any = {};
       // 第一个数值的prop。目前每张图都只采用第一个measurements。以后都要显示的。
@@ -101,7 +106,6 @@ const ZEChart: React.FC<ZEChartProps> = memo(
       };
 
       if (data?.result && data?.logicform) {
-        let dataForChart = data;
         // 20220519
         // 二维分组 + 单行数据。改造result和columnProperties，目的是为了把第二个维度拆成多个legend
         // 其实就是改造成交叉表
@@ -418,7 +422,14 @@ const ZEChart: React.FC<ZEChartProps> = memo(
 
     // Editor
     const editComponent = (
-      <div style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          flex: 1,
+          minWidth: 0,
+        }}
+      >
         <Space style={{ flexDirection: "row-reverse" }}>
           <Button
             type="primary"
@@ -447,14 +458,14 @@ const ZEChart: React.FC<ZEChartProps> = memo(
             重置
           </Button>
         </Space>
-
-        <TextArea
-          style={{ marginTop: 10, flex: 1, minHeight: 0 }}
-          rows={15}
+        <TsEditor
+          width={`${editorWidth}px`}
           value={
-            editingOption || `option = ${JSON.stringify(finalOption, null, 2)}`
+            editingOption || obj2str(finalOption, { prefix: "option = " })
           }
-          onChange={(e) => setEditingOption(e.target.value)}
+          onChange={(v) => {
+            setEditingOption(v);
+          }}
         />
         <div style={{ fontSize: 10, color: "grey" }}>
           注：可复制参数，去
