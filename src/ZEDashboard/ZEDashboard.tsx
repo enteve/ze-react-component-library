@@ -68,7 +68,7 @@ const ZEDashboard: React.FC<ZEDashboardProps> = ({
               ...d.cardProps,
               ...cardsState[d.id],
             },
-            ["title", "logicform", "representation", "sheetProps"]
+            ["title", "logicform", "representation", "sheetProps", "chartProps"]
           ),
         }));
       };
@@ -111,7 +111,10 @@ const ZEDashboard: React.FC<ZEDashboardProps> = ({
                 )}
                 tableProps={{ height: "auto", ...d.cardProps?.tableProps }}
                 onChange={(params) => {
-                  cardsStateRef.current[d.id] = params;
+                  cardsStateRef.current[d.id] = {
+                    ...cardsStateRef.current[d.id],
+                    ...params,
+                  };
                 }}
                 close={
                   editable || d.cardProps?.close
