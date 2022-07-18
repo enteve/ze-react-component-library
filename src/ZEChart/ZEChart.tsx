@@ -1,5 +1,5 @@
 // Generated with util/create-component.js
-import React, { useMemo, memo, useState } from "react";
+import React, { useMemo, memo, useState, useEffect, useRef } from "react";
 import _ from "underscore";
 import merge from "deepmerge";
 import { ZEChartProps } from "./ZEChart.types";
@@ -20,13 +20,58 @@ import EChart from "./EChart";
 import getPieOption from "./EChart/options/pie";
 import getLineOption from "./EChart/options/line";
 import getBarOption from "./EChart/options/bar";
-import { chartTooltipFormatter, formatChartOptionGrid } from "./util";
-import { formatWithProperty, getFormatter } from "../util";
-import { Result, Input, Button, message, Space } from "antd";
+import { formatChartOptionGrid } from "./util";
+import { getFormatter } from "../util";
+import { Result, Button, message, Space } from "antd";
 import { canUseCrossTable, crossResult } from "../crossTableGen";
 
-const { TextArea } = Input;
-const editorWidth = 300;
+const getFormatterString = (property: PropertyType) => {
+  const formatter = getFormatter(property);
+  if (formatter) {
+    return formatter.formatter;
+  }
+  if (property.type === "percentage") {
+    return "0.0%";
+  }
+  if (property.primal_type === "number") {
+    return "0,0";
+  }
+  return null;
+};
+
+const chartTooltipFormatter = (
+  params: any,
+  properties: PropertyType[],
+  formatDisplayValue: (property: PropertyType, value: number) => string | number
+): string => {
+  let res: string = "";
+  if (!params) {
+    return res;
+  }
+  const data: any[] = params instanceof Array ? params : [params];
+
+  data.slice(0, 1).forEach((d) => {
+    let itemTip = d.name ? `${d.name} <br />` : "";
+    properties.forEach((property, index) => {
+      let unit: any = property.unit;
+      const formatter = getFormatter(property);
+      if (formatter) {
+        unit = `${formatter.prefix}${unit}${formatter.postfix}`;
+      }
+      const v = d?.data?.[property.name];
+      const displayV = formatDisplayValue(property, v);
+
+      itemTip = `${itemTip}${(data[index] || d)?.marker}${property.name}
+      ${
+        unit ? `(${unit})` : ""
+      } <span style="float:right;margin-left:20px;font-size:14px;color:#666;font-weight:900">${displayV}</span><br />`;
+    });
+    res = `${res}${itemTip}`;
+  });
+  return res;
+};
+
+const newlineCharacter = "\n";
 
 const ZEChart: React.FC<ZEChartProps> = memo(
   ({
@@ -37,10 +82,23 @@ const ZEChart: React.FC<ZEChartProps> = memo(
     height,
     onDbClick,
     onItemSelect,
+    userChartOptionStr,
+    onSave,
     option: inputOption = {},
     targetPred,
     isOtherPredsSupplementary = false,
   }) => {
+    const globalVarsRef = useRef<{
+      dataForChart: any;
+      numeral: any;
+      measurementProp: any;
+    }>({
+      dataForChart: undefined,
+      numeral: _numeral,
+      measurementProp: {},
+    });
+
+    const editorWidth = width / 2;
     const { data } = useRequest<LogicformAPIResultType>(
       () => {
         if (result) {
@@ -55,12 +113,22 @@ const ZEChart: React.FC<ZEChartProps> = memo(
     );
     /* 直接对最终options修改 */
     const [editMode, setEditMode] = useState<boolean>(false);
-    const [editingOption, setEditingOption] = useState<string>();
+    const [editingOption, setEditingOption] =
+      useState<string>(userChartOptionStr);
     const [userChangedOption, setUserChangedOption] = useState<any>(); // 最终用户的option，会完全覆盖默认的配置
-    const toggleEditMode = () => {
-      setEditMode(!editMode);
-      setEditingOption(undefined);
+
+    const resetEditingOption = () => {
+      readOptionsFromString(userChartOptionStr);
+      onSave?.(userChartOptionStr);
+      setEditingOption(userChartOptionStr);
     };
+    const toggleEditMode = () => {
+      if (editMode) {
+        resetEditingOption();
+      }
+      setEditMode(!editMode);
+    };
+
     const additionalToolboxFeature = {
       myEditor: {
         show: true,
@@ -70,6 +138,25 @@ const ZEChart: React.FC<ZEChartProps> = memo(
         },
         title: "编辑图表",
       },
+    };
+
+    const readOptionsFromString = (optionStr?: string) => {
+      setEditingOption(optionStr);
+      if (optionStr) {
+        // console.log(optionStr);
+        try {
+          const { dataForChart, numeral, measurementProp } =
+            globalVarsRef.current;
+          let option: any;
+          eval(optionStr);
+          setUserChangedOption(option);
+        } catch (error) {
+          console.log(error);
+          message.error("非法的格式，请检查配置");
+        }
+      } else {
+        setUserChangedOption(undefined);
+      }
     };
 
     const chartEventDict: Record<string, Function> = useMemo(() => {
@@ -87,31 +174,19 @@ const ZEChart: React.FC<ZEChartProps> = memo(
         },
       };
     }, [JSON.stringify({ data })]);
-    // 为编辑器提供的全局变量
-    let dataForChart = data;
-    const numeral = _numeral;
-    ////////////////////////
+
     const chartOption = useMemo(() => {
       let option: any = {};
-      // 第一个数值的prop。目前每张图都只采用第一个measurements。以后都要显示的。
-      let measurementProp: PropertyType;
-
-      const labelFormatter = (property) => (item: any) => {
-        // 这个label formatter有时会返回整个axis，很奇怪。不过这个时候没有data
-        if (!item.data) {
-          return;
-        }
-
-        return formatWithProperty(property, item.data[property.name]);
-      };
 
       if (data?.result && data?.logicform) {
+        globalVarsRef.current.dataForChart = data;
         // 20220519
         // 二维分组 + 单行数据。改造result和columnProperties，目的是为了把第二个维度拆成多个legend
         // 其实就是改造成交叉表
         if (canUseCrossTable(data.logicform)) {
-          dataForChart = crossResult(data);
+          globalVarsRef.current.dataForChart = crossResult(data);
         }
+        const { dataForChart, numeral } = globalVarsRef.current;
 
         // result to dataset:
         // 要对entity进行一个改写
@@ -145,18 +220,24 @@ const ZEChart: React.FC<ZEChartProps> = memo(
           dimensions,
         };
 
-        measurementProp =
+        globalVarsRef.current.measurementProp =
           dataForChart.columnProperties[dataForChart.logicform.groupby.length];
+        const { measurementProp } = globalVarsRef.current;
 
         // tooltip
         option.tooltip = {
           confine: true,
           formatter: (params) => {
+            const formatDisplayValue = (p, v) => {
+              const formatterStr = getFormatterString(p);
+              return formatterStr ? numeral(v).format(formatterStr) : v;
+            };
             return chartTooltipFormatter(
               params,
               dataForChart.columnProperties.slice(
                 dataForChart.logicform.groupby.length
-              )
+              ),
+              formatDisplayValue
             );
           },
         };
@@ -188,7 +269,7 @@ const ZEChart: React.FC<ZEChartProps> = memo(
           if (measurementProp?.unit) {
             option.xAxis.name = measurementProp?.unit;
             if (measurementProp?.ui?.formatters) {
-              const formatter = getFormatter(measurementProp, 0);
+              const formatter = getFormatter(measurementProp);
               if (formatter) {
                 option.xAxis.name = `${formatter.prefix}${option.xAxis.name}${formatter.postfix}`;
               }
@@ -201,7 +282,7 @@ const ZEChart: React.FC<ZEChartProps> = memo(
               for (let i = 0; i < chars.length; i++) {
                 const char = chars[i];
                 if (i > 0 && i % 2 === 0) {
-                  option.xAxis.name += "\n";
+                  option.xAxis.name += newlineCharacter;
                 }
                 option.xAxis.name += char;
               }
@@ -210,7 +291,17 @@ const ZEChart: React.FC<ZEChartProps> = memo(
 
           // label format
           if (!option.label) option.label = { show: true };
-          option.label.formatter = labelFormatter(measurementProp);
+          option.label.formatter = (item) => {
+            if (!item.data) {
+              return;
+            }
+            const value = item.data[measurementProp.name];
+            const formatterStr = getFormatterString(measurementProp);
+            if (formatterStr) {
+              return numeral(value).format(formatterStr);
+            }
+            return value;
+          };
           if (type === "bar") {
             // option.label.show = true;
             option.label.position = "right";
@@ -237,8 +328,13 @@ const ZEChart: React.FC<ZEChartProps> = memo(
             }
           }
           // value轴format
-          option.xAxis.axisLabel.formatter = (value) =>
-            formatWithProperty(measurementProp, value);
+          option.xAxis.axisLabel.formatter = (value) => {
+            const formatterStr = getFormatterString(measurementProp);
+            if (formatterStr) {
+              return numeral(value).format(formatterStr);
+            }
+            return value;
+          };
 
           if (type === "column") {
             // inverse要去掉
@@ -276,15 +372,30 @@ const ZEChart: React.FC<ZEChartProps> = memo(
                     })
                   )
                 );
-                option.yAxis[1].axisLabel.formatter = (v) =>
-                  formatWithProperty(columnProperty, v);
+                option.yAxis[1].axisLabel.formatter = (value) => {
+                  const formatterStr = getFormatterString(measurementProp);
+                  if (formatterStr) {
+                    return numeral(value).format(formatterStr);
+                  }
+                  return value;
+                };
               }
 
               option.series.push({
                 type,
                 yAxisIndex,
                 label: {
-                  formatter: labelFormatter(columnProperty),
+                  formatter: (item) => {
+                    if (!item.data) {
+                      return;
+                    }
+                    const value = item.data[measurementProp.name];
+                    const formatterStr = getFormatterString(measurementProp);
+                    if (formatterStr) {
+                      return numeral(value).format(formatterStr);
+                    }
+                    return value;
+                  },
                 },
                 ...selectProps,
               });
@@ -308,7 +419,8 @@ const ZEChart: React.FC<ZEChartProps> = memo(
               label: {
                 position: "inside",
                 show: true,
-                formatter: (p: any) => `${p.name}\n${p.percent}%`,
+                formatter: (p: any) =>
+                  p.name + newlineCharacter + p.percent + "%",
               },
               radius: ["50%", "95%"],
               itemStyle: {
@@ -347,7 +459,17 @@ const ZEChart: React.FC<ZEChartProps> = memo(
           } else {
             option.label = {
               show: true,
-              formatter: labelFormatter(measurementProp),
+              formatter: (item) => {
+                if (!item.data) {
+                  return;
+                }
+                const value = item.data[measurementProp.name];
+                const formatterStr = getFormatterString(measurementProp);
+                if (formatterStr) {
+                  return numeral(value).format(formatterStr);
+                }
+                return value;
+              },
             };
           }
         }
@@ -374,7 +496,7 @@ const ZEChart: React.FC<ZEChartProps> = memo(
     let finalOption: any;
     if (["bar", "column", "pie", "line"].includes(type)) {
       if (userChangedOption) {
-        finalOption = userChangedOption;
+        finalOption = { ...userChangedOption, dataset: chartOption.dataset };
       } else {
         finalOption = formatChartOptionGrid({
           ...merge(chartOption, inputOption),
@@ -420,6 +542,9 @@ const ZEChart: React.FC<ZEChartProps> = memo(
       );
     }
 
+    const optionsForEdit = { ...finalOption };
+    delete optionsForEdit["dataset"];
+
     // Editor
     const editComponent = (
       <div
@@ -435,24 +560,15 @@ const ZEChart: React.FC<ZEChartProps> = memo(
             type="primary"
             style={{ float: "right" }}
             onClick={() => {
-              if (editingOption) {
-                try {
-                  let option: any;
-                  eval(editingOption);
-                  setUserChangedOption(option);
-                } catch (error) {
-                  console.log(error);
-                  message.error("非法的格式，请检查配置");
-                }
-              }
+              readOptionsFromString(editingOption);
+              onSave?.(editingOption);
             }}
           >
             保存
           </Button>
           <Button
             onClick={() => {
-              setUserChangedOption(undefined);
-              setEditingOption(undefined);
+              resetEditingOption();
             }}
           >
             重置
@@ -461,23 +577,20 @@ const ZEChart: React.FC<ZEChartProps> = memo(
         <TsEditor
           width={`${editorWidth}px`}
           value={
-            editingOption || obj2str(finalOption, { prefix: "option = " })
+            editingOption || obj2str(optionsForEdit, { prefix: "option = " })
           }
           onChange={(v) => {
             setEditingOption(v);
           }}
         />
-        <div style={{ fontSize: 10, color: "grey" }}>
-          注：可复制参数，去
-          <a
-            href="https://echarts.apache.org/examples/zh/editor.html?c=pie-simple"
-            target="_blank"
-          >
-            echarts编辑器进行编辑
-          </a>
-        </div>
       </div>
     );
+
+    useEffect(() => {
+      if (userChartOptionStr && chartOption?.dataset) {
+        readOptionsFromString(userChartOptionStr);
+      }
+    }, [userChartOptionStr, chartOption]);
 
     return (
       <div

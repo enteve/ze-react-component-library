@@ -181,7 +181,7 @@ export const valueEnumMapping = (property: PropertyType) => {
   return valueEnum;
 };
 
-export const getFormatter = (property: PropertyType, value: number): any => {
+export const getFormatter = (property: PropertyType): any => {
   // 单个的formatter优先。因为table模式下要决定单个formatter
   if (property.ui?.formatter) {
     return {
@@ -203,10 +203,24 @@ export const getFormatter = (property: PropertyType, value: number): any => {
   return null;
 };
 
+export const getFormatterString = (property: PropertyType) => {
+  const formatter = getFormatter(property);
+  if(formatter){
+    return formatter.formatter;
+  }
+  if (property.type === "percentage") {
+    return "0.0%";
+  }
+  if (property.primal_type === "number") {
+    return "0,0";
+  }
+  return null;
+} 
+
 export const formatWithProperty = (property: PropertyType, value: any) => {
   if (value === null) return "-";
 
-  const formatter = getFormatter(property, value);
+  const formatter = getFormatter(property);
 
   if (formatter) {
     return numeral(value).format(formatter.formatter);

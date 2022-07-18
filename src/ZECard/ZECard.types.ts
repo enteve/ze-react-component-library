@@ -11,8 +11,11 @@ import { ZEValueDisplayerProps } from "../ZEValueDisplayer/ZEValueDisplayer";
 import { Fields } from "@antv/s2";
 
 export type ZECardOnChangeParams = {
-  logicform: LogicformType;
+  logicform?: LogicformType;
   representation?: string;
+  chartProps?: {
+    userChartOptionStr?: string;
+  }
   sheetProps?: {
     s2DataConfig?: {
       fields?: Fields;
