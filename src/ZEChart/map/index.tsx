@@ -6,6 +6,7 @@ import {
   config,
   normaliseGroupby,
   getHierarchyCodeLength,
+  PredItemObjectType,
 } from "zeroetp-api-sdk";
 import * as echarts from "echarts";
 import EChart, { CHART_MAX_HEIGHT } from "../EChart";
@@ -128,7 +129,7 @@ const Map: React.FC<Props> = ({
 
       // VisualMap，确定一下min和max
       const values = data.result.map(
-        (i) => i[logicform.preds[dimension - 1].name]
+        (i) => i[(logicform.preds[dimension - 1] as PredItemObjectType) .name]
       );
       const max = _.max(values);
       let min = _.min(values);
