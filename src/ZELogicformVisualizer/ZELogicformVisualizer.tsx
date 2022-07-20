@@ -133,9 +133,9 @@ const ZELogicformVisualizer: React.FC<ZELogicformVisualizerProps> = ({
   // 有个逻辑，如果有preds且只有一个，且里面有query那么拿到外面去，这样可以绕过preds不显示的问题。
   try {
     // 这里就假设是normed logicform，其他的格式今后将不会进来
-    if (logicform.preds?.length === 1 && logicform.preds[0][0].query) {
-      logicform.query = { ...logicform.query, ...logicform.preds[0][0].query };
-      delete logicform.preds[0][0].query;
+    if (logicform.preds?.length === 1 && logicform.preds[0].query) {
+      logicform.query = { ...logicform.query, ...logicform.preds[0].query };
+      delete logicform.preds[0].query;
     }
   } catch (error) {}
 
@@ -271,20 +271,8 @@ const ZELogicformVisualizer: React.FC<ZELogicformVisualizerProps> = ({
                 </span>
               ),
             });
-          } else if (v.schema) {
-            // 嵌套的的搜索，暂时先只支持ent，之后其他嵌套想个好办法
-            if (v.preds?.[0]?.[0].operator === "$ent") {
-              badges.push({
-                color: filterColor,
-                text: (
-                  <span>
-                    {k}：<strong>{v.preds[0][0].name}</strong>
-                  </span>
-                ),
-              });
-            } else if (v.query) {
-              addQuery(v.query, k);
-            }
+          } else if (v.schema && v.query) {
+            addQuery(v.query, k);
           }
         }
       });
@@ -361,11 +349,6 @@ const ZELogicformVisualizer: React.FC<ZELogicformVisualizerProps> = ({
   }
   if (!(display.preds === false) && logicform.preds) {
     const preds = logicform.preds.map((p, index) => {
-      // TODO: Traverse尚未支持
-      if (Array.isArray(p)) {
-        p = p[0] as PredItemObjectType;
-      }
-
       return (
         <span key={index}>
           {typeof p === "object" && p.operator && stringifyPredItem(p)}

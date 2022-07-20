@@ -612,7 +612,7 @@ export const CustomContent = () => {
         try {
           if (
             logicform.schema === "product" &&
-            logicform.preds[0][0].operator === "$ent"
+            logicform.preds[0].operator === "$ent"
           ) {
             const entity = result.result[0];
             return (
@@ -648,12 +648,7 @@ export const Distincts = () => (
 export const ModalityUrl = () => (
   <ZECard
     title="url跳转"
-    logicform={{
-      schema: "store",
-      operator: "$ent",
-      field: "名称",
-      name: "黑河市黑河市市辖区店",
-    }}
+    logicform={{"query":{},"schema":"stock","preds":[{"operator":"库存","name":"库存"}],"groupby":["商品","商品_名称"]}}
   />
 );
 
