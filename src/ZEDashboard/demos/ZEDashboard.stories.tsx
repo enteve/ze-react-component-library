@@ -1,6 +1,7 @@
 // Generated with util/create-component.js
 import React, { useState, useRef } from "react";
 import { Space, Button } from "antd";
+import merge from "deepmerge"
 import ZECard from "../../ZECard";
 import ZESearchBar, { ZESearchBarAnswerType } from "../../ZESearchBar";
 import ZEDashboard, { ZEDashboardItem, ZEDashboardInstance } from "../index";
@@ -48,13 +49,80 @@ const report: ZEDashboardItem[] = [
     id: "card1",
     cardProps: {
       title: "各省市销售额",
+      representation: 'pie',
       logicform: {
         schema: "sales",
         groupby: { _id: "店铺_地址", level: "省市" },
         preds: [{ name: "销售额", operator: "$sum", pred: "销售额" }],
       },
       close: () => {},
+      chartProps: {
+        userChartOptionStr: `option = {
+          tooltip: {
+            confine: true,
+            formatter: function formatter(params) {
+              var formatDisplayValue = function formatDisplayValue(p, v) {
+                var formatterStr = getFormatterString(p);
+                return formatterStr ? numeral(v).format(formatterStr) : v;
+              };
+              
+              return chartTooltipFormatter(params, dataForChart.columnProperties.slice(dataForChart.logicform.groupby.length), formatDisplayValue);
+            },
+            trigger: 'item'
+          },
+          legend: {
+            type: 'scroll',
+            orient: 'vertical',
+            right: 10,
+            top: 20,
+            bottom: 20,
+            padding: [
+              0,
+              50
+            ]
+          },
+          series: [
+            {
+              type: 'pie',
+              label: {
+                position: 'inside',
+                show: true,
+                formatter: function formatter(p) {
+                  return p.name + newlineCharacter + p.percent + '%';
+                }
+              },
+              radius: [
+                '20%',
+                '95%'
+              ],
+              itemStyle: {
+                borderRadius: 10,
+                borderColor: '#fff',
+                borderWidth: 2
+              },
+              emphasis: {
+                label: {
+                  show: true,
+                  fontWeight: 'bold'
+                }
+              },
+              labelLine: {
+                show: false
+              }
+            }
+          ],
+          visualMap: false,
+          grid: {
+            containLabel: true,
+            top: 12,
+            bottom: 35,
+            left: 0,
+            right: 30
+          }
+        }`
+      }
     },
+    
     layout: {
       h: 6,
       i: "card1",
@@ -149,6 +217,16 @@ export const Basic = () => {
               type="primary"
               onClick={() => {
                 console.log(dashboardRef.current.getDashboardState?.(data));
+                const savedData = dashboardRef.current.getDashboardState?.(data);
+                if(savedData){
+                  setData(data.map(d => {
+                    const target = savedData.find(f => f.id === d.id);
+                    if(target){
+                      return merge(d, target)
+                    }
+                    return d;
+                  }));
+                }
               }}
             >
               保存

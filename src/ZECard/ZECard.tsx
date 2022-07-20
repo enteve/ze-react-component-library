@@ -361,6 +361,9 @@ const ZECard: React.FC<ZECardProps> = ({
             onChangeLogicform={setLogicform}
             onDbClick={onDbClick}
             onItemSelect={enableGroupByMenu ? setSelectedItem : undefined}
+            onSave={(v) => {
+              onChange?.({ chartProps: { userChartOptionStr: v } });
+            }}
             {...chartProps}
           />
         );
@@ -412,8 +415,6 @@ const ZECard: React.FC<ZECardProps> = ({
             xlsx={xlsx}
             onChange={(v) => {
               onChange?.({
-                logicform,
-                representation: finalRepresentation,
                 sheetProps: { s2DataConfig: { fields: v?.fields } },
               });
             }}
@@ -528,15 +529,10 @@ const ZECard: React.FC<ZECardProps> = ({
   if (showMainContentOnly) return <Spin spinning={loading}>{component}</Spin>;
 
   useEffect(() => {
-    const sheetFields = sheetProps?.s2DataConfig?.fields;
-    onChange &&
-      onChange({
-        logicform,
-        representation: finalRepresentation,
-        sheetProps: sheetFields
-          ? { s2DataConfig: { fields: sheetFields } }
-          : undefined,
-      });
+    onChange?.({
+      logicform,
+      representation: finalRepresentation,
+    });
   }, [logicform, finalRepresentation]);
 
   return (
