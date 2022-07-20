@@ -19,13 +19,13 @@ import MapSvg from "./assets/map.svg";
 import KpiSvg from "./assets/kpi.svg";
 
 const graphics = [
-  {
-    key: "kpi",
-    title: "Kpi指标",
-    icon: KpiSvg,
-    tip: "kpi",
-    type: "basic",
-  },
+  // {
+  //   key: "kpi",
+  //   title: "Kpi指标",
+  //   icon: KpiSvg,
+  //   tip: "kpi",
+  //   type: "basic",
+  // },
   {
     key: "table",
     title: "数据明细表",
