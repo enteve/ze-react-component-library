@@ -270,23 +270,22 @@ const ZECard: React.FC<ZECardProps> = ({
     };
   };
 
-  const tableContent = (
-    <Table
-      logicform={logicform}
-      setLogicform={(val, valWithSkipAndSorter) => {
-        if (val) {
-          setLogicform(val);
-        }
-        setLogicFormWithSkipAndSort(valWithSkipAndSorter);
-      }}
-      xlsx={xlsx}
-      exportToExcel={exportToExcel}
-      onRow={onRow}
-      result={data}
-      reload={fetchData}
-      {...tableProps}
-    />
-  );
+  const finalTableProps = {
+    logicform,
+    setLogicform: (val, valWithSkipAndSorter) => {
+      if (val) {
+        setLogicform(val);
+      }
+      setLogicFormWithSkipAndSort(valWithSkipAndSorter);
+    },
+    xlsx,
+    exportToExcel,
+    onRow,
+    result: data,
+    reload: fetchData,
+    ...tableProps,
+  };
+  const tableContent = <Table {...finalTableProps} />;
 
   let component: any;
   // 自定义Content
@@ -307,7 +306,7 @@ const ZECard: React.FC<ZECardProps> = ({
     } else if (isSimpleQuery(logicform)) {
       // feat modality
       if (data?.schema?.modality?.list?.type === "HierarchyList") {
-        component = <HierarchyList data={data} />;
+        component = <HierarchyList data={data} tableProps={finalTableProps} />;
       } else {
         component = tableContent;
       }

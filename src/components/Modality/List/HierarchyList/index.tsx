@@ -1,12 +1,17 @@
 import React from "react";
 import { LogicformAPIResultType } from "zeroetp-api-sdk";
 import Table from "../../../../ZECard/Table";
+import { TableProps } from "../../../../ZECard/Table/Table.types";
 
 type HierarchyListProps = {
   data: LogicformAPIResultType;
+  tableProps?: TableProps;
 };
 
-const HierarchyList: React.FC<HierarchyListProps> = ({ data }) => {
+const HierarchyList: React.FC<HierarchyListProps> = ({
+  data,
+  tableProps = {},
+}) => {
   if (!data || !data.result) return <div />;
 
   const hierarchyDatasource: any[] = [];
@@ -60,6 +65,7 @@ const HierarchyList: React.FC<HierarchyListProps> = ({ data }) => {
     <Table
       setLogicform={() => {}}
       logicform={data.logicform}
+      {...tableProps}
       result={{
         ...data,
         result: dataSource,
