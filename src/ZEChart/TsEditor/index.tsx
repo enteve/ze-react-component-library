@@ -1,5 +1,6 @@
 import React, { FC, useRef, useEffect } from "react";
 import AceEditor, { IAceEditorProps } from "react-ace";
+import "ace-builds/webpack-resolver";
 import "ace-builds/src-noconflict/mode-typescript";
 import "ace-builds/src-noconflict/theme-github";
 import "ace-builds/src-noconflict/ext-language_tools";
