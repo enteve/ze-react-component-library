@@ -1,7 +1,16 @@
 // Generated with util/create-component.js
-import React, { useMemo, memo, useState, useEffect, useRef } from "react";
+import React, {
+  useMemo,
+  memo,
+  useState,
+  useEffect,
+  useRef,
+  ReactNode,
+  ReactElement,
+} from "react";
 import _ from "underscore";
 import merge from "deepmerge";
+import { ErrorBoundary, FallbackProps } from "react-error-boundary";
 import { ZEChartProps } from "./ZEChart.types";
 import Map from "./map";
 import TsEditor from "./TsEditor";
@@ -73,6 +82,34 @@ const chartTooltipFormatter = (
 
 const newlineCharacter = "\n";
 
+const ChartDomWrapper = ({
+  chartErrorRef,
+  isEditing,
+  children = null,
+}: {
+  chartErrorRef: React.MutableRefObject<FallbackProps>;
+  children?: any;
+  isEditing?: boolean;
+}) => {
+  return (
+    <ErrorBoundary
+      fallbackRender={(errorProps) => {
+        chartErrorRef.current = errorProps;
+        return (
+          <Result
+            status="error"
+            title={
+              isEditing ? "option不合法，请修改后点击保存" : "出错了，请检查"
+            }
+          />
+        );
+      }}
+    >
+      {children}
+    </ErrorBoundary>
+  );
+};
+
 const ZEChart: React.FC<ZEChartProps> = memo(
   ({
     type,
@@ -98,6 +135,7 @@ const ZEChart: React.FC<ZEChartProps> = memo(
       numeral: _numeral,
       measurementProp: {},
     });
+    const chartErrorRef = useRef<FallbackProps>();
 
     const editorWidth = width / 2;
     const { data } = useRequest<LogicformAPIResultType>(
@@ -499,13 +537,15 @@ const ZEChart: React.FC<ZEChartProps> = memo(
       // console.log(finalOption);
 
       chartDom = (
-        <EChart
-          option={finalOption}
-          eventsDict={chartEventDict}
-          width={editMode ? width - editorWidth : width}
-          height={height}
-          additionalToolboxFeature={additionalToolboxFeature}
-        />
+        <ChartDomWrapper chartErrorRef={chartErrorRef} isEditing={editMode}>
+          <EChart
+            option={finalOption}
+            eventsDict={chartEventDict}
+            width={editMode ? width - editorWidth : width}
+            height={height}
+            additionalToolboxFeature={additionalToolboxFeature}
+          />
+        </ChartDomWrapper>
       );
     } else if (type === "map") {
       if (userChangedOption) {
@@ -514,15 +554,17 @@ const ZEChart: React.FC<ZEChartProps> = memo(
         finalOption = merge(chartOption, inputOption);
       }
       chartDom = (
-        <Map
-          logicform={logicform}
-          data={data}
-          width={editMode ? width - editorWidth : width}
-          height={height}
-          eventsDict={chartEventDict}
-          option={finalOption}
-          // additionalToolboxFeature={additionalToolboxFeature}
-        />
+        <ChartDomWrapper chartErrorRef={chartErrorRef} isEditing={editMode}>
+          <Map
+            logicform={logicform}
+            data={data}
+            width={editMode ? width - editorWidth : width}
+            height={height}
+            eventsDict={chartEventDict}
+            option={finalOption}
+            // additionalToolboxFeature={additionalToolboxFeature}
+          />
+        </ChartDomWrapper>
       );
     } else {
       chartDom = (
@@ -554,6 +596,7 @@ const ZEChart: React.FC<ZEChartProps> = memo(
             onClick={() => {
               readOptionsFromString(editingOption);
               onSave?.(type, editingOption);
+              chartErrorRef.current?.resetErrorBoundary();
             }}
           >
             保存
