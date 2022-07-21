@@ -598,6 +598,7 @@ const ZEChart: React.FC<ZEChartProps> = memo(
         style={{ display: "flex" }}
       >
         <div
+          style={{ flex: 1 }}
           onClick={() => {
             if (type === "map") {
               onDbClick(null, data, true);
