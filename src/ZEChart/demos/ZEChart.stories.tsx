@@ -20,69 +20,71 @@ export const Pie = () => (
       groupby: "产品_品类",
       preds: [{ name: "amount", operator: "$sum", pred: "销售额" }],
     }}
-    userChartOptionStr={`option = {
-      tooltip: {
-        confine: true,
-        formatter: function formatter(params) {
-          var formatDisplayValue = function formatDisplayValue(p, v) {
-            var formatterStr = getFormatterString(p);
-            return formatterStr ? numeral(v).format(formatterStr) : v;
-          };
-          
-          return chartTooltipFormatter(params, dataForChart.columnProperties.slice(dataForChart.logicform.groupby.length), formatDisplayValue);
+    userChartOptionStr={{
+      pie: `option = {
+        tooltip: {
+          confine: true,
+          formatter: function formatter(params) {
+            var formatDisplayValue = function formatDisplayValue(p, v) {
+              var formatterStr = getFormatterString(p);
+              return formatterStr ? numeral(v).format(formatterStr) : v;
+            };
+            
+            return chartTooltipFormatter(params, dataForChart.columnProperties.slice(dataForChart.logicform.groupby.length), formatDisplayValue);
+          },
+          trigger: 'item'
         },
-        trigger: 'item'
-      },
-      legend: {
-        type: 'scroll',
-        orient: 'vertical',
-        right: 10,
-        top: 20,
-        bottom: 20,
-        padding: [
-          0,
-          50
-        ]
-      },
-      series: [
-        {
-          type: 'pie',
-          label: {
-            position: 'inside',
-            show: true,
-            formatter: function formatter(p) {
-              return p.name + newlineCharacter + p.percent + '%';
-            }
-          },
-          radius: [
-            '20%',
-            '95%'
-          ],
-          itemStyle: {
-            borderRadius: 10,
-            borderColor: '#fff',
-            borderWidth: 2
-          },
-          emphasis: {
+        legend: {
+          type: 'scroll',
+          orient: 'vertical',
+          right: 10,
+          top: 20,
+          bottom: 20,
+          padding: [
+            0,
+            50
+          ]
+        },
+        series: [
+          {
+            type: 'pie',
             label: {
+              position: 'inside',
               show: true,
-              fontWeight: 'bold'
+              formatter: function formatter(p) {
+                return p.name + newlineCharacter + p.percent + '%';
+              }
+            },
+            radius: [
+              '20%',
+              '95%'
+            ],
+            itemStyle: {
+              borderRadius: 10,
+              borderColor: '#fff',
+              borderWidth: 2
+            },
+            emphasis: {
+              label: {
+                show: true,
+                fontWeight: 'bold'
+              }
+            },
+            labelLine: {
+              show: false
             }
-          },
-          labelLine: {
-            show: false
           }
+        ],
+        visualMap: false,
+        grid: {
+          containLabel: true,
+          top: 12,
+          bottom: 35,
+          left: 0,
+          right: 30
         }
-      ],
-      visualMap: false,
-      grid: {
-        containLabel: true,
-        top: 12,
-        bottom: 35,
-        left: 0,
-        right: 30
-      }
-    }`}
+      }`,
+    }}
   />
 );
 

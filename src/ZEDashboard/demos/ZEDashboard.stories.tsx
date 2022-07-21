@@ -57,69 +57,71 @@ const report: ZEDashboardItem[] = [
       },
       close: () => {},
       chartProps: {
-        userChartOptionStr: `option = {
-          tooltip: {
-            confine: true,
-            formatter: function formatter(params) {
-              var formatDisplayValue = function formatDisplayValue(p, v) {
-                var formatterStr = getFormatterString(p);
-                return formatterStr ? numeral(v).format(formatterStr) : v;
-              };
-              
-              return chartTooltipFormatter(params, dataForChart.columnProperties.slice(dataForChart.logicform.groupby.length), formatDisplayValue);
+        userChartOptionStr: {
+          'pie': `option = {
+            tooltip: {
+              confine: true,
+              formatter: function formatter(params) {
+                var formatDisplayValue = function formatDisplayValue(p, v) {
+                  var formatterStr = getFormatterString(p);
+                  return formatterStr ? numeral(v).format(formatterStr) : v;
+                };
+                
+                return chartTooltipFormatter(params, dataForChart.columnProperties.slice(dataForChart.logicform.groupby.length), formatDisplayValue);
+              },
+              trigger: 'item'
             },
-            trigger: 'item'
-          },
-          legend: {
-            type: 'scroll',
-            orient: 'vertical',
-            right: 10,
-            top: 20,
-            bottom: 20,
-            padding: [
-              0,
-              50
-            ]
-          },
-          series: [
-            {
-              type: 'pie',
-              label: {
-                position: 'inside',
-                show: true,
-                formatter: function formatter(p) {
-                  return p.name + newlineCharacter + p.percent + '%';
-                }
-              },
-              radius: [
-                '20%',
-                '95%'
-              ],
-              itemStyle: {
-                borderRadius: 10,
-                borderColor: '#fff',
-                borderWidth: 2
-              },
-              emphasis: {
+            legend: {
+              type: 'scroll',
+              orient: 'vertical',
+              right: 10,
+              top: 20,
+              bottom: 20,
+              padding: [
+                0,
+                50
+              ]
+            },
+            series: [
+              {
+                type: 'pie',
                 label: {
+                  position: 'inside',
                   show: true,
-                  fontWeight: 'bold'
+                  formatter: function formatter(p) {
+                    return p.name + newlineCharacter + p.percent + '%';
+                  }
+                },
+                radius: [
+                  '20%',
+                  '95%'
+                ],
+                itemStyle: {
+                  borderRadius: 10,
+                  borderColor: '#fff',
+                  borderWidth: 2
+                },
+                emphasis: {
+                  label: {
+                    show: true,
+                    fontWeight: 'bold'
+                  }
+                },
+                labelLine: {
+                  show: false
                 }
-              },
-              labelLine: {
-                show: false
               }
+            ],
+            visualMap: false,
+            grid: {
+              containLabel: true,
+              top: 12,
+              bottom: 35,
+              left: 0,
+              right: 30
             }
-          ],
-          visualMap: false,
-          grid: {
-            containLabel: true,
-            top: 12,
-            bottom: 35,
-            left: 0,
-            right: 30
-          }
-        }`
+          }`
+        }
       }
     },
     
@@ -219,13 +221,15 @@ export const Basic = () => {
                 console.log(dashboardRef.current.getDashboardState?.(data));
                 const savedData = dashboardRef.current.getDashboardState?.(data);
                 if(savedData){
-                  setData(data.map(d => {
+                  const newData = data.map(d => {
                     const target = savedData.find(f => f.id === d.id);
                     if(target){
                       return merge(d, target)
                     }
                     return d;
-                  }));
+                  });
+                  console.log(newData);
+                  setData(newData);
                 }
               }}
             >
@@ -246,9 +250,9 @@ export const Basic = () => {
                 const reportMaxY = Math.max(
                   ...report.map((d) => d.layout?.y || 0)
                 );
-                const newData = [
+                const newData:any[] = [
                   ...report,
-                  ...data.map((d) => ({
+                  ...data.map((d:any) => ({
                     ...d,
                     layout: {
                       ...d.layout,

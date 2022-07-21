@@ -14,7 +14,7 @@ export type ZECardOnChangeParams = {
   logicform?: LogicformType;
   representation?: string;
   chartProps?: {
-    userChartOptionStr?: string;
+    userChartOptionStr?: Record<string, string>;
   }
   sheetProps?: {
     s2DataConfig?: {

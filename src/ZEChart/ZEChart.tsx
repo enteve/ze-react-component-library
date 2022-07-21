@@ -82,12 +82,13 @@ const ZEChart: React.FC<ZEChartProps> = memo(
     height,
     onDbClick,
     onItemSelect,
-    userChartOptionStr,
+    userChartOptionStr: _userChartOptionStr,
     onSave,
     option: inputOption = {},
     targetPred,
     isOtherPredsSupplementary = false,
   }) => {
+    const userChartOptionStr = _userChartOptionStr?.[type];
     const globalVarsRef = useRef<{
       dataForChart: any;
       numeral: any;
@@ -119,13 +120,10 @@ const ZEChart: React.FC<ZEChartProps> = memo(
 
     const resetEditingOption = () => {
       readOptionsFromString(userChartOptionStr);
-      onSave?.(userChartOptionStr);
+      onSave?.(type, userChartOptionStr);
       setEditingOption(userChartOptionStr);
     };
     const toggleEditMode = () => {
-      if (editMode) {
-        resetEditingOption();
-      }
       setEditMode(!editMode);
     };
 
@@ -484,12 +482,6 @@ const ZEChart: React.FC<ZEChartProps> = memo(
         subTitle="请联系开发团队以获取支持"
       />
     );
-    if (data?.logicform.groupby?.length > 2) return notSupportedResult;
-    if (
-      data?.logicform.groupby?.length === 2 &&
-      data?.logicform.preds.length >= 2
-    )
-      return notSupportedResult;
 
     // 设定正确的chart
     let chartDom: React.ReactNode;
@@ -561,7 +553,7 @@ const ZEChart: React.FC<ZEChartProps> = memo(
             style={{ float: "right" }}
             onClick={() => {
               readOptionsFromString(editingOption);
-              onSave?.(editingOption);
+              onSave?.(type, editingOption);
             }}
           >
             保存
@@ -587,10 +579,17 @@ const ZEChart: React.FC<ZEChartProps> = memo(
     );
 
     useEffect(() => {
-      if (userChartOptionStr && chartOption?.dataset) {
+      if (chartOption?.dataset) {
         readOptionsFromString(userChartOptionStr);
       }
     }, [userChartOptionStr, chartOption]);
+
+    if (data?.logicform.groupby?.length > 2) return notSupportedResult;
+    if (
+      data?.logicform.groupby?.length === 2 &&
+      data?.logicform.preds.length >= 2
+    )
+      return notSupportedResult;
 
     return (
       <div

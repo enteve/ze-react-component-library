@@ -361,8 +361,15 @@ const ZECard: React.FC<ZECardProps> = ({
             onChangeLogicform={setLogicform}
             onDbClick={onDbClick}
             onItemSelect={enableGroupByMenu ? setSelectedItem : undefined}
-            onSave={(v) => {
-              onChange?.({ chartProps: { userChartOptionStr: v } });
+            onSave={(t, v) => {
+              onChange?.({
+                chartProps: {
+                  userChartOptionStr: {
+                    ...chartProps?.userChartOptionStr,
+                    [t]: v,
+                  },
+                },
+              });
             }}
             {...chartProps}
           />
@@ -526,14 +533,14 @@ const ZECard: React.FC<ZECardProps> = ({
     );
   }
 
-  if (showMainContentOnly) return <Spin spinning={loading}>{component}</Spin>;
-
   useEffect(() => {
     onChange?.({
       logicform,
       representation: finalRepresentation,
     });
   }, [logicform, finalRepresentation]);
+
+  if (showMainContentOnly) return <Spin spinning={loading}>{component}</Spin>;
 
   return (
     <Spin spinning={loading}>
